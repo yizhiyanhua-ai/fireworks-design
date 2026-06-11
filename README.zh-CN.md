@@ -1,9 +1,9 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/logo-light.svg">
-  <img alt="fireworks-design logo" src="docs/images/logo/logo-light.svg" width="560">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/logo-dark.svg?v=2">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/logo-light.svg?v=2">
+  <img alt="fireworks-design logo" src="docs/images/logo/logo-light.svg?v=2" width="560">
 </picture>
 
 # fireworks-design
