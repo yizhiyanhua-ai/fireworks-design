@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#0a0e14" />
+<title>tideline — See your git history like the tide</title>
+<meta name="description" content="An MIT-licensed CLI that renders your git history as a tidal timeline. Commits rise and fall like water. Zero config, sub-100ms on 10k commits, pipes like Unix." />
+<meta name="author" content="tideline" />
+
+<!-- Inline SVG favicon: the tide-wave mark, no extra request. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 14'%3E%3Crect width='24' height='14' fill='%230a0e14'/%3E%3Cpath d='M1 9 C 3 4, 5 4, 7 9 S 11 14, 13 9 S 17 4, 19 9 L23 9' stroke='%235eead4' stroke-width='1.6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
+
+<!-- Social sharing: OG + Twitter. Same description, foam-accent card imagery is
+     deferred to a real og:image at ship time; the metadata is in place now. -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="tideline — See your git history like the tide" />
+<meta property="og:description" content="An MIT-licensed CLI that renders a repository's commits as a tidal timeline. Zero config, sub-100ms on 10k commits, pipes like Unix." />
+<meta property="og:site_name" content="tideline" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="tideline — See your git history like the tide" />
+<meta name="twitter:description" content="An MIT-licensed CLI that renders a repository's commits as a tidal timeline. Zero config, sub-100ms on 10k commits, pipes like Unix." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!--
+  Font note: JetBrains Mono is preloaded+swapped so the box-drawing glyphs (▓▒░█≈)
+  used in the charts swap in cleanly. For a production ship the whole Tailwind
+  runtime below should be replaced by a purged, minified static build (typ. <15KB)
+  to clear the <250KB / <1.2s-FCP-on-3G budget; this CDN is the demo harness.
+-->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;450;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;450;500;600&display=swap"></noscript>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    '#0a0e14',   /* page canvas — 2° blue tint, darker than terminal */
+          tide:   '#1e3a5f',   /* deep tide blue — hero base glow */
+          tide2:  '#16283f',   /* card/border base */
+          edge:   '#243449',   /* bluer hairline border so edges don't blend into tide2 */
+          term:   '#0c1118',   /* terminal window bg — pops above canvas */
+          termbd: '#243449',
+          foam:   '#5eead4',   /* the SINGLE accent: copy-success, cursor, wave peaks */
+          paper:  '#e2e8f0',   /* primary text */
+          sub:    '#94a3b8',   /* secondary text — AA on ink (~7.5:1) */
+          dim:    '#6b7d97',   /* metadata/ticks/labels — readable text, AA (~5.2:1 on ink) */
+          dim2:   '#44516b',   /* NON-TEXT ONLY — separator dots, hairline fills. ~2.4:1 on ink, fails AA for text; never apply to readable copy. */
+        },
+        fontFamily: {
+          mono: ['"JetBrains Mono"', '"SF Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        },
+        letterSpacing: {
+          tightest: '-0.055em',
+          tight2:   '-0.03em',
+          kicker:   '0.2em',
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{
+    /* one modular scale, one source of truth */
+    --step--2: clamp(0.69rem, 0.67rem + 0.10vw, 0.74rem);
+    --step--1: clamp(0.78rem, 0.75rem + 0.14vw, 0.86rem);
+    --step-0:  clamp(0.88rem, 0.84rem + 0.20vw, 0.98rem);
+    --step-1:  clamp(1.00rem, 0.94rem + 0.30vw, 1.14rem);
+    --step-2:  clamp(1.23rem, 1.10rem + 0.66vw, 1.56rem);
+    --step-3:  clamp(1.56rem, 1.30rem + 1.30vw, 2.30rem);
+    --step-4:  clamp(2.05rem, 1.55rem + 2.50vw, 3.55rem);
+    --step-5:  clamp(2.75rem, 1.85rem + 4.50vw, 6.00rem);
+    /* display tightening tokens — two values, one line-height, applied uniformly.
+       -0.05em reserved for the single largest wordmark moment (H1); -0.04em for all H2s. */
+    --display-tighter: -0.05em;   /* H1 only */
+    --display-tight:   -0.04em;   /* all H2s */
+    --display-lh:      0.92;
+  }
+  html, body { background:#0a0e14; color:#e2e8f0; }
+  body {
+    font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings:"cv01","ss01";
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  /* mono is scoped: wordmark, terminal/code, kickers, chart */
+  .font-mono, code, pre, kbd, .mono { font-family:'JetBrains Mono','SF Mono','Fira Code',ui-monospace,monospace; }
+
+  /* ── editorial column guides (hero only) ── */
+  .guides{
+    background-image: linear-gradient(to right, rgba(94,234,212,0.045) 1px, transparent 1px);
+    background-size: calc((100% - 0px) / 12) 100%;
+  }
+
+  /* ── display wordmark optical tightening ──
+     Uses the shared --display-lh token so the wordmark, H1, and H2s all share
+     ONE line-height instead of three near-identical-but-distinct values. */
+  .wordmark{ font-weight:800; letter-spacing:var(--display-tighter); line-height:var(--display-lh); }
+
+  /* ── mono kicker label (the system voice) ── */
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:var(--step--2);
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:#6b7d97;
+    font-weight:600;
+  }
+  .kicker .mk{ color:#5eead4; }   /* foam reserved: ONLY catalog mark */
+
+  /* ── reveal on scroll ── */
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  .reveal.d1{ transition-delay:.07s; }
+  .reveal.d2{ transition-delay:.14s; }
+  .reveal.d3{ transition-delay:.21s; }
+  .reveal.d4{ transition-delay:.28s; }
+
+  /* ── nav underline ── */
+  .nav-link{ position:relative; }
+  .nav-link::after{
+    content:""; position:absolute; left:0; right:0; bottom:-5px; height:1px; background:#5eead4;
+    transform:scaleX(0); transform-origin:left; transition:transform .25s ease;
+  }
+  .nav-link:hover::after, .nav-link:focus-visible::after{ transform:scaleX(1); }
+  .nav-link:focus-visible{ outline:none; }
+
+  /* ── terminal window ── */
+  .term-win{
+    background:#0c1118; border:1px solid #243449; border-radius:14px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 30px 70px -22px rgba(0,0,0,0.75),
+                0 0 0 1px rgba(94,234,212,0.035);
+  }
+  .term-out{ font-family:'JetBrains Mono',monospace; font-size:var(--step-0); line-height:1.6; white-space:pre; color:#e2e8f0; }
+  .caret{ display:inline-block; width:.58ch; background:#5eead4; color:#5eead4; }
+  .caret.blink{ animation: blink 1.05s steps(1,end) infinite; }
+  /* static block caret for reduced-motion users (a solid cursor, no animation) */
+  .caret.static{ animation:none; }
+  @keyframes blink{ 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+  /* ── install pill = PRIMARY CTA (foam focus ring, strongest weight in hero) ── */
+  .install-pill{
+    border:1px solid #243449; background:#0c1118; border-radius:14px;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .install-pill:hover, .install-pill:focus-within{
+    border-color:rgba(94,234,212,0.55);
+    box-shadow:0 0 0 4px rgba(94,234,212,0.10), 0 18px 40px -22px rgba(94,234,212,0.30);
+  }
+  .copy-btn{ transition: color .15s ease, border-color .15s ease, background .15s ease; }
+  .copy-btn.copied{ color:#5eead4; border-color:#5eead4; background:rgba(94,234,212,0.07); }
+  .copy-btn .check{ opacity:0; transform:scale(.5); transition:opacity .18s ease, transform .18s ease; }
+  .copy-btn .copy-ic{ transition:opacity .15s ease; }
+  .copy-btn.copied .check{ opacity:1; transform:scale(1); }
+  .copy-btn.copied .copy-ic{ opacity:0; position:absolute; }
+  .copy-btn:focus-visible{ outline:2px solid #5eead4; outline-offset:2px; }
+
+  /* ── feature card ── */
+  .fcard{ transition: border-color .28s ease, transform .28s ease, background .28s ease; }
+  .fcard:hover{ border-color:rgba(94,234,212,0.40); transform:translateY(-3px); }
+  .fcard .knum{ color:#44516b; transition:color .28s ease; }
+  .fcard:hover .knum{ color:#5eead4; }
+
+  /* ── metaphor strip: the signature artifact ── */
+  .tide-strip{ font-family:'JetBrains Mono',monospace; line-height:1.16; }
+  .tide-strip .ann{ color:#6b7d97; }
+  .tide-strip .hi{ color:#5eead4; }
+
+  /* per-column rise: the wave literally comes in when scrolled into view */
+  #tide-chart .col{ display:inline-block; transition: transform .9s cubic-bezier(.2,.8,.2,1), opacity .9s; will-change:transform; }
+  #tide-chart:not(.in) .col{ transform: translateY(40%); opacity:0; }
+  /* crest cells reveal slightly later for a cresting feel */
+  #tide-chart .col.peak{ transition-delay: calc(var(--i) * 1.1ms + 220ms); }
+  #tide-chart .col{ transition-delay: calc(var(--i) * 1.1ms); }
+
+  /* slow ambient foam sweep over the settled chart */
+  .sweep-mask{
+    position:absolute; inset:0; pointer-events:none; overflow:hidden; border-radius:inherit;
+  }
+  .sweep-band{
+    position:absolute; top:0; bottom:0; width:34%;
+    background:linear-gradient(90deg, transparent, rgba(94,234,212,0.07) 50%, transparent);
+    animation: sweep 11s linear infinite;
+  }
+  @keyframes sweep{ 0%{ left:-34%; } 100%{ left:100%; } }
+
+  /* crest tooltip */
+  .crest{ position:relative; cursor:default; }
+  .crest .tip{
+    position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(4px);
+    background:#0c1118; border:1px solid #243449; border-radius:8px; padding:6px 9px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; line-height:1.4; white-space:nowrap;
+    color:#e2e8f0; opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+    z-index:5; box-shadow:0 12px 30px -12px rgba(0,0,0,0.8);
+  }
+  .crest .tip b{ color:#5eead4; font-weight:600; }
+  .crest:hover .tip, .crest:focus-visible .tip{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .crest:focus-visible{ outline:none; }
+
+  /* horizontal scroll guard */
+  .nowrap-x{ overflow-x:auto; scrollbar-width:thin; scrollbar-color:#243449 transparent; }
+  .nowrap-x::-webkit-scrollbar{ height:6px; }
+  .nowrap-x::-webkit-scrollbar-thumb{ background:#243449; border-radius:999px; }
+
+  /* signature chart: a faint high-water glow along the top edge, and a
+     right-edge fade so mobile readers read overflow as scrollable. */
+  .tide-frame{ position:relative; }
+  .tide-frame::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:1px; pointer-events:none;
+    background:linear-gradient(90deg, transparent, rgba(94,234,212,0.45) 35%, rgba(94,234,212,0.45) 65%, transparent);
+    opacity:.0; transition:opacity .8s ease .35s;
+  }
+  .tide-frame.in::before{ opacity:1; }
+  .tide-frame::after{
+    content:""; position:absolute; top:0; bottom:0; right:0; width:26px; pointer-events:none;
+    background:linear-gradient(90deg, transparent, #0a0e15);
+    opacity:0; transition:opacity .25s ease;
+  }
+  @media (max-width: 767px){
+    /* only show the scroll-fade cue when the chart actually overflows on phones */
+    .tide-frame.can-scroll::after{ opacity:1; }
+  }
+  .scroll-hint{ display:none; }
+  @media (max-width: 767px){
+    .scroll-hint{ display:inline-flex; align-items:center; gap:.4rem; }
+  }
+
+  /* hairline rule */
+  .hr-tide{ height:1px; background:linear-gradient(90deg, transparent, #243449 10%, #243449 90%, transparent); }
+
+  /* live status dot — pulse, foam */
+  .live-dot{ width:6px; height:6px; border-radius:999px; background:#5eead4; box-shadow:0 0 0 0 rgba(94,234,212,0.6); animation:pulse 2.6s ease-out infinite; }
+  @keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(94,234,212,0.5)} 70%{box-shadow:0 0 0 8px rgba(94,234,212,0)} 100%{box-shadow:0 0 0 0 rgba(94,234,212,0)} }
+
+  .nums{ font-variant-numeric: tabular-nums; }
+
+  /* visually-hidden — for the accessible peak list that mirrors the chart */
+  .vh{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* skip-link: invisible until focused, then a solid foam-bordered chip */
+  .skip-link{
+    position:absolute; left:50%; transform:translateX(-50%) translateY(-150%);
+    top:.6rem; z-index:60; padding:.5rem .9rem; border-radius:10px;
+    background:#0c1118; border:1px solid rgba(94,234,212,0.6); color:#e2e8f0;
+    font-family:'JetBrains Mono',monospace; font-size:13px; text-decoration:none;
+    transition:transform .18s ease; box-shadow:0 12px 30px -12px rgba(0,0,0,0.8);
+  }
+  .skip-link:focus-visible{ transform:translateX(-50%) translateY(0); outline:2px solid #5eead4; outline-offset:2px; }
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .caret.blink, .sweep-band, .live-dot{ animation:none !important; }
+    .live-dot{ box-shadow:none; }
+    #tide-chart:not(.in) .col{ transform:none; opacity:1; }
+    .tide-frame::before{ transition:none !important; opacity:1; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body class="min-h-screen antialiased selection:bg-foam/25 selection:text-paper">
+
+<a href="#top" class="skip-link">Skip to content</a>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<header class="sticky top-0 z-40 backdrop-blur-md bg-ink/85 border-b border-edge/70">
+  <nav class="max-w-[1280px] mx-auto px-5 sm:px-8 h-14 flex items-center justify-between" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2 group" aria-label="tideline home">
+      <svg width="24" height="14" viewBox="0 0 24 14" fill="none" class="text-foam" aria-hidden="true">
+        <path d="M1 9 C 3 4, 5 4, 7 9 S 11 14, 13 9 S 17 4, 19 9 L23 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="font-mono font-bold tracking-tight2 text-paper text-[15px] group-hover:text-foam transition-colors">tideline</span>
+      <span class="hidden sm:inline font-mono text-dim text-[11px] nums">v0.4.2</span>
+    </a>
+    <div class="flex items-center gap-6 font-mono text-[13px] text-sub">
+      <a href="#demo" class="nav-link hover:text-paper transition-colors">demo</a>
+      <a href="#features" class="nav-link hover:text-paper transition-colors hidden sm:inline">features</a>
+      <a href="#tide" class="nav-link hover:text-paper transition-colors hidden sm:inline">chart</a>
+      <a href="#install" class="nav-link hover:text-paper transition-colors hidden sm:inline">install</a>
+      <a href="https://github.com" class="nav-link hover:text-foam transition-colors inline-flex items-center gap-1">
+        github <span class="text-dim" aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="relative overflow-hidden">
+  <!-- faint column guides (editorial spine) + deep-tide glow -->
+  <div aria-hidden="true" class="absolute inset-0 guides opacity-60 pointer-events-none"></div>
+  <div aria-hidden="true" class="absolute -top-48 -right-40 w-[680px] h-[680px] rounded-full pointer-events-none"
+       style="background:radial-gradient(closest-side, rgba(30,58,95,0.42), transparent 70%); filter:blur(8px);"></div>
+
+  <!-- Hero is deliberately lean: H1 + one tight sentence + install pill + repo link.
+       Tightened vertical rhythm (pt-10/pt-14) so the repo + size line is visible
+       above the fold at 1440×900; the kicker no longer duplicates MIT/binary
+       metadata that the spec bar already carries. -->
+  <div class="relative max-w-[1280px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-10 sm:pb-14">
+    <div class="max-w-[920px]">
+
+      <!-- brand lockup, DEMOTED to a quiet kicker above the H1.
+           Trimmed to just the version — MIT/binary live once, in the spec bar. -->
+      <div class="reveal flex items-center gap-3 mb-5">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="kicker"><span class="mk">▪</span>&nbsp;tideline&nbsp;·&nbsp;v0.4.2</span>
+      </div>
+
+      <!-- VALUE PROP = the H1, the true focal point.
+           Tightening uses --display-tighter (reserved for the single largest moment). -->
+      <h1 class="reveal d1 text-paper" style="font-family:'JetBrains Mono',monospace; font-weight:800; font-size:var(--step-5); letter-spacing:var(--display-tighter); line-height:var(--display-lh);">
+        See your git history<br>
+        <span class="text-sub">like the</span> <span class="text-foam">tide.</span>
+      </h1>
+
+      <!-- one tight sentence (Inter). The kicker already states MIT/single-binary;
+           trust metadata is repeated lower in the spec bar, so the clarifier no
+           longer re-lists it — it states only the core mechanic. -->
+      <p class="reveal d2 mt-5 max-w-[52ch] text-sub" style="font-size:var(--step-1); line-height:1.55;">
+        A CLI that renders a repository&rsquo;s commits as a tidal timeline &mdash; the rhythm of your
+        codebase, surfaced in one glance.
+      </p>
+
+      <!-- INSTALL = primary CTA (foam focus ring, strongest visual weight in hero) -->
+      <div id="install" class="reveal d3 mt-8">
+        <div class="install-pill flex items-stretch max-w-[580px]" role="group" aria-label="Install tideline">
+          <span class="flex items-center pl-4 pr-2 font-mono text-[13px] text-foam select-none" aria-hidden="true">$</span>
+          <code id="install-cmd" class="flex items-center flex-1 min-w-0 py-3 font-mono text-[13px] sm:text-[14px] text-paper whitespace-nowrap overflow-x-auto nowrap-x">
+            curl -fsSL https://tideline.sh/install | sh
+          </code>
+          <button id="copy-btn" type="button"
+            class="copy-btn relative shrink-0 mr-1.5 my-1.5 inline-flex items-center gap-2 rounded-lg border border-edge px-3.5 py-2 font-mono text-[12px] tracking-kicker uppercase text-sub hover:text-foam hover:border-foam/60"
+            aria-label="Copy install command to clipboard">
+            <svg class="copy-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <svg class="check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span class="copy-label">copy</span>
+          </button>
+        </div>
+        <!-- secondary repo link = plain dim text, deliberately weak -->
+        <div class="mt-3.5 flex items-center gap-5 text-[12px] text-dim">
+          <a href="https://github.com" class="nav-link hover:text-sub transition-colors inline-flex items-center gap-1.5">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+            source on github
+          </a>
+          <span class="hidden sm:inline nums">no sudo · no brew · ~480&nbsp;KB</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hr-tide"></div>
+</section>
+
+<!-- ═══════════════════════ LIVE TERMINAL DEMO ═══════════════════════ -->
+<section id="demo" class="relative">
+  <div class="max-w-[1280px] mx-auto px-5 sm:px-8 py-16 sm:py-24">
+
+    <div class="flex items-end justify-between gap-6 mb-9 reveal">
+      <div>
+        <div class="kicker mb-3"><span class="mk">//</span>&nbsp;01&nbsp;&mdash;&nbsp;live demo</div>
+        <h2 class="text-paper font-mono tracking-tight2" style="font-size:var(--step-3); font-weight:700; letter-spacing:var(--display-tight); line-height:var(--display-lh);">
+          One command. <span class="text-sub">One chart.</span>
+        </h2>
+      </div>
+      <p class="hidden md:block text-sub text-right max-w-[36ch]" style="font-size:var(--step-0); line-height:1.6;">
+        Animated output. <span class="font-mono font-semibold">tideline</span> against a 1,284-commit repo &mdash;
+        commits colored by author, branches as tide tributaries.
+      </p>
+    </div>
+
+    <div class="term-win overflow-hidden reveal d1">
+      <div class="flex items-center gap-2 px-4 h-9 border-b border-termbd/80 bg-[#0a0e15]">
+        <!-- Terminal traffic-lights deliberately rendered in the neutral ramp, not the
+             MacOS red/yellow/green — one-accent discipline. A Makefile-author's terminal. -->
+        <span class="w-3 h-3 rounded-full bg-dim2" aria-hidden="true"></span>
+        <span class="w-3 h-3 rounded-full bg-dim" aria-hidden="true"></span>
+        <span class="w-3 h-3 rounded-full bg-sub" aria-hidden="true"></span>
+        <span class="ml-3 font-mono text-dim text-[12px]">tideline &mdash; ~/src/firestore-proxy &mdash; zsh &mdash; 80&times;22</span>
+        <span class="ml-auto font-mono text-dim text-[11px] tracking-kicker uppercase nums">first render 38ms</span>
+      </div>
+      <div class="p-4 sm:p-6 overflow-x-auto nowrap-x">
+        <pre class="term-out"><code id="term-body"></code><span id="term-caret" class="caret blink" aria-hidden="true">&nbsp;</span></pre>
+      </div>
+    </div>
+
+    <p class="mt-4 text-dim text-[12px] font-mono reveal d2">
+      Authors:&nbsp; <span class="text-foam">&#9608;</span>&nbsp;margo &nbsp; <span class="text-paper">&#9619;</span>&nbsp;devon &nbsp; <span class="text-sub">&#9618;</span>&nbsp;priya &nbsp; <span class="text-dim">&#9617;</span>&nbsp;samo &nbsp; <span class="text-dim">&#9601;</span>&nbsp;ci-bot &nbsp;·&nbsp; amplitude = commits per tide-window
+    </p>
+  </div>
+  <div class="hr-tide"></div>
+</section>
+
+<!-- ═══════════════════════ FEATURES ═══════════════════════ -->
+<section id="features" class="relative">
+  <div class="max-w-[1280px] mx-auto px-5 sm:px-8 py-16 sm:py-24">
+
+    <div class="grid grid-cols-12 gap-6 mb-10 reveal">
+      <div class="col-span-12 lg:col-span-8">
+        <div class="kicker mb-3"><span class="mk">//</span>&nbsp;02&nbsp;&mdash;&nbsp;why it earns its keep</div>
+        <h2 class="text-paper font-mono tracking-tight2" style="font-size:var(--step-3); font-weight:700; letter-spacing:var(--display-tight); line-height:var(--display-lh);">
+          A chart you can <span class="text-sub">actually read.</span>
+        </h2>
+      </div>
+      <p class="col-span-12 lg:col-span-4 lg:pt-2 text-sub" style="font-size:var(--step-0); line-height:1.6;">
+        Three things, each with a number you can verify on your own machine.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-edge/60 border border-edge/60 rounded-2xl overflow-hidden">
+
+      <!-- CARD 1 -->
+      <article class="fcard bg-ink p-7 sm:p-8 reveal">
+        <div class="flex items-baseline justify-between mb-6">
+          <span class="kicker">tidal, not tabular</span>
+          <span class="knum font-mono text-[12px] tracking-kicker">01</span>
+        </div>
+        <!-- bespoke inline sparkline (wave amplitude) -->
+        <svg viewBox="0 0 120 36" class="w-full h-9 mb-6" fill="none" aria-hidden="true">
+          <path d="M2 28 C 10 8, 18 8, 26 28 S 42 48, 50 28 S 66 6, 74 28 S 90 44, 98 24 L118 18"
+                stroke="#5eead4" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="2" y1="30" x2="118" y2="30" stroke="#243449" stroke-width="1" stroke-dasharray="2 3"/>
+        </svg>
+        <h3 class="text-paper mb-3" style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:var(--step-1); letter-spacing:-0.02em; line-height:1.25;">
+          Time on one axis. Activity as amplitude.
+        </h3>
+        <p class="text-sub" style="font-size:var(--step-0); line-height:1.6;">
+          A spike reads &ldquo;busy week&rdquo; in under a second &mdash; no legend, no tooltip, no legend-for-the-legend.
+          The shape of a release cadence, a merge-conflict ebb, or a stalled branch is visible before you read a single hash.
+        </p>
+        <code class="block mt-6 font-mono text-dim text-[12px]">tideline --since=4w --by-author</code>
+      </article>
+
+      <!-- CARD 2 — parse-time as a compact ASCII sparkline, so it shares ONE visual
+           idiom (thin mono line-art) with cards 1 and 3 instead of a slide-deck bar
+           chart. Foam marks the 10k-commit centerpiece (the claim); the rest sit in
+           the dim ramp so foam stays the single 'look here' color. -->
+      <article class="fcard bg-ink p-7 sm:p-8 reveal d1">
+        <div class="flex items-baseline justify-between mb-6">
+          <span class="kicker">reads any repo, instantly</span>
+          <span class="knum font-mono text-[12px] tracking-kicker">02</span>
+        </div>
+        <!-- ASCII sparkline: parse time vs commit count. foam = the 10k claim. -->
+        <div class="h-9 mb-6 flex items-center" role="img"
+             aria-label="Parse time across commit counts: 1k 12ms, 5k 38ms, 10k 94ms, 100k 0.9s, 1.1M 3.8s.">
+          <code class="font-mono text-[13px] tracking-wide whitespace-nowrap nums" aria-hidden="true">
+            <span class="text-dim">1k&nbsp;<span class="text-dim">&#9617;</span></span>&nbsp;&nbsp;
+            <span class="text-dim">5k&nbsp;<span class="text-dim">&#9618;</span></span>&nbsp;&nbsp;
+            <span class="text-dim">10k&nbsp;<span class="text-foam">&#9619;</span></span>&nbsp;&nbsp;
+            <span class="text-dim">100k&nbsp;<span class="text-dim">&#9619;</span></span>&nbsp;&nbsp;
+            <span class="text-dim">1.1M&nbsp;<span class="text-dim">&#9608;</span></span>
+          </code>
+        </div>
+        <h3 class="text-paper mb-3" style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:var(--step-1); letter-spacing:-0.02em; line-height:1.25;">
+          <span class="nums">Sub-100ms</span> on 10k commits.
+        </h3>
+        <p class="text-sub" style="font-size:var(--step-0); line-height:1.6;">
+          Zero config. Drop it in a checkout and run. It parses the <code class="text-foam font-mono">.git</code> directory directly &mdash;
+          no index, no daemon. The Linux kernel (1.1M commits) renders in <span class="nums">3.8s</span>.
+        </p>
+        <code class="block mt-6 font-mono text-dim text-[12px]">tideline ./any-repo --depth=10k</code>
+      </article>
+
+      <!-- CARD 3 -->
+      <article class="fcard bg-ink p-7 sm:p-8 reveal d2">
+        <div class="flex items-baseline justify-between mb-6">
+          <span class="kicker">pipes like unix</span>
+          <span class="knum font-mono text-[12px] tracking-kicker">03</span>
+        </div>
+        <!-- bespoke pipe diagram. One accent rule: foam only on tideline (the
+             subject); the downstream tools sit in the dim ramp so foam stays the
+             single 'look here' color rather than paper-white competing as accent #2. -->
+        <svg viewBox="0 0 120 36" class="w-full h-9 mb-6" fill="none" aria-hidden="true">
+          <rect x="2"  y="13" width="34" height="10" rx="2" stroke="#5eead4" stroke-width="1.4"/>
+          <rect x="44" y="13" width="34" height="10" rx="2" stroke="#6b7d97" stroke-width="1.4"/>
+          <rect x="86" y="7"  width="32" height="22" rx="2" stroke="#44516b" stroke-width="1.4"/>
+          <path d="M36 18 L44 18" stroke="#5eead4" stroke-width="1.4"/>
+          <path d="M78 18 L86 18" stroke="#6b7d97" stroke-width="1.4"/>
+          <text x="19" y="20" fill="#5eead4" font-family="JetBrains Mono" font-size="6" text-anchor="middle">tideline</text>
+          <text x="61" y="20" fill="#94a3b8" font-family="JetBrains Mono" font-size="6" text-anchor="middle">fzf</text>
+          <text x="102" y="20" fill="#6b7d97" font-family="JetBrains Mono" font-size="6" text-anchor="middle">svg</text>
+        </svg>
+        <h3 class="text-paper mb-3" style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:var(--step-1); letter-spacing:-0.02em; line-height:1.25;">
+          Output to SVG / JSON / terminal.
+        </h3>
+        <p class="text-sub" style="font-size:var(--step-0); line-height:1.6;">
+          Compose with <code class="text-foam font-mono">fzf</code>, feed <code class="text-foam font-mono">diff</code>, or land it in a README.
+          One flag changes the surface; nothing else changes. Stdin in, stdout out, exit&nbsp;0.
+        </p>
+        <code class="block mt-6 font-mono text-dim text-[12px]">tideline --format=svg > tide.svg</code>
+      </article>
+    </div>
+  </div>
+  <div class="hr-tide"></div>
+</section>
+
+<!-- ═══════════════════════ METAPHOR STRIP (SIGNATURE) ═══════════════════════ -->
+<section id="tide" class="relative overflow-hidden border-y border-edge/60">
+  <div class="sweep-mask" aria-hidden="true"><div class="sweep-band"></div></div>
+
+  <div class="relative max-w-[1280px] mx-auto px-5 sm:px-8 py-16 sm:py-20">
+    <div class="grid grid-cols-12 gap-6 mb-8 reveal">
+      <div class="col-span-12 lg:col-span-8">
+        <div class="kicker mb-3"><span class="mk">//</span>&nbsp;03&nbsp;&mdash;&nbsp;the metaphor, earned</div>
+        <h2 class="text-paper font-mono" style="font-size:var(--step-4); font-weight:700; letter-spacing:var(--display-tight); line-height:var(--display-lh);">
+          Fifty-two weeks.<br><span class="text-sub">One tide.</span>
+        </h2>
+      </div>
+      <div class="col-span-12 lg:col-span-4 lg:pt-3">
+        <p class="text-sub" style="font-size:var(--step-0); line-height:1.65;">
+          A real-shaped commit graph &mdash; <span class="font-mono nums"><span id="h2-total">927</span> commits across 5 authors</span> over a year.
+          Every spike is a story. Hover a crest to read it. Point at a trough; you already know what happened.
+        </p>
+      </div>
+    </div>
+
+    <!-- the chart — procedurally rendered, parseable, interactive.
+         role="figure" + an accessible peak list so screen-reader users get the
+         concrete per-crest counts that the hover tooltips carry visually.
+         tide-frame adds the high-water glow + mobile scroll-fade cue. -->
+    <div id="tide-frame" class="reveal d1 tide-frame tide-strip relative rounded-xl border border-edge/70 bg-[#0a0e15] p-4 sm:p-6 overflow-x-auto nowrap-x">
+      <div class="flex items-center justify-between mb-3 font-mono text-[11px] text-dim tracking-kicker uppercase gap-2">
+        <span class="truncate">repo: firestore-proxy</span>
+        <span class="hidden sm:inline">amplitude &nbsp;&#9652;&nbsp; commits per tide-window</span>
+        <span class="flex items-center gap-3 shrink-0">
+          <span class="scroll-hint text-dim" aria-hidden="true">scroll &rarr;</span>
+          <span class="nums">w01 &rarr; w52</span>
+        </span>
+      </div>
+
+      <div id="tide-chart" class="font-mono text-[9px] sm:text-[11px] md:text-[12px] leading-[1.18]" role="figure"
+           aria-labelledby="tide-chart-caption">
+        <span id="tide-chart-caption" class="vh">Tidal chart of <span id="aria-total">927</span> commits across 52 weeks for the firestore-proxy repository. Time runs left to right: oldest week on the left, the current week on the right. Peak activity is the release high tide near week 49.</span>
+        <!-- Accessible mirror of the crest peaks, traversable by screen readers. -->
+        <ul class="vh" aria-label="Annotated peaks and troughs" id="aria-peaks">
+          <li>Week 11: release-freeze surge, 27 commits, margo and devon.</li>
+          <li>Week 23: merge-conflict ebb, 10 commits.</li>
+          <li>Week 31: feature burst, 24 commits.</li>
+          <li>Week 41: summer trough, 2 commits.</li>
+          <li>Week 49: release high tide, 56 commits, the year's peak.</li>
+        </ul>
+      </div>
+
+      <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] text-dim">
+        <span aria-label="margo author, primary contributor"><span class="text-foam">&#9608;</span> margo</span>
+        <span aria-label="devon author"><span class="text-paper">&#9619;</span> devon</span>
+        <span aria-label="priya author"><span class="text-sub">&#9618;</span> priya</span>
+        <span aria-label="samo author"><span class="text-dim">&#9617;</span> samo</span>
+        <span aria-label="ci-bot author"><span class="text-dim">&#9601;</span> ci-bot</span>
+        <span class="ml-auto hidden sm:inline"><span class="text-foam">&nbsp;&#9652;</span>&nbsp;release high tide</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SPEC / TRUST BAR (the closer) ═══════════════════════
+     The hero already delivers install + repo, so this bar is the page closer —
+     NOT a second hero. The single ghosted inline install line below is the
+     reviewer-prescribed lightweight second touchpoint: no copy button, no
+     display headline, just a quiet reference. The brief ends here. -->
+<section class="relative">
+  <div class="max-w-[1280px] mx-auto px-5 sm:px-8 py-12 sm:py-14">
+    <div class="reveal flex flex-col md:flex-row md:items-center md:justify-between gap-y-5 gap-x-8 font-mono text-[13px]">
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="inline-flex items-center gap-1.5 rounded-md border border-foam/40 px-2.5 py-1 text-foam text-[11px] tracking-kicker uppercase">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L2 7v6c0 5 4 9 10 9s10-4 10-9V7l-10-5z"/></svg>
+          MIT
+        </span>
+        <span class="text-sub">install size ~480&nbsp;KB</span>
+        <span class="text-dim2">&middot;</span>
+        <span class="text-sub">zsh &middot; bash &middot; fish</span>
+        <span class="text-dim2">&middot;</span>
+        <span class="text-sub">works offline</span>
+        <span class="text-dim2">&middot;</span>
+        <span class="text-sub">single static binary</span>
+        <span class="text-dim2">&middot;</span>
+        <span class="text-sub">no telemetry</span>
+      </div>
+      <div class="text-dim text-[12px]">
+        Built by people who write Makefiles for fun.
+      </div>
+    </div>
+    <!-- single ghosted inline install reference — NO copy button, NO headline.
+         Deliberately weak: a footnote, not a CTA. The pill in the hero is the
+         only interactive install affordance. dim (not dim2) so it stays AA-legible. -->
+    <div class="reveal mt-6 font-mono text-[12px] text-dim">
+      <span class="text-dim">$</span>&nbsp;<span class="text-paper/70">curl -fsSL tideline.sh/install</span>&nbsp;<span class="text-dim">| sh</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="border-t border-edge/60 bg-ink">
+  <div class="max-w-[1280px] mx-auto px-5 sm:px-8 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+      <div class="flex items-center gap-2.5 justify-center md:justify-start">
+        <svg width="20" height="13" viewBox="0 0 24 14" fill="none" class="text-foam" aria-hidden="true">
+          <path d="M1 9 C 3 4, 5 4, 7 9 S 11 14, 13 9 S 17 4, 19 9 L23 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="font-mono font-bold tracking-tight2 text-paper text-[14px]">tideline</span>
+        <span class="font-mono text-dim text-[12px] nums">v0.4.2</span>
+      </div>
+      <nav class="flex items-center justify-center gap-7 font-mono text-[13px] text-sub" aria-label="Footer">
+        <a href="https://tideline.sh/docs" class="nav-link hover:text-paper transition-colors">Docs</a>
+        <a href="https://github.com" class="nav-link hover:text-paper transition-colors">GitHub</a>
+        <a href="https://tideline.sh/changelog" class="nav-link hover:text-paper transition-colors">Changelog</a>
+      </nav>
+      <div class="flex items-center gap-2 justify-center md:justify-end font-mono text-[12px] text-dim">
+        <span>MIT</span>
+        <svg width="24" height="13" viewBox="0 0 24 14" fill="none" class="text-foam" aria-hidden="true">
+          <path d="M1 9 C 3 4, 5 4, 7 9 S 11 14, 13 9 S 17 4, 19 9 L23 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const CMD = 'curl -fsSL https://tideline.sh/install | sh';
+
+  /* ─────────────── Copy-to-clipboard (hero pill, <200ms) ───────────────
+     The hero pill is the ONLY interactive install affordance now (the secondary
+     CTA was removed). The ghosted line in the spec bar is a non-interactive
+     footnote by design. */
+  function wireCopy(btn){
+    const label = btn.querySelector('.copy-label');
+    btn.addEventListener('click', async ()=>{
+      const t0 = performance.now();
+      try{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          await navigator.clipboard.writeText(CMD);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = CMD; ta.style.position='fixed'; ta.style.opacity='0';
+          document.body.appendChild(ta); ta.select();
+          try{ document.execCommand('copy'); }catch(_){}
+          document.body.removeChild(ta);
+        }
+      }catch(e){ /* best-effort */ }
+      btn.classList.add('copied');
+      if(label){ label.textContent = 'copied'; }
+      clearTimeout(btn._t);
+      btn._t = setTimeout(()=>{ btn.classList.remove('copied'); if(label){ label.textContent='copy'; } }, 1600);
+      // spec: flash within 200ms
+      void (performance.now() - t0);
+    });
+  }
+  const heroCopy = document.getElementById('copy-btn');
+  if(heroCopy) wireCopy(heroCopy);
+
+  /* ─────────────── Reveal on scroll ─────────────── */
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el=>{
+    if(reduce){ el.classList.add('in'); } else { io.observe(el); }
+  });
+
+  /* ─────────────── The signature metaphor strip ───────────────
+     ONE source of truth: a 52-week commit-count array (WEEKLY) that sums to
+     927 with its peak (56) at week 49. Every visible number on this page that
+     refers to the chart is derived from this array — amplitude row heights,
+     the totals line, the crest tooltips, the 'peak N @ wNN' string, and the
+     H2 total — so a terminal engineer can reconcile them by eye. */
+  const WEEKLY = [17,20,20,19,19,20,22,25,28,29,27,22,18,16,16,17,16,15,15,16,16,15,10,5,2,2,3,10,17,23,24,24,22,22,21,19,14,7,2,2,2,2,2,2,5,13,28,45,56,52,38,25];
+  const TOTAL = WEEKLY.reduce((a,b)=>a+b,0);            // 927
+  const PEAK  = Math.max.apply(null, WEEKLY);           // 56
+  const PEAK_W = WEEKLY.indexOf(PEAK);                  // 48 -> w49
+  const H = 9;                                          // amplitude rows
+  const AMP_SCALE = H / PEAK;                           // so the peak week reaches row 9
+
+  const AUTHORS = {
+    margo:'#5eead4',
+    devon:'#e2e8f0',
+    priya:'#94a3b8',
+    samo: '#6b7d97',
+    ci:   '#5a6b85'   // lifted from #44516b so the dimmest author tier still clears
+                     // WCAG 1.4.11 non-text contrast (3.57:1) on the chart bg.
+                     // Stays the clearly-lowest tier; glyph ▁ doubles the encoding.
+  };
+  // Every author carries a DISTINCT glyph so the chart is legible without color
+  // (double-encoding for colorblind readers). priya ▒, samo ░, ci ▁ — each a
+  // different fill density, none colliding with the '·' decorative tick mark.
+  const GLYPH = { margo:'█', devon:'▓', priya:'▒', samo:'░', ci:'▁' };
+
+  // dominant author per week, biased by amplitude (peaks => margo/devon)
+  const WEEK_AUTHORS = WEEKLY.map((v)=>{
+    if(v >= 45) return 'margo';
+    if(v >= 20) return 'devon';
+    if(v >= 12) return (v % 2 ? 'priya' : 'devon');
+    if(v >= 4)  return 'samo';
+    return 'ci';
+  });
+
+  const chartEl = document.getElementById('tide-chart');
+
+  // annotations land on real local extrema of the WEEKLY curve, so the
+  // 'release high tide' tag sits under the same column as the data peak.
+  const ANN = [
+    {col:10, text:'v1.0 release',      hi:true},
+    {col:22, text:'merge-conflict ebb'},
+    {col:30, text:'feature burst'},
+    {col:40, text:'summer trough'},
+    {col:PEAK_W, text:'release high tide', hi:true}
+  ];
+  // crest tooltip columns — these read the LIVE per-week count, not literals.
+  const TIP_COLS = [10, 22, 30, 40, PEAK_W];
+  const TIP_NOTE = {
+    10:'w11 · release-freeze surge · margo, devon',
+    22:'w23 · merge-conflict ebb',
+    30:'w31 · feature burst',
+    40:'w41 · holiday / summer',
+    [PEAK_W]:'w49 · reopen surge · year peak'
+  };
+
+  function buildChart(){
+    // amplitude rows derived from the single WEEKLY array
+    const peaks = WEEKLY.map(v => Math.max(1, Math.round(v * AMP_SCALE)));
+
+    // build row-by-row, each week wrapped as an interactive column span
+    const rows = [];
+    for(let r=0; r<H; r++){
+      const rowAmp = H - r;             // 9 (top) .. 1 (bottom)
+      let row = '';
+      for(let w=0; w<52; w++){
+        const filled = peaks[w] >= rowAmp;
+        // The crest cell is the TOPMOST filled cell of a column. Make it
+        // interactive for EVERY annotated column (the ANN set + global peak)
+        // regardless of the >=5 floor or rounding drift — so all five labeled
+        // stories are reachable and the chart reads as intentional, not decorative.
+        const isAnnotated = ANN.some(a => a.col === w);
+        const isPeak = filled && rowAmp === peaks[w] && isAnnotated;
+        const who = WEEK_AUTHORS[w];
+        let glyph, color;
+        if(filled){ glyph = GLYPH[who]; color = AUTHORS[who]; }
+        else if(peaks[w] + 1 === rowAmp){ glyph = '·'; color = '#243449'; }
+        else { glyph = ' '; color = 'transparent'; }
+
+        const tip = isPeak ? ` tabindex="0" class="col peak crest" data-w="${w}"`
+                           : ` class="col"`;
+        const tipHtml = isPeak
+          ? `<span class="tip" role="tooltip"><b>${WEEKLY[w]} commits</b><br>${TIP_NOTE[w]}</span>` : '';
+        row += `<span${tip} style="--i:${w}"><span style="color:${color}">${glyph}${glyph}</span>${tipHtml}</span>`;
+      }
+      rows.push(row);
+    }
+    // baseline waterline
+    let base = '';
+    for(let w=0; w<52; w++){ base += `<span class="col" style="--i:${w}"><span style="color:#243449">≈≈</span></span>`; }
+    rows.push(base);
+    // week ticks (every 4 weeks)
+    let ticks = '';
+    for(let w=0; w<52; w++){
+      const label = (w % 4 === 0) ? `w${String(w+1).padStart(2,'0')}` : '  ';
+      ticks += `<span class="col" style="--i:${w}"><span style="color:#6b7d97">${label}</span></span>`;
+    }
+    rows.push(ticks);
+    // annotation row (sparse)
+    let annRow = '';
+    for(let w=0; w<52; w++){
+      const a = ANN.find(x=>x.col===w);
+      let cell = '';
+      if(a){ cell = a.hi
+        ? `<span class="hi">&#9652;&nbsp;${a.text}</span>`
+        : `<span class="ann">&middot;&nbsp;${a.text}</span>`; }
+      annRow += `<span class="col" style="--i:${w}"><span style="display:inline-block;white-space:nowrap;overflow:hidden">${cell}</span></span>`;
+    }
+    rows.push(annRow);
+
+    chartEl.querySelectorAll(':scope > div').forEach(d=>d.remove());
+    const rowsHtml = rows.map(r=>`<div style="white-space:pre">${r}</div>`).join('');
+    chartEl.insertAdjacentHTML('beforeend', rowsHtml);
+
+    // commit totals line — derived from the SAME WEEKLY array (no second model).
+    let totals = '<span style="color:#6b7d97">total </span>';
+    for(let w=0; w<52; w++){
+      const s = WEEKLY[w];
+      const cls = s >= 45 ? 'color:#5eead4' : (s >= 20 ? 'color:#e2e8f0' : 'color:#6b7d97');
+      totals += `<span style="${cls}">${String(s).padStart(2,'0')}</span>` + (w<51?' ':'');
+    }
+    totals += `   <span style="color:#6b7d97">commits/week &middot; sum ${TOTAL} &middot; peak ${PEAK} @ w${PEAK_W+1}</span>`;
+    const tDiv = document.createElement('div');
+    tDiv.style.cssText = 'margin-top:6px;font-size:0.92em';
+    tDiv.innerHTML = totals;
+    chartEl.appendChild(tDiv);
+
+    // Reflect the single source of truth into the H2 + aria text too.
+    const h2Total = document.getElementById('h2-total');
+    const ariaTotal = document.getElementById('aria-total');
+    if(h2Total) h2Total.textContent = String(TOTAL);
+    if(ariaTotal) ariaTotal.textContent = String(TOTAL);
+
+    // keyboard: dismiss any open tooltip with Escape
+    chartEl.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Escape' && document.activeElement && document.activeElement.classList.contains('crest')){
+        document.activeElement.blur();
+      }
+    });
+  }
+  buildChart();
+
+  // The frame (border + glow + mobile scroll-fade) wraps the chart.
+  const frameEl = document.getElementById('tide-frame');
+  // Detect horizontal overflow so the right-edge fade cue only shows when the
+  // chart truly overflows its column (phones, narrow tablets).
+  function syncScrollCue(){
+    if(!frameEl) return;
+    frameEl.classList.toggle('can-scroll', frameEl.scrollWidth > frameEl.clientWidth + 1);
+  }
+  syncScrollCue();
+  window.addEventListener('resize', syncScrollCue, { passive:true });
+
+  // reveal the columns with the staggered rising-tide sweep (the signature motion).
+  // The frame's high-water glow rides the same reveal (.in on both).
+  const tideObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        chartEl.classList.add('in');
+        if(frameEl) frameEl.classList.add('in');
+        // sizes settle after the column transition; re-check the scroll cue.
+        requestAnimationFrame(syncScrollCue);
+        tideObs.disconnect();
+      }
+    });
+  }, { threshold:0.20 });
+  if(reduce){
+    chartEl.classList.add('in');
+    if(frameEl) frameEl.classList.add('in');
+    syncScrollCue();
+  } else { tideObs.observe(chartEl); }
+
+  /* ─────────────── Animated terminal demo ───────────────
+     Time axis runs LEFT → RIGHT (oldest week on the left, now on the right),
+     matching the metaphor strip below — one canonical direction for the page. */
+  const termBody  = document.getElementById('term-body');
+  const caretEl   = document.getElementById('term-caret');
+
+  const PROMPT  = `<span style="color:#6b7d97">margo@tideline</span> <span style="color:#5eead4">~/src/firestore-proxy</span> <span style="color:#94a3b8">(main)</span> $ `;
+  const COMMAND = 'tideline --by-author --since=6w';
+
+  // The 6 weeks run w1 (oldest, left) → w6 (now, right); annotations sit under
+  // the columns they describe.
+  const OUT = [
+    '',
+    `<span style="color:#94a3b8">tideline 0.4.2</span>  <span style="color:#44516b">&middot;</span>  <span style="color:#94a3b8">parsing 1,284 commits across 5 authors</span>`,
+    `<span style="color:#243449">──────────────────────────────────────────────────────────────────────────</span>`,
+    `<span style="color:#94a3b8">amplitude &#9652;        commits per tide-window        main &#9652; feature/* &#9652; ci &#9652;</span>`,
+    '',
+    `<span style="color:#243449">   &middot;        &middot;        &middot;  &middot;        &middot;        &middot;  &middot;     &middot;  &middot;  &middot;        </span>`,
+    `<span style="color:#44516b">      &middot;        &middot;        &middot;     <span style="color:#94a3b8">&#9618;&#9618;</span>   &middot;        &middot;     <span style="color:#94a3b8">&#9618;&#9618;&#9618;</span>  &middot;        &middot;     </span>`,
+    `<span style="color:#94a3b8">      <span style="color:#94a3b8">&#9618;&#9618;</span>     &middot;        <span style="color:#5eead4">&#9608;&#9608;</span>  &middot;  <span style="color:#94a3b8">&#9618;&#9618;</span>   &middot;        <span style="color:#5eead4">&#9608;&#9608;&#9608;&#9608;</span>    &middot;  <span style="color:#94a3b8">&#9618;&#9618;</span>     </span>`,
+    `<span style="color:#e2e8f0">   <span style="color:#94a3b8">&#9618;&#9618;</span>   <span style="color:#5eead4">&#9608;&#9608;&#9608;&#9608;</span>   <span style="color:#e2e8f0">&#9619;&#9619;</span>   &middot;     <span style="color:#5eead4">&#9608;&#9608;</span>    <span style="color:#e2e8f0">&#9619;&#9619;&#9619;</span>   <span style="color:#5eead4">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> <span style="color:#e2e8f0">&#9619;&#9619;</span>  <span style="color:#5eead4">&#9608;&#9608;</span>   <span style="color:#e2e8f0">&#9619;&#9619;</span>    </span>`,
+    `<span style="color:#5eead4"><span style="color:#e2e8f0">&#9619;&#9619;&#9619;&#9619;</span>   <span style="color:#5eead4">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> <span style="color:#e2e8f0">&#9619;&#9619;&#9619;&#9619;</span> <span style="color:#5eead4">&#9608;&#9608;&#9608;&#9608;</span> <span style="color:#e2e8f0">&#9619;&#9619;&#9619;&#9619;&#9619;</span> <span style="color:#5eead4">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span> <span style="color:#e2e8f0">&#9619;&#9619;&#9619;&#9619;</span> <span style="color:#94a3b8">&#9618;&#9618;</span>  </span>`,
+    `<span style="color:#243449">&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;</span>`,
+    `       w1 (oldest)   w2          w3          w4          w5          w6 (now)`,
+    '',
+    `<span style="color:#94a3b8">&#9652; feature burst  w3   &#9652; release high tide  w6   &#9652; merge-conflict ebb  w4</span>`,
+    `<span style="color:#44516b">rendered in 38ms &middot; 6 weeks &middot; 5 authors &middot; exit 0</span>`,
+  ];
+
+  function renderCmd(n){ return PROMPT + `<span style="color:#e2e8f0">${COMMAND.slice(0,n)}</span>`; }
+
+  let started = false;
+  function runDemo(){
+    if(started) return; started = true;
+    caretEl.classList.remove('blink','static');
+
+    if(reduce){
+      let html = renderCmd(COMMAND.length) + '\n' + OUT.join('\n');
+      termBody.innerHTML = html;
+      // reduced motion: static block caret, never blinks
+      caretEl.classList.add('static');
+      return;
+    }
+
+    // Phase 1: type the command (~4s budget includes this)
+    let ci = 0;
+    const typeCmd = ()=>{
+      ci++;
+      termBody.innerHTML = renderCmd(ci);
+      if(ci < COMMAND.length){ setTimeout(typeCmd, 36 + Math.random()*38); }
+      else { setTimeout(()=>{ termBody.innerHTML = renderCmd(COMMAND.length) + '\n'; runOutput(); }, 240); }
+    };
+    typeCmd();
+
+    // Phase 2: print output line by line (the wave sweeps in).
+    // OUTPUT uses a fixed two-tier cadence (not the per-line jitter used for
+    // command typing) so the chart draws in a confident sweep instead of a
+    // stutter — matching the '38ms first render / sub-100ms parse' precision claim.
+    function runOutput(){
+      let li = 0, acc = renderCmd(COMMAND.length) + '\n';
+      termBody.innerHTML = acc;
+      const step = ()=>{
+        if(li < OUT.length){
+          acc += OUT[li] + '\n';
+          termBody.innerHTML = acc;
+          li++;
+          // structural lines (headers, rules, blanks) print fast (40ms);
+          // the chart rows (the 'data') print slightly slower (70ms) so the
+          // wave visibly rises rather than flashing in.
+          const line = OUT[li - 1] || '';
+          const isChartRow = line.indexOf('&#9608;') !== -1 || line.indexOf('&#9619;') !== -1 || line.indexOf('&#9618;') !== -1;
+          const delay = isChartRow ? 70 : 40;
+          setTimeout(step, delay);
+        } else {
+          // only animate the caret when motion is allowed
+          caretEl.classList.add('blink');
+        }
+      };
+      step();
+    }
+  }
+  const demoObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ runDemo(); demoObs.disconnect(); } });
+  }, { threshold:0.35 });
+  demoObs.observe(document.getElementById('demo'));
+
+  // (Card 2's bar chart was replaced with an inline ASCII sparkline; the perf-bar
+  // grow-on-reveal observer that animated the old bars is no longer needed.)
+})();
+</script>
+</body>
+</html>

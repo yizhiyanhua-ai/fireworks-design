@@ -1,6 +1,12 @@
 <div align="center">
 
-# 🎆 fireworks-design
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/logo-light.svg">
+  <img alt="fireworks-design logo" src="docs/images/logo/logo-light.svg" width="560">
+</picture>
+
+# fireworks-design
 
 **An open-source Claude Code workflow that replicates ClaudeDesign — fan out many distinct design directions, judge them like a panel, synthesize the best, and adversarially refine to a single world-class frontend page.**
 
@@ -102,6 +108,8 @@ Workflow({
 - Returns: winning lens, full ranking, all direction paths, polish summary
 
 ## 💼 Example cases
+
+> 📖 **Real generated outputs** (not hypothetical) live in [`examples/`](./examples/README.md) — three full pages produced by actual workflow runs, with the winner, agent/token cost, and what each pipeline stage fixed.
 
 ### Case 1 — SaaS landing page
 ```

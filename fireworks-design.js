@@ -21,11 +21,16 @@ export const meta = {
 //   refineRounds — critique->fix loops (default 2)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const A = args || {}
+// Robustly resolve args — tolerate object, JSON string, or undefined.
+let _raw = (typeof args !== 'undefined') ? args : undefined
+if (typeof _raw === 'string' && _raw.trim()) {
+  try { _raw = JSON.parse(_raw) } catch (e) { /* leave as string, handled below */ }
+}
+const A = (_raw && typeof _raw === 'object' && !Array.isArray(_raw)) ? _raw : {}
 const prompt = A.prompt
 const outputDir = (A.outputDir || '').replace(/\/$/, '')
 if (!prompt || !outputDir) {
-  throw new Error('fireworks-design requires args.prompt and args.outputDir (absolute path).')
+  throw new Error('fireworks-design requires args.prompt and args.outputDir (absolute path). Received args of type: ' + typeof _raw + ' — value: ' + JSON.stringify(_raw).slice(0, 200))
 }
 const VARIANT_COUNT = Math.min(8, Math.max(3, A.variants || 6))
 const REFINE_ROUNDS = Math.max(1, A.refineRounds || 2)
@@ -125,6 +130,18 @@ HARD REQUIREMENTS (non-negotiable):
 
 PROCESS (do this internally before writing): briefly reason about hierarchy, palette, type pairing, layout grid, and one signature interaction, self-critique once, then write the final file. Then write it.`
 
+// Retry wrapper — agent() returns null on terminal API error (e.g. rate limit).
+// Without this, a null brief crashes downstream as "null is not an object".
+async function agentRetry(prompt, opts, tries) {
+  tries = tries || 4
+  for (let i = 0; i < tries; i++) {
+    const r = await agent(prompt, opts)
+    if (r) return r
+    log(`agent "${opts.label}" returned null (likely rate-limited) — retry ${i + 1}/${tries}`)
+  }
+  throw new Error(`agent "${opts.label}" failed after ${tries} attempts. The account likely hit a rate limit — re-run the workflow, run one at a time, or reduce "variants".`)
+}
+
 // ── 1. BRIEF ─────────────────────────────────────────────────────────────────
 phase('Brief')
 const briefPrompt = `You are a senior design director. Turn the user's request into a tight creative brief + design system that every designer will work from.
@@ -138,7 +155,7 @@ ${brand || '(none provided — infer a fitting, original brand voice)'}
 Decide the product framing, the audience, the sections the page must contain, and a concrete design token set (font pairings, palette hexes, mood, reference vibes). Define crisp success criteria. Be specific and opinionated — generic briefs produce generic pages.`
 
 log(`Distilling brief for: ${prompt.slice(0, 80)}${prompt.length > 80 ? '…' : ''}`)
-const brief = await agent(briefPrompt, { label: 'brief', phase: 'Brief', schema: BRIEF_SCHEMA })
+const brief = await agentRetry(briefPrompt, { label: 'brief', phase: 'Brief', schema: BRIEF_SCHEMA })
 
 const briefText = `PRODUCT: ${brief.product.name} — ${brief.product.oneLiner} (audience: ${brief.product.audience})
 GOAL: ${brief.goal}
@@ -226,12 +243,12 @@ Read those files. Use the strongest as the base, fold in the best elements of th
 Write the complete final HTML to this EXACT absolute path with the Write tool:
 ${FINAL_PATH}`
 log('Synthesizing top directions into one refined draft…')
-await agent(synthPrompt, { label: 'synthesize', phase: 'Synthesize' })
+await agentRetry(synthPrompt, { label: 'synthesize', phase: 'Synthesize' })
 
 // ── 5. REFINE (critique -> fix loop) ─────────────────────────────────────────
 for (let i = 0; i < REFINE_ROUNDS; i++) {
   phase(`Refine ${i + 1}/${REFINE_ROUNDS}`)
-  const critique = await agent(`You are a ruthless but constructive senior design reviewer doing pass ${i + 1} of ${REFINE_ROUNDS}. Read the current page and find what's keeping it from world-class.
+  const critique = await agentRetry(`You are a ruthless but constructive senior design reviewer doing pass ${i + 1} of ${REFINE_ROUNDS}. Read the current page and find what's keeping it from world-class.
 
 Read: ${FINAL_PATH}
 
@@ -239,7 +256,7 @@ ${briefText}
 
 Return prioritized issues: focus on hierarchy, type polish, color/contrast, motion, responsiveness, accessibility, and any generic/templated feeling. Each issue: severity, area, the concrete problem, and a specific fix. Critical/major issues matter most.`, { label: `critique:${i + 1}`, phase: `Refine ${i + 1}/${REFINE_ROUNDS}`, schema: CRITIQUE_SCHEMA })
 
-  await agent(`You are implementing the reviewer's fixes on the current page. Be surgical and precise — fix real issues, don't restructure what's working.
+  await agentRetry(`You are implementing the reviewer's fixes on the current page. Be surgical and precise — fix real issues, don't restructure what's working.
 
 Read the current file: ${FINAL_PATH}
 
@@ -255,7 +272,7 @@ ${FINAL_PATH}`, { label: `fix:${i + 1}`, phase: `Refine ${i + 1}/${REFINE_ROUNDS
 
 // ── 6. POLISH ────────────────────────────────────────────────────────────────
 phase('Polish')
-const polish = await agent(`Final QA + polish pass. The page must be flawless and shippable.
+const polish = await agentRetry(`Final QA + polish pass. The page must be flawless and shippable.
 
 Read: ${FINAL_PATH}
 

@@ -1,6 +1,12 @@
 <div align="center">
 
-# 🎆 fireworks-design
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/logo-light.svg">
+  <img alt="fireworks-design logo" src="docs/images/logo/logo-light.svg" width="560">
+</picture>
+
+# fireworks-design
 
 **开源的 Claude Code 工作流,复刻 ClaudeDesign —— 并行铺开多种独立设计方向、像评审团一样打分、融合最优、再对抗式打磨,稳定产出世界级前端页面。**
 
@@ -102,6 +108,8 @@ Workflow({
 - 返回:胜出风格、完整排名、所有方向路径、polish 总结
 
 ## 💼 使用案例
+
+> 📖 **真实生成成品**(非假设)在 [`examples/`](./examples/README.md) —— 三张完整页面由真实工作流跑出,含胜出风格、agent/token 成本、以及每个流水线阶段修了什么。
 
 ### 案例 1 —— SaaS 落地页
 ```

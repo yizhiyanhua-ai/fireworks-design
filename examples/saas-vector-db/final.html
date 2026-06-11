@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>vector — similarity search at the speed of thought</title>
+<meta name="description" content="Open-source vector database engineered for AI workloads. Sub-millisecond similarity search at any scale, with a Python-native DX." />
+<meta name="theme-color" content="#0A0A12" />
+<meta name="color-scheme" content="dark" />
+
+<!-- Inline SVG favicon: stays single-file, no extra request, matches the wordmark mark. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230A0A12'/%3E%3Cpath d='M5 5 L19 19 M5 19 L19 5' stroke='%23C6F24E' stroke-width='1.8' stroke-linecap='round' opacity='.85'/%3E%3Ccircle cx='5' cy='5' r='2' fill='%237C5CFF'/%3E%3Ccircle cx='19' cy='19' r='2' fill='%237C5CFF'/%3E%3Ccircle cx='19' cy='5' r='2' fill='%23E8E8F0'/%3E%3Ccircle cx='5' cy='19' r='2' fill='%23E8E8F0'/%3E%3C/svg%3E" />
+
+<!-- Social cards -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="vector — similarity search at the speed of thought" />
+<meta property="og:description" content="Open-source vector database built for AI. Sub-millisecond p99 queries, billion-scale indexes, a Python-native SDK." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="vector — similarity search at the speed of thought" />
+<meta name="twitter:description" content="Open-source vector database built for AI. 0.38ms p99 queries at billion scale." />
+
+<!--
+  Tailwind via Play CDN keeps this a single self-contained file (per the demo brief).
+  NOTE for production: compile Tailwind to a purged static stylesheet and self-host /
+  subset the two font families below — the Play CDN is ~300KB JS and not for production.
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts: IBM Plex Sans (display + text) · JetBrains Mono (code / stats / eyebrows / wordmark).
+     Trimmed to the weights actually painted (400/500/600 each) + font-display:optional to
+     avoid a render-blocking swap and cut payload vs. the full family. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com crossorigin />
+<!-- Non-blocking font load: <link rel=preload as=style> + onload swap keeps the hero H1
+     (the LCP candidate) from being blocked by the 6-font stylesheet. The system-ui fallback
+     paints immediately; fonts swap in without FOIT. NOTE: production should self-host + subset
+     the two families (400/600 weights, Latin only) and purge+compile Tailwind — the Play CDN is
+     the dominant LCP bottleneck as shipped. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        colors: {
+          base:   { 950: '#07070E', 900: '#0A0A12', 850: '#0E0C18', 800: '#12101F', 700: '#161427' },
+          line:   { DEFAULT: '#241F38', soft: '#1A1730' },
+          iris:   { DEFAULT: '#7C5CFF', soft: '#9C85FF', deep: '#5A3FDB' },
+          lime:   { DEFAULT: '#C6F24E', soft: '#D8F97A', deep: '#A8D43C' },
+          /* FLAT keys so `text-inkhi` / `text-inkmid` / `text-inklo` compile to real CSS rules.
+             (Nested `ink:{hi}` would hyphenate to `text-ink-hi` — dead classes, no dim hierarchy.) */
+          inkhi:  '#E8E8F0',
+          inkmid: '#9494B8',
+          inklo:  '#8A8AAE', /* AA on card surfaces (>=4.5:1) */
+        },
+        letterSpacing: { tightest: '-0.04em', tighter: '-0.025em' },
+        maxWidth: { edge: '1240px' },
+        transitionTimingFunction: { brand: 'cubic-bezier(.16,1,.3,1)' },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{
+    --bg:#0A0A12; --bg-deep:#07070E; --bg-seam:#12101F;
+    --card:#100E1C; --line:#241F38; --line-soft:#1A1730;
+    --iris:#7C5CFF; --iris-soft:#9C85FF; --lime:#C6F24E;
+    --hi:#E8E8F0; --mid:#9494B8; --lo:#8A8AAE; /* AA on card surfaces (>=4.5:1) */
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+
+  html,body{ background:var(--bg); }
+  body{
+    color:var(--hi);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-feature-settings:"ss01","cv01";
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  .font-mono{ font-feature-settings:"tnum" 1, "zero" 1; } /* align dense numerals in stat columns */
+
+  /* ---------- Modular type scale (1.250 — single source of truth) ---------- */
+  .t-display{ font-size:clamp(2.7rem,7vw,5.4rem); line-height:.94; letter-spacing:-.04em; font-weight:600; }
+  .t-h2{ font-size:clamp(1.95rem,4.4vw,3rem); line-height:1.06; letter-spacing:-.028em; font-weight:600; }
+  .t-h3{ font-size:1.2rem; line-height:1.25; letter-spacing:-.012em; font-weight:600; }
+  .t-body{ font-size:1.0625rem; line-height:1.6; letter-spacing:-.003em; }
+  .t-sub{ font-size:1.0625rem; line-height:1.55; letter-spacing:-.003em; }
+  .t-eyebrow{ font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:500; }
+  /* mono is reserved for: code, stat numbers, eyebrows, command pills, the wordmark, line-number annotations */
+
+  .wordmark{ font-family:'JetBrains Mono',monospace; font-weight:600; letter-spacing:-.04em; }
+
+  /* ---------- Hairline editorial divider ---------- */
+  .hrule{ height:1px; width:100%; background:linear-gradient(90deg,transparent,var(--line) 12%,var(--line) 88%,transparent); }
+
+  /* ---------- Vector-space canvas motif ---------- */
+  .vec-motif{ position:absolute; inset:0; pointer-events:none; }
+
+  /* ---------- Code card ---------- */
+  .codecard{
+    background:linear-gradient(180deg,rgba(124,92,255,.06),rgba(0,0,0,0) 38%),#0C0B16;
+    border:1px solid var(--line);
+    box-shadow:0 1px 0 0 rgba(255,255,255,.04) inset, 0 40px 80px -40px rgba(0,0,0,.9);
+  }
+  /* scrim removed — the proof comparison bars must read at full legibility */
+
+  /* syntax tokens — within the iris/lime/neutral system, no off-palette hues */
+  .tok-kw{ color:#B69CFF; } .tok-fn{ color:#C6F24E; } .tok-str{ color:#9CB4FF; }
+  .tok-num{ color:#E0B07A; } .tok-com{ color:var(--lo); font-style:italic; }
+  .tok-var{ color:var(--hi); } .tok-op{ color:var(--mid); } .tok-cls{ color:#9BC8B8; }
+
+  /* ---------- Buttons ---------- */
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-weight:600; font-size:.875rem;
+        border-radius:.6rem; padding:.7rem 1.1rem; transition:transform .28s var(--ease),box-shadow .28s var(--ease),background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease); }
+  .btn-lime{ background:var(--lime); color:#0A0A12; box-shadow:0 0 0 0 rgba(198,242,78,0); }
+  .btn-lime:hover{ background:#D4FF5E; transform:translateY(-1px); box-shadow:0 14px 34px -10px rgba(198,242,78,.5); }
+  .btn-lime:active{ transform:translateY(0); }
+  .btn-ghost{ border:1px solid var(--line); color:var(--hi); background:transparent; }
+  .btn-ghost:hover{ border-color:var(--iris); background:rgba(124,92,255,.07); }
+
+  .pip-pill{
+    background:rgba(124,92,255,.10); border:1px solid var(--line);
+    transition:border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+  }
+  .pip-pill:hover{ border-color:var(--iris); background:rgba(124,92,255,.16); }
+
+  /* pip-pill as the unmistakable PRIMARY CTA — lime accent treatment (hero + final CTA) */
+  .pip-primary{
+    background:rgba(198,242,78,.06); border:1px solid rgba(198,242,78,.55);
+    box-shadow:0 0 0 0 rgba(198,242,78,0);
+  }
+  .pip-primary:hover{
+    border-color:var(--lime); background:rgba(198,242,78,.12);
+    transform:translateY(-1px); box-shadow:0 16px 38px -14px rgba(198,242,78,.45);
+  }
+  .pip-primary:focus-visible{
+    box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--lime);
+  }
+
+  /* focus-visible — box-shadow ring only, native radius preserved per element */
+  a:focus-visible,button:focus-visible,[role="tab"]:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--iris);
+  }
+
+  /* ---------- Feature card hover ---------- */
+  .feat{ transition:border-color .3s var(--ease), transform .3s var(--ease), background .3s var(--ease); }
+  .feat:hover{ border-color:rgba(198,242,78,.55); transform:translateY(-3px); background:linear-gradient(180deg,rgba(198,242,78,.035),rgba(0,0,0,0)); }
+  .feat .feat-glow{ position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    box-shadow:inset 0 0 60px -22px rgba(198,242,78,.4); opacity:0; transition:opacity .35s var(--ease); }
+  .feat:hover .feat-glow{ opacity:1; }
+
+  /* ---------- Pricing ---------- */
+  .price-pro{ border-color:rgba(198,242,78,.45); box-shadow:0 0 0 1px rgba(198,242,78,.18), 0 40px 80px -50px rgba(198,242,78,.35); }
+
+  /* ---------- Tabs ---------- */
+  .tab{ position:relative; transition:color .2s var(--ease); color:var(--mid); }
+  .tab:hover{ color:var(--hi); }
+  .tab[aria-selected="true"]{ color:var(--hi); }
+  .tab[aria-selected="true"]::after{ content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lime); }
+  .tab-panel{ transition:opacity .18s var(--ease); }
+  .tab-panel.swap{ opacity:0; }
+
+  /* ---------- Reveal (staggered) ---------- */
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  .reveal.is-in{ opacity:1; transform:none; }
+  .reveal[data-d="1"]{ transition-delay:.07s; }
+  .reveal[data-d="2"]{ transition-delay:.14s; }
+  .reveal[data-d="3"]{ transition-delay:.21s; }
+  .reveal[data-d="4"]{ transition-delay:.28s; }
+
+  /* ---------- Sparkline draw ---------- */
+  .spark-path{ stroke-dasharray:260; stroke-dashoffset:260; transition:stroke-dashoffset 1.4s var(--ease); }
+  .spark-path.is-in{ stroke-dashoffset:0; }
+
+  /* ---------- Nav blur on scroll ---------- */
+  #nav.scrolled{
+    background:rgba(10,10,18,.72);
+    backdrop-filter:saturate(140%) blur(14px);
+    -webkit-backdrop-filter:saturate(140%) blur(14px);
+    border-bottom-color:var(--line);
+  }
+
+  /* ---------- Trust line — now rendered as concrete mono stats (see hero) ---------- */
+
+  /* ---------- Final CTA band ---------- */
+  .cta-band{
+    background:radial-gradient(ellipse 60% 120% at 50% 0%, rgba(124,92,255,.20), transparent 70%), linear-gradient(180deg,#0E0C1A,#0A0A12);
+    border-top:1px solid var(--line);
+  }
+
+  /* selection + scrollbar */
+  ::selection{ background:rgba(198,242,78,.28); color:#fff; }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background:var(--bg); }
+  ::-webkit-scrollbar-thumb{ background:#1c1830; border-radius:8px; border:2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover{ background:#2a2444; }
+
+  /* latency pulse */
+  .pulse-dot{ width:6px; height:6px; border-radius:50%; background:var(--lime); display:inline-block;
+    box-shadow:0 0 0 0 rgba(198,242,78,.7); animation:pulse 2.2s var(--ease) infinite; }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(198,242,78,.55); }
+    70%{ box-shadow:0 0 0 9px rgba(198,242,78,0); }
+    100%{ box-shadow:0 0 0 0 rgba(198,242,78,0); }
+  }
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{
+      animation-duration:.001ms !important; animation-iteration-count:1 !important;
+      transition-duration:.001ms !important; scroll-behavior:auto !important;
+    }
+    .spark-path{ stroke-dashoffset:0 !important; }
+    .reveal{ opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+
+<body class="font-sans antialiased">
+
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[70] focus:bg-lime focus:text-base-900 focus:px-3 focus:py-2 focus:rounded-md focus:font-semibold">Skip to content</a>
+
+<!-- ====================== NAV ====================== -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <nav id="nav" aria-label="Primary" class="border-b border-transparent transition-colors duration-300">
+    <div class="mx-auto max-w-edge px-5 sm:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="#top" class="flex items-center gap-2.5" aria-label="vector home">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 4 L20 20 M4 20 L20 4" stroke="#C6F24E" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>
+            <circle cx="4" cy="4" r="2" fill="#7C5CFF"/><circle cx="20" cy="20" r="2" fill="#7C5CFF"/>
+            <circle cx="20" cy="4" r="2" fill="#E8E8F0"/><circle cx="4" cy="20" r="2" fill="#E8E8F0"/>
+          </svg>
+          <span class="wordmark text-[17px] text-inkhi">vector</span>
+        </a>
+
+        <div class="hidden md:flex items-center gap-1">
+          <a href="#code" class="px-3 py-2 text-sm text-inkmid hover:text-inkhi transition-colors">Docs</a>
+          <a href="https://github.com" class="group inline-flex items-center gap-2 px-3 py-2 text-sm text-inkmid hover:text-inkhi transition-colors" aria-label="vector on GitHub, 14.2 thousand stars">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.57.1.78-.25.78-.55v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.74-1.56-2.56-.3-5.26-1.28-5.26-5.7 0-1.26.45-2.3 1.2-3.1-.12-.3-.52-1.48.1-3.08 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.6.23 2.78.11 3.07.75.82 1.2 1.86 1.2 3.1 0 4.43-2.7 5.4-5.28 5.69.42.36.78 1.05.78 2.12v3.14c0 .3.21.66.79.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+            <span>GitHub</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-line px-1.5 py-0.5 text-[11px] text-inkmid group-hover:border-iris/50 transition-colors">★ 14.2k</span>
+          </a>
+          <a href="#pricing" class="px-3 py-2 text-sm text-inkmid hover:text-inkhi transition-colors">Pricing</a>
+          <a href="#get-started" class="btn btn-lime ml-2">Get Started</a>
+        </div>
+
+        <button id="menuBtn" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md text-inkmid hover:text-inkhi" aria-label="Open menu" aria-expanded="false" aria-controls="menuSheet">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="menuSheet" class="md:hidden hidden border-t border-line bg-base-900/95 backdrop-blur">
+      <div class="px-5 py-4 flex flex-col gap-1">
+        <a href="#code" class="py-2.5 text-sm text-inkmid">Docs</a>
+        <a href="https://github.com" class="py-2.5 text-sm text-inkmid">GitHub ★ 14.2k</a>
+        <a href="#pricing" class="py-2.5 text-sm text-inkmid">Pricing</a>
+        <a href="#get-started" class="btn btn-lime mt-2">Get Started</a>
+      </div>
+    </div>
+  </nav>
+  <span id="top" class="block h-0 -mt-16"></span>
+</header>
+
+<main id="main">
+
+<!-- ====================== HERO ====================== -->
+<section class="relative overflow-hidden pt-32 sm:pt-40 pb-16 sm:pb-24">
+  <!-- interactive vector-space canvas — the signature moment -->
+  <canvas id="vecCanvas" class="vec-motif" aria-hidden="true"></canvas>
+  <div class="pointer-events-none absolute -top-40 -right-40 w-[640px] h-[640px] rounded-full" aria-hidden="true"
+       style="background:radial-gradient(circle,rgba(124,92,255,.16),transparent 60%);"></div>
+
+  <div class="relative mx-auto max-w-edge px-5 sm:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+
+      <!-- LEFT 60% (cols 1–7) -->
+      <div class="lg:col-span-7">
+        <div class="reveal inline-flex items-center gap-2 rounded-full border border-line bg-base-850/60 pl-1.5 pr-3.5 py-1.5">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-iris/15 px-2 py-0.5 text-iris-soft">
+            <span class="pulse-dot"></span>
+            <span class="t-eyebrow text-[.62rem] text-iris-soft">Apache-2.0</span>
+          </span>
+          <span class="text-xs text-inkmid">Self-host or cloud</span>
+        </div>
+
+        <h1 class="reveal t-display mt-6 text-inkhi" data-d="1">
+          Similarity search<br class="hidden sm:block" />
+          at the <span class="text-lime">speed of thought.</span>
+        </h1>
+
+        <p class="reveal t-sub mt-7 text-inkmid max-w-xl" data-d="2">
+          Vector is the open-source vector database built for AI — sub-millisecond queries, billion-scale indexes, a Python SDK that feels native.
+        </p>
+
+        <!-- CTAs: the literal install command IS the primary CTA (per brief success criterion) -->
+        <div class="reveal mt-9 flex flex-col sm:flex-row sm:items-center gap-3" data-d="3">
+          <button id="pipCopy" data-copy="pip install vector-db"
+            class="pip-pill pip-primary group inline-flex items-center gap-3 rounded-lg px-5 py-3.5 font-mono text-[15px] text-inkhi"
+            aria-label="Copy install command">
+            <span class="text-lime">$</span>
+            <span>pip install vector-db</span>
+            <span id="pipCopyIcon" class="text-inkmid group-hover:text-lime transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </span>
+            <span id="pipCopied" class="hidden text-lime text-[13px] font-sans font-semibold">copied</span>
+          </button>
+
+          <a href="https://github.com" class="btn btn-ghost px-5 py-3.5" aria-label="Star vector on GitHub (14.2k stars)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.57.1.78-.25.78-.55v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.74-1.56-2.56-.3-5.26-1.28-5.26-5.7 0-1.26.45-2.3 1.2-3.1-.12-.3-.52-1.48.1-3.08 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.6.23 2.78.11 3.07.75.82 1.2 1.86 1.2 3.1 0 4.43-2.7 5.4-5.28 5.69.42.36.78 1.05.78 2.12v3.14c0 .3.21.66.79.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+            Star on GitHub ↗
+          </a>
+        </div>
+
+        <!-- trust line — concrete OSS credibility markers, not fabricated logos -->
+        <div class="reveal mt-12" data-d="4">
+          <p class="t-eyebrow text-inkmid">Adopted in production</p>
+          <p class="mt-2 text-sm text-inklo">Powering retrieval at Series-B AI startups and Fortune-500 search teams.</p>
+          <div class="mt-4 flex flex-wrap items-center gap-x-8 gap-y-3 font-mono text-[13px]">
+            <span class="inline-flex items-baseline gap-1.5"><span class="text-inkhi font-semibold">14.2k</span><span class="text-inkmid">★ GitHub</span></span>
+            <span class="inline-flex items-baseline gap-1.5"><span class="text-inkhi font-semibold">312k</span><span class="text-inkmid">weekly pip downloads</span></span>
+            <span class="inline-flex items-baseline gap-1.5"><span class="text-inkhi font-semibold">280+</span><span class="text-inkmid">contributors</span></span>
+            <span class="inline-flex items-baseline gap-1.5"><span class="text-inkhi font-semibold">Apache-2.0</span><span class="text-inkmid">license</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT 40% (cols 8–12) — terminal/code proof card, full legibility -->
+      <div class="lg:col-span-5 lg:pl-2 reveal" data-d="2">
+        <div class="codecard rounded-xl overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-line-soft">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#3a3450]"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#3a3450]"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#3a3450]"></span>
+            </div>
+            <span class="font-mono text-[11px] text-inkmid">query.py — vector</span>
+            <span class="font-mono text-[11px] text-lime/90 bg-lime/10 border border-lime/20 rounded px-1.5 py-0.5">0.38ms · p99</span>
+          </div>
+
+          <div class="p-5 font-mono text-[13.5px] leading-7">
+<pre class="whitespace-pre"><span class="tok-com">from</span> <span class="tok-cls">vector</span> <span class="tok-com">import</span> <span class="tok-var">Client</span>
+
+<span class="tok-var">db</span> <span class="tok-op">=</span> <span class="tok-fn">Client</span><span class="tok-op">(</span><span class="tok-str">"vector://localhost:6333"</span><span class="tok-op">)</span>
+<span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">upsert</span><span class="tok-op">(</span><span class="tok-str">"docs"</span><span class="tok-op">,</span> <span class="tok-var">embeddings</span><span class="tok-op">)</span>
+
+<span class="tok-var">hits</span> <span class="tok-op">=</span> <span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">query</span><span class="tok-op">(</span>
+    <span class="tok-var">collection</span><span class="tok-op">=</span><span class="tok-str">"docs"</span><span class="tok-op">,</span>
+    <span class="tok-var">vector</span><span class="tok-op">=</span><span class="tok-var">q</span><span class="tok-op">,</span>
+    <span class="tok-var">limit</span><span class="tok-op">=</span><span class="tok-num">5</span><span class="tok-op">,</span>
+<span class="tok-op">)</span></pre>
+          </div>
+
+          <div class="px-5 pb-5">
+            <div class="rounded-lg border border-line bg-base-950/60 p-3">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] text-inkmid">p99 query latency · lower is better</span>
+                <a href="https://github.com" class="font-mono text-[11px] text-lime/90 hover:text-lime underline underline-offset-2 decoration-line">benchmark [1] ↗</a>
+              </div>
+              <div class="mt-3 space-y-2">
+                <div class="flex items-center gap-3">
+                  <span class="w-16 font-mono text-[10px] text-inkhi shrink-0">vector</span>
+                  <div class="flex-1 h-2 rounded-full bg-line-soft overflow-hidden"><div class="h-full bg-lime/80" style="width:8%"></div></div>
+                  <span class="w-14 font-mono text-[10px] text-lime shrink-0 text-right">0.38ms</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="w-16 font-mono text-[10px] text-inkmid shrink-0">field avg</span>
+                  <div class="flex-1 h-2 rounded-full bg-line-soft overflow-hidden"><div class="h-full bg-iris/40" style="width:92%"></div></div>
+                  <span class="w-14 font-mono text-[10px] text-inkmid shrink-0 text-right">3.8ms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mt-3 font-mono text-[11px] text-inkmid text-right">single node · 1B vectors · 1024-dim · cold-cache p99</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== SPEED BENCHMARK STRIP ====================== -->
+<section aria-label="Performance benchmarks" class="relative bg-base-950 border-y border-line">
+  <div class="mx-auto max-w-edge px-5 sm:px-8 py-16 sm:py-20">
+    <div class="reveal flex items-end justify-between gap-6 mb-10 flex-wrap">
+      <div>
+        <p class="t-eyebrow text-lime/90">Benchmark · not a claim</p>
+        <h2 class="t-h2 mt-2 text-inkhi">Numbers we'd put our name on.</h2>
+      </div>
+      <a href="https://github.com" class="inline-flex items-center gap-1.5 font-mono text-[12px] text-inkmid hover:text-lime transition-colors">
+        view methodology <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <!-- 0.38ms is isolated as the dominant proof figure; the other three sit a tier down -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+
+      <!-- Stat 1 -->
+      <div class="reveal" data-d="1">
+        <div class="font-mono text-inkhi text-[clamp(2.6rem,4.6vw,3.5rem)] font-semibold leading-none tracking-tightest">
+          10<span class="text-lime">×</span>
+        </div>
+        <p class="mt-3 text-sm text-inkhi font-medium">faster than Pinecone</p>
+        <p class="text-[12px] text-inkmid mt-1">ANN benchmark · 1B vectors</p>
+        <svg viewBox="0 0 240 36" class="mt-3 w-full h-7" aria-hidden="true">
+          <path class="spark-path" d="M0 30 C 30 28, 50 26, 70 24 S 110 19, 140 15 S 190 9, 240 4" fill="none" stroke="#C6F24E" stroke-width="2" stroke-linecap="round"/>
+          <path d="M0 31 L240 30" fill="none" stroke="#7C5CFF" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3 4"/>
+        </svg>
+      </div>
+
+      <!-- Stat 2 — DOMINANT (lime, slightly larger; lime top border on mobile isolates it from the other three) -->
+      <div class="reveal relative lg:pl-8 border-t-2 border-lime/40 pt-4 lg:border-t-0 lg:pt-0 lg:before:absolute lg:before:left-0 lg:before:top-1 lg:before:bottom-1 lg:before:w-px lg:before:bg-line lg:before:content-['']" data-d="2">
+        <div class="font-mono text-lime text-[clamp(2.95rem,5.2vw,4rem)] font-semibold leading-none tracking-tightest">
+          0.38<span class="text-inkhi text-[.5em] align-top ml-1">ms</span>
+        </div>
+        <p class="mt-3 text-sm text-inkhi font-medium">p99 query latency</p>
+        <p class="text-[12px] text-inkmid mt-1">1024-dim embeddings</p>
+        <svg viewBox="0 0 240 36" class="mt-3 w-full h-7" aria-hidden="true">
+          <path class="spark-path" d="M0 22 C 40 24, 80 18, 120 21 S 200 16, 240 19" fill="none" stroke="#C6F24E" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- Stat 3 -->
+      <div class="reveal" data-d="3">
+        <div class="font-mono text-inkhi text-[clamp(2.6rem,4.6vw,3.5rem)] font-semibold leading-none tracking-tightest">
+          1B<span class="text-lime">+</span>
+        </div>
+        <p class="mt-3 text-sm text-inkhi font-medium">vectors per node</p>
+        <p class="text-[12px] text-inkmid mt-1">HNSW + product quantization</p>
+        <svg viewBox="0 0 240 36" class="mt-3 w-full h-7" aria-hidden="true">
+          <g stroke="#C6F24E" stroke-width="2" stroke-linecap="round">
+            <line x1="8" y1="28" x2="8" y2="30"/><line x1="40" y1="24" x2="40" y2="30"/>
+            <line x1="72" y1="22" x2="72" y2="30"/><line x1="104" y1="18" x2="104" y2="30"/>
+            <line x1="136" y1="14" x2="136" y2="30"/><line x1="168" y1="10" x2="168" y2="30"/>
+            <line x1="200" y1="6" x2="200" y2="30"/><line x1="232" y1="3" x2="232" y2="30"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Stat 4 -->
+      <div class="reveal" data-d="4">
+        <div class="font-mono text-inkhi text-[clamp(2.6rem,4.6vw,3.5rem)] font-semibold leading-none tracking-tightest">
+          99.99<span class="text-lime text-[.5em] align-top ml-1">%</span>
+        </div>
+        <p class="mt-3 text-sm text-inkhi font-medium">recall@10</p>
+        <p class="text-[12px] text-inkmid mt-1">vs. exact brute-force</p>
+        <svg viewBox="0 0 240 36" class="mt-3 w-full h-7" aria-hidden="true">
+          <path class="spark-path" d="M0 28 C 60 26, 120 8, 240 5" fill="none" stroke="#C6F24E" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <p class="reveal mt-12 text-[12px] text-inkmid max-w-2xl leading-relaxed">
+      [1] Measured on c6i.4xlarge, 1B 1024-dim float32 vectors, HNSW (M=16, ef=128), 99th-percentile cold-cache reads. Full methodology and reproducible scripts in our
+      <a href="https://github.com" class="text-inkhi hover:text-lime underline underline-offset-2 decoration-line transition-colors">public benchmark repo ↗</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ====================== CODE SNIPPET BLOCK ====================== -->
+<section id="code" class="relative py-24 sm:py-32">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+    <div class="reveal max-w-2xl">
+      <p class="t-eyebrow text-lime/90">Developer experience</p>
+      <h2 class="mt-3 t-h2 text-inkhi">Under a dozen lines. <span class="text-lime">Zero config.</span></h2>
+      <p class="mt-5 t-body text-inkmid">No config files. No schema ceremony. Connect, upsert, query — that's the whole API surface you need to ship.</p>
+    </div>
+
+    <div class="reveal mt-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start" data-d="1">
+      <div class="lg:col-span-8 codecard rounded-xl overflow-hidden">
+        <div role="tablist" aria-label="Code language" class="flex items-center gap-1 border-b border-line-soft px-3">
+          <button role="tab" id="tab-py" aria-selected="true" aria-controls="panel-py" tabindex="0"
+                  class="tab px-4 py-3 font-mono text-[13px]" data-tab="py">Python</button>
+          <button role="tab" id="tab-ts" aria-selected="false" aria-controls="panel-ts" tabindex="-1"
+                  class="tab px-4 py-3 font-mono text-[13px]" data-tab="ts">TypeScript</button>
+          <button role="tab" id="tab-curl" aria-selected="false" aria-controls="panel-curl" tabindex="-1"
+                  class="tab px-4 py-3 font-mono text-[13px]" data-tab="curl">curl</button>
+        </div>
+
+        <div class="p-5 font-mono text-[13.5px] leading-7 overflow-x-auto">
+<pre id="panel-py" role="tabpanel" aria-labelledby="tab-py" class="tab-panel whitespace-pre"><span class="tok-com">from</span> <span class="tok-cls">vector</span> <span class="tok-com">import</span> <span class="tok-var">Client</span>
+
+<span class="tok-var">db</span> <span class="tok-op">=</span> <span class="tok-fn">Client</span><span class="tok-op">(</span><span class="tok-str">"vector://localhost:6333"</span><span class="tok-op">)</span>
+
+<span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">create_collection</span><span class="tok-op">(</span><span class="tok-str">"docs"</span><span class="tok-op">,</span> <span class="tok-var">dim</span><span class="tok-op">=</span><span class="tok-num">1536</span><span class="tok-op">)</span>
+<span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">upsert</span><span class="tok-op">(</span><span class="tok-str">"docs"</span><span class="tok-op">,</span> <span class="tok-var">embeddings</span><span class="tok-op">)</span>
+
+<span class="tok-var">hits</span> <span class="tok-op">=</span> <span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">query</span><span class="tok-op">(</span><span class="tok-str">"docs"</span><span class="tok-op">,</span> <span class="tok-var">vector</span><span class="tok-op">=</span><span class="tok-var">q</span><span class="tok-op">,</span> <span class="tok-var">limit</span><span class="tok-op">=</span><span class="tok-num">5</span><span class="tok-op">)</span></pre>
+
+<pre id="panel-ts" role="tabpanel" aria-labelledby="tab-ts" class="tab-panel whitespace-pre" hidden><span class="tok-com">import</span> { <span class="tok-var">Client</span> } <span class="tok-com">from</span> <span class="tok-str">"vector-db"</span><span class="tok-op">;</span>
+
+<span class="tok-com">const</span> <span class="tok-var">db</span> <span class="tok-op">=</span> <span class="tok-com">new</span> <span class="tok-fn">Client</span><span class="tok-op">(</span><span class="tok-str">"vector://localhost:6333"</span><span class="tok-op">);</span>
+
+<span class="tok-com">await</span> <span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">createCollection</span><span class="tok-op">(</span><span class="tok-str">"docs"</span><span class="tok-op">,</span> { <span class="tok-var">dim</span><span class="tok-op">:</span> <span class="tok-num">1536</span> <span class="tok-op">});</span>
+
+<span class="tok-com">await</span> <span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">upsert</span><span class="tok-op">(</span><span class="tok-str">"docs"</span><span class="tok-op">,</span> <span class="tok-var">embeddings</span><span class="tok-op">);</span>
+
+<span class="tok-com">const</span> <span class="tok-var">hits</span> <span class="tok-op">=</span> <span class="tok-com">await</span> <span class="tok-var">db</span><span class="tok-op">.</span><span class="tok-fn">query</span><span class="tok-op">(</span><span class="tok-str">"docs"</span><span class="tok-op">,</span> { <span class="tok-var">vector</span><span class="tok-op">:</span> <span class="tok-var">q</span><span class="tok-op">,</span> <span class="tok-var">limit</span><span class="tok-op">:</span> <span class="tok-num">5</span> <span class="tok-op">});</span></pre>
+
+<pre id="panel-curl" role="tabpanel" aria-labelledby="tab-curl" class="tab-panel whitespace-pre" hidden><span class="tok-com"># create collection</span>
+<span class="tok-fn">curl</span> <span class="tok-op">-</span>X PUT <span class="tok-var">localhost:6333/collections/docs</span> <span class="tok-op">\</span>
+  <span class="tok-op">-</span>H <span class="tok-str">"Content-Type: application/json"</span> <span class="tok-op">\</span>
+  <span class="tok-op">-</span>d <span class="tok-str">'{"vectors": {"size": 1536, "distance": "cosine"}}'</span>
+
+<span class="tok-com"># query</span>
+<span class="tok-fn">curl</span> <span class="tok-op">-</span>X POST <span class="tok-var">localhost:6333/collections/docs/points/query</span> <span class="tok-op">\</span>
+  <span class="tok-op">-</span>H <span class="tok-str">"Content-Type: application/json"</span> <span class="tok-op">\</span>
+  <span class="tok-op">-</span>d <span class="tok-str">'{"vector": [0.1, ...], "limit": 5}'</span></pre>
+        </div>
+      </div>
+
+      <!-- How it works — flat numbered list (not pinned to code lines) -->
+      <div class="lg:col-span-4">
+        <p class="font-mono text-[11px] text-inkmid tracking-[.14em] uppercase">How it works</p>
+        <ol class="mt-5 space-y-5">
+          <li class="flex gap-4">
+            <span class="font-mono text-[12px] text-lime/90 shrink-0 w-6">01</span>
+            <div><p class="text-sm text-inkhi font-medium">connect</p><p class="mt-0.5 text-sm text-inkmid leading-relaxed">One URI, no driver soup. Same client works in-process or across the network.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-mono text-[12px] text-inkmid shrink-0 w-6">02</span>
+            <div><p class="text-sm text-inkhi font-medium">model</p><p class="mt-0.5 text-sm text-inkmid leading-relaxed">Declare a collection with a dimension. Vector infers the rest.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-mono text-[12px] text-inkmid shrink-0 w-6">03</span>
+            <div><p class="text-sm text-inkhi font-medium">load</p><p class="mt-0.5 text-sm text-inkmid leading-relaxed">Batch upsert streams straight into the index, no rebuild step.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-mono text-[12px] text-inkmid shrink-0 w-6">04</span>
+            <div><p class="text-sm text-inkhi font-medium">query</p><p class="mt-0.5 text-sm text-inkmid leading-relaxed">Vector + metadata filter in one call. Recall doesn't flinch.</p></div>
+          </li>
+        </ol>
+        <a href="https://github.com" class="inline-flex items-center gap-1.5 mt-6 font-mono text-[13px] text-lime hover:text-inkhi transition-colors">
+          Read the quickstart <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== THREE-FEATURE GRID ====================== -->
+<section class="relative py-24 sm:py-28 bg-gradient-to-b from-transparent to-base-800/60">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+    <div class="reveal flex items-end justify-between gap-6 mb-12 flex-wrap">
+      <div>
+        <h2 class="t-h2 text-inkhi">Built for production AI.</h2>
+        <p class="mt-3 t-body text-inkmid">The features you'd reach for after the demo — already first-class.</p>
+      </div>
+      <p class="hidden md:block max-w-xs font-mono text-[12px] text-inkmid md:text-right">No enterprise upsell required.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- (a) Hybrid Search -->
+      <article class="feat reveal relative rounded-xl border border-line bg-base-850/50 p-7 overflow-hidden" data-d="1">
+        <span class="feat-glow rounded-xl"></span>
+        <div class="relative">
+          <span class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-lime/30 bg-lime/5 text-lime">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="6" r="3"/><circle cx="17" cy="18" r="3"/><path d="M9.5 11 14.5 8M9.5 13l5 3"/></svg>
+          </span>
+          <h3 class="t-h3 mt-5 text-inkhi">Hybrid Search</h3>
+          <p class="mt-2 text-sm text-inkmid leading-relaxed">Dense and sparse vectors fused in one query. Keyword recall meets semantic intent.</p>
+          <p class="mt-5 font-mono text-[12px] text-lime/90 border-t border-line-soft pt-3">sub-50ms @ 10M docs</p>
+        </div>
+      </article>
+
+      <!-- (b) Filter at Scale -->
+      <article class="feat reveal relative rounded-xl border border-line bg-base-850/50 p-7 overflow-hidden" data-d="2">
+        <span class="feat-glow rounded-xl"></span>
+        <div class="relative">
+          <span class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-lime/30 bg-lime/5 text-lime">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 5h18l-7 8v6l-4 2v-8L3 5z"/></svg>
+          </span>
+          <h3 class="t-h3 mt-5 text-inkhi">Filter at Scale</h3>
+          <p class="mt-2 text-sm text-inkmid leading-relaxed">Metadata filtering that respects your index. Predicate pushdown, no recompute.</p>
+          <p class="mt-5 font-mono text-[12px] text-lime/90 border-t border-line-soft pt-3">zero recompute</p>
+        </div>
+      </article>
+
+      <!-- (c) Drop-in Scalable -->
+      <article class="feat reveal relative rounded-xl border border-line bg-base-850/50 p-7 overflow-hidden" data-d="3">
+        <span class="feat-glow rounded-xl"></span>
+        <div class="relative">
+          <span class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-lime/30 bg-lime/5 text-lime">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </span>
+          <h3 class="t-h3 mt-5 text-inkhi">Drop-in Scalable</h3>
+          <p class="mt-2 text-sm text-inkmid leading-relaxed">Sharding and replication built in. Grow from laptop to cluster without a rewrite.</p>
+          <p class="mt-5 font-mono text-[12px] text-lime/90 border-t border-line-soft pt-3">1B vectors · one command</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== PRICING TABLE ====================== -->
+<section id="pricing" class="relative py-24 sm:py-32">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+    <div class="reveal max-w-2xl">
+      <p class="t-eyebrow text-lime/90">Pricing</p>
+      <h2 class="mt-3 t-h2 text-inkhi">Simple pricing. Open core.</h2>
+      <p class="mt-5 t-body text-inkmid">Self-host forever, free. Pay only when you want it managed.</p>
+    </div>
+
+    <div class="reveal mt-14 grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch" data-d="1">
+      <!-- Free -->
+      <div class="rounded-xl border border-line bg-base-850/40 p-8 flex flex-col">
+        <div class="flex items-center justify-between">
+          <h3 class="t-h3 text-inkhi">Free</h3>
+          <span class="font-mono text-[11px] text-inkmid border border-line rounded px-1.5 py-0.5">self-host</span>
+        </div>
+        <p class="mt-1 text-sm text-inkmid">For builders & solo projects.</p>
+        <div class="mt-6 flex items-end gap-1">
+          <span class="font-mono text-5xl font-semibold text-inkhi tracking-tightest">$0</span>
+          <span class="text-inkmid text-sm mb-1.5">/forever</span>
+        </div>
+        <ul class="mt-7 space-y-3 text-sm flex-1">
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Full feature set, Apache-2.0</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Billion-scale indexes</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Community Discord support</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Run anywhere — your metal, your cloud</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">No telemetry, no lock-in</span></li>
+        </ul>
+        <a href="#get-started" class="btn btn-ghost mt-8">Start free</a>
+      </div>
+
+      <!-- Pro (elevated) — lg:mt-0 keeps the floating "Most popular" badge clear of the Free card on the stacked mobile layout -->
+      <div class="price-pro reveal rounded-xl border bg-gradient-to-b from-base-850 to-[#0E0C1A] p-8 flex flex-col relative mt-7 lg:mt-0" data-d="2">
+        <span class="absolute -top-3 left-8 inline-flex items-center gap-1.5 rounded-full bg-lime text-base-900 px-2.5 py-0.5 text-[11px] font-semibold">Most popular</span>
+        <div class="flex items-center justify-between">
+          <h3 class="t-h3 text-inkhi">Pro</h3>
+          <span class="font-mono text-[11px] text-lime border border-lime/30 rounded px-1.5 py-0.5">managed</span>
+        </div>
+        <p class="mt-1 text-sm text-inkmid">For teams shipping to production.</p>
+        <div class="mt-6 flex items-end gap-1">
+          <span class="font-mono text-5xl font-semibold text-lime tracking-tightest">$39</span>
+          <span class="text-inkmid text-sm mb-1.5">/mo · or $0.025/hr</span>
+        </div>
+        <ul class="mt-7 space-y-3 text-sm flex-1">
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Fully managed clusters</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Auto-scaling & replication</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">99.99% uptime SLA</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Priority engineering support</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">SOC 2 backups & PITR</span></li>
+        </ul>
+        <a href="#get-started" class="btn btn-lime mt-8">Start 14-day trial</a>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="rounded-xl border border-line bg-base-850/40 p-8 flex flex-col">
+        <div class="flex items-center justify-between">
+          <h3 class="t-h3 text-inkhi">Enterprise</h3>
+          <span class="font-mono text-[11px] text-inkmid border border-line rounded px-1.5 py-0.5">dedicated</span>
+        </div>
+        <p class="mt-1 text-sm text-inkmid">For regulated & hyperscale.</p>
+        <div class="mt-6 flex items-end gap-1">
+          <span class="font-mono text-5xl font-semibold text-inkhi tracking-tightest">Custom</span>
+        </div>
+        <ul class="mt-7 space-y-3 text-sm flex-1">
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Dedicated infra / VPC peering</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">On-prem & air-gapped deploy</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">HIPAA · FedRAMP · SOC 2 Type II</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Named solutions architect</span></li>
+          <li class="flex gap-2.5"><svg class="text-lime shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="text-inkmid">Custom SLAs & 24/7 incident</span></li>
+        </ul>
+        <a href="https://github.com" class="btn btn-ghost mt-8">Talk to us</a>
+      </div>
+    </div>
+
+    <p class="reveal mt-10 text-center text-sm text-inkmid">
+      Self-host forever, free. Apache-2.0. No vendor lock-in. ·
+      <a href="https://github.com" class="text-lime hover:text-inkhi underline underline-offset-2 decoration-line transition-colors">See the fair comparison vs. managed alternatives ↗</a>
+    </p>
+  </div>
+</section>
+
+<!-- ====================== FINAL CTA BAND ====================== -->
+<section id="get-started" class="cta-band relative py-24 sm:py-32">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+    <div class="reveal text-center max-w-3xl mx-auto">
+      <p class="t-eyebrow text-lime/90">Ship today</p>
+      <h2 class="mt-4 t-h2 text-inkhi">Ship faster <span class="text-lime">search today.</span></h2>
+      <p class="mt-6 t-body text-inkmid max-w-xl mx-auto">Two commands. No signup wall. Your embeddings, indexed in under a minute.</p>
+
+      <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button id="ctaCopy" data-copy="pip install vector-db"
+          class="pip-pill pip-primary copy-cta group inline-flex items-center gap-3 rounded-lg px-5 py-3.5 font-mono text-[15px] text-inkhi"
+          aria-label="Copy install command">
+          <span class="text-lime">$</span>
+          <span>pip install vector-db</span>
+          <span class="text-inkmid group-hover:text-lime transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          </span>
+          <span id="ctaCopied" class="hidden text-lime text-[13px] font-sans font-semibold">copied</span>
+        </button>
+        <a href="https://github.com" class="btn btn-ghost px-5 py-3.5">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.57.1.78-.25.78-.55v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.74-1.56-2.56-.3-5.26-1.28-5.26-5.7 0-1.26.45-2.3 1.2-3.1-.12-.3-.52-1.48.1-3.08 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.6.23 2.78.11 3.07.75.82 1.2 1.86 1.2 3.1 0 4.43-2.7 5.4-5.28 5.69.42.36.78 1.05.78 2.12v3.14c0 .3.21.66.79.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ====================== FOOTER ====================== -->
+<footer class="border-t border-line bg-base-950">
+  <div class="mx-auto max-w-edge px-5 sm:px-8 py-16">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-10">
+      <div class="col-span-2 md:col-span-2">
+        <a href="#top" class="flex items-center gap-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 4 L20 20 M4 20 L20 4" stroke="#C6F24E" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>
+            <circle cx="4" cy="4" r="2" fill="#7C5CFF"/><circle cx="20" cy="20" r="2" fill="#7C5CFF"/>
+            <circle cx="20" cy="4" r="2" fill="#E8E8F0"/><circle cx="4" cy="20" r="2" fill="#E8E8F0"/>
+          </svg>
+          <span class="wordmark text-[16px] text-inkhi">vector</span>
+        </a>
+        <p class="mt-4 text-sm text-inkmid max-w-xs">Built by engineers, for engineers.</p>
+        <p class="mt-3 text-xs text-inklo">Apache-2.0 · 100% open source</p>
+      </div>
+
+      <nav aria-label="Product">
+        <p class="t-eyebrow text-inklo">Product</p>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a href="#code" class="text-inkmid hover:text-inkhi transition-colors">Features</a></li>
+          <li><a href="#pricing" class="text-inkmid hover:text-inkhi transition-colors">Pricing</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Changelog</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Roadmap</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Docs">
+        <p class="t-eyebrow text-inklo">Docs</p>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a href="#code" class="text-inkmid hover:text-inkhi transition-colors">Quickstart</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Python SDK</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">REST API</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Benchmarks</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Community">
+        <p class="t-eyebrow text-inklo">Community</p>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Discord</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">GitHub</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">X / Twitter</a></li>
+          <li><a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Blog</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="hrule mt-14"></div>
+
+    <div class="mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <p class="text-xs text-inklo">© 2026 vector · Apache-2.0</p>
+      <div class="flex items-center gap-5 text-xs">
+        <a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Privacy</a>
+        <a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Terms</a>
+        <a href="https://github.com" class="text-inkmid hover:text-inkhi transition-colors">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- copy toast -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-full bg-base-850 border border-lime/40 text-lime text-xs font-medium opacity-0 translate-y-3 pointer-events-none transition-all duration-300 z-[60]" role="status" aria-live="polite">Copied to clipboard</div>
+
+<script>
+(() => {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Nav scroll blur ---------- */
+  const nav = document.getElementById('nav');
+  const onScroll = () => { nav.classList.toggle('scrolled', window.scrollY > 8); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- Mobile menu (open/close + close on navigate + Esc) ---------- */
+  const menuBtn = document.getElementById('menuBtn');
+  const menuSheet = document.getElementById('menuSheet');
+  const setMenu = (open) => {
+    menuSheet.classList.toggle('hidden', !open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+  };
+  menuBtn.addEventListener('click', () => setMenu(menuSheet.classList.contains('hidden')));
+  // close after tapping any in-sheet link so the sheet never covers the destination
+  menuSheet.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menuSheet.classList.contains('hidden')) setMenu(false);
+  });
+
+  /* ---------- Copy to clipboard (hero pill + final CTA) ---------- */
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  const showToast = (msg) => {
+    toast.textContent = msg;
+    toast.style.opacity = '1'; toast.style.transform = 'translate(-50%,0)';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translate(-50%,12px)'; }, 1600);
+  };
+  const flashIcon = (btn) => {
+    const icon = btn.querySelector('svg');
+    if (!icon) return;
+    const orig = icon.innerHTML;
+    icon.innerHTML = '<path d="M20 6 9 17l-5-5" fill="none" stroke="#C6F24E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
+    icon.style.color = '#C6F24E';
+    setTimeout(() => { icon.innerHTML = orig; icon.style.color = ''; }, 1400);
+  };
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const txt = btn.getAttribute('data-copy');
+      try { await navigator.clipboard.writeText(txt); }
+      catch { const t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select();
+              try { document.execCommand('copy'); } catch(_){} document.body.removeChild(t); }
+      flashIcon(btn);
+      showToast('Copied: ' + txt);
+    });
+  });
+  // inline "copied" label toggles (hero pill + final CTA band) — parity affordance
+  const wireCopiedLabel = (btnId, labelId) => {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    const copied = document.getElementById(labelId);
+    if (!copied) return;
+    btn.addEventListener('click', () => {
+      copied.classList.remove('hidden');
+      setTimeout(() => copied.classList.add('hidden'), 1400);
+    });
+  };
+  wireCopiedLabel('pipCopy', 'pipCopied');
+  wireCopiedLabel('ctaCopy', 'ctaCopied');
+
+  /* ---------- Accessible tabs (roving tabindex + arrow keys) ---------- */
+  const tablist = document.querySelector('[role="tablist"]');
+  const tabs = Array.from(document.querySelectorAll('[role="tab"][data-tab]'));
+  const panels = {
+    py: document.getElementById('panel-py'),
+    ts: document.getElementById('panel-ts'),
+    curl: document.getElementById('panel-curl'),
+  };
+  const selectTab = (tab) => {
+    const key = tab.getAttribute('data-tab');
+    tabs.forEach(t => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+    });
+    Object.entries(panels).forEach(([k, p]) => {
+      if (!p) return;
+      if (k === key) {
+        // fade-in swap — force a reflow read so the opacity transition reliably paints
+        // after the element flips from display:none to block.
+        p.classList.add('swap'); p.hidden = false;
+        void p.offsetHeight;
+        requestAnimationFrame(() => requestAnimationFrame(() => p.classList.remove('swap')));
+      } else { p.hidden = true; }
+    });
+  };
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      const i = tabs.indexOf(tab);
+      let next = null;
+      if (e.key === 'ArrowRight') next = tabs[(i+1)%tabs.length];
+      else if (e.key === 'ArrowLeft') next = tabs[(i-1+tabs.length)%tabs.length];
+      else if (e.key === 'Home') next = tabs[0];
+      else if (e.key === 'End') next = tabs[tabs.length-1];
+      if (next) { e.preventDefault(); next.focus(); selectTab(next); }
+    });
+  });
+
+  /* ---------- Scroll reveal (staggered via data-d) ---------- */
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduce) { reveals.forEach(el => el.classList.add('is-in')); }
+  else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+
+  /* ---------- Sparkline draw on view ---------- */
+  const sparks = document.querySelectorAll('.spark-path');
+  if (reduce) { sparks.forEach(s => s.classList.add('is-in')); }
+  else {
+    const sio = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-in'); sio.unobserve(entry.target); } });
+    }, { threshold: 0.4 });
+    sparks.forEach(s => sio.observe(s));
+  }
+
+  /* ---------- Hero latency — frozen at the canonical 0.38ms p99 ---------- */
+  /* (The jitter loop was removed: a 'live' number on a static marketing page reads as theater.
+     The canonical 0.38ms matches the strip and the methodology footnote [1].) */
+
+  /* ---------- SIGNATURE: interactive vector-space canvas ---------- */
+  // A query point fires ripples; nearest neighbors are pulled toward it with live
+  // distance scores. Epicenter sits in the upper-right so it never competes with the
+  // proof card; density and opacity are tuned down so the card reads first.
+  const canvas = document.getElementById('vecCanvas');
+  const heroWrap = canvas ? canvas.parentElement : null;
+  if (canvas && heroWrap && !reduce) {
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let points = [];      // ambient dataset points
+    let query = null;     // current query point
+    let neighbors = [];   // nearest neighbors pulled toward query
+    let ripples = [];     // expanding query ripples
+    let running = true;
+    let started = false;
+    const POINT_COUNT = 26;   // reduced from 46 — calmer field, card reads first
+
+    const rnd = (a,b) => a + Math.random()*(b-a);
+
+    function resize() {
+      const r = heroWrap.getBoundingClientRect();
+      W = r.width; H = r.height;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W+'px'; canvas.style.height = H+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    function seed() {
+      points = [];
+      // confine ambient points to the LEFT 62% so the proof card column stays calm
+      const maxX = W < 768 ? 1 : 0.62;
+      for (let i=0;i<POINT_COUNT;i++){
+        points.push({ x: rnd(.04,maxX)*W, y: rnd(.06,.92)*H, vx: rnd(-.05,.05), vy: rnd(-.05,.05), r: rnd(1.0,1.7) });
+      }
+    }
+    function fireQuery() {
+      // epicenter in the upper-right area, away from the proof card
+      const qx = W * (W < 768 ? .5 : .86);
+      const qy = H * (W < 768 ? .35 : .18);
+      query = { x: qx, y: qy, born: performance.now() };
+      ripples.push({ x: qx, y: qy, born: performance.now() });
+      // pick 5 nearest ambient points as neighbors
+      const ranked = points.map(p => ({ p, d: Math.hypot(p.x-qx, p.y-qy) })).sort((a,b)=>a.d-b.d).slice(0,5);
+      neighbors = ranked.map(({p}, idx) => ({ p, ox: p.x, oy: p.y, rank: idx, settle: 0 }));
+    }
+    function step(now) {
+      if (!running) return;
+      ctx.clearRect(0,0,W,H);
+
+      // drift ambient points
+      for (const p of points) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      }
+
+      // ripples — softer so they don't fight the proof card
+      ripples = ripples.filter(rp => now - rp.born < 2600);
+      for (const rp of ripples) {
+        const t = (now - rp.born) / 2600;
+        const rad = t * Math.min(W,H) * 0.42;
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, Math.max(0.1, rad), 0, Math.PI*2);
+        ctx.strokeStyle = `rgba(198,242,78,${(1-t)*0.22})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // pull neighbors toward query
+      if (query) {
+        for (const n of neighbors) {
+          const targetGap = 26 + n.rank * 16;
+          const dx = query.x - n.p.x, dy = query.y - n.p.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const desired = Math.min(dist, Math.max(0, dist - targetGap));
+          n.p.x += (dx/dist) * desired * 0.06;
+          n.p.y += (dy/dist) * desired * 0.06;
+        }
+        // connection lines query -> neighbors (faded by rank so the top hit reads strongest)
+        for (const n of neighbors) {
+          const score = (0.99 - n.rank*0.04).toFixed(2);
+          ctx.beginPath();
+          ctx.moveTo(query.x, query.y); ctx.lineTo(n.p.x, n.p.y);
+          ctx.strokeStyle = `rgba(124,92,255,${0.50 - n.rank*0.07})`;
+          ctx.lineWidth = n.rank === 0 ? 1.1 : 0.8; ctx.stroke();
+          // neighbor node — brighter than ambient so the hit cluster is unmistakable
+          ctx.beginPath();
+          ctx.arc(n.p.x, n.p.y, n.rank === 0 ? 2.6 : 2.0, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(198,242,78,${0.85 - n.rank*0.12})`;
+          ctx.fill();
+          // score label near neighbor (bumped to 10px for legibility)
+          ctx.fillStyle = `rgba(232,232,240,${0.85 - n.rank*0.10})`;
+          ctx.font = '500 10px "JetBrains Mono", monospace';
+          ctx.fillText(score, n.p.x + 7, n.p.y - 7);
+        }
+        // query point — solid lime core with a soft persistent halo
+        ctx.beginPath();
+        ctx.arc(query.x, query.y, 11, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(198,242,78,0.10)'; ctx.fill();
+        ctx.beginPath();
+        ctx.arc(query.x, query.y, 5, 0, Math.PI*2);
+        ctx.fillStyle = '#C6F24E';
+        ctx.shadowColor = 'rgba(198,242,78,0.7)'; ctx.shadowBlur = 16; ctx.fill(); ctx.shadowBlur = 0;
+        ctx.beginPath(); ctx.arc(query.x, query.y, 5, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(198,242,78,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      // ambient points — lower opacity so the proof card reads first.
+      // skip neighbor points (already painted bright lime above) so the hit
+      // cluster isn't dimmed back down to ambient level.
+      const neighborSet = new Set(neighbors.map(n => n.p));
+      for (const p of points) {
+        if (neighborSet.has(p)) continue;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(124,92,255,0.18)';
+        ctx.fill();
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    // DEFER: start the animation loop only after first paint (idle callback or a
+    // post-LCP rAF) so it never competes with LCP. See brief's LCP < 1.5s goal.
+    const startAnim = () => {
+      if (started) return; started = true;
+      resize(); seed(); fireQuery();
+      requestAnimationFrame(step);
+      setInterval(() => { if (running && !document.hidden) fireQuery(); }, 4200);
+    };
+    if ('requestIdleCallback' in window) requestIdleCallback(startAnim, { timeout: 1200 });
+    else window.addEventListener('load', startAnim);
+
+    // visibility gating — pause when hero out of view or tab hidden
+    const visIo = new IntersectionObserver((e) => {
+      running = e[0].isIntersecting;
+      if (running && started) requestAnimationFrame(step);
+    }, { threshold: 0.05 });
+    visIo.observe(heroWrap);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) running = false;
+      else if (heroWrap.getBoundingClientRect().top < window.innerHeight) { running = true; if (started) requestAnimationFrame(step); }
+    });
+    window.addEventListener('resize', () => { if (started) { resize(); seed(); fireQuery(); } });
+  }
+})();
+</script>
+
+</body>
+</html>
