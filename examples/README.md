@@ -8,15 +8,21 @@ Real output from `fireworks-design` — each page below was produced by an **act
 
 | Example | Brief | Variants | Winner (aesthetic) | Agents | Tokens | View |
 |---------|-------|:--------:|--------------------|:------:|:------:|------|
-| **SaaS landing** — `saas-vector-db` | Vector DB for AI workloads: hero, benchmark stat strip, Python snippet, features, 3-tier pricing | 6 | Bold Editorial (tie @ 7.17) | 49 | ~1.7M | [`final.html`](./saas-vector-db/final.html) |
-| **OSS homepage** — `oss-cli-homepage` | `tideline` CLI: install command + copy button, feature cards, terminal demo | 4 | Bold Editorial (7.17) | 35 | ~1.07M | [`final.html`](./oss-cli-homepage/final.html) |
-| **Portfolio** — `designer-portfolio` | Designer one-pager: name hero, about, 4-project grid, contact | 4 | Bold Editorial (7.67) | 35 | ~0.85M | [`final.html`](./designer-portfolio/final.html) |
+| **SaaS landing** — `saas-vector-db` | Vector DB for AI workloads: hero, benchmark stat strip, Python snippet, features, 3-tier pricing | 6 | Bold Editorial (tie @ 7.17) | 49 | ~1.7M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html) · [src](./saas-vector-db/final.html) |
+| **OSS homepage** — `oss-cli-homepage` | `tideline` CLI: install command + copy button, feature cards, terminal demo | 4 | Bold Editorial (7.17) | 35 | ~1.07M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html) · [src](./oss-cli-homepage/final.html) |
+| **Portfolio** — `designer-portfolio` | Designer one-pager: name hero, about, 4-project grid, contact | 4 | Bold Editorial (7.67) | 35 | ~0.85M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html) · [src](./designer-portfolio/final.html) |
 
 > **Why "Bold Editorial" kept winning** is not a bug — each run explores genuinely distinct aesthetics (Swiss Minimal, Dark Premium, Vibrant Gradient, Neo-Brutalist, Soft Organic, …). The editorial lens simply scored highest *for these particular briefs* (developer/tool/design-savvy audiences reward hierarchy and typographic confidence). Different briefs will crown different winners; that's the point of judging.
 
 ## How to view
 
-These are standalone HTML files (single file, no build). Options:
+**Live (rendered) on GitHub Pages:**
+- 🌐 SaaS landing — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html>
+- 🌐 OSS homepage — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html>
+- 🌐 Portfolio — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html>
+- 🌐 Landing + all links — <https://yizhiyanhua-ai.github.io/fireworks-design/>
+
+These are standalone HTML files (single file, no build). Locally:
 
 ```bash
 # open directly
@@ -25,9 +31,6 @@ open examples/saas-vector-db/final.html
 # or serve locally
 python3 -m http.server 8000   # then visit localhost:8000/examples/...
 ```
-
-Or use an in-browser preview of the raw file:
-`https://htmlpreview.github.io/?https://github.com/yizhiyanhua-ai/fireworks-design/blob/main/examples/<example>/final.html`
 
 ## What each pipeline stage actually contributed
 
