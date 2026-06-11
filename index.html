@@ -3,127 +3,373 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fireworks-design · Live</title>
-<meta name="description" content="A Claude Code workflow that replicates ClaudeDesign. Live example outputs.">
+<title>fireworks-design — World-class frontend pages from one prompt</title>
+<meta name="description" content="An open-source Claude Code workflow that replicates ClaudeDesign: explore many design directions, judge them like a panel, synthesize the best, refine to one shippable page.">
 <link rel="icon" href="docs/images/logo/logo-icon.svg?v=2" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0b0b14;--panel:#0f172a;--border:#334155;--txt:#e2e8f0;--dim:#94a3b8;--faint:#475569;
-    --purple:#a855f7;--orange:#f97316;--blue:#3b82f6;--green:#10b981;--gold:#eab308}
+  :root{
+    --bg:#08080f; --panel:#0f172a; --panel2:#11182b; --border:#26314a; --border2:#334155;
+    --txt:#eef2ff; --dim:#94a3b8; --faint:#5b6478;
+    --purple:#a855f7; --purple2:#7c3aed;
+    --orange:#f97316; --orange2:#ea580c;
+    --blue:#3b82f6; --blue2:#1d4ed8;
+    --green:#10b981; --gold:#eab308;
+    --grad:linear-gradient(110deg,#f97316,#a855f7 50%,#3b82f6);
+  }
   *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
   body{
     background:
-      radial-gradient(1000px 500px at 80% -10%, rgba(124,58,237,.18), transparent 60%),
-      radial-gradient(800px 400px at -5% 20%, rgba(249,115,22,.10), transparent 55%),
-      linear-gradient(180deg,#0f0f1a,#1a1a2e);
-    color:var(--txt);font-family:'Inter',system-ui,sans-serif;line-height:1.6;
-    min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:56px 20px 80px;
+      radial-gradient(1100px 600px at 82% -8%, rgba(124,58,237,.20), transparent 60%),
+      radial-gradient(900px 520px at -8% 12%, rgba(249,115,22,.12), transparent 58%),
+      radial-gradient(800px 500px at 50% 120%, rgba(59,130,246,.12), transparent 60%),
+      linear-gradient(180deg,#08080f,#0d0d1a 40%,#08080f);
+    background-attachment:fixed;
+    color:var(--txt); font-family:'Inter',system-ui,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
   }
-  img.logo{width:min(520px,92vw);height:auto;margin-bottom:18px}
-  .tag{color:var(--dim);max-width:560px;text-align:center;font-size:17px;margin-bottom:36px}
-  .tag b{color:var(--txt)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;width:min(980px,100%)}
-  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--border);
-    border-radius:16px;padding:22px 24px;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
-  a.card:hover{transform:translateY(-3px);border-color:var(--purple);box-shadow:0 18px 40px -22px rgba(168,85,247,.6)}
-  .k{font-family:'SF Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
-  .card h3{font-size:18px;margin:8px 0 6px}
-  .card p{color:var(--dim);font-size:14px}
-  .meta{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
-  .pill{font-family:'SF Mono',monospace;font-size:11px;padding:3px 9px;border-radius:6px;border:1px solid var(--border);color:var(--faint)}
-  .row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px}
-  .row a{color:var(--dim);font-family:'SF Mono',monospace;font-size:13px;text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px}
-  .row a:hover{color:var(--txt);border-color:var(--purple)}
-  footer{margin-top:54px;color:var(--faint);font-family:'SF Mono',monospace;font-size:12px;text-align:center}
+  ::selection{background:rgba(168,85,247,.35);color:#fff}
+  a{color:inherit}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+  .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ── top repo bar ── */
+  .topbar{
+    display:block;text-align:center;text-decoration:none;
+    font-size:13px;color:var(--txt);font-weight:500;
+    background:linear-gradient(90deg,rgba(124,58,237,.18),rgba(249,115,22,.14),rgba(59,130,246,.18));
+    border-bottom:1px solid var(--border);padding:9px 16px;
+    transition:background .2s;
+  }
+  .topbar:hover{background:linear-gradient(90deg,rgba(124,58,237,.30),rgba(249,115,22,.24),rgba(59,130,246,.30))}
+  .topbar b{color:#fff}
+  .topbar .arr{opacity:.6;margin-left:4px}
+  .topbar .star{color:var(--gold);margin-right:6px}
+
+  /* ── nav ── */
+  nav.bar{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    background:rgba(8,8,15,.72);border-bottom:1px solid transparent;
+    transition:border-color .25s, background .25s;
+  }
+  nav.bar.scrolled{border-color:var(--border);background:rgba(8,8,15,.88)}
+  .nav-in{display:flex;align-items:center;gap:18px;height:64px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-weight:700;font-size:16px;letter-spacing:-.01em}
+  .brand img{width:30px;height:30px}
+  .brand span b{font-weight:800}
+  .brand span i{font-style:normal;color:var(--purple)}
+  .navlinks{display:none;gap:6px;margin-left:14px}
+  .navlinks a{text-decoration:none;color:var(--dim);font-size:14px;font-weight:500;padding:8px 12px;border-radius:8px;transition:.18s}
+  .navlinks a:hover{color:var(--txt);background:rgba(255,255,255,.05)}
+  .nav-cta{margin-left:auto;display:flex;gap:10px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;font-size:14px;
+    padding:9px 16px;border-radius:10px;transition:.18s;border:1px solid transparent;cursor:pointer;white-space:nowrap}
+  .btn-ghost{color:var(--dim);border-color:var(--border2)}
+  .btn-ghost:hover{color:var(--txt);border-color:var(--purple);background:rgba(168,85,247,.08)}
+  .btn-gh{color:#fff;background:rgba(255,255,255,.06);border-color:var(--border2)}
+  .btn-gh:hover{background:rgba(255,255,255,.12);border-color:#fff}
+  .btn-primary{color:#0a0a12;background:var(--grad);font-weight:700;box-shadow:0 8px 30px -10px rgba(168,85,247,.6)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 36px -10px rgba(168,85,247,.8)}
+  .btn svg{width:16px;height:16px}
+
+  /* ── hero ── */
+  header.hero{position:relative;padding:84px 0 56px;text-align:center;overflow:hidden}
+  .burst{position:absolute;inset:0;z-index:0;display:grid;place-items:center;pointer-events:none;opacity:.5}
+  .burst svg{width:min(900px,130vw);animation:spin 80s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hero .inner{position:relative;z-index:1}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--purple);background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.28);
+    padding:6px 14px;border-radius:999px;margin-bottom:26px}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+  h1{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(34px,6vw,62px);line-height:1.04;letter-spacing:-.025em;margin:0 auto 22px;max-width:16ch}
+  .hero p.lede{font-size:clamp(16px,2.2vw,20px);color:var(--dim);max-width:62ch;margin:0 auto 34px}
+  .hero p.lede b{color:var(--txt);font-weight:600}
+  .cta-row{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-bottom:26px}
+  .cta-row .btn{padding:13px 22px;font-size:15px}
+  .install{max-width:640px;margin:0 auto 30px;text-align:left}
+  .install .label{display:flex;align-items:center;justify-content:space-between;
+    background:#0a0a14;border:1px solid var(--border);border-bottom:none;border-radius:12px 12px 0 0;padding:9px 14px}
+  .install .label span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.06em}
+  .install pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;color:#cbd5e1;
+    background:#07070e;border:1px solid var(--border);border-radius:0 12px 12px 0;padding:14px 16px;overflow:auto;margin:0;border-top:none}
+  .install pre .c{color:var(--faint)} .install pre .s{color:var(--green)}
+  .copy{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:var(--purple);
+    font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 9px;border-radius:6px;cursor:pointer;transition:.18s}
+  .copy:hover{background:rgba(168,85,247,.22)}
+  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .stat{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px 20px;min-width:120px}
+  .stat b{display:block;font-family:'Sora',sans-serif;font-size:24px;font-weight:800}
+  .stat span{font-size:11.5px;color:var(--faint);font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+
+  /* ── sections ── */
+  section{padding:72px 0;position:relative}
+  .sec-head{text-align:center;max-width:680px;margin:0 auto 48px}
+  .sec-head .k{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:12px}
+  .sec-head h2{font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;margin-bottom:14px}
+  .sec-head p{color:var(--dim);font-size:16.5px}
+
+  /* philosophy quote */
+  .quote{max-width:780px;margin:0 auto;text-align:center;padding:8px 0}
+  .quote blockquote{font-family:'Sora',sans-serif;font-weight:600;font-size:clamp(20px,3vw,30px);line-height:1.35;letter-spacing:-.01em}
+  .quote .marks{color:var(--purple);font-size:40px;line-height:0}
+  .quote cite{display:block;margin-top:18px;font-style:normal;font-size:13.5px;color:var(--faint);font-family:'JetBrains Mono',monospace}
+  .quote cite a{color:var(--dim);text-decoration:underline;text-underline-offset:3px}
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:44px}
+  .pcard{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:16px;padding:24px}
+  .pcard h3{font-size:16px;margin-bottom:8px}
+  .pcard p{color:var(--dim);font-size:14px}
+  .pcard .n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);margin-bottom:14px}
+
+  /* how it works — phases */
+  .phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .phase{position:relative;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);
+    border-radius:16px;padding:24px 24px 26px;overflow:hidden;transition:.2s}
+  .phase:hover{transform:translateY(-3px);border-color:var(--purple)}
+  .phase::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--c,var(--purple));opacity:.8}
+  .phase .num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--c,var(--purple));font-weight:700;letter-spacing:.1em}
+  .phase h3{font-family:'Sora',sans-serif;font-size:19px;margin:8px 0 8px;font-weight:700}
+  .phase p{color:var(--dim);font-size:14px}
+
+  /* examples */
+  .ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:15px}
+  a.ex{display:block;text-decoration:none;color:inherit;background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--border);border-radius:14px;padding:20px 20px 18px;transition:.2s;position:relative;overflow:hidden}
+  a.ex:hover{transform:translateY(-3px);border-color:var(--purple);box-shadow:0 18px 40px -22px rgba(168,85,247,.6)}
+  a.ex .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+  a.ex h3{font-size:16.5px;margin:8px 0 5px;font-weight:700}
+  a.ex p{color:var(--dim);font-size:13px;line-height:1.5}
+  a.ex .m{margin-top:11px;display:flex;gap:6px;flex-wrap:wrap}
+  .pill{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);color:var(--faint)}
+  .ex-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:30px}
+  .ex-head .left .k{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
+  .ex-head .left h2{font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(24px,3.6vw,34px);letter-spacing:-.02em}
+
+  /* cta band */
+  .cta-band{position:relative;text-align:center;border:1px solid var(--border);border-radius:24px;overflow:hidden;
+    background:radial-gradient(700px 300px at 50% -30%,rgba(168,85,247,.25),transparent 70%),linear-gradient(180deg,#0c0c18,#0a0a14);padding:64px 24px}
+  .cta-band h2{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;margin-bottom:14px}
+  .cta-band p{color:var(--dim);max-width:52ch;margin:0 auto 28px;font-size:16px}
+
+  /* footer */
+  footer{border-top:1px solid var(--border);padding:40px 0 60px;margin-top:40px}
+  .foot-in{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  .foot-in .brand img{width:26px;height:26px}
+  .foot-in small{color:var(--faint);font-family:'JetBrains Mono',monospace;font-size:12px}
+  .foot-links{display:flex;gap:18px;flex-wrap:wrap}
+  .foot-links a{color:var(--dim);font-size:13px;text-decoration:none;font-family:'JetBrains Mono',monospace}
+  .foot-links a:hover{color:var(--txt)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  @media(min-width:860px){.navlinks{display:flex}}
+  @media(max-width:640px){.install pre{font-size:11px}.cta-row{flex-direction:column;width:100%;max-width:340px;margin-left:auto;margin-right:auto}.cta-row .btn{justify-content:center}}
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+    .burst svg{animation:none}
+  }
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <img class="logo" src="docs/images/logo/logo-dark.svg?v=2" alt="fireworks-design">
-  <p class="tag">An open-source Claude Code workflow that replicates <b>ClaudeDesign</b>.<br>The pages below are <b>real pipeline output</b> — explore → judge → synthesize → refine → polish.</p>
 
-  <div class="grid">
-    <a class="card" href="examples/movie-rating-platform/final.html">
-      <div class="k" style="color:var(--gold)">🎬 Movie platform</div>
-      <h3>LUMIÈRE</h3><p>Cinematic movie rating & discovery — hero 9.2 score, Trending Now, Top Rated chart, genre filters.</p>
-      <div class="meta"><span class="pill">Dark Premium · 7.33</span><span class="pill">49 agents</span></div>
-    </a>
-    <a class="card" href="examples/restaurant-fine-dining/final.html">
-      <div class="k" style="color:var(--gold)">🍽️ Fine dining</div>
-      <h3>MAISON NOIR</h3><p>Upscale restaurant — tasting menu, ambience gallery, candle-lit cellar mood, antique gold.</p>
-      <div class="meta"><span class="pill">Dark Premium · 7.50</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/creative-agency/final.html">
-      <div class="k" style="color:var(--green)">🎨 Design studio</div>
-      <h3>OBJECT &amp; ECHO</h3><p>Experimental creative agency — kinetic type, object/echo duality, acid-green signal.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.67</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/music-album/final.html">
-      <div class="k" style="color:var(--purple)">🎵 Album release</div>
-      <h3>NOVA · AURORA</h3><p>Immersive album page — generative cover, 32-bar visualizer, mouse-stirred title glow.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.17</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/fitness-app/final.html">
-      <div class="k" style="color:var(--green)">💪 Fitness SaaS</div>
-      <h3>PULSE</h3><p>Training app — adaptive plans, AI coaching, data-minimal athletic aesthetic.</p>
-      <div class="meta"><span class="pill">Swiss Minimal · 7.50</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/travel-destination/final.html">
-      <div class="k" style="color:var(--blue)">✈️ Travel guide</div>
-      <h3>AZORES</h3><p>Destination guide — interactive islands map, big editorial photography, 5-day itinerary.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.33</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/edtech-course/final.html">
-      <div class="k" style="color:var(--orange)">📚 Online courses</div>
-      <h3>LUMEN</h3><p>Learning platform — course cards, learning-path journey animation, instructors.</p>
-      <div class="meta"><span class="pill">Swiss Minimal · 7.50</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/game-launch/final.html">
-      <div class="k" style="color:var(--blue)">🎮 AAA game promo</div>
-      <h3>ECHOES OF THE VOID</h3><p>Sci-fi launch site — ship-status HUD, cinematic title reveal, editions ladder.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.17</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/nonprofit-cause/final.html">
-      <div class="k" style="color:var(--blue)">🤝 Charity</div>
-      <h3>Brightwater Project</h3><p>Clean-water nonprofit — animated donation well, transparency donut, impact stats.</p>
-      <div class="meta"><span class="pill">Editorial · 7.00</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/ecommerce-product/final.html">
-      <div class="k" style="color:var(--gold)">🛒 Product page</div>
-      <h3>AURA ONE</h3><p>Premium headphones — variant selector, instrument-grade specs, review breakdown.</p>
-      <div class="meta"><span class="pill">Dark Premium · 7.50</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/tech-conference/final.html">
-      <div class="k" style="color:var(--orange)">🎤 Dev conference</div>
-      <h3>BUILD/2026</h3><p>Conference site — multi-track schedule, build-pipeline dependency graph, speakers.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.00</span><span class="pill">29 agents</span></div>
-    </a>
-    <a class="card" href="examples/saas-vector-db/final.html">
-      <div class="k" style="color:var(--orange)">🗄️ SaaS landing</div>
-      <h3>vector</h3><p>Vector DB — hero, benchmark stats, Python snippet, 3-tier pricing.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.17</span><span class="pill">49 agents</span></div>
-    </a>
-    <a class="card" href="examples/oss-cli-homepage/final.html">
-      <div class="k" style="color:var(--blue)">⌨️ OSS homepage</div>
-      <h3>tideline</h3><p>CLI tool — install command, terminal demo, feature cards, monospace.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.17</span><span class="pill">35 agents</span></div>
-    </a>
-    <a class="card" href="examples/designer-portfolio/final.html">
-      <div class="k" style="color:var(--green)">🖼️ Portfolio</div>
-      <h3>Lin Hua — Selected Work</h3><p>Designer portfolio — stat hero, 6-project grid, capabilities, testimonials, recognition.</p>
-      <div class="meta"><span class="pill">Bold Editorial · 7.67</span><span class="pill">enriched</span></div>
-    </a>
-    <a class="card" href="docs/intro.html">
-      <div class="k" style="color:var(--purple)">📖 Methodology</div>
-      <h3>How it works (图文)</h3><p>The six-phase pipeline explained with inline SVG diagrams — explore → judge → synthesize → refine → polish.</p>
-      <div class="meta"><span class="pill">SVG diagrams</span><span class="pill">bilingual</span></div>
-    </a>
-  </div>
+<!-- top open-source bar -->
+<a class="topbar" href="https://github.com/yizhiyanhua-ai/fireworks-design" target="_blank" rel="noopener">
+  <span class="star">★</span> Open source · <b>github.com/yizhiyanhua-ai/fireworks-design</b><span class="arr">→</span>
+</a>
 
-  <div class="row">
-    <a href="https://github.com/yizhiyanhua-ai/fireworks-design">GitHub ↗</a>
-    <a href="https://github.com/yizhiyanhua-ai/fireworks-design#readme">README</a>
-    <a href="https://github.com/yizhiyanhua-ai/fireworks-design/blob/main/fireworks-design.js">workflow.js</a>
+<!-- nav -->
+<nav class="bar" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <img src="docs/images/logo/logo-icon.svg?v=2" alt="">
+      <span>fireworks<b>-</b><i>design</i></span>
+    </a>
+    <div class="navlinks">
+      <a href="#how">How it works</a>
+      <a href="#examples">Examples</a>
+      <a href="#philosophy">Philosophy</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn btn-gh" href="https://github.com/yizhiyanhua-ai/fireworks-design" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.34c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.19c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        Star
+      </a>
+      <a class="btn btn-primary" href="#examples">View examples</a>
+    </div>
   </div>
-  <footer>fireworks-design · quality is the only thing that matters</footer>
+</nav>
+
+<!-- hero -->
+<header class="hero" id="top">
+  <div class="burst" aria-hidden="true">
+    <svg viewBox="0 0 400 400">
+      <g stroke-linecap="round" stroke-width="2" opacity=".5">
+        <line x1="200" y1="200" x2="200" y2="60" stroke="#a855f7"/>
+        <line x1="200" y1="200" x2="340" y2="200" stroke="#f97316"/>
+        <line x1="200" y1="200" x2="200" y2="340" stroke="#3b82f6"/>
+        <line x1="200" y1="200" x2="60" y2="200" stroke="#10b981"/>
+        <line x1="200" y1="200" x2="300" y2="100" stroke="#eab308"/>
+        <line x1="200" y1="200" x2="300" y2="300" stroke="#a855f7"/>
+        <line x1="200" y1="200" x2="100" y2="300" stroke="#f97316"/>
+        <line x1="200" y1="200" x2="100" y2="100" stroke="#3b82f6"/>
+      </g>
+      <g fill=".6">
+        <circle cx="200" cy="60" r="5" fill="#a855f7"/><circle cx="340" cy="200" r="5" fill="#f97316"/>
+        <circle cx="200" cy="340" r="5" fill="#3b82f6"/><circle cx="60" cy="200" r="5" fill="#10b981"/>
+        <circle cx="300" cy="100" r="4" fill="#eab308"/><circle cx="300" cy="300" r="4" fill="#a855f7"/>
+        <circle cx="100" cy="300" r="4" fill="#f97316"/><circle cx="100" cy="100" r="4" fill="#3b82f6"/>
+      </g>
+    </svg>
+  </div>
+  <div class="wrap inner">
+    <span class="eyebrow"><span class="dot"></span> Open-source · Claude Code workflow</span>
+    <h1>One prompt in.<br>A studio's worth of <span class="grad">directions</span> out.</h1>
+    <p class="lede"><b>fireworks-design</b> replicates ClaudeDesign — it fans out 6–8 distinct aesthetics in parallel, judges each across 6 design dimensions, synthesizes the best, then adversarially refines to a <b>single shippable page</b>.</p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/yizhiyanhua-ai/fireworks-design" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a7.77 7.77 0 0 1 7.75 7.78 7.75 7.75 0 0 1-5.32 7.37c-.4.08-.55-.17-.55-.38l.01-2.2c0-.75-.26-1.23-.55-1.48 1.78-.2 3.65-.89 3.65-3.95 0-.87-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.21-2.2.82a7.6 7.6 0 0 0-4 0c-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.05 1.86 3.74 3.64 3.95-.23.2-.44.6-.51 1.17-.46.21-1.63.57-2.35-.68-.4-.71-1.12-.77-1.12-.77-.63-.01-.04.4-.04.4.42.2.72.97.72.97.42 1.28 1.57.91 1.95.7.06-.44.26-.74.47-.91l-.01-2.2c0-.21-.15-.46-.55-.38A7.75 7.75 0 0 1 .25 8 7.77 7.77 0 0 1 8 .25z"/></svg>
+        Star on GitHub
+      </a>
+      <a class="btn btn-ghost" href="#examples">See 14 live examples →</a>
+    </div>
+
+    <div class="install">
+      <div class="label"><span>~ install in your project</span><button class="copy" id="copy">copy</button></div>
+      <pre id="code"><span class="c"># drop it into your Claude Code workflows folder</span>
+mkdir -p .claude/workflows
+curl -fsSL -o .claude/workflows/fireworks-design.js \
+  <span class="s">https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/fireworks-design.js</span></pre>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>14</b><span>LIVE EXAMPLES</span></div>
+      <div class="stat"><b>8</b><span>AESTHETICS</span></div>
+      <div class="stat"><b>6</b><span>JUDGE DIMENSIONS</span></div>
+      <div class="stat"><b>∞</b><span>MODEL-AGNOSTIC</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- philosophy -->
+<section id="philosophy">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="k">Why it exists</div>
+      <h2>Designers ration exploration.<br>This workflow doesn't.</h2>
+    </div>
+    <div class="quote reveal">
+      <blockquote><span class="marks">“</span> Even experienced designers have to ration exploration — there's rarely time to prototype a dozen directions, so you limit yourself to a few. <span class="marks">”</span></blockquote>
+      <cite>— <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">Anthropic, Introducing Claude Design</a></cite>
+    </div>
+    <div class="pgrid">
+      <div class="pcard reveal"><div class="n">01 / PROBLEM</div><h3>One generation = one draw</h3><p>A single LLM output locks taste, mood, and interpretation into one version. Its quality ceiling is capped by variance.</p></div>
+      <div class="pcard reveal"><div class="n">02 / APPROACH</div><h3>Explore widely, judge independently</h3><p>Fan out many distinct aesthetics, score each across separate dimensions — turn variance into a quality floor.</p></div>
+      <div class="pcard reveal"><div class="n">03 / OUTCOME</div><h3>Synthesize, then refine hard</h3><p>Graft the winners together and critique-fix-loop until it clears the bar. Different briefs crown different winners — on purpose.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- how it works -->
+<section id="how" style="background:linear-gradient(180deg,transparent,rgba(124,58,237,.04),transparent)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="k">How it works</div>
+      <h2>Six phases, one shippable page</h2>
+      <p>Every phase is deterministic orchestration over many model agents — no hand-holding, no single lucky roll.</p>
+    </div>
+    <div class="phases">
+      <div class="phase reveal" style="--c:#a855f7"><div class="num">① BRIEF</div><h3>Distill a design system</h3><p>Turn the prompt into shared tokens — fonts, palette, mood — injected into every agent after.</p></div>
+      <div class="phase reveal" style="--c:#f97316"><div class="num">② DIVERGE</div><h3>Explore many directions</h3><p>N agents each commit to a distinct aesthetic and ship a complete page. The quality core.</p></div>
+      <div class="phase reveal" style="--c:#3b82f6"><div class="num">③ JUDGE</div><h3>Panel scoring</h3><p>Every direction × 6 dimensions, scored 1–10 by independent critics. Each returns a top fix.</p></div>
+      <div class="phase reveal" style="--c:#10b981"><div class="num">④ SYNTHESIZE</div><h3>Graft the best</h3><p>Top-3 directions read and merged into one page that must beat any single direction.</p></div>
+      <div class="phase reveal" style="--c:#eab308"><div class="num">⑤ REFINE</div><h3>Adversarial polish</h3><p>Ruthless critique → surgical fix, looped. ClaudeDesign's "fine-grained controls," engineered.</p></div>
+      <div class="phase reveal" style="--c:#a855f7"><div class="num">⑥ POLISH</div><h3>Ship-ready QA</h3><p>Responsive, A11y, WCAG AA, reduced-motion, no broken refs — verified in headless Chromium.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- examples -->
+<section id="examples">
+  <div class="wrap">
+    <div class="ex-head reveal">
+      <div class="left">
+        <div class="k">Live outputs</div>
+        <h2>14 real pages, 14 different domains</h2>
+        <p style="color:var(--dim);margin-top:8px;max-width:60ch">Every page below is genuine pipeline output — no hand-editing. Winners span <b style="color:var(--txt)">Bold Editorial ×8, Dark Premium ×3, Swiss Minimal ×2, Editorial ×1</b>.</p>
+      </div>
+      <a class="btn btn-ghost" href="examples/README.md">Full deep-dives →</a>
+    </div>
+    <div class="ex-grid">
+      <a class="ex" href="examples/movie-rating-platform/final.html"><div class="k" style="color:var(--gold)">🎬 MOVIE</div><h3>LUMIÈRE</h3><p>Cinematic rating & discovery. Hero 9.2 score, trending, charts, genres.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">49 agents</span></div></a>
+      <a class="ex" href="examples/restaurant-fine-dining/final.html"><div class="k" style="color:var(--gold)">🍽️ DINING</div><h3>MAISON NOIR</h3><p>Fine dining. Tasting menu, candle-lit cellar, antique gold.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/creative-agency/final.html"><div class="k" style="color:var(--green)">🎨 STUDIO</div><h3>OBJECT &amp; ECHO</h3><p>Experimental agency. Kinetic type, object/echo duality, acid signal.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/music-album/final.html"><div class="k" style="color:var(--purple)">🎵 MUSIC</div><h3>NOVA · AURORA</h3><p>Immersive album. Generative cover, 32-bar visualizer, play-state aura.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/fitness-app/final.html"><div class="k" style="color:var(--green)">💪 FITNESS</div><h3>PULSE</h3><p>Training app. Adaptive plans, data-minimal athletic aesthetic.</p><div class="m"><span class="pill">Swiss Minimal</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/travel-destination/final.html"><div class="k" style="color:var(--blue)">✈️ TRAVEL</div><h3>AZORES</h3><p>Destination guide. Interactive islands map, big editorial photography.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/edtech-course/final.html"><div class="k" style="color:var(--orange)">📚 EDTECH</div><h3>LUMEN</h3><p>Learning platform. Course cards, learning-path journey animation.</p><div class="m"><span class="pill">Swiss Minimal</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/game-launch/final.html"><div class="k" style="color:var(--blue)">🎮 GAME</div><h3>ECHOES OF THE VOID</h3><p>AAA promo. Ship-status HUD, cinematic title reveal, editions.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/nonprofit-cause/final.html"><div class="k" style="color:var(--blue)">🤝 NONPROFIT</div><h3>Brightwater</h3><p>Clean-water cause. Animated donation well, transparency donut.</p><div class="m"><span class="pill">Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/ecommerce-product/final.html"><div class="k" style="color:var(--gold)">🛒 COMMERCE</div><h3>AURA ONE</h3><p>Premium headphones. Variant picker, instrument-grade specs.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/tech-conference/final.html"><div class="k" style="color:var(--orange)">🎤 CONFERENCE</div><h3>BUILD/2026</h3><p>Dev conference. Multi-track schedule, build-pipeline graph.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">29 agents</span></div></a>
+      <a class="ex" href="examples/saas-vector-db/final.html"><div class="k" style="color:var(--orange)">🗄️ SAAS</div><h3>vector</h3><p>Vector DB landing. Benchmark stats, Python snippet, pricing.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">49 agents</span></div></a>
+      <a class="ex" href="examples/oss-cli-homepage/final.html"><div class="k" style="color:var(--blue)">⌨️ OSS</div><h3>tideline</h3><p>CLI homepage. Install command, terminal demo, monospace.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/designer-portfolio/final.html"><div class="k" style="color:var(--green)">🖼️ PORTFOLIO</div><h3>Lin Hua</h3><p>Designer portfolio. Stat hero, 6-project grid, testimonials.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">enriched</span></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- final cta -->
+<section style="padding:48px 0 24px">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <h2>Stop betting on one roll.</h2>
+      <p>Install the workflow, point it at any brief, and let a panel of design critics do the exploration you never have time for.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/yizhiyanhua-ai/fireworks-design" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a7.77 7.77 0 0 1 7.75 7.78 7.75 7.75 0 0 1-5.32 7.37c-.4.08-.55-.17-.55-.38l.01-2.2c0-.75-.26-1.23-.55-1.48 1.78-.2 3.65-.89 3.65-3.95 0-.87-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.21-2.2.82a7.6 7.6 0 0 0-4 0c-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.05 1.86 3.74 3.64 3.95-.23.2-.44.6-.51 1.17-.46.21-1.63.57-2.35-.68-.4-.71-1.12-.77-1.12-.77-.63-.01-.04.4-.04.4.42.2.72.97.72.97.42 1.28 1.57.91 1.95.7.06-.44.26-.74.47-.91l-.01-2.2c0-.21-.15-.46-.55-.38A7.75 7.75 0 0 1 .25 8 7.77 7.77 0 0 1 8 .25z"/></svg>
+          Star on GitHub
+        </a>
+        <a class="btn btn-ghost" href="examples/README.md">Read the deep-dives</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <a class="brand" href="#top"><img src="docs/images/logo/logo-icon.svg?v=2" alt=""><span>fireworks<b>-</b><i>design</i></span></a>
+    <small>MIT · quality is the only thing that matters</small>
+    <div class="foot-links">
+      <a href="https://github.com/yizhiyanhua-ai/fireworks-design" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/yizhiyanhua-ai/fireworks-design#readme" target="_blank" rel="noopener">README</a>
+      <a href="examples/README.md">Examples</a>
+      <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">ClaudeDesign</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // nav scroll state
+  const nav=document.getElementById('nav');
+  const onScroll=()=>nav.classList.toggle('scrolled',window.scrollY>8);
+  onScroll();addEventListener('scroll',onScroll,{passive:true});
+  // reveal on scroll
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>reduce?el.classList.add('in'):io.observe(el));
+  // copy install
+  const code=document.getElementById('code'),btn=document.getElementById('copy');
+  btn?.addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(code.innerText.trim());
+      const t=btn.textContent;btn.textContent='copied ✓';setTimeout(()=>btn.textContent=t,1400);}catch(e){}
+  });
+</script>
 </body>
 </html>
