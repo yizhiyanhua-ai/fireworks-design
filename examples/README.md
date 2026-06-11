@@ -1,6 +1,6 @@
 # Examples
 
-Real output from `fireworks-design` — each page below was produced by an **actual workflow run**: parallel direction exploration → panel judging → synthesis → adversarial refine → polish. No hand-editing after the pipeline.
+Real output from `fireworks-design` — each page below was produced by an **actual workflow run**: parallel direction exploration → panel judging → synthesis → adversarial refine → polish.
 
 > The `draft-*.html` files each run also generates (the explored directions) are intentionally **not** committed — they're intermediate artifacts. Only the final synthesized page is kept here, so the repo stays lean. Run the workflow locally to see all directions.
 
@@ -8,15 +8,19 @@ Real output from `fireworks-design` — each page below was produced by an **act
 
 | Example | Brief | Variants | Winner (aesthetic) | Agents | Tokens | View |
 |---------|-------|:--------:|--------------------|:------:|:------:|------|
+| 🎬 **Movie platform** — `movie-rating-platform` | *LUMIÈRE*: cinematic movie rating/discovery — full-bleed hero w/ 9.2 score, Trending Now row, Top Rated chart, genre filters, critic quote | 6 | Dark Premium (tie @ 7.33) | 49 | ~1.58M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html) · [src](./movie-rating-platform/final.html) |
 | **SaaS landing** — `saas-vector-db` | Vector DB for AI workloads: hero, benchmark stat strip, Python snippet, features, 3-tier pricing | 6 | Bold Editorial (tie @ 7.17) | 49 | ~1.7M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html) · [src](./saas-vector-db/final.html) |
 | **OSS homepage** — `oss-cli-homepage` | `tideline` CLI: install command + copy button, feature cards, terminal demo | 4 | Bold Editorial (7.17) | 35 | ~1.07M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html) · [src](./oss-cli-homepage/final.html) |
-| **Portfolio** — `designer-portfolio` | Designer one-pager: name hero, about, 4-project grid, contact | 4 | Bold Editorial (7.67) | 35 | ~0.85M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html) · [src](./designer-portfolio/final.html) |
+| **Portfolio** — `designer-portfolio` | Designer portfolio: stat hero, 6-project grid, capabilities, clients, process, testimonials, recognition, footer | 4 | Bold Editorial (7.67) | 35 | ~0.85M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html) · [src](./designer-portfolio/final.html) |
 
-> **Why "Bold Editorial" kept winning** is not a bug — each run explores genuinely distinct aesthetics (Swiss Minimal, Dark Premium, Vibrant Gradient, Neo-Brutalist, Soft Organic, …). The editorial lens simply scored highest *for these particular briefs* (developer/tool/design-savvy audiences reward hierarchy and typographic confidence). Different briefs will crown different winners; that's the point of judging.
+> **Note on "Bold Editorial" winning 3× then Dark Premium taking the movie brief** — not a bug. Each run explores genuinely distinct aesthetics; the winning lens is whichever scored highest *for that brief*. Developer/tool/design-savvy audiences rewarded editorial hierarchy; the cinematic movie brief rewarded theatrical dark restraint. Different briefs crown different winners — that's the whole point of judging instead of picking once.
+
+> 📝 **`designer-portfolio`** was subsequently enriched in a targeted pass (704 → 1,249 lines): sticky nav + scroll progress, a stat-led hero, the work grid upgraded to 6 projects with year/role/impact-on-hover, plus capabilities, clients, process, testimonials, and recognition sections — preserving the original editorial aesthetic.
 
 ## How to view
 
 **Live (rendered) on GitHub Pages:**
+- 🎬 Movie platform — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html>
 - 🌐 SaaS landing — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html>
 - 🌐 OSS homepage — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html>
 - 🌐 Portfolio — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html>
@@ -34,7 +38,12 @@ python3 -m http.server 8000   # then visit localhost:8000/examples/...
 
 ## What each pipeline stage actually contributed
 
-### `saas-vector-db` (flagship, 6 directions)
+### `movie-rating-platform` (6 directions — Dark Premium winner)
+- **Diverge** produced 6 distinct readings of a cinematic brief: Bold Editorial, Swiss Minimal, Vibrant Gradient (reconciled as ambient aurora glow), Dark Premium, Soft Organic, Neo-Brutalist.
+- **Synthesize** built on the Dark Premium "70mm screening room" base — near-black canvas, antique-gold `#d4a24a` rationed exclusively to ratings, the active genre, the primary CTA, and the top-2 rank numerals.
+- **Refine × 2** + **Polish** fixed a **critical JS bug**: the mobile menu hamburger never became an X because Lucide detached the saved icon node on first render — replaced with a `setToggleIcon()` rebuild. Added a dynamic `aria-label`, then elevated the signature moment with a one-shot gold projector-beam light-sweep across the hero 9.2 score (disabled under reduced motion).
+
+### `saas-vector-db` (6 directions)
 - **Diverge** produced 6 distinct pages: Bold Editorial, Swiss Minimal, Vibrant Gradient, Dark Premium, Soft Organic, Neo-Brutalist.
 - **Synthesize** grafted the editorial skeleton with the gradient's ambient motion and the dark-premium restraint.
 - **Refine × 2** + **Polish** fixed: a mobile menu that never closed on navigation, double-painted neighbor nodes on the hero vector-space canvas, and stripped **all 11 placeholder `href="#"`** links. Verified in headless Chrome at 375/768/1280 — zero horizontal scroll.
@@ -61,4 +70,4 @@ Workflow({
 })
 ```
 
-> **Rate-limit note:** these three runs were executed **sequentially, not concurrently.** Running multiple `fireworks-design` workflows in parallel can trip provider rate limits (each run spawns 35–50 agents). The workflow now retries rate-limited agents automatically, but serializing heavy runs is the safe default.
+> **Rate-limit note:** these runs were executed **sequentially, not concurrently.** Running multiple `fireworks-design` workflows in parallel can trip provider rate limits (each run spawns 35–50 agents). The workflow now retries rate-limited agents automatically, but serializing heavy runs is the safe default.

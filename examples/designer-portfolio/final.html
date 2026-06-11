@@ -4,13 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Lin Hua — Selected Work</title>
-<meta name="description" content="Lin Hua, Product Designer — Interfaces, Systems, Soft Realism. A single-page editorial portfolio; four works set like a printed design annual." />
+<meta name="description" content="Lin Hua, Product Designer — Interfaces, Systems, Soft Realism. A single-page editorial portfolio; selected works set like a printed design annual." />
 <link rel="canonical" href="https://linhua.studio/" />
 
 <!-- Open Graph / Twitter / theme -->
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Lin Hua — Selected Work" />
-<meta property="og:description" content="Product Designer — Interfaces, Systems, Soft Realism. Four works, set in order of conviction." />
+<meta property="og:description" content="Product Designer — Interfaces, Systems, Soft Realism. Selected works, set in order of conviction." />
 <meta property="og:url" content="https://linhua.studio/" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Lin Hua — Selected Work" />
@@ -198,15 +198,54 @@
   .work-card .thumb { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
   .work-card .thumb-inner { transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
   .work-card .glyph { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .work-card .reveal-detail {
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s,
+                margin-top 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 0;
+  }
+  .work-card .title-row { transition: color 0.35s ease; }
   @media (hover: hover) {
     .work-card:hover .thumb-inner { transform: scale(1.035); }
     .work-card:hover .glyph { transform: translateX(3px); }
+    .work-card:hover .reveal-detail {
+      max-height: 180px; opacity: 1; margin-top: 0.85rem;
+    }
   }
   .work-card:focus-within .thumb-inner { transform: scale(1.035); }
   .work-card:focus-within .glyph { transform: translateX(3px); }
+  .work-card:focus-within .reveal-detail {
+    max-height: 180px; opacity: 1; margin-top: 0.85rem;
+  }
 
-  /* ---- Email: the real CTA. Browser-drawn underline tracks italic slope —
-          background-image cannot. Vermillion = one of two saturated beats. ---- */
+  /* ---- Sticky nav + scroll progress ---- */
+  .nav-bar {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s ease, background 0.4s ease;
+  }
+  .nav-bar.is-scrolled { border-bottom-color: color-mix(in srgb, var(--ink) 15%, transparent); }
+  .nav-progress {
+    position: absolute; left: 0; bottom: -1px; height: 2px;
+    width: 100%;
+    transform: scaleX(0); transform-origin: left center;
+    background: var(--vermillion);
+    transition: transform 0.08s linear;
+  }
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: ""; position: absolute; left: 0; right: 100%; bottom: -0.32em;
+    height: 1px; background: var(--ink);
+    transition: right 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-link:hover::after, .nav-link:focus-visible::after,
+  .nav-link[aria-current="true"]::after { right: 0; }
+
+  /* ---- Email / link: the real CTA. Vermillion underline. ---- */
   .link-underline {
     text-decoration: underline;
     text-decoration-color: var(--vermillion);
@@ -216,6 +255,33 @@
     transition: text-decoration-thickness 0.3s ease;
   }
   .link-underline:hover, .link-underline:focus-visible { text-decoration-thickness: 3px; }
+
+  /* ---- Primary CTA button (vermillion is reserved; we use ink for the CTA so
+          vermillion keeps its singular status for name/rule/progress/underline) ---- */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.6em;
+    background: var(--ink); color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--step--1); letter-spacing: 0.16em;
+    text-transform: uppercase; font-weight: 500;
+    padding: 0.95rem 1.5rem; border-radius: 2px;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
+                background 0.4s ease, color 0.4s ease;
+  }
+  .btn-primary .arrow { transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
+  .btn-primary:hover { background: var(--vermillion); }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+  .btn-primary:focus-visible { outline-offset: 4px; }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.5em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--step--1); letter-spacing: 0.14em;
+    text-transform: uppercase; font-weight: 500;
+    padding: 0.9rem 0.2rem; color: var(--ink);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 40%, transparent);
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+  .btn-secondary:hover { color: var(--vermillion); border-color: var(--vermillion); }
 
   /* ---- Focus ring — ink (not vermillion). Vermillion is reserved for name/email/01. ---- */
   a:focus-visible, button:focus-visible {
@@ -236,12 +302,57 @@
     color: var(--ink);
     line-height: 1;
   }
+  .tag-verm {
+    border-color: color-mix(in srgb, var(--vermillion) 45%, transparent);
+    color: var(--vermDeep);
+  }
 
   /* ---- Thumbnails tinted from the paper/bone/taupe family + ONE vermillion + ONE ink ---- */
   .tint-verm  { background: var(--vermillion); }
   .tint-bone  { background: #D8D2C4; }
   .tint-taupe { background: #C9C1AE; }
   .tint-sand  { background: #B5AC95; }
+  .tint-ink   { background: #161413; }
+  .tint-sage  { background: #A8AE94; }
+
+  /* ---- Capability tile ---- */
+  .cap-tile {
+    border-top: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+    padding-top: 1.5rem;
+    transition: padding-top 0.4s cubic-bezier(0.16,1,0.3,1),
+                border-color 0.4s ease;
+  }
+  .cap-tile .cap-num { transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), color 0.4s ease; }
+  .cap-tile:hover { border-top-color: var(--ink); padding-top: 1.75rem; }
+  .cap-tile:hover .cap-num { transform: translateY(-2px); color: var(--vermDeep); }
+
+  /* ---- Wordmark cell (text-based "trusted by") ---- */
+  .wordmark {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--inkDim);
+    transition: color 0.35s ease, letter-spacing 0.5s cubic-bezier(0.16,1,0.3,1);
+    text-align: center;
+  }
+  .wordmark:hover { color: var(--ink); letter-spacing: 0; }
+
+  /* ---- Process step ---- */
+  .step-row { position: relative; }
+  .step-row::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+    transform: scaleY(0); transform-origin: top;
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .step-row:hover::before { transform: scaleY(1); background: var(--vermillion); }
+
+  /* ---- Quote block ---- */
+  .quote-mark {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    color: var(--vermillion); line-height: 0.6;
+    font-size: clamp(3.5rem, 6vw, 5rem);
+  }
 
   /* ---- Reduced motion ---- */
   @media (prefers-reduced-motion: reduce) {
@@ -253,6 +364,7 @@
     .v-rule { transform: scaleX(1); }
     .name-line > span { transform: translateY(0); }
     .fade-up, .card-reveal { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+    .work-card .reveal-detail { max-height: none; opacity: 1; margin-top: 0.85rem; }
   }
 
   /* ---- Selection — ink/15 on paper, never vermillion ---- */
@@ -275,48 +387,47 @@
 <!-- Skip link -->
 <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-ink focus:text-paper focus:px-3 focus:py-2 focus:rounded mono-label">Skip to content</a>
 
-<!-- ===================== HEADER / NAV ===================== -->
-<header class="relative z-20">
-  <div class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-5 lg:pt-7">
-    <nav class="flex items-center justify-between" aria-label="Primary">
+<!-- ===================== STICKY NAV + SCROLL PROGRESS ===================== -->
+<div class="nav-bar">
+  <div class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+    <nav class="flex items-center justify-between py-3.5" aria-label="Primary">
       <a href="#main" class="mono-label text-ink hover:text-inkDim transition-colors" aria-label="Lin Hua, home">
         <span class="inline-block w-1.5 h-1.5 bg-ink align-middle mr-2 -translate-y-0.5" aria-hidden="true"></span>LH<span class="text-inkDim"> — Index</span>
       </a>
       <ul class="flex items-center gap-5 sm:gap-8 mono-label text-ink">
-        <li><a href="#work" class="hover:text-inkDim transition-colors">Work</a></li>
-        <li class="hidden sm:block"><a href="#about" class="hover:text-inkDim transition-colors">About</a></li>
-        <li><a href="#contact" class="hover:text-inkDim transition-colors">Contact</a></li>
+        <li><a href="#work" class="nav-link hover:text-inkDim transition-colors" data-navlink>Work</a></li>
+        <li class="hidden sm:block"><a href="#capabilities" class="nav-link hover:text-inkDim transition-colors" data-navlink>Capabilities</a></li>
+        <li class="hidden md:block"><a href="#process" class="nav-link hover:text-inkDim transition-colors" data-navlink>Process</a></li>
+        <li class="hidden md:block"><a href="#about" class="nav-link hover:text-inkDim transition-colors" data-navlink>About</a></li>
+        <li><a href="#contact" class="nav-link hover:text-inkDim transition-colors" data-navlink>Contact</a></li>
       </ul>
     </nav>
-    <div class="rule-h mt-5"></div>
   </div>
-</header>
+  <div class="nav-progress" id="navProgress" aria-hidden="true"></div>
+</div>
 
 <main id="main" class="relative z-10">
 
   <!-- ===================== HERO ===================== -->
   <section aria-labelledby="hero-name" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
-    <!-- Editorial micro-label row — pt-4 (was pt-8) to protect first-viewport fit -->
+    <!-- Editorial micro-label row -->
     <div class="flex items-end justify-between pt-4 lg:pt-6">
       <span class="mono-label text-inkDim fade-up">Selected Work — Vol. 01</span>
       <span class="mono-label text-inkDim fade-up hidden sm:block">Lisbon · N. 38°54′</span>
     </div>
 
-    <!-- Masthead grid — name + About land above the fold; §02 work heading IS the fold cue.
-         About is absolutely parked in the top-right void at lg (off-axis, lower-third, right column
-         per brief) so it never stacks under the name and steals fold height. -->
+    <!-- Masthead grid — name + About land above the fold. -->
     <div class="grid grid-cols-12 gap-x-4 lg:gap-x-6 mt-6 lg:mt-8 min-h-[34vh] lg:min-h-[38vh] relative">
 
       <!-- Top-left tiny credit -->
       <div class="col-span-12 lg:col-span-3 fade-up">
         <p class="mono-label text-inkDim">A Portfolio</p>
-        <p class="mt-2 font-sans leading-[var(--leading-ui)] text-inkDim max-w-[18ch]" style="font-size:var(--step--1);">
-          Four works, set in order of conviction.
+        <p class="mt-2 font-sans leading-[var(--leading-ui)] text-inkDim max-w-[20ch]" style="font-size:var(--step--1);">
+          Twelve years of interfaces, set in order of conviction.
         </p>
       </div>
 
-      <!-- ABOUT blurb — absolute in the top-right void at lg; in-flow stack below sm.
-           Drop cap rendered as explicit floated span (em-tuned, cross-browser safe). -->
+      <!-- ABOUT blurb — absolute in the top-right void at lg; in-flow stack below sm. -->
       <div id="about" class="col-span-12 sm:col-span-12 lg:col-span-5 lg:absolute lg:top-0 lg:right-0 lg:w-[42%] order-3 lg:order-none mt-8 sm:mt-8 lg:mt-0 fade-up">
         <p class="mono-label text-inkDim mb-3">Manifesto</p>
         <p class="font-sans text-ink max-w-[42ch] text-left" style="font-size:var(--step-0); line-height:var(--leading-read);">
@@ -330,20 +441,69 @@
           <span class="name-line block" id="name-lin"><span>Lin</span></span>
           <span class="name-line delay-1 block" id="name-hua"><span>Hua</span></span>
         </h1>
-        <!-- typesetter's vermillion mark — one of only two saturated beats -->
+        <!-- typesetter's vermillion mark -->
         <div class="v-rule w-24 mt-3 mb-3" aria-hidden="true"></div>
-        <p class="font-sans tracking-[0.005em] text-ink max-w-[38ch] fade-up" style="font-size:var(--step-0); line-height:var(--leading-ui);">
+        <p class="font-sans tracking-[0.005em] text-ink max-w-[42ch] fade-up" style="font-size:var(--step-0); line-height:var(--leading-ui);">
           Product Designer <span class="text-inkDim px-1">—</span>
           <span class="text-ink">Interfaces, Systems, Soft Realism.</span>
+          Helping software teams ship products that read like they were edited, not assembled.
         </p>
+
+        <!-- Stat row — credibility, set as a typeset ledger -->
+        <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-5 mt-8 max-w-[44rem] fade-up">
+          <div>
+            <dt class="mono-label text-inkDim">Practising</dt>
+            <dd class="display-serif font-light tracking-[-0.02em] text-ink mt-1" style="font-size:var(--step-2); line-height:1;">12<span class="text-inkDim text-[0.5em] align-baseline ml-1">yrs</span></dd>
+          </div>
+          <div>
+            <dt class="mono-label text-inkDim">Products shipped</dt>
+            <dd class="display-serif font-light tracking-[-0.02em] text-ink mt-1" style="font-size:var(--step-2); line-height:1;">34</dd>
+          </div>
+          <div>
+            <dt class="mono-label text-inkDim">Users reached</dt>
+            <dd class="display-serif font-light tracking-[-0.02em] text-ink mt-1" style="font-size:var(--step-2); line-height:1;">9.4<span class="text-inkDim text-[0.5em] align-baseline ml-1">M</span></dd>
+          </div>
+          <div>
+            <dt class="mono-label text-inkDim">Systems built</dt>
+            <dd class="display-serif font-light tracking-[-0.02em] text-ink mt-1" style="font-size:var(--step-2); line-height:1;">7</dd>
+          </div>
+        </dl>
+
+        <!-- Primary CTA -->
+        <div class="flex flex-wrap items-center gap-x-8 gap-y-4 mt-9 fade-up">
+          <a href="#work" class="btn-primary">
+            See selected work
+            <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#contact" class="btn-secondary">
+            Start a brief
+          </a>
+        </div>
       </div>
 
     </div>
   </section>
 
+  <!-- ===================== TRUSTED BY ===================== -->
+  <section aria-labelledby="clients-heading" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-16 lg:pt-24">
+    <div class="flex items-baseline justify-between mb-8 fade-up">
+      <p class="mono-label text-inkDim">§ 01 — Trusted by</p>
+      <p class="mono-label text-inkDim hidden sm:block">Teams who came back for a second engagement</p>
+    </div>
+    <h2 id="clients-heading" class="sr-only">Selected clients</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-y-8 gap-x-4 border-t border-b border-ink/15 py-8 lg:py-10 fade-up">
+      <span class="wordmark" style="font-size:var(--step-2);">Linear</span>
+      <span class="wordmark" style="font-size:var(--step-2);">Plaid</span>
+      <span class="wordmark italic" style="font-size:var(--step-2);">Halcyon</span>
+      <span class="wordmark" style="font-size:var(--step-2);">Field&nbsp;Notes</span>
+      <span class="wordmark italic" style="font-size:var(--step-2);">Tessera</span>
+      <span class="wordmark" style="font-size:var(--step-2);">Meridian</span>
+    </div>
+  </section>
+
   <!-- ===================== SELECTED WORK ===================== -->
-  <section id="work" aria-labelledby="work-heading" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-10 lg:pt-14">
-    <!-- section header — left aligned, ragged right. This heading is the fold cue. -->
+  <section id="work" aria-labelledby="work-heading" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-20 lg:pt-28">
+    <!-- section header -->
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 lg:mb-12">
       <div class="fade-up">
         <p class="mono-label text-inkDim">§ 02</p>
@@ -351,32 +511,27 @@
           Selected <span class="italic">Work</span>
         </h2>
       </div>
-      <p class="mono-label text-inkDim fade-up self-start sm:self-end">Four projects — 2022 / 2026</p>
+      <p class="mono-label text-inkDim fade-up self-start sm:self-end">Six projects — 2021 / 2026</p>
     </div>
 
-    <!-- ASYMMETRIC GRID — one large, three varied; one inverted card breaks rhythm.
-         Captions break template rhythm: plate-caption / right-aligned / inverted / left. -->
+    <!-- ASYMMETRIC GRID -->
     <div class="grid grid-cols-12 gap-x-4 gap-y-12 md:gap-y-14 lg:gap-x-6 lg:gap-y-16">
 
-      <!-- 01 — LARGE, spans 8 cols. Vermillion thumbnail (one of three vermillion uses).
-            Caption set ABOVE the thumbnail (magazine plate-caption), description below.
-            md: full width; lg: 8 cols. -->
+      <!-- 01 — LARGE, spans 8 cols. Vermillion. -->
       <article class="work-card card-reveal dir-right col-span-12 md:col-span-12 lg:col-span-8 lg:col-start-1 group">
         <a href="#contact" class="block group" aria-label="Open contact to discuss Project 01 — Halcyon, a calm operating layer for distributed teams">
 
-          <!-- Plate caption ABOVE the plate -->
           <div class="flex items-baseline justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <span class="mono-label text-ink" style="font-size:var(--step--1);">01 / 04</span>
-              <span class="tag">System · 2025</span>
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="mono-label text-ink" style="font-size:var(--step--1);">01 / 06</span>
+              <span class="tag tag-verm">System · 2025</span>
+              <span class="mono-label text-inkDim hidden md:block">Lead designer</span>
             </div>
             <span class="mono-label text-inkDim hidden sm:block">Lead — most shipped</span>
           </div>
 
-          <!-- Halcyon: aspect-[16/9] (was 16/8, too short). Now unambiguously the largest object after the name. -->
           <div class="thumb overflow-hidden rounded-[3px] tint-verm aspect-[16/9] relative">
             <div class="thumb-inner w-full h-full">
-              <!-- Art-directed: type-specimen composition in vermillion field -->
               <svg class="absolute inset-0 w-full h-full" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                 <g stroke="#F5F1E8" stroke-opacity="0.10" stroke-width="1">
                   <line x1="120" y1="0" x2="120" y2="450"/><line x1="240" y1="0" x2="240" y2="450"/>
@@ -392,27 +547,28 @@
             </div>
           </div>
 
-          <!-- Title + description BELOW the plate -->
-          <div class="flex items-start justify-between mt-5">
+          <div class="flex items-start justify-between mt-5 title-row">
             <div class="flex-1 min-w-0">
               <h3 class="display-serif font-light tracking-[-0.025em]" style="font-size:var(--step-3); line-height:1.02;">Halcyon</h3>
               <p class="mono-caption text-inkDim mt-2 max-w-[52ch]">
                 A calm operating layer for distributed teams — six surfaces, one grammar, zero notifications you didn't ask for.
               </p>
+              <div class="reveal-detail">
+                <p class="mono-caption text-ink mt-1 max-w-[52ch]">
+                  <span class="text-vermDeep font-medium">Outcome —</span> cut average time-to-context from 11 min to 2 min across 14 partner teams; notification fatigue down 63% in the first quarter. Now the reference architecture for the org's internal tools.
+                </p>
+              </div>
             </div>
-            <!-- Per-project glyph (system: stacked squares) replaces the copied arrow-NE -->
             <svg class="glyph shrink-0 ml-4 mt-2 text-ink" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
           </div>
         </a>
       </article>
 
-      <!-- 02 — small, top-right. Caption RIGHT-aligned (breaks template rhythm).
-            md: small upward margin begins asymmetry early. bone. -->
+      <!-- 02 — small, top-right. bone. -->
       <article class="work-card card-reveal dir-left col-span-12 sm:col-span-6 sm:mt-6 md:col-span-5 md:col-start-8 md:mt-6 lg:col-span-4 lg:col-start-9 lg:row-start-1 lg:mt-24 group">
         <a href="#contact" class="block group" aria-label="Open contact to discuss Project 02 — Tessera, a type-driven design system for a literary reading app">
           <div class="thumb overflow-hidden rounded-[3px] tint-bone aspect-[4/5] relative">
             <div class="thumb-inner w-full h-full">
-              <!-- Art-directed: type calibration grid -->
               <svg class="absolute inset-0 w-full h-full" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                 <g stroke="#161413" stroke-opacity="0.85" stroke-width="1.2" fill="none">
                   <circle cx="200" cy="250" r="170"/><circle cx="200" cy="250" r="120"/>
@@ -426,19 +582,22 @@
               </svg>
             </div>
           </div>
-          <!-- Right-aligned caption block -->
-          <div class="flex items-start justify-between mt-5 flex-row-reverse">
+          <div class="flex items-start justify-between mt-5 flex-row-reverse title-row">
             <div class="flex-1 min-w-0 text-right">
-              <div class="flex items-center gap-3 mb-2 justify-end">
+              <div class="flex items-center gap-3 mb-2 justify-end flex-wrap">
                 <span class="tag">Type · 2024</span>
-                <span class="mono-label text-inkDim" style="font-size:var(--step--1);">02 / 04</span>
+                <span class="mono-label text-inkDim" style="font-size:var(--step--1);">02 / 06</span>
               </div>
               <h3 class="display-serif font-light tracking-[-0.02em]" style="font-size:var(--step-2); line-height:1.05;">Tessera</h3>
               <p class="mono-caption text-inkDim mt-2 max-w-[40ch] ml-auto">
                 A type-driven design system for a literary reading app — scales that respect the eye, not the grid.
               </p>
+              <div class="reveal-detail text-right">
+                <p class="mono-caption text-ink mt-1 max-w-[40ch] ml-auto">
+                  <span class="text-vermDeep font-medium">Outcome —</span> 240+ tokens, one variable axis; average reading session +22%. Adopted across three sister products.
+                </p>
+              </div>
             </div>
-            <!-- Per-project glyph (type: Aa monogram) -->
             <svg class="glyph shrink-0 mr-4 mt-2 text-ink" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M5 19L12 5L19 19M8 14H16" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </a>
@@ -449,7 +608,6 @@
         <a href="#contact" class="block group" aria-label="Open contact to discuss Project 03 — Groundtruth, a field-research tool for environmental scientists">
           <div class="thumb overflow-hidden rounded-[3px] tint-taupe aspect-[5/4] relative">
             <div class="thumb-inner w-full h-full">
-              <!-- Art-directed: topographic contour field -->
               <svg class="absolute inset-0 w-full h-full" viewBox="0 0 500 400" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true">
                 <path d="M0,300 Q120,225 250,275 T500,235" stroke="#161413" stroke-opacity="0.18" stroke-width="1.2"/>
                 <path d="M0,250 Q135,185 260,228 T500,192" stroke="#161413" stroke-opacity="0.18" stroke-width="1.2"/>
@@ -462,31 +620,32 @@
               </svg>
             </div>
           </div>
-          <div class="flex items-start justify-between mt-5">
+          <div class="flex items-start justify-between mt-5 title-row">
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-3 mb-2">
-                <span class="mono-label text-inkDim" style="font-size:var(--step--1);">03 / 04</span>
+              <div class="flex items-center gap-3 mb-2 flex-wrap">
+                <span class="mono-label text-inkDim" style="font-size:var(--step--1);">03 / 06</span>
                 <span class="tag">Product · 2024</span>
               </div>
               <h3 class="display-serif font-light tracking-[-0.02em]" style="font-size:var(--step-2); line-height:1.05;">Groundtruth</h3>
               <p class="mono-caption text-inkDim mt-2 max-w-[46ch]">
                 A field-research tool for environmental scientists — capture that survives mud, signal, and dead batteries.
               </p>
+              <div class="reveal-detail">
+                <p class="mono-caption text-ink mt-1 max-w-[46ch]">
+                  <span class="text-vermDeep font-medium">Outcome —</span> works offline to 72 hrs; data loss in transit fell from 8% to under 0.4%. Used by 11 university field programs.
+                </p>
+              </div>
             </div>
-            <!-- Per-project glyph (field: pin) -->
             <svg class="glyph shrink-0 ml-4 mt-2 text-ink" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M12 21s-7-6.5-7-12a7 7 0 1 1 14 0c0 5.5-7 12-7 12z" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.5"/></svg>
           </div>
         </a>
       </article>
 
-      <!-- 04 — small, offset UP. INVERTED paper-on-dark card — caption also inverted so it belongs to its dark thumbnail.
-            md: small negative margin continues the asymmetry. -->
+      <!-- 04 — small, offset UP. INVERTED dark card. -->
       <article class="work-card card-reveal dir-right col-span-12 sm:col-span-5 sm:mt-8 md:col-span-5 md:col-start-8 md:-mt-2 lg:col-span-4 lg:col-start-9 lg:-mt-12 group">
         <a href="#contact" class="block group" aria-label="Open contact to discuss Project 04 — Slow Press, a publishing platform that hides share counts">
-          <div class="thumb overflow-hidden rounded-[3px] aspect-[4/3] relative" style="background:#161413;">
+          <div class="thumb overflow-hidden rounded-[3px] aspect-[4/3] relative tint-ink">
             <div class="thumb-inner w-full h-full">
-              <!-- Art-directed: data sonification bars on near-black with a dark caption footer band
-                   (the dark card's identity is now real: type sits ON dark, not below it on paper) -->
               <svg class="absolute inset-0 w-full h-full" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                 <g fill="#D8D2C4">
                   <rect x="40"  y="80"  width="22" height="120"/><rect x="74"  y="60"  width="22" height="140"/>
@@ -495,10 +654,8 @@
                   <rect x="244" y="110" width="22" height="90"/><rect x="278" y="30"  width="22" height="170"/>
                   <rect x="312" y="70"  width="22" height="130"/><rect x="346" y="95"  width="22" height="105"/>
                 </g>
-                <!-- highlighted bar carries emphasis without vermillion: full-height bone cap on the dark card -->
                 <rect x="278" y="30" width="22" height="170" fill="#E9E4D6"/>
                 <text x="40" y="36" font-family="JetBrains Mono" font-size="11" fill="#D8D2C4" letter-spacing="3">SIGNAL · 440 Hz → READING TIME</text>
-                <!-- dark footer caption band: bone text on near-black, genuinely inverted -->
                 <rect x="0" y="220" width="400" height="80" fill="#0e0d0c"/>
                 <text x="40" y="248" font-family="Fraunces" font-style="italic" font-weight="300" font-size="30" fill="#E9E4D6" letter-spacing="-1">Slow Press</text>
                 <line x1="40" y1="262" x2="120" y2="262" stroke="#E9E4D6" stroke-opacity="0.5" stroke-width="1"/>
@@ -506,20 +663,108 @@
               </svg>
             </div>
           </div>
-          <!-- Caption on paper (dark identity lives in the thumbnail, not the type) -->
-          <div class="flex items-start justify-between mt-5">
+          <div class="flex items-start justify-between mt-5 title-row">
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-3 mb-2">
-                <span class="mono-label text-inkDim" style="font-size:var(--step--1);">04 / 04</span>
+              <div class="flex items-center gap-3 mb-2 flex-wrap">
+                <span class="mono-label text-inkDim" style="font-size:var(--step--1);">04 / 06</span>
                 <span class="tag">Editorial · 2023</span>
               </div>
               <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="line-height:1.05;font-size:var(--step-2);">Slow Press</h3>
               <p class="mono-caption text-inkDim mt-2 max-w-[38ch]">
                 A publishing platform that hides share counts — the metric was never your friend.
               </p>
+              <div class="reveal-detail">
+                <p class="mono-caption text-ink mt-1 max-w-[38ch]">
+                  <span class="text-vermDeep font-medium">Outcome —</span> median read-depth +41% in six months; 3,200 writers migrated in the first year.
+                </p>
+              </div>
             </div>
-            <!-- Per-project glyph (editorial: em-dash / page) -->
             <svg class="glyph shrink-0 ml-4 mt-2 text-ink" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 4h9l4 4v12H6z" stroke-linejoin="round"/><path d="M9 12h6M9 16h4" stroke-linecap="round"/></svg>
+          </div>
+        </a>
+      </article>
+
+      <!-- 05 — medium-wide, sand tint. Compass / wayfinding glyph. -->
+      <article class="work-card card-reveal dir-left col-span-12 sm:col-span-7 md:col-span-7 lg:col-span-7 lg:col-start-1 group">
+        <a href="#contact" class="block group" aria-label="Open contact to discuss Project 05 — Meridian, a wayfinding system for a regional transit network">
+          <div class="flex items-baseline justify-between mb-4">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="mono-label text-ink" style="font-size:var(--step--1);">05 / 06</span>
+              <span class="tag">Wayfinding · 2023</span>
+            </div>
+            <span class="mono-label text-inkDim hidden sm:block">Civic</span>
+          </div>
+          <div class="thumb overflow-hidden rounded-[3px] tint-sand aspect-[16/8] relative">
+            <div class="thumb-inner w-full h-full">
+              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <!-- compass rose -->
+                <g transform="translate(400,200)" fill="none" stroke="#161413" stroke-opacity="0.85" stroke-width="1.4">
+                  <circle r="150"/><circle r="100" stroke-opacity="0.4"/>
+                  <line x1="0" y1="-150" x2="0" y2="150"/>
+                  <line x1="-150" y1="0" x2="150" y2="0"/>
+                </g>
+                <polygon points="400,50 412,200 400,210 388,200" fill="#E8462C"/>
+                <polygon points="400,350 388,200 400,190 412,200" fill="#161413"/>
+                <text x="400" y="38" font-family="Fraunces" font-style="italic" font-weight="300" font-size="28" fill="#161413" letter-spacing="-1" text-anchor="middle">N</text>
+                <text x="40" y="385" font-family="JetBrains Mono" font-size="13" fill="#161413" letter-spacing="3">MERIDIAN · 47 STATIONS · 1 GLANCE</text>
+                <text x="640" y="385" font-family="JetBrains Mono" font-size="13" fill="#161413" letter-spacing="3">2023</text>
+              </svg>
+            </div>
+          </div>
+          <div class="flex items-start justify-between mt-5 title-row">
+            <div class="flex-1 min-w-0">
+              <h3 class="display-serif font-light tracking-[-0.025em]" style="font-size:var(--step-2); line-height:1.05;">Meridian</h3>
+              <p class="mono-caption text-inkDim mt-2 max-w-[54ch]">
+                A wayfinding system for a regional transit network — 47 stations reduced to one glance, legible at a run, in the rain, without your glasses.
+              </p>
+              <div class="reveal-detail">
+                <p class="mono-caption text-ink mt-1 max-w-[54ch]">
+                  <span class="text-vermDeep font-medium">Outcome —</span> missed-transfer rate down 19%; the system is now the case study the network shows visiting delegations. Rollout completed in 14 months.
+                </p>
+              </div>
+            </div>
+            <svg class="glyph shrink-0 ml-4 mt-2 text-ink" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="12,5 14,12 12,19 10,12" fill="currentColor" stroke="none"/></svg>
+          </div>
+        </a>
+      </article>
+
+      <!-- 06 — small, sage tint. Onboarding / funnel glyph. -->
+      <article class="work-card card-reveal dir-down col-span-12 sm:col-span-5 md:col-span-5 md:col-start-8 lg:col-span-5 lg:col-start-8 group">
+        <a href="#contact" class="block group" aria-label="Open contact to discuss Project 06 — Hearth, an onboarding flow that asks for less up front">
+          <div class="thumb overflow-hidden rounded-[3px] tint-sage aspect-[4/5] relative">
+            <div class="thumb-inner w-full h-full">
+              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <!-- funnel of declining form fields -->
+                <g fill="none" stroke="#161413" stroke-opacity="0.85" stroke-width="1.4">
+                  <rect x="60"  y="70"  width="280" height="44"/>
+                  <rect x="95"  y="140" width="210" height="44"/>
+                  <rect x="130" y="210" width="140" height="44"/>
+                  <rect x="165" y="280" width="70"  height="44"/>
+                </g>
+                <rect x="165" y="280" width="70" height="44" fill="#E8462C" opacity="0.92"/>
+                <text x="200" y="430" font-family="Fraunces" font-style="italic" font-weight="300" font-size="42" fill="#161413" letter-spacing="-2" text-anchor="middle">Hearth</text>
+                <line x1="150" y1="448" x2="250" y2="448" stroke="#161413" stroke-opacity="0.5" stroke-width="1"/>
+                <text x="200" y="470" font-family="JetBrains Mono" font-size="11" fill="#161413" letter-spacing="3" text-anchor="middle">2022 · 12 FIELDS → 4</text>
+              </svg>
+            </div>
+          </div>
+          <div class="flex items-start justify-between mt-5 title-row">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3 mb-2 flex-wrap">
+                <span class="mono-label text-inkDim" style="font-size:var(--step--1);">06 / 06</span>
+                <span class="tag">Onboarding · 2022</span>
+              </div>
+              <h3 class="display-serif font-light tracking-[-0.02em]" style="font-size:var(--step-2); line-height:1.05;">Hearth</h3>
+              <p class="mono-caption text-inkDim mt-2 max-w-[40ch]">
+                An onboarding flow for a fintech that asks for less up front — and converts more by doing so.
+              </p>
+              <div class="reveal-detail">
+                <p class="mono-caption text-ink mt-1 max-w-[40ch]">
+                  <span class="text-vermDeep font-medium">Outcome —</span> activation +34%, drop-off at step 3 halved. The four-field pattern became the org's default.
+                </p>
+              </div>
+            </div>
+            <svg class="glyph shrink-0 ml-4 mt-2 text-ink" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 5h16M6 12h12M9 19h6" stroke-linecap="round"/></svg>
           </div>
         </a>
       </article>
@@ -535,21 +780,245 @@
 
   </section>
 
+  <!-- ===================== CAPABILITIES ===================== -->
+  <section id="capabilities" aria-labelledby="cap-heading" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-24 lg:pt-32">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12 lg:mb-16">
+      <div class="fade-up">
+        <p class="mono-label text-inkDim">§ 03</p>
+        <h2 id="cap-heading" class="display-serif font-light tracking-[-0.03em] mt-3" style="font-size:var(--step-4); line-height:var(--leading-tight);">
+          Capabili<span class="italic">ties</span>
+        </h2>
+      </div>
+      <p class="mono-label text-inkDim fade-up self-start sm:self-end max-w-[28ch] sm:text-right">Where I am sharp, and where the work actually lands</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+
+      <!-- Product Design -->
+      <div class="cap-tile fade-up">
+        <div class="flex items-baseline justify-between mb-4">
+          <svg class="cap-num text-inkDim" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <span class="mono-label text-inkDim">01</span>
+        </div>
+        <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-1); line-height:1.05;">Product Design</h3>
+        <p class="font-sans text-inkDim mt-3" style="font-size:var(--step--1); line-height:var(--leading-read);">
+          End-to-end ownership of a product surface — from the first uncomfortable question to the pixels a user actually touches. I design the thing, not the deck about the thing.
+        </p>
+      </div>
+
+      <!-- Design Systems -->
+      <div class="cap-tile fade-up">
+        <div class="flex items-baseline justify-between mb-4">
+          <svg class="cap-num text-inkDim" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span class="mono-label text-inkDim">02</span>
+        </div>
+        <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-1); line-height:1.05;">Design Systems</h3>
+        <p class="font-sans text-inkDim mt-3" style="font-size:var(--step--1); line-height:var(--leading-read);">
+          Tokens, primitives, and the grammar between them — built to be authored by many and read by everyone. A system earns its keep when a new designer ships correct work on day two.
+        </p>
+      </div>
+
+      <!-- Prototyping -->
+      <div class="cap-tile fade-up">
+        <div class="flex items-baseline justify-between mb-4">
+          <svg class="cap-num text-inkDim" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+          <span class="mono-label text-inkDim">03</span>
+        </div>
+        <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-1); line-height:1.05;">Prototyping</h3>
+        <p class="font-sans text-inkDim mt-3" style="font-size:var(--step--1); line-height:var(--leading-read);">
+          Code-level prototypes that answer the real question before the meeting — interaction, motion, edge state. I would rather build it twice in code than argue about it once in a frame.
+        </p>
+      </div>
+
+      <!-- Research -->
+      <div class="cap-tile fade-up">
+        <div class="flex items-baseline justify-between mb-4">
+          <svg class="cap-num text-inkDim" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+          <span class="mono-label text-inkDim">04</span>
+        </div>
+        <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-1); line-height:1.05;">Research</h3>
+        <p class="font-sans text-inkDim mt-3" style="font-size:var(--step--1); line-height:var(--leading-read);">
+          Generative interviews, usability, and the unglamorous work of reading support tickets. I treat research as the brief, not the decoration on top of one.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== PROCESS ===================== -->
+  <section id="process" aria-labelledby="process-heading" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-24 lg:pt-32">
+    <div class="grid grid-cols-12 gap-y-8 gap-x-4 lg:gap-x-6">
+      <div class="col-span-12 lg:col-span-5 fade-up">
+        <p class="mono-label text-inkDim">§ 04</p>
+        <h2 id="process-heading" class="display-serif font-light tracking-[-0.03em] mt-3" style="font-size:var(--step-4); line-height:var(--leading-tight);">
+          How I <span class="italic">work</span>
+        </h2>
+        <p class="font-sans text-inkDim mt-6 max-w-[42ch]" style="font-size:var(--step-0); line-height:var(--leading-read);">
+          Four movements, repeated until the product is quiet enough to ship. Not a methodology — a rhythm.
+        </p>
+      </div>
+
+      <ol class="col-span-12 lg:col-span-7 lg:col-start-7 space-y-0">
+        <li class="step-row fade-up pl-6 sm:pl-8 pb-9">
+          <div class="flex items-baseline gap-4 mb-2">
+            <span class="mono-label text-vermDeep">01</span>
+            <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-2); line-height:1.05;">Listen, then name the problem</h3>
+          </div>
+          <p class="font-sans text-inkDim max-w-[54ch]" style="font-size:var(--step--1); line-height:var(--leading-read);">
+            Before any pixel: interviews, support logs, the data nobody reads. The deliverable of this phase is a single sentence the team agrees is the problem. Most projects are solved here, not later.
+          </p>
+        </li>
+        <li class="step-row fade-up pl-6 sm:pl-8 pb-9">
+          <div class="flex items-baseline gap-4 mb-2">
+            <span class="mono-label text-vermDeep">02</span>
+            <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-2); line-height:1.05;">Sketch in constraints</h3>
+          </div>
+          <p class="font-sans text-inkDim max-w-[54ch]" style="font-size:var(--step--1); line-height:var(--leading-read);">
+            Cheap options first — paper, lists, ugly frames — generated against the real limits: engineering cost, latency, the legacy nobody wants to touch. I would rather kill an idea in an hour than in a sprint.
+          </p>
+        </li>
+        <li class="step-row fade-up pl-6 sm:pl-8 pb-9">
+          <div class="flex items-baseline gap-4 mb-2">
+            <span class="mono-label text-vermDeep">03</span>
+            <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-2); line-height:1.05;">Build it twice</h3>
+          </div>
+          <p class="font-sans text-inkDim max-w-[54ch]" style="font-size:var(--step--1); line-height:var(--leading-read);">
+            A working prototype in code, put in front of five users before the design is "done." The second build is always cheaper, and it is the one that ships. Motion and edge states get designed here, not bolted on.
+          </p>
+        </li>
+        <li class="step-row fade-up pl-6 sm:pl-8">
+          <div class="flex items-baseline gap-4 mb-2">
+            <span class="mono-label text-vermDeep">04</span>
+            <h3 class="display-serif font-light tracking-[-0.02em] text-ink" style="font-size:var(--step-2); line-height:1.05;">Edit, then leave</h3>
+          </div>
+          <p class="font-sans text-inkDim max-w-[54ch]" style="font-size:var(--step--1); line-height:var(--leading-read);">
+            The last 20% is subtraction. I remove what the prototype proved we didn't need, write the spec the team can own without me, and document the system so the next designer isn't reading my mind.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== TESTIMONIALS ===================== -->
+  <section aria-labelledby="quotes-heading" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-24 lg:pt-32">
+    <div class="flex items-baseline justify-between mb-12 lg:mb-16 fade-up">
+      <div>
+        <p class="mono-label text-inkDim">§ 05</p>
+        <h2 id="quotes-heading" class="display-serif font-light tracking-[-0.03em] mt-3" style="font-size:var(--step-4); line-height:var(--leading-tight);">
+          In their <span class="italic">words</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-6 gap-y-12">
+
+      <!-- Lead quote — large, spans 7 -->
+      <figure class="lg:col-span-7 fade-up">
+        <span class="quote-mark block" aria-hidden="true">&ldquo;</span>
+        <blockquote class="display-serif font-light tracking-[-0.02em] text-ink -mt-4" style="font-size:var(--step-3); line-height:1.18;">
+          Lin is the rare designer who can hold the whole product in one hand and a single pixel in the other, and not drop either. Halcyon shipped on time because she refused to let ambiguity survive a meeting.
+        </blockquote>
+        <figcaption class="mt-7 flex items-center gap-4">
+          <span class="block w-8 h-px bg-ink/40" aria-hidden="true"></span>
+          <span>
+            <span class="font-sans text-ink block" style="font-size:var(--step--1);">D. Okafor</span>
+            <span class="mono-label text-inkDim">VP Product · Halcyon</span>
+          </span>
+        </figcaption>
+      </figure>
+
+      <!-- Two stacked smaller quotes -->
+      <div class="lg:col-span-5 lg:col-start-8 flex flex-col gap-10">
+        <figure class="fade-up">
+          <blockquote class="display-serif font-light tracking-[-0.015em] text-ink" style="font-size:var(--step-1); line-height:1.3;">
+            &ldquo;She redesigned our onboarding and our activation curve bent the same week. I have never seen a designer move that fast without making a mess.&rdquo;
+          </blockquote>
+          <figcaption class="mt-5 flex items-center gap-4">
+            <span class="block w-8 h-px bg-ink/40" aria-hidden="true"></span>
+            <span>
+              <span class="font-sans text-ink block" style="font-size:var(--step--1);">M. Lindqvist</span>
+              <span class="mono-label text-inkDim">Founder · Hearth</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="fade-up">
+          <blockquote class="display-serif font-light tracking-[-0.015em] text-ink" style="font-size:var(--step-1); line-height:1.3;">
+            &ldquo;The type system she built is the reason three of our products finally look like they came from the same company. It just works.&rdquo;
+          </blockquote>
+          <figcaption class="mt-5 flex items-center gap-4">
+            <span class="block w-8 h-px bg-ink/40" aria-hidden="true"></span>
+            <span>
+              <span class="font-sans text-ink block" style="font-size:var(--step--1);">R. Acharya</span>
+              <span class="mono-label text-inkDim">Eng Lead · Tessera</span>
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RECOGNITION ===================== -->
+  <section aria-labelledby="recog-heading" class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-24 lg:pt-32">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 lg:mb-12">
+      <div class="fade-up">
+        <p class="mono-label text-inkDim">§ 06</p>
+        <h2 id="recog-heading" class="display-serif font-light tracking-[-0.03em] mt-3" style="font-size:var(--step-4); line-height:var(--leading-tight);">
+          Recogni<span class="italic">tion</span>
+        </h2>
+      </div>
+      <p class="mono-label text-inkDim fade-up self-start sm:self-end">Awards, talks &amp; press</p>
+    </div>
+
+    <ul class="divide-y divide-ink/12 border-t border-b border-ink/15">
+      <li class="fade-up grid grid-cols-12 gap-4 py-5 items-baseline group">
+        <span class="mono-label text-vermDeep col-span-2 sm:col-span-1">2026</span>
+        <span class="col-span-10 sm:col-span-7 font-sans text-ink" style="font-size:var(--step-0);">Awwwards — Site of the Day, Halcyon marketing surface</span>
+        <span class="col-span-12 sm:col-span-4 mono-label text-inkDim sm:text-right">Award</span>
+      </li>
+      <li class="fade-up grid grid-cols-12 gap-4 py-5 items-baseline">
+        <span class="mono-label text-vermDeep col-span-2 sm:col-span-1">2025</span>
+        <span class="col-span-10 sm:col-span-7 font-sans text-ink" style="font-size:var(--step-0);">Config (Figma) — Talk, &ldquo;Designing the gaps between screens&rdquo;</span>
+        <span class="col-span-12 sm:col-span-4 mono-label text-inkDim sm:text-right">Talk</span>
+      </li>
+      <li class="fade-up grid grid-cols-12 gap-4 py-5 items-baseline">
+        <span class="mono-label text-vermDeep col-span-2 sm:col-span-1">2025</span>
+        <span class="col-span-10 sm:col-span-7 font-sans text-ink" style="font-size:var(--step-0);">D&amp;AD Wood Pencil — Digital Design, Groundtruth</span>
+        <span class="col-span-12 sm:col-span-4 mono-label text-inkDim sm:text-right">Award</span>
+      </li>
+      <li class="fade-up grid grid-cols-12 gap-4 py-5 items-baseline">
+        <span class="mono-label text-vermDeep col-span-2 sm:col-span-1">2024</span>
+        <span class="col-span-10 sm:col-span-7 font-sans text-ink" style="font-size:var(--step-0);">The Browser Company guest essay — &ldquo;Against delightful defaults&rdquo;</span>
+        <span class="col-span-12 sm:col-span-4 mono-label text-inkDim sm:text-right">Press</span>
+      </li>
+      <li class="fade-up grid grid-cols-12 gap-4 py-5 items-baseline">
+        <span class="mono-label text-vermDeep col-span-2 sm:col-span-1">2024</span>
+        <span class="col-span-10 sm:col-span-7 font-sans text-ink" style="font-size:var(--step-0);">CSS Design Awards — Best UI, Tessera reader</span>
+        <span class="col-span-12 sm:col-span-4 mono-label text-inkDim sm:text-right">Award</span>
+      </li>
+      <li class="fade-up grid grid-cols-12 gap-4 py-5 items-baseline">
+        <span class="mono-label text-vermDeep col-span-2 sm:col-span-1">2023</span>
+        <span class="col-span-10 sm:col-span-7 font-sans text-ink" style="font-size:var(--step-0);">UX Lisbon — Workshop, &ldquo;Prototyping in the language you ship&rdquo;</span>
+        <span class="col-span-12 sm:col-span-4 mono-label text-inkDim sm:text-right">Talk</span>
+      </li>
+    </ul>
+  </section>
+
   <!-- ===================== CONTACT — full-bleed closing band ===================== -->
-  <footer id="contact" aria-labelledby="contact-heading" class="mt-24 lg:mt-36 relative">
+  <footer id="contact" aria-labelledby="contact-heading" class="mt-28 lg:mt-40 relative">
     <div class="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
       <div class="rule-h mb-12 lg:mb-16"></div>
-      <p class="mono-label text-inkDim fade-up">§ 03 — Contact</p>
+      <p class="mono-label text-inkDim fade-up">§ 07 — Contact</p>
 
       <div class="grid grid-cols-12 gap-y-8 gap-x-4 lg:gap-x-6 mt-6 lg:mt-8">
-        <!-- Closing headline — step-5, the lead statement; largest type after the name -->
+        <!-- Closing headline -->
         <div class="col-span-12 lg:col-span-8 fade-up">
           <h2 id="contact-heading" class="display-serif font-light tracking-[-0.035em] max-w-[16ch]" style="font-size:var(--step-5); line-height:0.95;">
             Let’s make something <span class="italic">that lasts.</span>
           </h2>
         </div>
 
-        <!-- Email — the real CTA, step-3: vermillion underline carries the emphasis, not size -->
+        <!-- Email — the real CTA -->
         <div class="col-span-12 lg:col-span-7 mt-2 fade-up">
           <p class="mono-label text-inkDim mb-4">Write</p>
           <a href="mailto:lin@linhua.studio"
@@ -557,13 +1026,20 @@
              style="font-size:var(--step-3);">
             lin@linhua.studio
           </a>
-          <!-- Micro-copy carries a concrete stance, not a process promise -->
           <p class="font-sans text-inkDim mt-6 max-w-[46ch]" style="font-size:var(--step--1); line-height:var(--leading-read);">
             Based in Lisbon, available remote — for senior product roles and select independent commissions. Tell me the problem before the deliverables; the brief gets sharper when the goal does.
           </p>
+
+          <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <a href="mailto:lin@linhua.studio" class="btn-primary">
+              Start a brief
+              <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <span class="mono-label text-inkDim">Two engagements / quarter · Q3 2026 open</span>
+          </div>
         </div>
 
-        <!-- socials — quiet horizontal list -->
+        <!-- socials + nav -->
         <div class="col-span-12 lg:col-span-5 lg:col-start-8 fade-up">
           <p class="mono-label text-inkDim mb-4">Elsewhere</p>
           <ul class="flex flex-wrap gap-x-8 gap-y-3">
@@ -585,7 +1061,26 @@
                 X<span class="text-inkDim"> / @linhua</span>
               </a>
             </li>
+            <li>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+                 class="group inline-flex items-baseline gap-1 text-ink hover:text-inkDim transition-colors" style="font-family:'JetBrains Mono',monospace; font-size:var(--step--1); letter-spacing:0.02em;">
+                LinkedIn<span class="text-inkDim"> / in/linhua</span>
+              </a>
+            </li>
           </ul>
+
+          <!-- footer nav -->
+          <nav aria-label="Footer" class="mt-10">
+            <p class="mono-label text-inkDim mb-4">Index</p>
+            <ul class="grid grid-cols-2 gap-x-6 gap-y-2 max-w-[24rem]">
+              <li><a href="#main" class="nav-link font-sans text-ink hover:text-inkDim transition-colors" style="font-size:var(--step--1);">Top</a></li>
+              <li><a href="#work" class="nav-link font-sans text-ink hover:text-inkDim transition-colors" style="font-size:var(--step--1);">Selected work</a></li>
+              <li><a href="#capabilities" class="nav-link font-sans text-ink hover:text-inkDim transition-colors" style="font-size:var(--step--1);">Capabilities</a></li>
+              <li><a href="#process" class="nav-link font-sans text-ink hover:text-inkDim transition-colors" style="font-size:var(--step--1);">How I work</a></li>
+              <li><a href="#about" class="nav-link font-sans text-ink hover:text-inkDim transition-colors" style="font-size:var(--step--1);">About</a></li>
+              <li><a href="mailto:lin@linhua.studio" class="nav-link font-sans text-ink hover:text-inkDim transition-colors" style="font-size:var(--step--1);">Email</a></li>
+            </ul>
+          </nav>
         </div>
       </div>
 
@@ -628,7 +1123,6 @@
   const cardObserver = new IntersectionObserver((entries) => {
     entries.forEach((e, i) => {
       if (e.isIntersecting) {
-        // small per-entry stagger so cards cascade, not fire as one block
         const idx = Array.from(document.querySelectorAll('.card-reveal')).indexOf(e.target);
         e.target.style.transitionDelay = ((idx % 4) * 0.09) + 's';
         e.target.classList.add('in');
@@ -644,30 +1138,81 @@
     document.querySelectorAll('.fade-up, .card-reveal').forEach((el) => el.classList.add('in'));
   }
 
-  // ---------- SIGNATURE MOMENT: the name's second line tracks tighter over the reveal.
-  // A visible, intentional piece of craft: as "Hua" rises out of its mask it settles from
-  // loose to tight tracking, like a typesetter closing a setting. Reads on first paint for
-  // every visitor (no pointer/motion gate), and is the kind of detail a design eye notices. ----------
+  // ---------- Sticky nav: scroll progress bar + scrolled state + active link ----------
+  const navBar = document.querySelector('.nav-bar');
+  const navProgress = document.getElementById('navProgress');
+  const navLinks = Array.from(document.querySelectorAll('[data-navlink]'));
+  const sections = navLinks
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY || doc.scrollTop;
+      const max = doc.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(scrollTop / max, 1) : 0;
+      if (navProgress) navProgress.style.transform = 'scaleX(' + p + ')';
+      if (navBar) navBar.classList.toggle('is-scrolled', scrollTop > 8);
+
+      // active section via IntersectionObserver-style midpoint check
+      if (sections.length) {
+        const mid = scrollTop + window.innerHeight * 0.35;
+        let activeIdx = -1;
+        for (let i = 0; i < sections.length; i++) {
+          const top = sections[i].offsetTop;
+          if (mid >= top) activeIdx = i;
+        }
+        navLinks.forEach((l, i) => {
+          if (i === activeIdx) l.setAttribute('aria-current', 'true');
+          else l.removeAttribute('aria-current');
+        });
+      }
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- Smooth-scroll for in-page anchors (respects reduced motion) ----------
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', (ev) => {
+      const id = a.getAttribute('href');
+      if (!id || id === '#') return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      ev.preventDefault();
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      // move focus for a11y without a jarring jump
+      window.setTimeout(() => {
+        target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+      }, reduce ? 0 : 600);
+    });
+  });
+
+  // ---------- SIGNATURE MOMENT: "Hua" tracking closes over the reveal. ----------
   const nameHua = document.getElementById('name-hua');
   if (nameHua && !reduceMotion) {
     const inner = nameHua.querySelector('span');
     if (inner) {
-      // ease a tracking value from 0.18em -> 0.0 over the reveal window
       const startTracking = 0.18;
-      const duration = 1400;          // slightly longer than the mask rise so it settles after
-      const delay = 90;               // matches the .delay-1 line
+      const duration = 1400;
+      const delay = 90;
       let startTime = null;
       const animate = (ts) => {
         if (startTime === null) startTime = ts + delay;
         const elapsed = ts - startTime;
         let p = Math.min(Math.max(elapsed / duration, 0), 1);
-        // easeOutQuint for a confident settle
         p = 1 - Math.pow(1 - p, 5);
         const tracking = (startTracking * (1 - p)).toFixed(4);
         inner.style.letterSpacing = tracking + 'em';
         if (p < 1) requestAnimationFrame(animate);
       };
-      // Kick off once the load class is applied
       const kick = () => requestAnimationFrame(animate);
       if (document.documentElement.classList.contains('is-loaded')) kick();
       else {
@@ -684,17 +1229,17 @@
     const about = document.getElementById('about');
     const nameLin = document.getElementById('name-lin');
     if (about && nameLin) {
-      let ticking = false;
+      let parallaxTicking = false;
       window.addEventListener('scroll', () => {
-        if (!ticking) {
+        if (!parallaxTicking) {
           window.requestAnimationFrame(() => {
             const y = window.scrollY;
             if (y < 700) {
               about.style.transform = 'translateY(' + (y * -0.05) + 'px)';
             }
-            ticking = false;
+            parallaxTicking = false;
           });
-          ticking = true;
+          parallaxTicking = true;
         }
       }, { passive: true });
     }

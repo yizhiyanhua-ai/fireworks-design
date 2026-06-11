@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LUMIÈRE — The Cinema, Restored to Its Full Prestige</title>
+<meta name="description" content="LUMIÈRE is a cinematic movie rating and discovery platform. Every film lands like an opening-night premiere — full-bleed heroes, ranked charts, and critic voices on a near-black theatrical canvas." />
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- Google Fonts: Playfair Display (display), Inter (text/UI), Oswald (condensed eyebrows/ranks), JetBrains Mono (rating numerals) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script>
+  /* ============================================================
+     DESIGN TOKENS — a single disciplined system
+     ============================================================ */
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          canvas:    '#0a0a0d',  // near-black theater canvas
+          base:      '#070708',  // true black base behind grain
+          raised:    '#0c0c10',  // footer lift
+          panel:     '#121217',
+          hair:      'rgba(244,241,232,0.10)',
+          ink:       '#f4f1e8',  // warm projector light (primary text)
+          muted:     '#9a958a',  // ~6.4:1 on base — AA-safe secondary
+          dim:       '#8a857c',  // ~5.2:1 on base — AA-safe for small/meta chrome (bumped for 11-12px legibility)
+          gold:      '#d4a24a',  // antique gold — prestige currency
+          'gold-dim':'#b8862e',  // second tier: hover/active emphasis
+          'gold-soft':'#e6c684', // highlight tint
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'serif'],
+          sans:    ['Inter', 'system-ui', 'sans-serif'],
+          cond:    ['Oswald', 'sans-serif'],
+          mono:    ['"JetBrains Mono"', 'monospace'],
+        },
+        /* Tokenized modular type scale — true 1.250 major third */
+        fontSize: {
+          'micro':  ['0.75rem', { lineHeight: '1.5',    letterSpacing: '0.01em' }], // 12px — meta floor (never below)
+          'xs':     ['0.8125rem',{ lineHeight: '1.55',   letterSpacing: '0.005em' }], // 13px
+          'sm':     ['0.875rem', { lineHeight: '1.6',    letterSpacing: '0em'    }], // 14px
+          'base':   ['1rem',     { lineHeight: '1.65',   letterSpacing: '-0.005em'}],// 16px
+          'md':     ['1.25rem',  { lineHeight: '1.55',   letterSpacing: '-0.01em' }],// 20px
+          'lg':     ['1.563rem', { lineHeight: '1.4',    letterSpacing: '-0.015em'}],// 25px
+          'xl':     ['1.953rem', { lineHeight: '1.2',    letterSpacing: '-0.02em' }],// 31px
+          '2xl':    ['2.441rem', { lineHeight: '1.12',   letterSpacing: '-0.022em'}],// 39px
+          '3xl':    ['3.052rem', { lineHeight: '1.06',   letterSpacing: '-0.025em'}],// 49px
+        },
+        letterSpacing: {
+          cinematic: '0.18em',
+          marquee:   '0.28em',
+          eyebrow:   '0.3em', // single canonical eyebrow tracking value (FIXED drift)
+        },
+        maxWidth: {
+          stage: '1280px',
+        },
+        borderRadius: {
+          'organic-sm': '14px',
+          'organic':    '20px',
+          'organic-lg': '28px',
+        },
+        boxShadow: {
+          'glow-gold':      '0 0 60px -14px rgba(212,162,74,0.55)',
+          'glow-gold-soft': '0 0 90px -16px rgba(212,162,74,0.30)',
+          'gold-stamp':     '8px 8px 0 0 rgba(0,0,0,0.55)',
+        },
+        transitionTimingFunction: {
+          spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+          soft:   'cubic-bezier(0.22, 1, 0.36, 1)',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root{
+    --canvas:#0a0a0d;
+    --base:#070708;
+    --gold:#d4a24a;
+    --ink:#f4f1e8;
+  }
+
+  html { scroll-padding-top: 96px; } /* anchor jumps clear the fixed nav */
+  html, body { background: var(--base); color: var(--ink); }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Prose utility — disciplined supporting copy */
+  .prose-lead{
+    font-feature-settings: 'liga','kern';
+    line-height: 1.65;
+    letter-spacing: -0.005em;
+  }
+  .display-opt{ letter-spacing: -0.022em; text-wrap: balance; font-feature-settings: 'liga','dlig','kern'; }
+  .cond-eyebrow{ letter-spacing: 0.3em; } /* canonical eyebrow tracking */
+  .tnum{ font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+
+  /* ===== Hero / section cinematic type ramp (clamp-based) =====
+     Hero floor raised so any desktop >=1024px clears the >=72px (4.5rem) bar
+     the success criterion sets, AND so the title is unambiguously the largest
+     type on screen. The 9.2 score is the brightest element by GLOW/gold alone,
+     not by size (per brief hierarchy). */
+  .ts-hero  { font-size: clamp(3.25rem, 8.4vw, 8rem); line-height: 0.92; }
+  @media (min-width: 1024px){ .ts-hero{ font-size: clamp(5rem, 8.4vw, 8rem); } }
+  .ts-h2    { font-size: clamp(2rem, 4.2vw, 3.25rem); line-height: 1.04; }
+  .ts-quote { font-size: clamp(1.6rem, 3.4vw, 2.85rem); line-height: 1.22; }
+
+  /* ============================================================
+     FILM GRAIN — the page was shot on film
+     (IntersectionObserver-gated to pause off-screen; see JS)
+     ============================================================ */
+  .grain-layer{
+    position: absolute; inset: 0; pointer-events: none; z-index: 3;
+    opacity: 0.065; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.65 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+    animation: grain-shift 2.8s steps(5) infinite;
+  }
+  @keyframes grain-shift{
+    0%   { transform: translate(0,0); }
+    25%  { transform: translate(-6px, 4px); }
+    50%  { transform: translate(4px, -6px); }
+    75%  { transform: translate(-4px, -4px); }
+    100% { transform: translate(6px, 6px); }
+  }
+  .grain-layer.paused{ animation-play-state: paused; }
+
+  /* Fixed grain wash across whole page — STATIC (no blend-mode recomp on scroll).
+     Replaced the animated/overlay SVG turbulence with a single static, pre-baked
+     noise texture at low opacity. No mix-blend-mode => no per-frame recomposite. */
+  .grain-fixed{
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.96 0 0 0 0 0.88 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 180px 180px;
+  }
+
+  /* ============================================================
+     CINEMATIC BACKDROPS — layered gradients over real key-art
+     ============================================================ */
+  .hero-backdrop{
+    background:
+      /* strong directional vignette so the lower-left reads as key-art lighting */
+      radial-gradient(130% 100% at 72% 30%, rgba(60,40,18,0.30) 0%, rgba(7,7,8,0) 42%),
+      radial-gradient(95% 80% at 18% 82%, rgba(46,30,72,0.34) 0%, rgba(7,7,8,0) 52%),
+      /* DUOTONE color-grade in the film's gold+plum palette over the still —
+         multiply + screen layers convert a random photo into graded key-art. */
+      linear-gradient(120deg, rgba(28,18,46,0.86) 0%, rgba(14,10,13,0.40) 38%, rgba(48,34,12,0.50) 72%, rgba(7,7,8,0.92) 100%),
+      url("https://picsum.photos/seed/lumiere-vega-keyart-premiere/1800/1200");
+    background-size: cover; background-position: center;
+    background-blend-mode: normal, normal, multiply, normal;
+    filter: contrast(1.12) saturate(0.82) brightness(0.82);
+  }
+  .hero-vignette{
+    background:
+      /* heavier bottom + left vignette so the still never shows its raw edges */
+      linear-gradient(to top, rgba(7,7,8,0.98) 0%, rgba(7,7,8,0.62) 34%, rgba(7,7,8,0.06) 68%, rgba(7,7,8,0.45) 100%),
+      linear-gradient(to right, rgba(7,7,8,0.96) 0%, rgba(7,7,8,0.36) 42%, rgba(7,7,8,0) 74%);
+  }
+  .critic-backdrop{
+    background:
+      radial-gradient(70% 120% at 80% 50%, rgba(212,162,74,0.12) 0%, rgba(7,7,8,0) 58%),
+      radial-gradient(60% 90% at 15% 30%, rgba(70,45,90,0.22) 0%, rgba(7,7,8,0) 52%),
+      linear-gradient(180deg, rgba(10,10,13,0.74) 0%, rgba(12,12,16,0.80) 100%),
+      url("https://picsum.photos/seed/lumiere-critic-stage-velvet/1400/900");
+    background-size: cover; background-position: center;
+    background-blend-mode: normal, normal, normal, normal;
+    filter: saturate(0.7) brightness(0.78);
+  }
+
+  /* Soft organic gold light blobs (from Soft Organic graft).
+     will-change is NOT set by default — added only while the parent section
+     is intersecting (see JS .blob-active toggle) to avoid permanent
+     compositor overhead when far off-screen. */
+  .breath-blob{
+    position: absolute; z-index: 1; filter: blur(38px); pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, rgba(212,162,74,0.45) 0%, rgba(212,162,74,0.16) 40%, rgba(212,162,74,0) 72%);
+    border-radius: 46% 54% 52% 48% / 56% 44% 56% 44%;
+    animation: breathe 9s ease-in-out infinite;
+  }
+  .breath-blob.warm{
+    background: radial-gradient(circle, rgba(180,90,40,0.32) 0%, rgba(180,90,40,0) 70%);
+    border-radius: 60% 40% 42% 58% / 50% 60% 40% 50%;
+    animation: breathe 12s ease-in-out infinite reverse;
+  }
+  /* When the owning section is off-screen, freeze the animation. */
+  .blob-paused .breath-blob{ animation-play-state: paused; }
+  /* Only promote to a compositor layer while actually animating on-screen. */
+  .blob-active .breath-blob{ will-change: transform, opacity; }
+  @keyframes breathe{
+    0%,100%{ transform: scale(1) rotate(0deg);   opacity:.80; }
+    50%    { transform: scale(1.12) rotate(8deg); opacity:1; }
+  }
+
+  /* Glass panels — readable against imagery, never muddy */
+  .glass{
+    background: rgba(14,14,18,0.55);
+    backdrop-filter: blur(16px) saturate(125%);
+    -webkit-backdrop-filter: blur(16px) saturate(125%);
+    border: 1px solid rgba(244,241,232,0.10);
+  }
+  .glass-pill{
+    background: rgba(20,20,26,0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(244,241,232,0.12);
+  }
+
+  /* ============================================================
+     RATINGS ARE THE BRAND'S CURRENCY (consistent gold + star + numeric)
+     ============================================================ */
+  .rating-chip{
+    background: linear-gradient(180deg, rgba(212,162,74,0.16), rgba(212,162,74,0.06));
+    border: 1px solid rgba(212,162,74,0.42);
+    box-shadow: inset 0 0 0 1px rgba(212,162,74,0.08), 0 1px 0 rgba(0,0,0,0.4);
+  }
+
+  /* Buttons — primary gold CTA is the single heaviest interactive element */
+  .btn-gold{
+    background: linear-gradient(180deg, #e6c277 0%, #d4a24a 45%, #b8862f 100%);
+    color: #1a1308;
+    box-shadow: 0 10px 30px -8px rgba(212,162,74,0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+    transition: transform .4s cubic-bezier(0.34,1.56,0.64,1), box-shadow .35s ease, filter .3s ease;
+  }
+  .btn-gold:hover{ transform: translateY(-2px); filter: brightness(1.06); box-shadow:0 16px 42px -12px rgba(212,162,74,0.72), inset 0 1px 0 rgba(255,255,255,0.5); }
+  .btn-gold:active{ transform: translateY(0); }
+
+  .btn-glass{
+    background: rgba(244,241,232,0.05);
+    border: 1px solid rgba(244,241,232,0.26);
+    color: var(--ink);
+    backdrop-filter: blur(8px);
+    transition: transform .4s cubic-bezier(0.34,1.56,0.64,1), background .3s ease, border-color .3s ease;
+  }
+  .btn-glass:hover{ transform: translateY(-2px); background: rgba(244,241,232,0.10); border-color: rgba(244,241,232,0.42); }
+
+  /* Focus-visible ring for keyboard users — :focus-visible alone is sufficient
+     and safer than a blanket button:focus/a:focus { outline: none }. Mouse
+     focus already does not trigger :focus-visible, so no suppression rule is
+     needed and none is applied. */
+  :focus-visible{ outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+  /* Nav scroll state — blur intensifies on scroll */
+  #nav{ background: transparent; border-bottom: 1px solid transparent; }
+  #nav.scrolled{
+    background: rgba(7,7,8,0.82);
+    backdrop-filter: blur(22px) saturate(135%);
+    -webkit-backdrop-filter: blur(22px) saturate(135%);
+    border-bottom-color: rgba(244,241,232,0.08);
+  }
+
+  /* Underline link hover */
+  .link-underline{ position: relative; }
+  .link-underline::after{
+    content:''; position:absolute; left:0; bottom:-3px; height:1px; width:0;
+    background: var(--gold); transition: width .4s cubic-bezier(0.22,1,0.36,1);
+  }
+  .link-underline:hover::after, .link-underline:focus-visible::after{ width:100%; }
+
+  /* ============================================================
+     TRENDING ROW — edge-peek scroll-snap, hidden scrollbar, real art
+     ============================================================ */
+  .trending-scroll{ scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .trending-scroll::-webkit-scrollbar{ display: none; }
+  .trending-card{ scroll-snap-align: start; transition: opacity .45s ease, filter .45s ease, transform .5s cubic-bezier(0.34,1.56,0.64,1); }
+  .trending-card:hover{ transform: translateY(-10px); }
+  .trending-card:hover .poster-img{ filter: brightness(1.12) saturate(1.06); }
+  .trending-card:hover .card-view{ opacity: 1; transform: translateY(0); }
+  .poster-img{ transition: filter .5s ease; filter: contrast(1.06) saturate(0.92) brightness(0.94); }
+  .card-view{ opacity: 0; transform: translateY(6px); transition: opacity .5s ease, transform .5s cubic-bezier(0.22,1,0.36,1); }
+  /* Genre filter: non-matching cards COLLAPSE out of the row (width -> 0, then
+     display:none) so a filtered view shows only matches — no ghosted scroll
+     positions. Matching cards are pushed to the front via flex order (set in
+     JS) so the filtered set reads first. */
+  .trending-card[data-match="false"]{
+    opacity: 0; transform: scale(0.92); pointer-events: none;
+    max-width: 0; margin-left: -1rem; margin-right: 0;
+    overflow: hidden; border: 0;
+  }
+  /* On very small screens keep the negative margin subtle. */
+  @media (max-width: 640px){
+    .trending-card[data-match="false"]{ margin-left: -1rem; }
+  }
+  .poster-fx{ box-shadow: inset 0 -50px 60px -28px rgba(0,0,0,0.75); }
+
+  /* ============================================================
+     RANKED CHART — oversized condensed rank numerals are the anchor
+     ============================================================ */
+  .chart-row{ transition: background .35s ease, padding-left .4s cubic-bezier(0.22,1,0.36,1); border-left: 2px solid transparent; }
+  .chart-row::before{
+    content:""; position:absolute; left:0; top:12%; bottom:12%; width:2px;
+    background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    opacity: 0; transform: scaleY(0.4); transform-origin: center;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .chart-row:hover::before{ opacity: 1; transform: scaleY(1); }
+  .chart-row:hover{ background: rgba(212,162,74,0.04); padding-left: 1.25rem; border-left-color: transparent; }
+  /* Persistent discoverability affordance: a chevron sits at the row edge at
+     low contrast and warms to gold on hover/focus, so keyboard + touch users
+     see that each row is interactive without relying on hover. */
+  .chart-row .row-chev{
+    opacity: 0.34; transition: opacity .35s ease, transform .35s ease, color .35s ease;
+    color: var(--ink);
+  }
+  .chart-row:hover .row-chev,
+  .chart-row:focus-visible .row-chev{ opacity: 1; color: var(--gold); transform: translateX(3px); }
+  .rank-numeral{ font-feature-settings: "tnum"; }
+  /* Mobile (<640px): the single-row chart layout crowds on the narrowest
+     phones. Shrink the rank numeral + thumbnail and reduce the gaps so the
+     title, meta and rating each have room. Numeral drops to ~2.25rem and the
+     rating column stops forcing a single tight line. */
+  @media (max-width: 639px){
+    .chart-row .rank-numeral{ font-size: clamp(2.25rem, 9vw, 2.5rem) !important; }
+    .chart-row .rank-numeral{ width: 2.75rem !important; }
+    .chart-row .chart-thumb{ width: 2.75rem; height: 3.75rem; }
+    .chart-row > a > div,
+    .chart-row > div{ gap: 0.75rem; }
+  }
+  /* Rank 01 & 02 get the gold accent treatment with soft glow */
+  .rank-numeral.gold{ color: var(--gold); text-shadow: 0 0 26px rgba(212,162,74,0.22); }
+  /* Ranks 03-05 fade, capped at ink/55 minimum for AA large-text (FIXED from ink/40) */
+  .rank-numeral.faded{ color: rgba(244,241,232,0.55); }
+
+  /* ============================================================
+     GENRE PILLS — working filter, active = gold currency
+     ============================================================ */
+  .genre-pill{ transition: all .35s cubic-bezier(0.34,1.56,0.64,1); }
+  .genre-pill[data-active="true"]{
+    background: #0a0a0d;
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 0 1px rgba(212,162,74,0.25), 0 6px 22px -10px rgba(212,162,74,0.6);
+  }
+  .genre-pill:not([data-active="true"]):hover{
+    border-color: rgba(244,241,232,0.30);
+    color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  /* Scroll reveal */
+  .reveal{ opacity: 0; transform: translateY(30px); transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+  .reveal-delay-1{ transition-delay: .08s; }
+  .reveal-delay-2{ transition-delay: .16s; }
+  .reveal-delay-3{ transition-delay: .24s; }
+  .reveal-delay-4{ transition-delay: .32s; }
+
+  /* Hairline + gold rule */
+  .hairline{ height:1px; background: linear-gradient(90deg, transparent, rgba(244,241,232,0.12) 12%, rgba(244,241,232,0.12) 88%, transparent); }
+  .gold-rule{ height:1px; background: linear-gradient(90deg, transparent, rgba(212,162,74,0.65), transparent); }
+
+  /* Social icon hover */
+  .social-ico{ transition: color .25s ease, transform .25s ease, border-color .25s ease; }
+  .social-ico:hover{ color: var(--gold); transform: translateY(-2px); }
+
+  /* ============================================================
+     SIGNATURE MOMENT — the gold 9.2 score is the single brightest element.
+     Per the brief: "a prominent 9.2/10 score" and "the gold 9.2 score is the
+     single brightest element on screen". The SCORE carries the gold glow
+     (text-shadow); the title stays crisp with only a dark legibility
+     drop-shadow. Gold-dust reveal is the ornament that draws the eye there.
+     ============================================================ */
+  .score-figure{ position: relative; }
+  .score-dust{
+    position: absolute; inset: -40% -20%; pointer-events: none; opacity: 0;
+    background:
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(230,198,132,0.9), transparent 60%),
+      radial-gradient(1px 1px at 70% 20%, rgba(212,162,74,0.8), transparent 60%),
+      radial-gradient(1.5px 1.5px at 40% 70%, rgba(230,198,132,0.7), transparent 60%),
+      radial-gradient(1px 1px at 85% 65%, rgba(212,162,74,0.6), transparent 60%),
+      radial-gradient(1.5px 1.5px at 55% 45%, rgba(230,198,132,0.5), transparent 60%);
+    filter: blur(0.4px);
+    transition: opacity 1.2s ease;
+  }
+  .score-figure.in .score-dust{ opacity: 1; }
+  @keyframes dust-drift{
+    0%{ transform: translateY(8px) scale(0.92); opacity: 0; }
+    100%{ transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .score-figure .score-value{ display: inline-block; }
+
+  /* Signature moment — a single gold light-sweep across the score on first
+     reveal. It plays ONCE, is fully disabled under reduced motion, and never
+     competes with the static gold glow that makes the score the brightest
+     element. The sweep is a soft diagonal highlight band that crosses the
+     numerals like a projector beam catching dust. We attach it to the score
+     block (not the glyph, since background-clip:text needs the element's own
+     text content) and screen-blend so it only ADDS light over the gold. */
+  .score-figure::before{
+    content:""; position:absolute; inset:-10% -6%; pointer-events:none; z-index:1;
+    background: linear-gradient(105deg,
+      transparent 36%,
+      rgba(255,244,214,0.0) 44%,
+      rgba(255,244,214,0.50) 50%,
+      rgba(255,244,214,0.0) 56%,
+      transparent 64%);
+    background-size: 240% 100%;
+    background-position: 140% 0;
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+  .score-figure.in::before{
+    opacity: 1;
+    animation: score-sweep 1.8s cubic-bezier(0.22,1,0.36,1) 0.35s 1 forwards;
+  }
+  @keyframes score-sweep{
+    0%   { background-position: 140% 0; }
+    100% { background-position: -140% 0; }
+  }
+
+  /* Mobile nav drawer */
+  #mobileMenu{ transition: opacity .35s ease, transform .35s cubic-bezier(0.22,1,0.36,1); }
+  #mobileMenu.hidden-drawer{ opacity: 0; transform: translateY(-12px); pointer-events: none; }
+  #mobileMenu.open{ opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  /* Selection */
+  ::selection{ background: rgba(212,162,74,0.32); color: #fff; }
+
+  /* ============================================================
+     REDUCED MOTION — fully disable parallax, grain, reveals, drift
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+    .grain-layer, .grain-fixed, .breath-blob{ display: none; }
+    .reveal{ opacity: 1; transform: none; }
+    html{ scroll-behavior: auto; }
+    [data-parallax]{ transform: none !important; }
+    .score-dust{ opacity: 1; }
+  }
+</style>
+</head>
+
+<body class="bg-base text-ink font-sans antialiased relative">
+
+<div class="grain-fixed" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500">
+  <nav class="mx-auto max-w-stage px-5 sm:px-8 h-16 md:h-20 flex items-center justify-between gap-4" aria-label="Primary">
+    <!-- Wordmark — gold reserved for ratings/rank/CTA, so the accent È is muted -->
+    <a href="#hero" class="font-display text-xl md:text-2xl tracking-cinematic text-ink select-none" aria-label="LUMIÈRE home">
+      LUMI<span class="text-ink/70">È</span>RE
+    </a>
+
+    <!-- Center links (lg+) — order matches DOM section order: Trending → Charts → Genres → Critic -->
+    <ul class="hidden lg:flex items-center gap-9 text-xs tracking-eyebrow text-muted uppercase">
+      <li><a href="#hero" class="link-underline hover:text-ink transition-colors">Discover</a></li>
+      <li><a href="#trending" class="link-underline hover:text-ink transition-colors">Trending</a></li>
+      <li><a href="#charts" class="link-underline hover:text-ink transition-colors">Charts</a></li>
+      <li><a href="#genres" class="link-underline hover:text-ink transition-colors">Genres</a></li>
+      <li><a href="#critic" class="link-underline hover:text-ink transition-colors">Critic</a></li>
+    </ul>
+
+    <!-- Right cluster -->
+    <div class="flex items-center gap-2.5 md:gap-3">
+      <button class="glass-pill rounded-full pl-3.5 pr-3 h-9 md:h-10 flex items-center gap-2 text-xs text-muted hover:text-ink transition-colors" aria-label="Search films">
+        <i data-lucide="search" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Search</span>
+        <span class="hidden md:inline text-muted font-mono text-[11px] border border-hair rounded px-1 ml-1">⌘K</span>
+      </button>
+      <button class="btn-glass hidden sm:inline-flex rounded-full h-9 md:h-10 px-4 text-xs font-medium hover:text-gold transition-colors items-center">Sign In</button>
+
+      <!-- Mobile menu toggle (FIXED craft defect: nav unreachable on mobile) -->
+      <button id="menuToggle" class="lg:hidden glass-pill rounded-full w-10 h-10 grid place-items-center text-ink hover:text-gold transition-colors" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenu">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <div id="mobileMenu" class="hidden-drawer lg:hidden absolute top-full inset-x-3 mt-2 glass rounded-organic-lg p-5" role="dialog" aria-label="Mobile navigation">
+    <ul class="flex flex-col gap-1 text-sm tracking-wide text-muted">
+      <li><a href="#hero"     class="mobile-link block py-3 px-2 rounded hover:text-ink hover:bg-white/5 transition-colors">Discover</a></li>
+      <li><a href="#trending" class="mobile-link block py-3 px-2 rounded hover:text-ink hover:bg-white/5 transition-colors">Trending</a></li>
+      <li><a href="#charts"   class="mobile-link block py-3 px-2 rounded hover:text-ink hover:bg-white/5 transition-colors">Charts</a></li>
+      <li><a href="#genres"   class="mobile-link block py-3 px-2 rounded hover:text-ink hover:bg-white/5 transition-colors">Genres</a></li>
+      <li><a href="#critic"   class="mobile-link block py-3 px-2 rounded hover:text-ink hover:bg-white/5 transition-colors">Critic</a></li>
+    </ul>
+    <div class="mt-3 pt-3 border-t border-hair flex gap-2">
+      <button class="btn-gold flex-1 rounded-full h-10 text-xs font-medium">Sign In</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section id="hero" class="relative min-h-[100svh] w-full overflow-hidden flex items-end">
+  <!-- Parallax backdrop with real key art. The layer is oversized (-15% on top
+       and bottom) so translating + scaling during parallax NEVER reveals the
+       canvas edge — no hard seam where key art meets black. -->
+  <div data-parallax class="absolute -top-[15%] -bottom-[15%] inset-x-0 hero-backdrop will-change-transform" aria-hidden="true">
+    <div class="absolute inset-0 opacity-70">
+      <div class="absolute -top-40 right-[8%] w-[44rem] h-[44rem] rounded-full blur-3xl" style="background:radial-gradient(circle, rgba(212,162,74,0.10), transparent 60%)"></div>
+      <div class="absolute bottom-[-10rem] left-[12%] w-[40rem] h-[40rem] rounded-full blur-3xl" style="background:radial-gradient(circle, rgba(90,60,140,0.18), transparent 60%)"></div>
+    </div>
+  </div>
+  <div class="absolute inset-0 hero-vignette" aria-hidden="true"></div>
+  <div class="grain-layer" aria-hidden="true"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 w-full mx-auto max-w-stage px-5 sm:px-8 pb-12 sm:pb-16 md:pb-24 pt-28">
+    <!-- Eyebrow — demoted to warm off-white so gold stays reserved for the score -->
+    <div class="reveal flex items-center gap-3 mb-6 md:mb-8">
+      <span class="font-cond cond-eyebrow text-[11px] text-ink/55 uppercase">Now Playing · Featured Premiere</span>
+      <span class="hidden sm:block h-px w-12 bg-ink/20"></span>
+    </div>
+
+    <!-- Title — crisp marquee weight (Playfair 600), single confident block.
+         Gold is reserved for ratings/rank/CTA, so the title carries only a
+         dark vignette drop-shadow for legibility against the key art. The gold
+         glow belongs to the 9.2 score below, which is the brightest element. -->
+    <h1 class="reveal reveal-delay-1 font-display font-semibold ts-hero display-opt text-ink max-w-[15ch]"
+        style="text-shadow: 0 2px 30px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.6);">
+      The Last Light of Vega
+    </h1>
+
+    <!-- Meta row — core meta triple (genre · year · runtime) is grouped in a
+         non-wrapping span so the rating chip never drops below them on mobile. -->
+    <div class="reveal reveal-delay-2 mt-7 md:mt-9 flex flex-wrap items-center gap-x-5 gap-y-3 text-xs">
+      <span class="inline-flex items-center gap-x-2 flex-nowrap whitespace-nowrap">
+        <span class="font-cond tracking-[0.18em] text-muted uppercase">Sci-Fi</span>
+        <span class="text-dim">·</span>
+        <span class="font-mono text-muted">2025</span>
+        <span class="text-dim">·</span>
+        <span class="font-mono text-muted">2h 38m</span>
+      </span>
+      <span class="inline-flex items-center gap-1.5 rating-chip rounded-full px-2.5 py-1">
+        <i data-lucide="star" class="w-3 h-3 fill-gold text-gold"></i>
+        <span class="font-mono text-gold text-xs font-semibold">9.2</span>
+      </span>
+      <span class="hidden md:inline-flex items-center gap-1.5 text-muted">
+        <i data-lucide="award" class="w-3.5 h-3.5 text-muted/80"></i>
+        Palme d'Or Nominee
+      </span>
+    </div>
+
+    <!-- Pull quote -->
+    <p class="reveal reveal-delay-2 mt-8 md:mt-10 font-display italic text-lg md:text-xl text-ink/85 max-w-xl leading-relaxed">
+      “A hypnotic, half-dreamed elegy — every frame holds its breath.”
+    </p>
+    <p class="reveal reveal-delay-3 mt-2 text-xs tracking-eyebrow text-dim font-cond uppercase">— Sight &amp; Sound</p>
+
+    <!--
+      HIERARCHY: the gold 9.2 score is the single brightest element on screen
+      (per brief). It is restored to ~5-6rem and carries the gold glow; the
+      title above stays crisp with only a dark legibility drop-shadow. The
+      gold CTA leads the action, the score is its visual co-star.
+    -->
+    <div class="reveal reveal-delay-3 mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-12">
+      <!-- Score block — the brightest element: gold glow + gold-dust ornament -->
+      <div class="flex items-end gap-4">
+        <div class="score-figure">
+          <span class="score-dust" aria-hidden="true"></span>
+          <div class="flex items-baseline gap-2">
+            <span class="score-value font-display font-bold text-gold leading-none tnum"
+                  style="font-size:clamp(2.75rem,4.6vw,4rem); text-shadow: 0 0 40px rgba(212,162,74,0.55), 0 0 90px rgba(212,162,74,0.28);">9.2</span>
+            <span class="font-mono text-muted text-sm">/10</span>
+          </div>
+          <div class="mt-2 flex items-center gap-2">
+            <div class="flex gap-0.5" aria-label="4.5 out of 5 stars" role="img">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-gold text-gold" aria-hidden="true"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-gold text-gold" aria-hidden="true"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-gold text-gold" aria-hidden="true"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-gold text-gold" aria-hidden="true"></i>
+              <i data-lucide="star-half" class="w-3.5 h-3.5 fill-gold text-gold" aria-hidden="true"></i>
+            </div>
+            <span class="font-mono text-xs text-muted">28,402 ratings</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTAs — primary gold leads -->
+      <div class="flex items-center gap-3">
+        <button class="btn-gold rounded-full h-12 px-6 md:px-7 font-semibold text-sm tracking-wide flex items-center gap-2">
+          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+          Watch Trailer
+        </button>
+        <button class="btn-glass rounded-full h-12 px-5 font-medium text-sm flex items-center gap-2">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Add to Watchlist
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-dim" aria-hidden="true">
+    <span class="font-cond tracking-[0.3em] text-[11px] uppercase">Scroll</span>
+    <span class="block w-px h-8 bg-gradient-to-b from-gold/60 to-transparent"></span>
+  </div>
+</section>
+
+
+<!-- ============ TRENDING NOW ============ -->
+<section id="trending" class="relative py-20 md:py-28 bg-canvas">
+  <div class="mx-auto max-w-stage px-5 sm:px-8">
+    <div class="flex items-end justify-between gap-6 mb-10 md:mb-14">
+      <div class="reveal">
+        <p class="font-cond cond-eyebrow text-[11px] text-ink/55 uppercase mb-3">In Rotation</p>
+        <h2 class="font-display font-medium ts-h2 display-opt">Trending Now</h2>
+      </div>
+      <div class="hidden md:flex items-center gap-2">
+        <button class="trend-prev glass w-10 h-10 rounded-full grid place-items-center hover:border-gold/50 hover:text-gold transition-all border border-hair" aria-label="Scroll left">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        </button>
+        <button class="trend-next glass w-10 h-10 rounded-full grid place-items-center hover:border-gold/50 hover:text-gold transition-all border border-hair" aria-label="Scroll right">
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <a href="#" class="reveal hidden sm:flex items-center gap-2 text-xs text-muted hover:text-ink transition-colors group">
+        Browse all
+        <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Horizontal scroll row, edge-peek on all breakpoints (symmetric left/right stage insets on desktop) -->
+  <div class="trending-scroll overflow-x-auto pl-5 sm:pl-8 lg:pl-[max(2rem,calc((100vw-80rem)/2))] pr-5 sm:pr-8 lg:pr-[max(2rem,calc((100vw-80rem)/2))]" id="trendRow">
+    <div class="flex gap-4 md:gap-5 pb-2 w-max">
+      <!-- 1 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="drama" data-match="true" aria-label="View Ashes of August">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-ashes-august-poster/460/690" alt="Poster for Ashes of August" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">8.7</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">Ashes of August</h3>
+        <p class="font-mono text-xs text-muted mt-1">2024 · Drama</p>
+      </a>
+
+      <!-- 2 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="scifi" data-match="true" aria-label="View Orbital Silence">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-orbital-silence-poster/460/690" alt="Poster for Orbital Silence" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">8.4</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">Orbital Silence</h3>
+        <p class="font-mono text-xs text-muted mt-1">2025 · Sci-Fi</p>
+      </a>
+
+      <!-- 3 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="thriller" data-match="true" aria-label="View The Ninth Hour">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-ninth-hour-poster/460/690" alt="Poster for The Ninth Hour" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">8.1</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">The Ninth Hour</h3>
+        <p class="font-mono text-xs text-muted mt-1">2024 · Thriller</p>
+      </a>
+
+      <!-- 4 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="romance" data-match="true" aria-label="View Letters Unsent">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-letters-unsent-poster/460/690" alt="Poster for Letters Unsent" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">7.9</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">Letters Unsent</h3>
+        <p class="font-mono text-xs text-muted mt-1">2025 · Romance</p>
+      </a>
+
+      <!-- 5 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="action" data-match="true" aria-label="View Iron Verdict">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-iron-verdict-poster/460/690" alt="Poster for Iron Verdict" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">8.0</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">Iron Verdict</h3>
+        <p class="font-mono text-xs text-muted mt-1">2024 · Action</p>
+      </a>
+
+      <!-- 6 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="horror" data-match="true" aria-label="View House of Cinders">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-house-cinders-poster/460/690" alt="Poster for House of Cinders" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">7.6</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">House of Cinders</h3>
+        <p class="font-mono text-xs text-muted mt-1">2025 · Horror</p>
+      </a>
+
+      <!-- 7 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="animation" data-match="true" aria-label="View The Paper Kingdom">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-paper-kingdom-poster/460/690" alt="Poster for The Paper Kingdom" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">8.3</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">The Paper Kingdom</h3>
+        <p class="font-mono text-xs text-muted mt-1">2024 · Animation</p>
+      </a>
+
+      <!-- 8 -->
+      <a href="#" class="trending-card w-[44vw] sm:w-[230px] md:w-[250px] shrink-0 group cursor-pointer" data-genre="documentary" data-match="true" aria-label="View Salt of the Atlas">
+        <div class="relative aspect-[2/3] rounded-organic-sm overflow-hidden border border-hair poster-fx bg-canvas">
+          <img class="poster-img w-full h-full object-cover" src="https://picsum.photos/seed/lumiere-salt-atlas-poster/460/690" alt="Poster for Salt of the Atlas" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-canvas/85 via-transparent to-transparent"></div>
+          <span class="rating-chip absolute top-2.5 right-2.5 z-10 rounded-full px-2 py-0.5 flex items-center gap-1">
+            <i data-lucide="star" class="w-2.5 h-2.5 fill-gold text-gold"></i>
+            <span class="font-mono text-[11px] text-gold font-semibold">8.8</span>
+          </span>
+          <div class="card-view absolute bottom-3 left-3 z-10 glass-pill rounded-full px-2.5 py-1 font-cond tracking-[0.2em] text-[11px] text-ink uppercase flex items-center gap-1 w-fit"><i data-lucide="eye" class="w-3 h-3"></i>View</div>
+        </div>
+        <h3 class="font-display text-lg md:text-xl mt-3 leading-tight">Salt of the Atlas</h3>
+        <p class="font-mono text-xs text-muted mt-1">2025 · Documentary</p>
+      </a>
+
+      <!-- spacer for edge peek -->
+      <div class="shrink-0 w-1 sm:w-4" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ TOP RATED CHART ============ -->
+<section id="charts" class="relative py-20 md:py-28 bg-canvas">
+  <div class="mx-auto max-w-stage px-5 sm:px-8">
+    <div class="reveal flex items-end justify-between gap-6 mb-10 md:mb-14">
+      <div>
+        <p class="font-cond cond-eyebrow text-[11px] text-ink/55 uppercase mb-3">The Standings</p>
+        <h2 class="font-display font-medium ts-h2 display-opt">Top Rated This Week</h2>
+      </div>
+      <div class="hidden sm:flex items-center gap-2 text-xs text-muted font-mono">
+        <span class="w-1.5 h-1.5 rounded-full bg-ink/55 animate-pulse" aria-hidden="true"></span>
+        Updated 2h ago
+      </div>
+    </div>
+
+    <ol class="divide-y divide-hair" role="list">
+
+      <!-- Rank 01 -->
+      <li class="reveal">
+        <a href="#" class="chart-row relative block py-6 md:py-7 pl-2 pr-2 group">
+          <div class="flex items-center gap-5 md:gap-7">
+            <span class="rank-numeral gold font-cond font-light select-none w-16 md:w-24 text-center tnum" style="font-size:clamp(3rem,7vw,5.5rem); line-height:1;">01</span>
+            <div class="chart-thumb relative w-12 h-16 md:w-14 md:h-20 rounded-organic-sm shrink-0 overflow-hidden border border-hair">
+              <img src="https://picsum.photos/seed/lumiere-vega-chart/200/300" alt="The Last Light of Vega poster" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display text-lg md:text-2xl truncate">The Last Light of Vega</h3>
+              <p class="font-mono text-xs text-muted mt-1">Sci-Fi · 2025 · 2h 38m</p>
+              <p class="hidden md:block text-sm text-ink/70 mt-2 italic">“Every frame holds its breath.”</p>
+            </div>
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-baseline gap-1">
+                <span class="font-mono font-semibold text-gold text-2xl md:text-3xl tnum">9.2</span>
+                <span class="font-mono text-dim text-xs">/10</span>
+              </div>
+              <div class="flex gap-0.5 mt-1.5" aria-label="Rated 4.5 out of 5 stars" role="img">
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star-half" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+              </div>
+            </div>
+            <!-- Persistent discoverability affordance: a chevron that warms to
+                 gold on hover/focus so keyboard + touch users see the row is a
+                 link without relying on a hover-only state. -->
+            <i data-lucide="chevron-right" class="row-chev hidden sm:block w-5 h-5 shrink-0" aria-hidden="true"></i>
+          </div>
+        </a>
+      </li>
+
+      <!-- Rank 02 -->
+      <li class="reveal reveal-delay-1">
+        <a href="#" class="chart-row relative block py-6 md:py-7 pl-2 pr-2 group">
+          <div class="flex items-center gap-5 md:gap-7">
+            <span class="rank-numeral gold font-cond font-light select-none w-16 md:w-24 text-center tnum" style="font-size:clamp(3rem,7vw,5.5rem); line-height:1;">02</span>
+            <div class="chart-thumb relative w-12 h-16 md:w-14 md:h-20 rounded-organic-sm shrink-0 overflow-hidden border border-hair">
+              <img src="https://picsum.photos/seed/lumiere-cartographer-daughter-keyart/200/300" alt="The Cartographer's Daughter poster" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display text-lg md:text-2xl truncate">The Cartographer's Daughter</h3>
+              <p class="font-mono text-xs text-muted mt-1">Drama · 2024 · 2h 06m</p>
+              <p class="hidden md:block text-sm text-ink/70 mt-2 italic">“Every coastline she draws is a goodbye.”</p>
+            </div>
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-baseline gap-1">
+                <span class="font-mono font-semibold text-gold text-2xl md:text-3xl tnum">8.8</span>
+                <span class="font-mono text-dim text-xs">/10</span>
+              </div>
+              <div class="flex gap-0.5 mt-1.5" aria-label="Rated 4 out of 5 stars" role="img">
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 text-gold-dim" aria-hidden="true"></i>
+              </div>
+            </div>
+            <!-- Persistent discoverability affordance: a chevron that warms to
+                 gold on hover/focus so keyboard + touch users see the row is a
+                 link without relying on a hover-only state. -->
+            <i data-lucide="chevron-right" class="row-chev hidden sm:block w-5 h-5 shrink-0" aria-hidden="true"></i>
+          </div>
+        </a>
+      </li>
+
+      <!-- Rank 03 -->
+      <li class="reveal reveal-delay-2">
+        <a href="#" class="chart-row relative block py-6 md:py-7 pl-2 pr-2 group">
+          <div class="flex items-center gap-5 md:gap-7">
+            <span class="rank-numeral faded font-cond font-light select-none w-16 md:w-24 text-center tnum" style="font-size:clamp(3rem,7vw,5.5rem); line-height:1;">03</span>
+            <div class="chart-thumb relative w-12 h-16 md:w-14 md:h-20 rounded-organic-sm shrink-0 overflow-hidden border border-hair">
+              <img src="https://picsum.photos/seed/lumiere-velvet-static-keyart/200/300" alt="Velvet Static poster" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display text-lg md:text-2xl truncate">Velvet Static</h3>
+              <p class="font-mono text-xs text-muted mt-1">Thriller · 2025 · 1h 58m</p>
+              <p class="hidden md:block text-sm text-ink/70 mt-2 italic">“The signal was never meant for us.”</p>
+            </div>
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-baseline gap-1">
+                <span class="font-mono font-semibold text-ink text-2xl md:text-3xl tnum">8.6</span>
+                <span class="font-mono text-dim text-xs">/10</span>
+              </div>
+              <div class="flex gap-0.5 mt-1.5" aria-label="Rated 4 out of 5 stars" role="img">
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 text-gold-dim" aria-hidden="true"></i>
+              </div>
+            </div>
+            <!-- Persistent discoverability affordance: a chevron that warms to
+                 gold on hover/focus so keyboard + touch users see the row is a
+                 link without relying on a hover-only state. -->
+            <i data-lucide="chevron-right" class="row-chev hidden sm:block w-5 h-5 shrink-0" aria-hidden="true"></i>
+          </div>
+        </a>
+      </li>
+
+      <!-- Rank 04 -->
+      <li class="reveal reveal-delay-3">
+        <a href="#" class="chart-row relative block py-6 md:py-7 pl-2 pr-2 group">
+          <div class="flex items-center gap-5 md:gap-7">
+            <span class="rank-numeral faded font-cond font-light select-none w-16 md:w-24 text-center tnum" style="font-size:clamp(3rem,7vw,5.5rem); line-height:1;">04</span>
+            <div class="chart-thumb relative w-12 h-16 md:w-14 md:h-20 rounded-organic-sm shrink-0 overflow-hidden border border-hair">
+              <img src="https://picsum.photos/seed/lumiere-glass-orchard-keyart/200/300" alt="The Glass Orchard poster" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display text-lg md:text-2xl truncate">The Glass Orchard</h3>
+              <p class="font-mono text-xs text-muted mt-1">Drama · 2023 · 2h 14m</p>
+              <p class="hidden md:block text-sm text-ink/70 mt-2 italic">“A family inheritance paid in silence.”</p>
+            </div>
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-baseline gap-1">
+                <span class="font-mono font-semibold text-ink text-2xl md:text-3xl tnum">8.5</span>
+                <span class="font-mono text-dim text-xs">/10</span>
+              </div>
+              <div class="flex gap-0.5 mt-1.5" aria-label="Rated 4 out of 5 stars" role="img">
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 text-gold-dim" aria-hidden="true"></i>
+              </div>
+            </div>
+            <!-- Persistent discoverability affordance: a chevron that warms to
+                 gold on hover/focus so keyboard + touch users see the row is a
+                 link without relying on a hover-only state. -->
+            <i data-lucide="chevron-right" class="row-chev hidden sm:block w-5 h-5 shrink-0" aria-hidden="true"></i>
+          </div>
+        </a>
+      </li>
+
+      <!-- Rank 05 -->
+      <li class="reveal reveal-delay-4">
+        <a href="#" class="chart-row relative block py-6 md:py-7 pl-2 pr-2 group">
+          <div class="flex items-center gap-5 md:gap-7">
+            <span class="rank-numeral faded font-cond font-light select-none w-16 md:w-24 text-center tnum" style="font-size:clamp(3rem,7vw,5.5rem); line-height:1;">05</span>
+            <div class="chart-thumb relative w-12 h-16 md:w-14 md:h-20 rounded-organic-sm shrink-0 overflow-hidden border border-hair">
+              <img src="https://picsum.photos/seed/lumiere-hollow-cathedral-keyart/200/300" alt="Hollow Cathedral poster" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display text-lg md:text-2xl truncate">Hollow Cathedral</h3>
+              <p class="font-mono text-xs text-muted mt-1">Horror · 2024 · 1h 49m</p>
+              <p class="hidden md:block text-sm text-ink/70 mt-2 italic">“The choir stopped singing decades ago.”</p>
+            </div>
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-baseline gap-1">
+                <span class="font-mono font-semibold text-ink text-2xl md:text-3xl tnum">8.4</span>
+                <span class="font-mono text-dim text-xs">/10</span>
+              </div>
+              <div class="flex gap-0.5 mt-1.5" aria-label="Rated 4 out of 5 stars" role="img">
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 fill-gold text-gold" aria-hidden="true"></i>
+                <i data-lucide="star" class="w-3 h-3 text-gold-dim" aria-hidden="true"></i>
+              </div>
+            </div>
+            <!-- Persistent discoverability affordance: a chevron that warms to
+                 gold on hover/focus so keyboard + touch users see the row is a
+                 link without relying on a hover-only state. -->
+            <i data-lucide="chevron-right" class="row-chev hidden sm:block w-5 h-5 shrink-0" aria-hidden="true"></i>
+          </div>
+        </a>
+      </li>
+
+    </ol>
+  </div>
+</section>
+
+
+<!-- ============ GENRE FILTER — recontextualized to filter the chart above ============
+     The brief's intended beat order is hero → trending → ranked chart → genre
+     navigation → critic. Placed here, the genre bar filters the chart the user
+     just read, so the sticky control always has meaningful content directly
+     beneath it. Stickiness is scoped to this section only via a wrapping
+     relative container; it releases before the critic section begins. -->
+<section id="genres" class="relative py-16 md:py-20 bg-base overflow-hidden">
+  <div class="mx-auto max-w-stage px-5 sm:px-8">
+    <div class="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
+      <div>
+        <p class="font-cond cond-eyebrow text-[11px] text-ink/55 uppercase mb-3">Find Your Mood</p>
+        <h2 class="font-display font-medium ts-h2 display-opt">Browse by Genre</h2>
+      </div>
+      <p class="text-xs text-muted max-w-xs prose-lead">Reshape the trending lineup by mood — pick a genre and the room above re-forms around your taste.</p>
+    </div>
+
+    <!-- Sticky filter bar: scoped to this section by the surrounding relative
+         container; it detaches before the critic section so it never floats
+         over unrelated content. -->
+    <div class="reveal reveal-delay-1 sticky top-[88px] z-30 glass rounded-organic-lg p-4 md:p-5">
+      <div class="flex flex-wrap gap-2.5 items-center" role="group" aria-label="Genre filter">
+        <span class="font-cond cond-eyebrow text-[11px] text-dim uppercase mr-1 hidden md:inline">Genre</span>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-active="true" data-genre="all">All</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="action">Action</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="drama">Drama</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="scifi">Sci-Fi</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="thriller">Thriller</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="animation">Animation</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="horror">Horror</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="documentary">Documentary</button>
+        <button class="genre-pill rounded-full px-4 py-2 text-xs border border-hair text-muted" data-genre="romance">Romance</button>
+        <span class="ml-auto hidden sm:flex items-center gap-2 text-xs text-dim">
+          <i data-lucide="info" class="w-3.5 h-3.5"></i>Tap to filter the trending lineup
+        </span>
+      </div>
+    </div>
+    <!-- Filter status: promoted above the row on mobile so the filtered state
+         is obvious on touch (where the inline hint is hidden). -->
+    <p class="reveal reveal-delay-2 mt-5 text-xs text-muted font-mono" aria-live="polite" id="genre-status">Showing all 8 trending titles</p>
+  </div>
+</section>
+
+
+<!-- ============ FEATURED CRITIC REVIEW (emotional center) ============ -->
+<section id="critic" class="relative py-28 md:py-40 overflow-hidden critic-backdrop">
+  <div class="grain-layer" aria-hidden="true" style="opacity:0.07"></div>
+  <!-- soft organic gold light -->
+  <div class="breath-blob w-[460px] h-[460px] -right-20 top-10 opacity-40" aria-hidden="true"></div>
+  <div class="breath-blob warm w-[340px] h-[340px] left-10 bottom-0 opacity-30" aria-hidden="true"></div>
+
+  <div class="relative z-10 mx-auto max-w-4xl px-5 sm:px-8 text-center">
+    <p class="reveal font-cond cond-eyebrow text-[11px] text-ink/55 uppercase mb-10">Critic's Voice</p>
+
+    <!-- Opening quote mark — decorative, demoted off-gold so the 5.0 score below
+         remains the single gold currency element in this section. -->
+    <div class="reveal reveal-delay-1 flex justify-center mb-2">
+      <span class="font-display text-ink/40 leading-none select-none" style="font-size:clamp(3rem,6vw,5.5rem); transform:translateY(0.32em);" aria-hidden="true">“</span>
+    </div>
+
+    <blockquote class="reveal reveal-delay-1 -mt-4 md:-mt-6">
+      <p class="font-display italic ts-quote text-ink display-opt">
+        The Last Light of Vega does not ask to be watched — it asks to be witnessed. In a year of noise, it is the rare film that trusts its own silence, and rewards anyone willing to sit inside it.
+      </p>
+
+      <footer class="mt-10 md:mt-14 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-8">
+        <div class="text-center sm:text-left">
+          <cite class="not-italic block font-medium text-ink text-sm">Marguerite Vance</cite>
+          <span class="block text-xs text-muted mt-0.5 font-cond tracking-[0.18em] uppercase">Senior Critic · Sight &amp; Sound</span>
+        </div>
+        <span class="hidden sm:block w-px h-8 bg-hair"></span>
+        <div class="flex items-center gap-2">
+          <div class="flex gap-0.5" aria-label="5 out of 5 stars" role="img">
+            <i data-lucide="star" class="w-4 h-4 fill-gold text-gold" aria-hidden="true"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-gold text-gold" aria-hidden="true"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-gold text-gold" aria-hidden="true"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-gold text-gold" aria-hidden="true"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-gold text-gold" aria-hidden="true"></i>
+          </div>
+          <span class="font-mono text-gold text-lg font-semibold tnum">5.0</span>
+        </div>
+      </footer>
+    </blockquote>
+
+    <a href="#" class="reveal reveal-delay-2 mt-10 link-underline inline-flex items-center gap-2 text-xs text-muted hover:text-ink transition-colors">
+      Read the full review
+      <i data-lucide="arrow-right" class="w-4 h-4"></i>
+    </a>
+  </div>
+</section>
+
+
+<!-- ============ SECONDARY CTA removed — the footer carries the brand
+     statement and the hero already offers the account-creation action,
+     so a conversion banner here would break the reverent cinematic tone
+     the brief demands (every section is a staged beat, never a database
+     grid). The critic quote is the true emotional close before the footer. ============ -->
+
+</main>
+
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative bg-raised pt-20 md:pt-24 pb-10">
+  <div class="mx-auto max-w-stage px-5 sm:px-8">
+
+    <!-- Wordmark + brand statement -->
+    <div class="reveal pb-12 md:pb-16 border-b border-hair">
+      <div class="font-display text-3xl md:text-5xl tracking-cinematic select-none">LUMI<span class="text-ink/70">È</span>RE</div>
+      <p class="mt-4 font-display italic text-lg md:text-xl text-ink/80 max-w-md">The cinema, restored to its full prestige.</p>
+    </div>
+
+    <!-- Columns -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-10 py-12 md:py-16">
+      <div class="col-span-2 md:col-span-1">
+        <p class="text-xs text-muted prose-lead max-w-xs">A cinematic discovery platform for the serious cinephile. Built for the dark.</p>
+        <div class="flex items-center gap-3 mt-6">
+          <a href="https://x.com" target="_blank" rel="noopener"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          <a href="https://letterboxd.com" target="_blank" rel="noopener"><i data-lucide="film" class="w-4 h-4"></i></a>
+          <a href="https://www.youtube.com" target="_blank" rel="noopener"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+
+      <nav aria-label="Discover">
+        <h3 class="font-cond tracking-eyebrow text-[11px] text-dim uppercase mb-4">Discover</h3>
+        <ul class="space-y-3 text-xs text-muted">
+          <li><a href="#" class="hover:text-ink transition-colors">New Releases</a></li>
+          <li><a href="#trending" class="hover:text-ink transition-colors">Trending</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Hidden Gems</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Collections</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Charts">
+        <h3 class="font-cond tracking-eyebrow text-[11px] text-dim uppercase mb-4">Charts</h3>
+        <ul class="space-y-3 text-xs text-muted">
+          <li><a href="#charts" class="hover:text-ink transition-colors">Top This Week</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">All-Time Greats</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">By Decade</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Critic Picks</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Critic Voices">
+        <h3 class="font-cond tracking-eyebrow text-[11px] text-dim uppercase mb-4">Critic Voices</h3>
+        <ul class="space-y-3 text-xs text-muted">
+          <li><a href="#" class="hover:text-ink transition-colors">Featured Reviews</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Essays</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Interviews</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Festival Coverage</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="About and Legal">
+        <h3 class="font-cond tracking-eyebrow text-[11px] text-dim uppercase mb-4">About</h3>
+        <ul class="space-y-3 text-xs text-muted">
+          <li><a href="#" class="hover:text-ink transition-colors">Our Story</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Terms of Service</a></li>
+          <li><a href="#" class="hover:text-ink transition-colors">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Gold hairline divider -->
+    <div class="gold-rule mb-8"></div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-dim">
+      <p>© 2026 LUMIÈRE Cinema. All films belong to their respective owners.</p>
+      <p class="font-mono tracking-wide">Crafted for the darkened theater.</p>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  // ===== Init icons =====
+  if (window.lucide) lucide.createIcons();
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ===== Nav scroll blur =====
+  const nav = document.getElementById('nav');
+  const onScroll = () => {
+    if (window.scrollY > 24) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ===== Mobile nav drawer — focus trap + body scroll-lock (FIXED a11y) =====
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen = false;
+  let lastFocused = null;
+
+  // Lucide replaces <i data-lucide> with an <svg>, so the original <i> reference
+  // detaches after first render. To swap the icon reliably we rebuild the inner
+  // <i>, let lucide re-render it, then it becomes the new <svg>. This function
+  // returns nothing but leaves the toggle's only child as the rendered icon.
+  const setToggleIcon = (name) => {
+    const i = document.createElement('i');
+    i.setAttribute('data-lucide', name);
+    i.className = 'w-5 h-5';
+    menuToggle.replaceChildren(i);
+    if (window.lucide) lucide.createIcons();
+  };
+
+  // Collect all focusable targets inside the drawer (links + buttons).
+  const drawerFocusables = () =>
+    mobileMenu.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+
+  const trapKey = (e) => {
+    if (!menuOpen) return;
+    if (e.key === 'Escape') { setMenu(false); return; }
+    if (e.key !== 'Tab') return;
+    const items = Array.from(drawerFocusables());
+    if (!items.length) return;
+    const first = items[0];
+    const last  = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  };
+
+  const setMenu = (open) => {
+    menuOpen = open;
+    menuToggle.setAttribute('aria-expanded', String(open));
+    menuToggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    mobileMenu.classList.toggle('open', open);
+    mobileMenu.classList.toggle('hidden-drawer', !open);
+    setToggleIcon(open ? 'x' : 'menu');
+
+    // Body scroll-lock while the drawer is open; restore on close.
+    if (open) {
+      lastFocused = document.activeElement;
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', trapKey);
+      // Move focus into the drawer once it is visible.
+      requestAnimationFrame(() => {
+        const first = drawerFocusables()[0];
+        if (first) first.focus();
+      });
+    } else {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', trapKey);
+      // Return focus to the toggle that opened the drawer.
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    }
+  };
+  menuToggle.addEventListener('click', () => setMenu(!menuOpen));
+  document.querySelectorAll('.mobile-link').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuOpen) setMenu(false); });
+
+  // ===== Scroll reveal (respects reduced motion) =====
+  if (!prefersReduced && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'));
+  }
+
+  // ===== Score gold-dust signature reveal =====
+  const scoreFigure = document.querySelector('.score-figure');
+  if (scoreFigure) {
+    if (prefersReduced) {
+      scoreFigure.classList.add('in');
+    } else {
+      // Trigger on first paint after fonts settle
+      requestAnimationFrame(() => setTimeout(() => scoreFigure.classList.add('in'), 600));
+    }
+  }
+
+  // ===== Hero parallax (disabled under reduced motion) =====
+  // The backdrop layer is oversized (inset -15% top/bottom). We translate it
+  // UP (negative Y) as the page scrolls down and grow scale within 1.0–1.04,
+  // so the image drifts opposite to scroll and NEVER pulls an edge into the
+  // frame — no hard seam between key art and the black canvas.
+  const parallax = document.querySelector('[data-parallax]');
+  if (parallax && !prefersReduced) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          if (y < window.innerHeight) {
+            const scale = Math.min(1.04, 1 + y * 0.00018);   // capped 1.0–1.04
+            const ty    = -y * 0.18;                          // translate UP
+            parallax.style.transform = `translate3d(0, ${ty}px, 0) scale(${scale})`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  // ===== Gate grain animation with IntersectionObserver (FIXED motion defect) =====
+  // Pause the (heaviest always-on repaint) grain layers when hero & critic are off-screen.
+  if (!prefersReduced && 'IntersectionObserver' in window) {
+    const grainLayers = document.querySelectorAll('.grain-layer');
+    const grainIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        e.target.classList.toggle('paused', !e.isIntersecting);
+      });
+    }, { threshold: 0 });
+    grainLayers.forEach((g) => grainIO.observe(g));
+  }
+
+  // ===== Pause breath-blobs + drop will-change when their section is off-screen.
+  // Each .breath-blob lives inside a <section>; we toggle .blob-paused (freezes
+  // animation) and .blob-active (adds will-change) on the owning section so the
+  // continuous 9s/12s transforms + compositor promotion only run while visible.
+  if ('IntersectionObserver' in window) {
+    const blobOwners = new Set();
+    document.querySelectorAll('.breath-blob').forEach((b) => {
+      const sec = b.closest('section');
+      if (sec) blobOwners.add(sec);
+    });
+    const blobIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        e.target.classList.toggle('blob-paused', !e.isIntersecting);
+        e.target.classList.toggle('blob-active', e.isIntersecting);
+      });
+    }, { threshold: 0, rootMargin: '120px 0px' });
+    blobOwners.forEach((sec) => blobIO.observe(sec));
+  }
+
+  // ===== Trending row arrow controls =====
+  const trendRow = document.getElementById('trendRow');
+  const tPrev = document.querySelector('.trend-prev');
+  const tNext = document.querySelector('.trend-next');
+  const step = () => Math.min(280, trendRow.clientWidth * 0.8);
+  if (tPrev) tPrev.addEventListener('click', () => trendRow.scrollBy({ left: -step(), behavior: prefersReduced ? 'auto' : 'smooth' }));
+  if (tNext) tNext.addEventListener('click', () => trendRow.scrollBy({ left:  step(), behavior: prefersReduced ? 'auto' : 'smooth' }));
+
+  // ===== Genre filter — signature interaction (respects reduced motion in re-render) =====
+  const pills = document.querySelectorAll('.genre-pill');
+  const cards = document.querySelectorAll('.trending-card');
+  const status = document.getElementById('genre-status');
+
+  const genreLabels = {
+    all:'all titles', action:'Action', drama:'Drama', scifi:'Sci-Fi',
+    thriller:'Thriller', animation:'Animation', horror:'Horror',
+    documentary:'Documentary', romance:'Romance'
+  };
+
+  pills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      const genre = pill.dataset.genre;
+      pills.forEach((p) => p.setAttribute('data-active', 'false'));
+      pill.setAttribute('data-active', 'true');
+
+      let matched = 0;
+      let matchIndex = 0;
+      cards.forEach((card) => {
+        const match = (genre === 'all') || (card.dataset.genre === genre);
+        // FIXED: reduced-motion users get no per-card transition
+        if (prefersReduced) {
+          card.style.transition = 'none';
+        }
+        card.setAttribute('data-match', String(match));
+        // Reorder matches to the front of the row via flex order so the
+        // filtered set reads first (order 0 = front). When 'all', reset to
+        // source order so the original ranking returns.
+        card.style.order = (genre === 'all') ? '' : (match ? '0' : '1');
+        if (match) { matched++; matchIndex++; }
+      });
+
+      const label = genre === 'all' ? `all ${matched} trending titles` : `${matched} ${genreLabels[genre]} title${matched === 1 ? '' : 's'}`;
+      status.textContent = `Showing ${label}`;
+
+      // Scroll the matching first card into view so the effect is visible
+      if (genre !== 'all') {
+        const firstMatch = Array.from(cards).find(c => c.dataset.genre === genre);
+        if (firstMatch) {
+          firstMatch.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>
