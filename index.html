@@ -124,6 +124,23 @@
   .pcard h3{font-size:16px;margin-bottom:8px}
   .pcard p{color:var(--dim);font-size:14px}
   .pcard .n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);margin-bottom:14px}
+  .manifesto{text-align:center;max-width:900px;margin:0 auto 42px;padding:0 8px}
+  .manifesto .slogan{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(27px,5vw,50px);line-height:1.08;letter-spacing:-.028em;margin-bottom:18px}
+  .manifesto .slogan em{font-style:normal}
+  .manifesto p{color:var(--dim);font-size:clamp(15px,2vw,18px);max-width:60ch;margin:0 auto}
+  .manifesto .bar{width:64px;height:3px;background:var(--grad);border-radius:2px;margin:22px auto 0}
+  .pull{text-align:center;font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(18px,2.6vw,26px);letter-spacing:-.01em;color:var(--txt);margin:46px auto 8px;max-width:24ch}
+  .pull span{color:var(--purple)}
+  .contrast{max-width:880px;margin:8px auto 0;border:1px solid var(--border);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,var(--panel),var(--panel2))}
+  .crow{display:grid;grid-template-columns:1fr 34px 1fr;align-items:stretch;border-bottom:1px solid var(--border)}
+  .crow:last-child{border-bottom:none}
+  .ccell{padding:18px 22px;font-size:14.5px;display:flex;align-items:center}
+  .ccell.l{color:var(--faint)}
+  .ccell.r{color:var(--txt);font-weight:500}
+  .ccell.m{justify-content:center;color:var(--purple);font-size:17px}
+  .ccap{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:16px}
+  .ccap b{color:var(--dim)}
+  @media(max-width:640px){.crow{grid-template-columns:1fr}.ccell.m{display:none}.ccell.l{border-bottom:1px solid var(--border);padding-bottom:6px}.ccell.r{padding-top:6px}}
 
   /* how it works — phases */
   .phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
@@ -261,18 +278,48 @@ curl -fsSL -o .claude/workflows/fireworks-design.js \
 <section id="philosophy">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="k">Why it exists</div>
-      <h2>Designers ration exploration.<br>This workflow doesn't.</h2>
+      <div class="k">The philosophy</div>
+      <h2>Don't ship the first draft.<br>Ship the verdict.</h2>
+      <p>Every other tool hands you one generation and calls it done. fireworks-design runs a whole design studio in parallel — and only the page that survives exploration, judging, and adversarial refinement gets to ship.</p>
     </div>
+
+    <div class="manifesto reveal">
+      <div class="slogan">Designed to be <em class="grad">wrong in parallel</em> —<br>so the final page is right.</div>
+      <p>A single model output is one draw from a distribution: its taste, mood, and reading of your brief are locked into that version, and its ceiling is capped by variance. We don't try to draw better. We draw <b style="color:var(--txt)">many times, on purpose</b>, and let independent critics throw out the losers.</p>
+      <div class="bar"></div>
+    </div>
+
     <div class="quote reveal">
       <blockquote><span class="marks">“</span> Even experienced designers have to ration exploration — there's rarely time to prototype a dozen directions, so you limit yourself to a few. <span class="marks">”</span></blockquote>
-      <cite>— <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">Anthropic, Introducing Claude Design</a></cite>
+      <cite>— <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">Anthropic, Introducing Claude Design</a> · the shared root of the idea</cite>
     </div>
+
+    <p class="pull reveal">Same idea. <span>Open-sourced.</span> Model-agnostic. <span>Yours.</span></p>
+
     <div class="pgrid">
-      <div class="pcard reveal"><div class="n">01 / PROBLEM</div><h3>One generation = one draw</h3><p>A single LLM output locks taste, mood, and interpretation into one version. Its quality ceiling is capped by variance.</p></div>
-      <div class="pcard reveal"><div class="n">02 / APPROACH</div><h3>Explore widely, judge independently</h3><p>Fan out many distinct aesthetics, score each across separate dimensions — turn variance into a quality floor.</p></div>
-      <div class="pcard reveal"><div class="n">03 / OUTCOME</div><h3>Synthesize, then refine hard</h3><p>Graft the winners together and critique-fix-loop until it clears the bar. Different briefs crown different winners — on purpose.</p></div>
+      <div class="pcard reveal"><div class="n">01 / BREADTH</div><h3>Explore like you're infinite.</h3><p>6–8 fully-committed directions, every run. One prompt gives you one mood, one taste, one lucky roll — we give you a studio's worth, then keep only what earns its place.</p></div>
+      <div class="pcard reveal"><div class="n">02 / VERDICT</div><h3>Judge, don't hope.</h3><p>Every direction scored 1–10 across 6 independent dimensions — hierarchy, type, color, motion, craft, delight. The winner isn't a feeling; it's a number with a paper trail.</p></div>
+      <div class="pcard reveal"><div class="n">03 / MODEL-AGNOSTIC</div><h3>The model is the intern. The panel is the art director.</h3><p>Inherits whatever model you run it on. A weaker model explores more crudely — but the judge-and-refine loop lifts every output toward the same bar. Bring your own intelligence.</p></div>
+      <div class="pcard reveal"><div class="n">04 / OPEN SOURCE</div><h3>Yours. Open. Local.</h3><p>One MIT file that lives in your repo and runs in your Claude Code. No subscription, no upload, no vendor lock-in. The studio is yours to keep, fork, and bend.</p></div>
     </div>
+  </div>
+</section>
+
+<!-- identity: vs ClaudeDesign -->
+<section style="background:linear-gradient(180deg,transparent,rgba(59,130,246,.04),transparent);padding:64px 0">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="k">Inspired by ClaudeDesign · built differently</div>
+      <h2>A product, made into a method you own.</h2>
+      <p>We love what Anthropic shipped. We just wanted it open, runnable on any model, and living in our own terminal. So we rebuilt the <em>mechanism</em> — not the product.</p>
+    </div>
+    <div class="contrast reveal">
+      <div class="crow"><div class="ccell l">ClaudeDesign ships one curated direction.</div><div class="ccell m">→</div><div class="ccell r">We explore eight, judge all, merge the best.</div></div>
+      <div class="crow"><div class="ccell l">Runs on one model, behind a paid subscription.</div><div class="ccell m">→</div><div class="ccell r">Model-agnostic, MIT, runs in your terminal.</div></div>
+      <div class="crow"><div class="ccell l">A hosted product you rent.</div><div class="ccell m">→</div><div class="ccell r">A single file you own, fork, and keep forever.</div></div>
+      <div class="crow"><div class="ccell l">Quality depends on their best vision model.</div><div class="ccell m">→</div><div class="ccell r">Quality is a floor built by the panel — on any model.</div></div>
+    </div>
+    <div class="ccap reveal">Same philosophy · <b>open source</b> · model-agnostic · runs anywhere</div>
   </div>
 </section>
 
