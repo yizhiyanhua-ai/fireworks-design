@@ -67,45 +67,41 @@
 
 ## 📦 安装
 
-`fireworks-design` 是单文件的 **Claude Code 工作流**。放进你项目的工作流目录即可:
+一条命令,把工作流放进项目即可:
 
 ```bash
-# 在项目根目录(运行 `claude` 的那个目录)执行
 mkdir -p .claude/workflows
 curl -fsSL -o .claude/workflows/fireworks-design.js \
   https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/fireworks-design.js
 ```
 
-或克隆后复制:
-
-```bash
-git clone https://github.com/yizhiyanhua-ai/fireworks-design.git
-cp fireworks-design/fireworks-design.js .claude/workflows/
-```
-
-完成。它会成为一个**命名工作流** —— 在任意 Claude Code 会话里用 `Workflow` 工具调用。
+在项目根目录(你打开 `claude` 的那个目录)执行,就完事了。
 
 ## 🚀 使用
 
-在 Claude Code 里调用(工作流后台运行,用 `/workflows` 看实时进度):
+装好就完事。接下来**直接用自然语言告诉 Claude** 你要什么、放哪里:
 
-```
+> 用 fireworks-design 给一个咖啡店做落地页,存到 `~/design/coffee`
+
+Claude 会在后台自动跑工作流(用 `/workflows` 看实时进度),给你一个成品 `final.html`。想调参就顺口说:
+
+> 探索 6 个方向、打磨 3 轮、品牌色用 `#7c3aed`
+
+**你会得到:** 一个自包含的 `final.html`(外加探索阶段的 `draft-*.html`),以及一份「哪个风格胜出、为什么」的总结。
+
+<details>
+<summary><b>想直接手动调用?</b></summary>
+
+```js
 Workflow({
   name: "fireworks-design",
-  args: {
-    prompt: "AI 笔记应用落地页 —— 隐私优先、秒级检索,面向独立开发者",
-    outputDir: "/绝对路径/输出目录",   // 必填:绝对路径
-    variants: 6,        // 探索方向数(默认 6,最多 8)
-    refineRounds: 2,    // 评审-修复轮数(默认 2)
-    brand: "可选:品牌色 #7c3aed,字体 Inter"  // 可选
-  }
+  args: { prompt: "...", outputDir: "/绝对路径", variants: 6, refineRounds: 2 }
 })
 ```
 
-**产出:**
-- `<outputDir>/final.html` —— 最终成品
-- `<outputDir>/draft-*.html` —— 全部探索方向(可单独取用)
-- 返回:胜出风格、完整排名、所有方向路径、polish 总结
+`prompt` 和 `outputDir`(绝对路径)必填;`variants`(3–8)、`refineRounds`、`brand`、`lenses` 可选。完整参数见下方「参数」表。
+
+</details>
 
 ## 💼 使用案例
 

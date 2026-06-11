@@ -67,45 +67,41 @@ A final gate checks and fixes: responsiveness (375/768/1280+), all interactive s
 
 ## 📦 Install
 
-`fireworks-design` is a single-file **Claude Code Workflow**. Drop it into your project's workflows folder:
+One command — drop the workflow into your project:
 
 ```bash
-# from your project root (the dir you run `claude` in)
 mkdir -p .claude/workflows
 curl -fsSL -o .claude/workflows/fireworks-design.js \
   https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/fireworks-design.js
 ```
 
-Or clone and copy:
-
-```bash
-git clone https://github.com/yizhiyanhua-ai/fireworks-design.git
-cp fireworks-design/fireworks-design.js .claude/workflows/
-```
-
-That's it. It becomes a **named workflow** — invoke it from any Claude Code session with the `Workflow` tool.
+Run it from your project root (the folder you open `claude` in). Done.
 
 ## 🚀 Usage
 
-Call it from Claude Code (the workflow runs in the background; watch live progress with `/workflows`):
+That's the whole setup. Now just **talk to Claude in plain language** — say what you want and where to save it:
 
-```
+> Use fireworks-design to build a landing page for a coffee shop. Save it to `~/design/coffee`.
+
+Claude runs the workflow in the background (watch it live with `/workflows`) and hands you a finished `final.html`. Tweak it conversationally whenever:
+
+> …explore 6 directions, refine 3 rounds, and use brand color `#7c3aed`.
+
+**What you get:** a single self-contained `final.html` (plus the explored `draft-*.html` directions) and a summary of which aesthetic won and why.
+
+<details>
+<summary><b>Prefer to call it directly?</b></summary>
+
+```js
 Workflow({
   name: "fireworks-design",
-  args: {
-    prompt: "Landing page for an AI note app — privacy-first, instant retrieval, aimed at indie developers",
-    outputDir: "/abs/path/to/output",   // REQUIRED: absolute path
-    variants: 6,        // directions to explore (default 6, max 8)
-    refineRounds: 2,    // critique→fix loops (default 2)
-    brand: "optional: accent #7c3aed, font Inter"  // optional
-  }
+  args: { prompt: "...", outputDir: "/abs/path", variants: 6, refineRounds: 2 }
 })
 ```
 
-**Output:**
-- `<outputDir>/final.html` — the finished page
-- `<outputDir>/draft-*.html` — every explored direction (use them on their own)
-- Returns: winning lens, full ranking, all direction paths, polish summary
+`prompt` and `outputDir` (absolute path) are required; `variants` (3–8), `refineRounds`, `brand`, and `lenses` are optional. Full reference in the **Arguments** table below.
+
+</details>
 
 ## 💼 Example cases
 
