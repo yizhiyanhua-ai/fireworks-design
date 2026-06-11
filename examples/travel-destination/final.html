@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AZORES — The Floating Garden</title>
+<meta name="description" content="Nine islands where the Atlantic grows flowers. A cinematic guide to the Azores — volcanic calderas, hydrangea roads, and a five-day itinerary through the North Atlantic's best-kept secret." />
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Playfair Display (display) · Cormorant Garamond (poetry) · Jost (spine) · JetBrains Mono (data) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;0,900;1,700&family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500;1,600&family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper:   '#F4EFE6',  /* warm canvas · 60% */
+          deep:    '#0A2A2C',  /* volcanic-teal dark */
+          ocean:   '#0F3D40',  /* primary teal · 30% */
+          ocean2:  '#15555a',  /* teal lifted */
+          gold:    '#C8932A',  /* sand-gold accent · 10% (fills only on light) */
+          goldsoft:'#E4B96A',
+          golddark:'#8A6516',  /* darkened gold — AA on paper/sand */
+          ink:     '#1C2A2B',  /* charcoal-teal body */
+          mute:    '#5C6A6B',  /* muted captions — AA on paper */
+          sand:    '#E8E0D2',  /* sand-tone panel */
+          near:    '#0F1410',  /* near-black overlay */
+          line:    'rgba(28,42,43,0.10)',
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'Georgia', 'serif'],
+          poetry:  ['"Cormorant Garamond"', 'Georgia', 'serif'],
+          sans:    ['"Jost"', 'system-ui', 'sans-serif'],
+          data:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        letterSpacing: {
+          stamp: '0.42em',
+          kicker: '0.28em',
+          wide2: '0.18em',
+        },
+        maxWidth: {
+          edge: '1280px',
+          prose: '68ch',
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{
+    /* spacing rhythm */
+    --s-1: 0.5rem; --s-2: 1rem; --s-3: 1.5rem; --s-4: 2rem;
+    --s-5: 3rem; --s-6: 4rem; --s-7: 6rem; --s-8: 8rem;
+
+    /* fluid modular type scale — everything routes through these */
+    --fs-display: clamp(3.5rem, 16vw, 15rem);
+    --fs-h1:      clamp(2.4rem, 6vw, 5.5rem);
+    --fs-h2:      clamp(2rem, 4.2vw, 3.6rem);
+    --fs-h3:      clamp(1.5rem, 2.4vw, 2.2rem);
+    --fs-lead:    clamp(1.25rem, 2vw, 1.65rem);
+    --fs-body:    1.0625rem;
+    --fs-small:   0.875rem;
+    --fs-micro:   0.75rem;
+  }
+
+  html{ scroll-behavior:smooth; scroll-padding-top:5rem; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{ background:#F4EFE6; color:#1C2A2B; font-family:'Jost',system-ui,sans-serif; font-weight:300; overflow-x:hidden; }
+  ::selection{ background:rgba(200,147,42,0.28); color:#0A2A2C; }
+
+  /* ---- Display & type tokens ---- */
+  .font-display{ font-feature-settings:"liga" 1, "dlig" 1, "onum" 1; }
+  .h-display{ font-size:var(--fs-display); line-height:0.86; letter-spacing:-0.02em; }
+  .h1{ font-size:var(--fs-h1); line-height:0.98; letter-spacing:-0.015em; text-wrap:balance; }
+  .h2{ font-size:var(--fs-h2); line-height:1.04; letter-spacing:-0.01em; text-wrap:balance; }
+  .h3{ font-size:var(--fs-h3); line-height:1.12; letter-spacing:-0.005em; text-wrap:balance; }
+  /* experience-card title token — sits clearly below section h2/h1 */
+  .h-card{ font-size:var(--fs-h3); line-height:1.15; letter-spacing:-0.005em; text-wrap:balance; }
+  .lead{ font-size:var(--fs-lead); line-height:1.5; }
+  .tnum{ font-variant-numeric: tabular-nums; }
+
+  /* ---- Eyebrow / kicker / stamp ---- */
+  .kicker{ font-family:'Jost',sans-serif; font-weight:500; font-size:var(--fs-micro); letter-spacing:0.28em; text-transform:uppercase; }
+  .stamp{ font-family:'Jost',sans-serif; font-weight:400; font-size:var(--fs-micro); letter-spacing:0.42em; text-transform:uppercase; }
+  /* stamp chip — guaranteed AA contrast when sitting over unknown photography */
+  .stamp-chip{ display:inline-block; padding:.32em .7em .3em; margin-left:-.7em; background:rgba(15,20,16,0.62); backdrop-filter:blur(4px); border-radius:2px; }
+  /* On light grounds, kickers/eyebrows use OCEAN (9.8:1) or darkened gold (#8A6516 ~4.7:1) — never #C8932A as text */
+
+  /* ---- Paper texture — earned, not sterile ---- */
+  .paper-grain{
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(28,42,43,0.018) 0, transparent 42%),
+      radial-gradient(circle at 80% 70%, rgba(200,147,42,0.022) 0, transparent 46%);
+  }
+  /* film-grain overlay for cinematic dark surfaces */
+  .grain::after{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:3;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity:0.055; mix-blend-mode:overlay;
+  }
+  .vignette::before{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+    background: radial-gradient(120% 90% at 50% 42%, transparent 40%, rgba(0,0,0,0.5) 100%);
+  }
+
+  /* ---- Hero Ken Burns (slow exhale) ---- */
+  @keyframes kenburns{
+    0%   { transform: scale(1.08) translate3d(0,0,0); }
+    100% { transform: scale(1.20) translate3d(-1.8%, -2.2%, 0); }
+  }
+  .kb-image{ animation: kenburns 26s ease-in-out infinite alternate; transform-origin: 55% 45%; }
+
+  /* ---- Wordmark entrance: rise + glow + letter-spacing relax ---- */
+  @keyframes wordRise{
+    0%{ opacity:0; transform:translateY(0.45em); letter-spacing:0.16em; filter:blur(7px); }
+    100%{ opacity:1; transform:translateY(0); letter-spacing:-0.02em; filter:blur(0); }
+  }
+  .word-rise{ animation: wordRise 1.7s cubic-bezier(.2,.7,.2,1) 0.25s both; letter-spacing:-0.02em; }
+  .glow-gold{ text-shadow: 0 0 60px rgba(200,147,42,0.22), 0 2px 50px rgba(0,0,0,0.4); }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+  .fade-up{ animation: fadeUp 1.05s cubic-bezier(.2,.7,.2,1) both; }
+  .d1{ animation-delay:.55s } .d2{ animation-delay:.85s } .d3{ animation-delay:1.1s } .d4{ animation-delay:1.35s }
+
+  /* ---- Scroll reveal ---- */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity 1.1s cubic-bezier(.2,.7,.2,1), transform 1.1s cubic-bezier(.2,.7,.2,1); will-change: opacity, transform; }
+  .reveal.in{ opacity:1; transform:none; }
+  .reveal-l{ opacity:0; transform: translateX(-36px); transition: opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1); }
+  .reveal-l.in{ opacity:1; transform:none; }
+  .reveal-r{ opacity:0; transform: translateX(36px); transition: opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1); }
+  .reveal-r.in{ opacity:1; transform:none; }
+  .rd1{ transition-delay:.12s } .rd2{ transition-delay:.24s } .rd3{ transition-delay:.36s } .rd4{ transition-delay:.48s }
+
+  /* ---- Experience / image cards ---- */
+  .card-img{ transition: transform 1.4s cubic-bezier(.2,.7,.2,1), filter .6s ease; }
+  .exp-card:hover .card-img{ transform: scale(1.06); filter:saturate(1.06); }
+  .exp-caption{ transition: opacity .55s ease, transform .55s ease; opacity:.55; }
+  .exp-card:hover .exp-caption{ opacity:1; transform:translateY(-2px); }
+  /* touch/keyboard caption fallback — hidden captions stay reachable */
+  .exp-card:focus-within .exp-caption{ opacity:1; transform:translateY(-2px); }
+  .exp-card:focus-within{ outline:none; }
+  .exp-card:focus-visible{ outline:2px solid #C8932A; outline-offset:3px; }
+
+  /* ---- CTA ---- */
+  .btn-gold{
+    background:linear-gradient(180deg,#d6a23c,#b9821f); color:#0A2A2C;
+    transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s, filter .35s;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.18) inset, 0 14px 32px -16px rgba(200,147,42,0.75);
+  }
+  .btn-gold:hover{ transform: translateY(-2px); box-shadow:0 1px 0 rgba(255,255,255,0.25) inset, 0 22px 44px -18px rgba(200,147,42,0.9); filter:brightness(1.05); }
+  .btn-gold:active{ transform: translateY(0); }
+  .btn-ghost{ border:1px solid rgba(244,239,230,0.5); color:#F4EFE6; transition: background .35s ease, border-color .35s ease, transform .35s ease; }
+  .btn-ghost:hover{ background:rgba(244,239,230,0.10); border-color:rgba(244,239,230,0.9); transform: translateY(-2px); }
+
+  /* ---- Mobile nav disclosure ---- */
+  .nav-disclosure[hidden]{ display:none !important; }
+  .nav-toggle .bar{ transition: transform .3s ease, opacity .3s ease; transform-origin:center; }
+  .nav-toggle[aria-expanded="true"] .bar.top{ transform: translateY(5px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] .bar.mid{ opacity:0; }
+  .nav-toggle[aria-expanded="true"] .bar.bot{ transform: translateY(-5px) rotate(-45deg); }
+  .mobile-menu{ animation: fadeUp .35s cubic-bezier(.2,.7,.2,1) both; }
+
+  /* ---- Focus rings — visible, AA ---- */
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid #C8932A; outline-offset:3px; border-radius:2px;
+  }
+
+  /* ---- Timeline spine + day node ----
+     Signature editorial anchor: an oversized Playfair numeral (1–5) in a gold-ringed
+     circle, riding the central/left spine. Replaces the old flat dot. */
+  .spine-line{ background:linear-gradient(180deg, transparent 0%, rgba(200,147,42,0.45) 6%, rgba(200,147,42,0.45) 94%, transparent 100%); }
+  .day-badge{
+    width:46px; height:46px; border-radius:9999px;
+    background:#0A2A2C; border:2px solid #C8932A;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display', Georgia, serif; font-weight:700;
+    font-size:1.375rem; line-height:1; color:#F4EFE6;
+    box-shadow: 0 0 0 6px #0A2A2C, 0 0 0 7px rgba(200,147,42,0.30), 0 0 22px rgba(200,147,42,0.35);
+  }
+
+  /* ---- Gold hairline rule that draws on reveal ---- */
+  .gold-rule{ height:1px; background:linear-gradient(90deg, transparent, rgba(200,147,42,0.55), transparent); }
+
+  /* ---- Gallery ---- captions always visible at low opacity (Cereal/Kinfolk norm; serves touch + keyboard) ---- */
+  .gallery-track{ scrollbar-width:none; }
+  .gallery-track::-webkit-scrollbar{ display:none; }
+  .g-label{ opacity:.6; transform:none; transition:opacity .5s, transform .5s; }
+  .g-item:hover .g-label{ opacity:1; }
+  .g-item:focus-within .g-label{ opacity:1; }
+  .g-item:focus-visible{ outline:2px solid #C8932A; outline-offset:3px; border-radius:2px; }
+
+  /* ---- Scroll cue ---- */
+  @keyframes cue { 0%,100%{ transform: translateY(0); opacity:.4; } 50%{ transform: translateY(8px); opacity:1; } }
+  .cue{ animation: cue 2.4s ease-in-out infinite; }
+
+  /* ---- Sand panel ---- */
+  .sand-panel{
+    background:
+      radial-gradient(circle at 15% 20%, rgba(15,61,64,0.05) 0, transparent 35%),
+      radial-gradient(circle at 85% 80%, rgba(15,61,64,0.07) 0, transparent 42%),
+      linear-gradient(180deg, #EFE7D6 0%, #E8E0D2 100%);
+  }
+
+  /* ---- Rainfall bars — animate via scaleY on scroll-in ---- */
+  .rain-bar{
+    background: linear-gradient(180deg, #15555a 0%, #0F3D40 70%, #0A2A2C 100%);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform .9s cubic-bezier(.2,.7,.2,1);
+    border-radius: 2px 2px 0 0;
+  }
+  .rain-bar.in{ transform: scaleY(1); }
+  /* JS-disabled fallback lives in <noscript> below — chart renders at full height
+     so it is never an empty row of month letters. */
+  .month-chip{ transition: background .3s ease; }
+
+  /* ---- Islands interactive map ---- */
+  .island-dot{ cursor:pointer; transition: r .35s cubic-bezier(.2,.7,.2,1), filter .35s; }
+  .island-dot:hover, .island-dot.active{ filter: drop-shadow(0 0 6px rgba(200,147,42,0.9)); }
+  .island-ring{ transition: opacity .35s ease, r .35s cubic-bezier(.2,.7,.2,1); opacity:0; }
+  .island-group:hover .island-ring, .island-group.active .island-ring{ opacity:1; }
+  .island-group:focus-within .island-ring{ opacity:1; }
+  /* active island breathes — a single slow halo pulse, the signature cue */
+  @keyframes islandPulse{
+    0%,100%{ filter: drop-shadow(0 0 5px rgba(200,147,42,0.55)); }
+    50%    { filter: drop-shadow(0 0 12px rgba(200,147,42,0.95)); }
+  }
+  .island-group.active .island-dot{ animation: islandPulse 3.2s ease-in-out infinite; }
+  /* detail-panel content cross-fades on each selection */
+  .island-fade{ animation: islandFade .5s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes islandFade{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform:none; } }
+
+  /* keep no horizontal scroll */
+  body{ overflow-x:hidden; }
+
+  /* ---- Hero on short viewports: the scroll cue can collide with stacked CTAs on
+     landscape phones (~375–700px tall). Hide the cue below 700px of height so the
+     conversion surface stays thumb-reachable. ---- */
+  @media (max-height: 699px){
+    .hero-cue{ display:none; }
+  }
+  @media (max-height: 740px){
+    .hero-content{ padding-bottom: 1.5rem; }
+  }
+
+  /* ---- REDUCED MOTION — static, equally strong, zero animation, no layout shift ---- */
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .kb-image{ animation:none !important; transform: scale(1.12) !important; }
+    .word-rise, .fade-up{ animation:none !important; opacity:1 !important; transform:none !important; }
+    .reveal, .reveal-l, .reveal-r{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .cue{ animation:none !important; opacity:.8 !important; }
+    .rain-bar{ transform: scaleY(1) !important; transition:none !important; }
+    .card-img{ transition:none !important; }
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+</style>
+</head>
+
+<body class="paper-grain">
+
+<!-- JS-disabled fallback: force rainfall chart + scroll reveals to their final state
+     so the page is never a wall of hidden content or an empty weather chart. -->
+<noscript>
+  <style>
+    .rain-bar{ transform: scaleY(1) !important; }
+    .reveal, .reveal-l, .reveal-r{ opacity:1 !important; transform:none !important; }
+    .kb-image{ animation:none !important; transform: scale(1.12) !important; }
+  </style>
+</noscript>
+
+<!-- ============================ NAV ============================ -->
+<header class="fixed top-0 inset-x-0 z-50 transition-colors duration-500" id="nav">
+  <nav class="mx-auto max-w-edge px-5 md:px-10 flex items-center justify-between h-16 md:h-20" aria-label="Primary">
+    <a href="#top" class="flex items-baseline gap-2.5 group" aria-label="AZORES — home">
+      <span class="font-display font-black text-paper text-xl md:text-2xl tracking-tight group-hover:text-gold transition-colors">AZORES</span>
+      <span class="font-poetry italic text-gold text-sm hidden sm:inline">the floating garden</span>
+    </a>
+    <ul class="hidden md:flex items-center gap-9 font-sans text-paper/85 text-[0.8rem] tracking-wide2 uppercase">
+      <li><a href="#story" class="hover:text-gold transition-colors">Story</a></li>
+      <li><a href="#experiences" class="hover:text-gold transition-colors">Things to do</a></li>
+      <li><a href="#itinerary" class="hover:text-gold transition-colors">5 days</a></li>
+      <li><a href="#islands" class="hover:text-gold transition-colors">Islands</a></li>
+      <li><a href="#plan" class="hover:text-gold transition-colors">Plan</a></li>
+    </ul>
+    <div class="flex items-center gap-2 md:gap-3">
+      <a href="#plan" class="btn-gold font-sans font-medium text-[0.76rem] tracking-wide2 uppercase px-5 py-2.5 rounded-sm">
+        Plan your trip
+      </a>
+      <button type="button" id="nav-toggle" class="nav-toggle md:hidden inline-flex flex-col justify-center items-center w-10 h-10 -mr-2 text-paper" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+        <span class="bar top block w-5 h-0.5 bg-current mb-1"></span>
+        <span class="bar mid block w-5 h-0.5 bg-current mb-1"></span>
+        <span class="bar bot block w-5 h-0.5 bg-current"></span>
+      </button>
+    </div>
+  </nav>
+  <!-- mobile disclosure -->
+  <div id="mobile-menu" class="nav-disclosure md:hidden bg-deep/97 backdrop-blur-md border-t border-paper/10" hidden>
+    <ul class="px-5 py-6 flex flex-col gap-1 font-sans text-paper/90 text-base">
+      <li><a href="#story" class="mobile-link block py-3 border-b border-paper/10">Story</a></li>
+      <li><a href="#experiences" class="mobile-link block py-3 border-b border-paper/10">Things to do</a></li>
+      <li><a href="#itinerary" class="mobile-link block py-3 border-b border-paper/10">5 days</a></li>
+      <li><a href="#islands" class="mobile-link block py-3 border-b border-paper/10">Islands</a></li>
+      <li><a href="#plan" class="mobile-link block py-3">Plan your trip</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============================ 01 — HERO ============================ -->
+<section class="relative h-[100svh] min-h-[640px] w-full overflow-hidden grain vignette" aria-label="Azores hero">
+  <!-- cinematic image -->
+  <div class="absolute inset-0">
+    <img
+      src="https://picsum.photos/seed/azores-caldera-lake/1920/1280"
+      alt="A volcanic caldera crater lake in the Azores, ringed by green cliffs under low Atlantic cloud."
+      width="1920" height="1280"
+      class="kb-image w-full h-full object-cover"
+      fetchpriority="high" />
+    <!-- gradient overlays for legibility -->
+    <div class="absolute inset-0 bg-gradient-to-b from-near/55 via-near/20 to-near/80"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-deep/85 via-transparent to-transparent"></div>
+  </div>
+
+  <!-- vertical location stamp (left) -->
+  <div class="hidden md:flex absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 flex-col items-center gap-4 z-20">
+    <span class="block w-px h-16 bg-paper/40"></span>
+    <span class="stamp text-paper/80 [writing-mode:vertical-rl] rotate-180">37.7°N · 25.7°W — North Atlantic</span>
+    <span class="block w-px h-16 bg-paper/40"></span>
+  </div>
+
+  <!-- hero content — bottom-anchored at every breakpoint so CTAs never collide with the scroll cue -->
+  <div class="hero-content relative z-20 h-full flex flex-col justify-end pb-24 md:pb-32">
+    <div class="mx-auto max-w-edge w-full px-5 md:px-10">
+
+      <p class="fade-up d1 stamp text-gold mb-5 md:mb-7 flex items-center gap-3">
+        <span class="inline-block w-8 h-px bg-gold/70"></span>
+        A cinematic guide · nine islands
+      </p>
+
+      <h1 class="font-display font-black h-display text-paper word-rise glow-gold">
+        AZORES
+      </h1>
+
+      <p class="font-poetry italic text-paper/95 lead -mt-1 md:-mt-2" style="line-height:1.25">
+        The Floating Garden
+      </p>
+
+      <p class="fade-up d2 font-poetry italic text-paper/85 lead max-w-prose mt-4 md:mt-5" style="line-height:1.25">
+        Nine islands where the Atlantic grows flowers.
+      </p>
+
+      <!-- editorial CTA cue — no fabricated price stamp (price lives, justified, in Practical Info) -->
+      <p class="fade-up d3 stamp text-paper/75 mt-6 md:mt-7 mb-5">
+        A five-day route inside · start planning
+      </p>
+
+      <!-- CTAs -->
+      <div class="fade-up d4 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md">
+        <a href="#plan" class="btn-gold font-sans font-medium text-[0.82rem] tracking-wide2 uppercase px-7 py-4 rounded-sm text-center">
+          Plan your trip
+        </a>
+        <a href="#islands" class="btn-ghost font-sans font-medium text-[0.82rem] tracking-wide2 uppercase px-7 py-4 rounded-sm text-center inline-flex items-center justify-center gap-2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg>
+          Explore the islands
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- scroll cue -->
+  <div class="hero-cue absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
+    <span class="stamp text-paper/70 text-[0.6rem]">Scroll</span>
+    <span class="cue block w-px h-9 bg-gradient-to-b from-paper/70 to-transparent" aria-hidden="true"></span>
+  </div>
+</section>
+
+
+<!-- ============================ 02 — INTRO / ABOUT ============================ -->
+<section id="story" class="bg-paper py-20 md:py-32 paper-grain">
+  <div class="mx-auto max-w-edge px-5 md:px-10">
+
+    <div class="flex items-center gap-4 mb-12 md:mb-16 reveal">
+      <p class="kicker text-ocean">The place</p>
+      <span class="flex-1 h-px bg-line"></span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+
+      <!-- left pull-quote -->
+      <div class="lg:col-span-5 reveal">
+        <svg class="text-gold/50 mb-3" width="40" height="32" viewBox="0 0 42 34" fill="currentColor" aria-hidden="true"><path d="M0 34V20C0 9 6 2 17 0l2 5C12 7 9 12 9 19h8v15H0zm23 0V20C23 9 29 2 40 0l2 5c-7 2-10 7-10 14h8v15H23z"/></svg>
+        <blockquote class="font-poetry italic text-ink h2 leading-[1.12]">
+          The Azores are what Hawaii would be if it kept its secrets.
+        </blockquote>
+        <div class="gold-rule mt-9 w-24"></div>
+        <p class="mt-5 stamp text-mute">Field notes · São Miguel</p>
+      </div>
+
+      <!-- right body -->
+      <div class="lg:col-span-6 lg:col-start-7 space-y-6">
+        <p class="reveal font-sans text-ink/90 text-[1.0625rem] leading-[1.75]">
+          They rose from the Mid-Atlantic Ridge — nine volcanic tips of mountains tall enough that only their crowns break the surface. The youngest, Pico, still wears its crater like a recent scar; the oldest have softened into crater lakes and rolling pastures the colour of an over-exposed photograph.
+        </p>
+        <p class="reveal rd1 font-sans text-ink/90 text-[1.0625rem] leading-[1.75]">
+          They call it <em class="font-poetry italic text-ocean">the Floating Garden</em> for a reason you understand the moment you leave the airport: hydrangeas lining every roadside, hedges of blue and violet running to the horizon, green that never quits because the rain never quite stops. The climate is spring, all year, with the volume turned up.
+        </p>
+        <p class="reveal rd2 font-sans text-ink/90 text-[1.0625rem] leading-[1.75]">
+          This is not a brochure. It is a slow walk through five days on these islands — the calderas, the whales, the tea rows, the cooking pits that use the volcano's own breath. The photography carries you. The words are the caption.
+        </p>
+      </div>
+    </div>
+
+    <!-- sand rule + stat row -->
+    <div class="mt-16 md:mt-24 reveal">
+      <div class="gold-rule w-full mb-10"></div>
+      <dl class="grid grid-cols-3 gap-4 md:gap-10 max-w-3xl">
+        <div>
+          <dt class="kicker text-mute mb-2">Islands</dt>
+          <dd class="font-display font-bold text-ink text-4xl md:text-5xl tnum">9</dd>
+        </div>
+        <div>
+          <dt class="kicker text-mute mb-2">Year-round avg</dt>
+          <dd class="font-display font-bold text-ink text-4xl md:text-5xl tnum">17<span class="text-mute text-2xl align-top ml-1">°C</span></dd>
+        </div>
+        <div>
+          <dt class="kicker text-mute mb-2">From Lisbon</dt>
+          <dd class="font-display font-bold text-ink text-4xl md:text-5xl tnum">4.5<span class="text-mute text-2xl align-top ml-1">h</span></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 03 — THINGS TO DO ============================ -->
+<section id="experiences" class="bg-paper py-20 md:py-32 border-t border-ink/5 paper-grain">
+  <div class="mx-auto max-w-edge px-5 md:px-10">
+
+    <header class="max-w-3xl mb-12 md:mb-16 reveal">
+      <p class="kicker text-ocean mb-5">Things to do</p>
+      <h2 class="font-display font-bold text-ink h1 mb-5">Six ways the islands<br class="hidden md:block"/> will move you.</h2>
+      <p class="font-sans text-mute lead font-light">
+        Each is a half-day or full-day excursion, bookable locally and best done slowly. The order is only a suggestion — the islands resist itineraries.
+      </p>
+    </header>
+
+    <!-- asymmetric grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:auto-rows-[260px]">
+
+      <!-- card 1 — tall -->
+      <a href="#plan" tabindex="0" class="exp-card group relative overflow-hidden rounded-sm lg:row-span-2 reveal block">
+        <img src="https://picsum.photos/seed/azores-whale-watching/900/1200" alt="A whale's tail slipping beneath the Atlantic surface off São Miguel." width="900" height="1200" class="card-img absolute inset-0 w-full h-full object-cover" loading="lazy"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-near/85 via-near/15 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <p class="mb-2"><span class="stamp-chip stamp text-gold text-[0.6rem]">São Miguel</span></p>
+          <h3 class="font-display font-bold text-paper h-card">Whale &amp; dolphin watching</h3>
+          <p class="exp-caption font-sans text-paper text-sm mt-2 max-w-xs">Twenty-eight cetacean species pass these waters — sperm whales year-round.</p>
+        </div>
+      </a>
+
+      <!-- card 2 -->
+      <a href="#plan" tabindex="0" class="exp-card group relative overflow-hidden rounded-sm reveal rd1 block">
+        <img src="https://picsum.photos/seed/azores-sete-cidades/800/600" alt="The twin blue-and-green lakes of the Sete Cidades caldera seen from the rim." width="800" height="600" class="card-img absolute inset-0 w-full h-full object-cover" loading="lazy"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-near/85 via-near/10 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <p class="mb-2"><span class="stamp-chip stamp text-gold text-[0.6rem]">Sete Cidades</span></p>
+          <h3 class="font-display font-bold text-paper h-card">Caldera rim hike</h3>
+          <p class="exp-caption font-sans text-sm mt-2">Two lakes, one blue, one green, curled inside a single volcanic crater.</p>
+        </div>
+      </a>
+
+      <!-- card 3 -->
+      <a href="#plan" tabindex="0" class="exp-card group relative overflow-hidden rounded-sm reveal rd2 block">
+        <img src="https://picsum.photos/seed/azores-furnas-cozido/800/600" alt="A pot of cozido stew being lifted from a steaming geothermal hole in Furnas." width="800" height="600" class="card-img absolute inset-0 w-full h-full object-cover" loading="lazy"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-near/85 via-near/10 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <p class="mb-2"><span class="stamp-chip stamp text-gold text-[0.6rem]">Furnas</span></p>
+          <h3 class="font-display font-bold text-paper h-card">Geothermal cozido</h3>
+          <p class="exp-caption font-sans text-sm mt-2">A stew slow-cooked for six hours in the volcano's own steam.</p>
+        </div>
+      </a>
+
+      <!-- card 4 — tall -->
+      <a href="#plan" tabindex="0" class="exp-card group relative overflow-hidden rounded-sm lg:row-span-2 reveal block">
+        <img src="https://picsum.photos/seed/azores-canyoning-saojorge/900/1200" alt="A canyoning descent down a green waterfall gorge on São Jorge island." width="900" height="1200" class="card-img absolute inset-0 w-full h-full object-cover" loading="lazy"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-near/85 via-near/15 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <p class="mb-2"><span class="stamp-chip stamp text-gold text-[0.6rem]">São Jorge</span></p>
+          <h3 class="font-display font-bold text-paper h-card">Canyoning the fajãs</h3>
+          <p class="exp-caption font-sans text-sm mt-2 max-w-xs">Abseil down waterfalls that fall straight into the Atlantic.</p>
+        </div>
+      </a>
+
+      <!-- card 5 -->
+      <a href="#plan" tabindex="0" class="exp-card group relative overflow-hidden rounded-sm reveal rd1 block">
+        <img src="https://picsum.photos/seed/azores-pico-ascent/800/600" alt="The cone of Mount Pico, Portugal's highest peak, above the clouds." width="800" height="600" class="card-img absolute inset-0 w-full h-full object-cover" loading="lazy"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-near/85 via-near/10 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <p class="mb-2"><span class="stamp-chip stamp text-gold text-[0.6rem]">Pico</span></p>
+          <h3 class="font-display font-bold text-paper h-card">Volcanic ascent</h3>
+          <p class="exp-caption font-sans text-sm mt-2">Climb 2,351m — Portugal's highest point — to stand above the clouds.</p>
+        </div>
+      </a>
+
+      <!-- card 6 -->
+      <a href="#plan" tabindex="0" class="exp-card group relative overflow-hidden rounded-sm reveal rd2 block">
+        <img src="https://picsum.photos/seed/azores-gorreana-tea/800/600" alt="Neat rows of tea plants at Europe's oldest tea plantation, Gorreana." width="800" height="600" class="card-img absolute inset-0 w-full h-full object-cover" loading="lazy"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-near/85 via-near/10 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <p class="mb-2"><span class="stamp-chip stamp text-gold text-[0.6rem]">Gorreana</span></p>
+          <h3 class="font-display font-bold text-paper h-card">Tea plantation walk</h3>
+          <p class="exp-caption font-sans text-sm mt-2">Europe's only tea estate, in production since 1883.</p>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 04 — 5-DAY ITINERARY ============================ -->
+<section id="itinerary" class="bg-deep text-paper py-24 md:py-36 relative overflow-hidden">
+  <div class="mx-auto max-w-edge px-5 md:px-10">
+
+    <header class="max-w-3xl mb-16 md:mb-24 reveal">
+      <p class="kicker text-gold mb-5">Five days</p>
+      <h2 class="font-display font-bold h1 mb-5">A slow arc across<br class="hidden md:block"/> São Miguel and beyond.</h2>
+      <p class="font-sans text-paper/70 lead font-light">
+        Arrive to mist, leave from a different island. This is the trip we'd build for someone who wants to feel the place, not tick it.
+      </p>
+    </header>
+
+    <!-- timeline -->
+    <div class="relative">
+      <!-- central spine (desktop) -->
+      <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 spine-line" aria-hidden="true"></div>
+      <!-- left spine (mobile) -->
+      <div class="md:hidden absolute left-[22px] top-0 bottom-0 w-px spine-line" aria-hidden="true"></div>
+
+      <ol class="space-y-16 md:space-y-32">
+
+        <!-- DAY 1 — left -->
+        <li class="relative reveal">
+          <div class="md:grid md:grid-cols-2 md:gap-16 items-center">
+            <!-- mobile image (full-bleed, above text) — keeps photography >60% area on phones -->
+            <div class="md:hidden mb-5 overflow-hidden rounded-sm aspect-[16/10]">
+              <img src="https://picsum.photos/seed/azores-ponta-delgada-harbour/720/540" alt="The black-and-white basalt harbour front of Ponta Delgada at dusk." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+            </div>
+            <div class="md:pr-14 md:text-right pl-16 md:pl-0 md:ml-auto md:max-w-[42ch]">
+              <p class="stamp text-gold mb-3">Day 1 · Arrival</p>
+              <h3 class="font-display font-bold h3 mb-3">Ponta Delgada — arriving the garden</h3>
+              <p class="font-sans text-paper/75 leading-[1.7] mb-4">
+                <span class="font-poetry italic text-paper/95 text-lg">Land into low cloud and the smell of wet earth.</span>
+                Ponta Delgada's black-and-white basalt doors line the harbour front; spend the first afternoon losing direction among the pineapple greenhouses and the convent cloisters.
+              </p>
+              <span class="inline-flex items-center gap-2 stamp text-paper/55 text-[0.6rem]">
+                <i data-lucide="map-pin" class="w-3 h-3 text-gold" aria-hidden="true"></i> São Miguel · Ponta Delgada
+              </span>
+            </div>
+            <div class="hidden md:block pl-14">
+              <div class="overflow-hidden rounded-sm aspect-[4/3]">
+                <img src="https://picsum.photos/seed/azores-ponta-delgada-harbour/720/540" alt="The black-and-white basalt harbour front of Ponta Delgada at dusk." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+              </div>
+            </div>
+          </div>
+          <span class="day-badge absolute md:left-1/2 left-[22px] top-0 md:-translate-x-1/2 -translate-x-1/2 z-10">1</span>
+        </li>
+
+        <!-- DAY 2 — right -->
+        <li class="relative reveal">
+          <div class="md:grid md:grid-cols-2 md:gap-16 items-center">
+            <div class="hidden md:block pr-14 md:order-1 order-2">
+              <div class="overflow-hidden rounded-sm aspect-[4/3]">
+                <img src="https://picsum.photos/seed/azores-sete-cidades-lakes/720/540" alt="The twin lakes of Sete Cidades, one blue and one green, from the crater rim." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+              </div>
+            </div>
+            <div class="md:hidden mb-5 md:order-1 order-1 overflow-hidden rounded-sm aspect-[16/10]">
+              <img src="https://picsum.photos/seed/azores-sete-cidades-lakes/720/540" alt="The twin lakes of Sete Cidades, one blue and one green, from the crater rim." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+            </div>
+            <div class="md:pl-14 pl-16 md:order-2 order-2 md:mr-auto md:max-w-[42ch]">
+              <p class="stamp text-gold mb-3">Day 2 · Caldeira</p>
+              <h3 class="font-display font-bold h3 mb-3">Sete Cidades — the two lakes</h3>
+              <p class="font-sans text-paper/75 leading-[1.7] mb-4">
+                <span class="font-poetry italic text-paper/95 text-lg">Drive the rim before the cloud lifts.</span>
+                The Vista do Rei miradouro looks down on a legend: one lake blue, one green, divided by a single arch bridge. Walk down through the village and back up through hydrangea.
+              </p>
+              <span class="inline-flex items-center gap-2 stamp text-paper/55 text-[0.6rem]">
+                <i data-lucide="map-pin" class="w-3 h-3 text-gold" aria-hidden="true"></i> Sete Cidades · west rim
+              </span>
+            </div>
+          </div>
+          <span class="day-badge absolute md:left-1/2 left-[22px] top-0 md:-translate-x-1/2 -translate-x-1/2 z-10">2</span>
+        </li>
+
+        <!-- DAY 3 — left -->
+        <li class="relative reveal">
+          <div class="md:grid md:grid-cols-2 md:gap-16 items-center">
+            <div class="md:hidden mb-5 overflow-hidden rounded-sm aspect-[16/10]">
+              <img src="https://picsum.photos/seed/azores-furnas-fumaroles/720/540" alt="Steaming geothermal fumaroles in Furnas where cozido pots are buried." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+            </div>
+            <div class="md:pr-14 md:text-right pl-16 md:pl-0 md:ml-auto md:max-w-[42ch]">
+              <p class="stamp text-gold mb-3">Day 3 · Furnas</p>
+              <h3 class="font-display font-bold h3 mb-3">Furnas — cooking with the volcano</h3>
+              <p class="font-sans text-paper/75 leading-[1.7] mb-4">
+                <span class="font-poetry italic text-paper/95 text-lg">At noon they lift the pots from the earth.</span>
+                Cozido das Furnas has been slow-cooking underground since dawn, in the geothermal fumaroles. Eat it, then walk the Terra Nostra botanical gardens in the steam.
+              </p>
+              <span class="inline-flex items-center gap-2 stamp text-paper/55 text-[0.6rem]">
+                <i data-lucide="map-pin" class="w-3 h-3 text-gold" aria-hidden="true"></i> Furnas · fumarole field
+              </span>
+            </div>
+            <div class="hidden md:block pl-14">
+              <div class="overflow-hidden rounded-sm aspect-[4/3]">
+                <img src="https://picsum.photos/seed/azores-furnas-fumaroles/720/540" alt="Steaming geothermal fumaroles in Furnas where cozido pots are buried." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+              </div>
+            </div>
+          </div>
+          <span class="day-badge absolute md:left-1/2 left-[22px] top-0 md:-translate-x-1/2 -translate-x-1/2 z-10">3</span>
+        </li>
+
+        <!-- DAY 4 — right -->
+        <li class="relative reveal">
+          <div class="md:grid md:grid-cols-2 md:gap-16 items-center">
+            <div class="hidden md:block pr-14 md:order-1 order-2">
+              <div class="overflow-hidden rounded-sm aspect-[4/3]">
+                <img src="https://picsum.photos/seed/azores-gorreana-tea-rows/720/540" alt="Symmetrical rows of tea plants curving over a green hillside at Gorreana." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+              </div>
+            </div>
+            <div class="md:hidden mb-5 md:order-1 order-1 overflow-hidden rounded-sm aspect-[16/10]">
+              <img src="https://picsum.photos/seed/azores-gorreana-tea-rows/720/540" alt="Symmetrical rows of tea plants curving over a green hillside at Gorreana." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+            </div>
+            <div class="md:pl-14 pl-16 md:order-2 order-2 md:mr-auto md:max-w-[42ch]">
+              <p class="stamp text-gold mb-3">Day 4 · Tea &amp; springs</p>
+              <h3 class="font-display font-bold h3 mb-3">Gorreana &amp; the hot springs</h3>
+              <p class="font-sans text-paper/75 leading-[1.7] mb-4">
+                <span class="font-poetry italic text-paper/95 text-lg">Europe's only tea, picked by hand since 1883.</span>
+                Walk the rows at Gorreana, taste the orange pekoe, then soak at Caldeira Velha under a waterfall of iron-warm water in the laurisilva forest.
+              </p>
+              <span class="inline-flex items-center gap-2 stamp text-paper/55 text-[0.6rem]">
+                <i data-lucide="map-pin" class="w-3 h-3 text-gold" aria-hidden="true"></i> Gorreana · Caldeira Velha
+              </span>
+            </div>
+          </div>
+          <span class="day-badge absolute md:left-1/2 left-[22px] top-0 md:-translate-x-1/2 -translate-x-1/2 z-10">4</span>
+        </li>
+
+        <!-- DAY 5 — left -->
+        <li class="relative reveal">
+          <div class="md:grid md:grid-cols-2 md:gap-16 items-center">
+            <div class="md:hidden mb-5 overflow-hidden rounded-sm aspect-[16/10]">
+              <img src="https://picsum.photos/seed/azores-pico-mountain-clouds/720/540" alt="Mount Pico rising above a sea of cloud at dawn." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+            </div>
+            <div class="md:pr-14 md:text-right pl-16 md:pl-0 md:ml-auto md:max-w-[42ch]">
+              <p class="stamp text-gold mb-3">Day 5 · Departure</p>
+              <h3 class="font-display font-bold h3 mb-3">Pico or Faial — the fly-home island</h3>
+              <p class="font-sans text-paper/75 leading-[1.7] mb-4">
+                <span class="font-poetry italic text-paper/95 text-lg">One last volcanic silhouette before Lisbon.</span>
+                A 55-minute puddle-jump to Pico for the mountain, or Faial for the blue hydrangea-lined lanes and the marina. Fly home from here with the Atlantic still in your clothes.
+              </p>
+              <span class="inline-flex items-center gap-2 stamp text-paper/55 text-[0.6rem]">
+                <i data-lucide="map-pin" class="w-3 h-3 text-gold" aria-hidden="true"></i> Pico · Faial · home
+              </span>
+            </div>
+            <div class="hidden md:block pl-14">
+              <div class="overflow-hidden rounded-sm aspect-[4/3]">
+                <img src="https://picsum.photos/seed/azores-pico-mountain-clouds/720/540" alt="Mount Pico rising above a sea of cloud at dawn." width="720" height="540" class="w-full h-full object-cover card-img" loading="lazy"/>
+              </div>
+            </div>
+          </div>
+          <span class="day-badge absolute md:left-1/2 left-[22px] top-0 md:-translate-x-1/2 -translate-x-1/2 z-10">5</span>
+        </li>
+
+      </ol>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ SIGNATURE — NINE ISLANDS INTERACTIVE MAP ============================ -->
+<section id="islands" class="bg-paper py-20 md:py-32 paper-grain border-t border-ink/5">
+  <div class="mx-auto max-w-edge px-5 md:px-10">
+
+    <header class="max-w-3xl mb-12 md:mb-16 reveal">
+      <p class="kicker text-ocean mb-5">The archipelago</p>
+      <h2 class="font-display font-bold text-ink h1 mb-5">Nine islands.<br class="hidden md:block"/> Pick your caldera.</h2>
+      <p class="font-sans text-mute lead font-light">
+        Three groups, scattered across 600km of open Atlantic. Tap an island to see what it's known for — then choose where the five days begin.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+
+      <!-- SVG map -->
+      <div class="lg:col-span-7 reveal-l">
+        <div class="relative rounded-sm bg-sand/60 border border-line p-4 md:p-6">
+          <svg viewBox="0 0 600 420" class="w-full h-auto" role="img" aria-label="Interactive map of the nine Azores islands. Select an island to read about it.">
+            <!-- ocean texture -->
+            <defs>
+              <radialGradient id="sea" cx="50%" cy="50%" r="75%">
+                <stop offset="0%" stop-color="#E8E0D2"/>
+                <stop offset="100%" stop-color="#D8CFBE"/>
+              </radialGradient>
+              <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="0.7" fill="rgba(15,61,64,0.12)"/>
+              </pattern>
+            </defs>
+            <rect width="600" height="420" fill="url(#sea)"/>
+            <rect width="600" height="420" fill="url(#dots)"/>
+
+            <!-- compass -->
+            <g transform="translate(548,48)" opacity="0.55">
+              <circle r="22" fill="none" stroke="#0F3D40" stroke-width="0.8"/>
+              <path d="M0,-18 L4,0 L0,18 L-4,0 Z" fill="#C8932A"/>
+              <text x="0" y="-26" text-anchor="middle" font-family="Jost" font-size="9" fill="#0F3D40" letter-spacing="2">N</text>
+            </g>
+
+            <!-- group labels -->
+            <text x="120" y="60" font-family="Jost" font-weight="500" font-size="11" fill="#5C6A6B" letter-spacing="3">WESTERN</text>
+            <text x="250" y="60" font-family="Jost" font-weight="500" font-size="11" fill="#5C6A6B" letter-spacing="3">CENTRAL</text>
+            <text x="430" y="60" font-family="Jost" font-weight="500" font-size="11" fill="#5C6A6B" letter-spacing="3">EASTERN</text>
+
+            <!-- islands: positions are schematic, not geographically exact -->
+            <!-- WESTERN GROUP -->
+            <g class="island-group" data-island="flores" tabindex="0" role="button" aria-label="Flores island">
+              <circle class="island-ring" cx="70" cy="140" r="20" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <path d="M62,128 Q72,118 80,128 Q88,140 82,156 Q72,166 64,156 Q56,144 62,128 Z" fill="#0F3D40"/>
+              <circle class="island-dot" cx="71" cy="143" r="4" fill="#C8932A"/>
+              <text x="71" y="184" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">Flores</text>
+            </g>
+            <g class="island-group" data-island="corvo" tabindex="0" role="button" aria-label="Corvo island">
+              <circle class="island-ring" cx="120" cy="100" r="18" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <circle cx="120" cy="100" r="11" fill="#0F3D40"/>
+              <circle class="island-dot" cx="120" cy="100" r="4" fill="#C8932A"/>
+              <text x="120" y="135" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">Corvo</text>
+            </g>
+
+            <!-- CENTRAL GROUP -->
+            <g class="island-group" data-island="faial" tabindex="0" role="button" aria-label="Faial island">
+              <circle class="island-ring" cx="215" cy="155" r="19" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <circle cx="215" cy="155" r="13" fill="#0F3D40"/>
+              <circle class="island-dot" cx="215" cy="155" r="4" fill="#C8932A"/>
+              <text x="215" y="190" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">Faial</text>
+            </g>
+            <g class="island-group active" data-island="pico" tabindex="0" role="button" aria-label="Pico island">
+              <circle class="island-ring" cx="265" cy="200" r="22" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <path d="M252,175 Q265,165 280,178 Q292,200 285,225 Q270,238 255,225 Q244,200 252,175 Z" fill="#0F3D40"/>
+              <!-- mountain peak marker -->
+              <path d="M262,185 L266,178 L270,185 Z" fill="#C8932A"/>
+              <circle class="island-dot" cx="266" cy="200" r="4.5" fill="#C8932A"/>
+              <text x="266" y="258" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">Pico</text>
+            </g>
+            <g class="island-group" data-island="sjorge" tabindex="0" role="button" aria-label="São Jorge island">
+              <circle class="island-ring" cx="320" cy="120" r="20" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <ellipse cx="320" cy="120" rx="20" ry="8" fill="#0F3D40"/>
+              <circle class="island-dot" cx="320" cy="120" r="4" fill="#C8932A"/>
+              <text x="320" y="152" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">São Jorge</text>
+            </g>
+            <g class="island-group" data-island="graciosa" tabindex="0" role="button" aria-label="Graciosa island">
+              <circle class="island-ring" cx="370" cy="80" r="17" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <ellipse cx="370" cy="80" rx="11" ry="9" fill="#0F3D40"/>
+              <circle class="island-dot" cx="370" cy="80" r="3.5" fill="#C8932A"/>
+              <text x="370" y="112" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">Graciosa</text>
+            </g>
+            <g class="island-group" data-island="terceira" tabindex="0" role="button" aria-label="Terceira island">
+              <circle class="island-ring" cx="395" cy="155" r="20" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <path d="M383,142 Q395,134 408,142 Q416,158 408,172 Q395,180 383,172 Q376,158 383,142 Z" fill="#0F3D40"/>
+              <circle class="island-dot" cx="395" cy="157" r="4.5" fill="#C8932A"/>
+              <text x="395" y="192" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">Terceira</text>
+            </g>
+
+            <!-- EASTERN GROUP -->
+            <g class="island-group" data-island="smiguel" tabindex="0" role="button" aria-label="São Miguel island">
+              <circle class="island-ring" cx="495" cy="190" r="22" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <path d="M475,168 Q495,158 518,170 Q532,190 524,212 Q505,225 482,215 Q466,195 475,168 Z" fill="#0F3D40"/>
+              <circle class="island-dot" cx="498" cy="191" r="5" fill="#C8932A"/>
+              <text x="498" y="244" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">São Miguel</text>
+            </g>
+            <g class="island-group" data-island="santa-maria" tabindex="0" role="button" aria-label="Santa Maria island">
+              <circle class="island-ring" cx="545" cy="285" r="18" fill="none" stroke="#C8932A" stroke-width="1.2"/>
+              <path d="M536,275 Q545,269 555,275 Q561,287 555,297 Q545,303 536,297 Q530,287 536,275 Z" fill="#0F3D40"/>
+              <circle class="island-dot" cx="545" cy="286" r="4" fill="#C8932A"/>
+              <text x="545" y="320" text-anchor="middle" font-family="Jost" font-size="11" fill="#1C2A2B">Santa Maria</text>
+            </g>
+          </svg>
+          <p class="stamp text-mute text-[0.58rem] mt-3 text-center">Schematic — not to scale</p>
+        </div>
+        <!-- sr-only text fallback so the map's information is available without interaction/graphics -->
+        <h3 class="sr-only">All nine Azores islands, by group</h3>
+        <ul class="sr-only">
+          <li>Western Group — Flores: waterfalls and hydrangeas. Corvo: the smallest island, a caldera with a village inside its rim.</li>
+          <li>Central Group — Faial: the blue isle with the painted marina. Pico: the 2,351m volcanic cone. São Jorge: a narrow island of cliffs and fajãs. Graciosa: the quietest, with the Furna do Enxofre cave. Terceira: the festival isle, UNESCO Angra do Heroísmo.</li>
+          <li>Eastern Group — São Miguel: the green isle, calderas and whales and tea. Santa Maria: the only island with white-sand beaches.</li>
+        </ul>
+      </div>
+
+      <!-- island detail panel -->
+      <div class="lg:col-span-5 reveal-r">
+        <div id="island-detail" aria-live="polite" aria-atomic="true" class="bg-deep text-paper rounded-sm p-7 md:p-9 min-h-[340px] flex flex-col">
+          <p class="stamp text-gold mb-3" id="island-kicker">Central Group · 2,351m</p>
+          <h3 class="font-display font-bold h3 mb-4" id="island-name">Pico</h3>
+          <p class="font-poetry italic text-paper/95 lead mb-5" style="line-height:1.3" id="island-poem">Climb a mountain that still remembers being made.</p>
+          <p class="font-sans text-paper/80 leading-[1.7] mb-6 flex-1" id="island-body">
+            The black pyramid of the Atlantic — Mount Pico is Portugal's highest point, a 2,351m volcanic cone you can summit in a single demanding day. Below it, black-stone vineyards lattice the UNESCO-listed lava fields, and the lava caves run cold and silent under the vines.
+          </p>
+          <div class="grid grid-cols-2 gap-4 pt-5 border-t border-paper/15">
+            <div>
+              <p class="kicker text-paper/55 mb-1">Known for</p>
+              <p class="font-sans text-paper/90 text-sm" id="island-known">Volcanic ascent</p>
+            </div>
+            <div>
+              <p class="kicker text-paper/55 mb-1">Best for</p>
+              <p class="font-sans text-paper/90 text-sm" id="island-best">Climbers, wine lovers</p>
+            </div>
+          </div>
+        </div>
+        <p class="stamp text-mute mt-4 text-[0.6rem] text-center lg:text-left">Tap any island on the map →</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 05 — PRACTICAL INFO ============================ -->
+<section id="practical" class="sand-panel py-20 md:py-32 relative">
+  <div class="mx-auto max-w-edge px-5 md:px-10">
+
+    <!-- data-led opener: the facts speak before the heading does -->
+    <div class="reveal mb-10 md:mb-14">
+      <div class="flex flex-wrap items-end gap-x-10 gap-y-6">
+        <div>
+          <p class="kicker text-mute mb-2">Direct from Lisbon</p>
+          <p class="font-display font-bold text-ink text-5xl md:text-6xl tnum leading-none">4.5<span class="text-mute text-2xl align-top ml-1">h</span></p>
+        </div>
+        <span class="hidden sm:block w-px h-12 bg-line"></span>
+        <div>
+          <p class="kicker text-mute mb-2">Year-round average</p>
+          <p class="font-display font-bold text-ink text-5xl md:text-6xl tnum leading-none">17<span class="text-mute text-2xl align-top ml-1">°C</span></p>
+        </div>
+        <span class="hidden sm:block w-px h-12 bg-line"></span>
+        <div>
+          <p class="kicker text-mute mb-2">Best window</p>
+          <p class="font-display font-bold text-ocean text-5xl md:text-6xl tnum leading-none">Apr<span class="text-golddark text-2xl align-middle mx-2">—</span>Oct</p>
+        </div>
+      </div>
+    </div>
+
+    <header class="max-w-3xl mb-12 md:mb-16 reveal">
+      <h2 class="font-display font-bold text-ink h1 mb-4">When to come, how to arrive, what to pack.</h2>
+      <p class="font-sans text-mute lead font-light">Everything you need to actually book this — dates, flights, and the Atlantic weather you'll meet there.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+
+      <!-- Best time -->
+      <div class="reveal bg-paper/70 backdrop-blur-sm rounded-sm p-7 md:p-8 border border-line">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-9 h-9 rounded-full border border-golddark/55 flex items-center justify-center text-golddark">
+            <i data-lucide="sun" class="w-[18px] h-[18px]" aria-hidden="true"></i>
+          </span>
+          <h3 class="font-display font-bold text-ink text-2xl">Best time to visit</h3>
+        </div>
+        <p class="font-display font-bold text-ocean text-3xl mb-5">Apr — Oct</p>
+        <ul class="font-sans text-ink/85 space-y-3 text-[0.9rem] leading-relaxed">
+          <li class="flex gap-3"><span class="font-data text-golddark text-xs tracking-wider pt-1 w-16 shrink-0 tnum">APR–OCT</span><span>The shoulder-and-summer window. Long days, caldera rims usually clear by mid-morning.</span></li>
+          <li class="flex gap-3"><span class="font-data text-golddark text-xs tracking-wider pt-1 w-16 shrink-0 tnum">JUL–AUG</span><span>Hydrangea peak — the roadside blue is at full saturation.</span></li>
+          <li class="flex gap-3"><span class="font-data text-golddark text-xs tracking-wider pt-1 w-16 shrink-0 tnum">ALL YEAR</span><span>Whale season never closes — sperm whales are resident.</span></li>
+          <li class="flex gap-3"><span class="font-data text-mute text-xs tracking-wider pt-1 w-16 shrink-0 tnum">DEC–FEB</span><span>Rainy and grey. Cheap, empty, and often socked-in with cloud.</span></li>
+        </ul>
+      </div>
+
+      <!-- How to get there -->
+      <div class="reveal rd1 bg-paper/70 backdrop-blur-sm rounded-sm p-7 md:p-8 border border-line">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-9 h-9 rounded-full border border-golddark/55 flex items-center justify-center text-golddark">
+            <i data-lucide="plane" class="w-[18px] h-[18px]" aria-hidden="true"></i>
+          </span>
+          <h3 class="font-display font-bold text-ink text-2xl">How to get there</h3>
+        </div>
+        <p class="font-display font-bold text-ocean text-3xl mb-5">4 — 4.5h</p>
+        <ul class="font-sans text-ink/85 space-y-3 text-[0.9rem] leading-relaxed">
+          <li><span class="font-data text-golddark text-xs tracking-wider">DIRECT</span><br/>Lisbon &amp; Porto to Ponta Delgada (PDL), 4–4.5h. Boston ~5.5h, Toronto ~6h, seasonal.</li>
+          <li><span class="font-data text-golddark text-xs tracking-wider">CARRIER</span><br/>Azores Airlines (SATA group) flies year-round; TAP Air Portugal and Ryanair add seasonal direct Lisbon/Porto routes in summer.</li>
+          <li><span class="font-data text-golddark text-xs tracking-wider">INTER-ISLAND</span><br/>SATA Air Açores puddle-jumps, 30–55 min between islands. Book the Pico/Faial leg early in summer.</li>
+          <li><span class="font-data text-golddark text-xs tracking-wider">ENTRY</span><br/>Portugal / Schengen. No visa for most Western travellers.</li>
+        </ul>
+      </div>
+
+      <!-- Weather -->
+      <div id="weather-card" class="reveal rd2 bg-paper/70 backdrop-blur-sm rounded-sm p-7 md:p-8 border border-line">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-9 h-9 rounded-full border border-golddark/55 flex items-center justify-center text-golddark">
+            <i data-lucide="cloud-sun" class="w-[18px] h-[18px]" aria-hidden="true"></i>
+          </span>
+          <h3 class="font-display font-bold text-ink text-2xl">Weather averages</h3>
+        </div>
+
+        <!-- month strip -->
+        <div class="grid grid-cols-4 gap-2 mb-6">
+          <div class="month-chip bg-ocean/5 rounded-sm py-3 text-center">
+            <div class="stamp text-mute text-[0.6rem] mb-1">Jan</div>
+            <div class="font-display font-bold text-ink text-xl tnum">16°</div>
+          </div>
+          <div class="month-chip bg-ocean/5 rounded-sm py-3 text-center">
+            <div class="stamp text-mute text-[0.6rem] mb-1">Apr</div>
+            <div class="font-display font-bold text-ink text-xl tnum">17°</div>
+          </div>
+          <div class="month-chip bg-gold/15 rounded-sm py-3 text-center">
+            <div class="stamp text-golddark text-[0.6rem] mb-1">Jul</div>
+            <div class="font-display font-bold text-ink text-xl tnum">24°</div>
+          </div>
+          <div class="month-chip bg-ocean/5 rounded-sm py-3 text-center">
+            <div class="stamp text-mute text-[0.6rem] mb-1">Oct</div>
+            <div class="font-display font-bold text-ink text-xl tnum">21°</div>
+          </div>
+        </div>
+
+        <!-- water + rain -->
+        <div class="flex items-center justify-between mb-2">
+          <span class="kicker text-mute">Monthly rainfall (mm)</span>
+          <span class="font-data text-xs text-ocean tnum">Sea ~20°C summer</span>
+        </div>
+        <!-- rainfall bars — animate via scaleY on scroll-in -->
+        <div class="flex items-end gap-1.5 h-16" aria-label="Average monthly rainfall in millimetres across the year">
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="75"></div><span class="text-[0.55rem] text-mute font-data">J</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="62"></div><span class="text-[0.55rem] text-mute font-data">F</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="52"></div><span class="text-[0.55rem] text-mute font-data">M</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="42"></div><span class="text-[0.55rem] text-mute font-data">A</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="35"></div><span class="text-[0.55rem] text-mute font-data">M</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="24"></div><span class="text-[0.55rem] text-mute font-data">J</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="18"></div><span class="text-[0.55rem] text-mute font-data">J</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="22"></div><span class="text-[0.55rem] text-mute font-data">A</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="32"></div><span class="text-[0.55rem] text-mute font-data">S</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="48"></div><span class="text-[0.55rem] text-mute font-data">O</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="65"></div><span class="text-[0.55rem] text-mute font-data">N</span></div>
+          <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rain-bar" data-h="82"></div><span class="text-[0.55rem] text-mute font-data">D</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="reveal mt-12 md:mt-16 font-poetry italic text-ink/70 max-w-2xl lead">
+      The Azores reward a flexible traveller — pack a light shell, leave the umbrella at the hotel, and trust the islands to deliver four seasons before lunch.
+    </p>
+  </div>
+</section>
+
+
+<!-- ============================ 06 — GALLERY STRIP ============================ -->
+<section aria-label="Gallery" class="bg-paper py-16 md:py-24 border-t border-ink/5">
+  <!-- imagery-led opener: no heading — the frames carry it, a single tracked label sets context -->
+  <div class="mx-auto max-w-edge px-5 md:px-10 mb-8 md:mb-10">
+    <div class="flex items-center justify-between gap-6 reveal">
+      <p class="kicker text-ocean">Six frames · no itinerary · the islands in still photographs</p>
+      <div class="hidden md:flex items-center gap-2 text-mute shrink-0">
+        <i data-lucide="move-horizontal" class="w-4 h-4" aria-hidden="true"></i>
+        <span class="stamp text-mute text-[0.6rem]">Scroll →</span>
+      </div>
+    </div>
+    <h2 class="sr-only">Gallery — six photographic frames of the Azores</h2>
+  </div>
+
+  <!-- horizontal scroll track -->
+  <div class="gallery-track overflow-x-auto overflow-y-hidden reveal">
+    <div class="flex gap-3 md:gap-5 px-5 md:px-10 pb-2" style="width:max-content;">
+
+      <figure class="g-item relative shrink-0 w-[78vw] sm:w-[420px] aspect-[16/10] overflow-hidden rounded-sm group" tabindex="0" role="group" aria-label="Photographic frame — hydrangea road on São Miguel">
+        <img src="https://picsum.photos/seed/azores-hydrangea-road/800/500" alt="A country road in the Azores lined on both sides with blue hydrangea hedges." width="800" height="500" class="w-full h-full object-cover card-img" loading="lazy"/>
+        <figcaption class="g-label absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-near/85 to-transparent">
+          <span class="stamp text-paper text-[0.6rem]">Hydrangea road · São Miguel</span>
+        </figcaption>
+      </figure>
+
+      <figure class="g-item relative shrink-0 w-[60vw] sm:w-[340px] aspect-[4/5] overflow-hidden rounded-sm group" tabindex="0" role="group" aria-label="Photographic frame — crater lake at Sete Cidades">
+        <img src="https://picsum.photos/seed/azores-crater-lake-mist/600/750" alt="A crater lake in early morning mist." width="600" height="750" class="w-full h-full object-cover card-img" loading="lazy"/>
+        <figcaption class="g-label absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-near/85 to-transparent">
+          <span class="stamp text-paper text-[0.6rem]">Crater lake · Sete Cidades</span>
+        </figcaption>
+      </figure>
+
+      <figure class="g-item relative shrink-0 w-[78vw] sm:w-[420px] aspect-[16/10] overflow-hidden rounded-sm group" tabindex="0" role="group" aria-label="Photographic frame — basalt coast on São Jorge">
+        <img src="https://picsum.photos/seed/azores-basalt-coast/800/500" alt="Black basalt cliffs meeting white Atlantic surf." width="800" height="500" class="w-full h-full object-cover card-img" loading="lazy"/>
+        <figcaption class="g-label absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-near/85 to-transparent">
+          <span class="stamp text-paper text-[0.6rem]">Basalt coast · São Jorge</span>
+        </figcaption>
+      </figure>
+
+      <figure class="g-item relative shrink-0 w-[60vw] sm:w-[340px] aspect-[1/1] overflow-hidden rounded-sm group" tabindex="0" role="group" aria-label="Photographic frame — tea rows at Gorreana">
+        <img src="https://picsum.photos/seed/azores-tea-rows-aerial/600/600" alt="Aerial view of tea plantation rows curving over green hills." width="600" height="600" class="w-full h-full object-cover card-img" loading="lazy"/>
+        <figcaption class="g-label absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-near/85 to-transparent">
+          <span class="stamp text-paper text-[0.6rem]">Tea rows · Gorreana</span>
+        </figcaption>
+      </figure>
+
+      <figure class="g-item relative shrink-0 w-[60vw] sm:w-[340px] aspect-[4/5] overflow-hidden rounded-sm group" tabindex="0" role="group" aria-label="Photographic frame — lighthouse on Faial">
+        <img src="https://picsum.photos/seed/azores-lighthouse-cliff/600/750" alt="A white and red lighthouse on a green cliff above the Atlantic." width="600" height="750" class="w-full h-full object-cover card-img" loading="lazy"/>
+        <figcaption class="g-label absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-near/85 to-transparent">
+          <span class="stamp text-paper text-[0.6rem]">Lighthouse · Faial</span>
+        </figcaption>
+      </figure>
+
+      <figure class="g-item relative shrink-0 w-[78vw] sm:w-[420px] aspect-[16/10] overflow-hidden rounded-sm group" tabindex="0" role="group" aria-label="Photographic frame — hot spring at Caldeira Velha">
+        <img src="https://picsum.photos/seed/azores-hot-spring-pool/800/500" alt="A rust-coloured geothermal hot spring pool surrounded by jungle." width="800" height="500" class="w-full h-full object-cover card-img" loading="lazy"/>
+        <figcaption class="g-label absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-near/85 to-transparent">
+          <span class="stamp text-paper text-[0.6rem]">Hot spring · Caldeira Velha</span>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ SECONDARY CTA (lead-in to the planner) ============================ -->
+<section aria-label="Plan your trip — invitation" class="relative overflow-hidden">
+  <div class="absolute inset-0">
+    <img src="https://picsum.photos/seed/azores-aerial-islands/1920/900" alt="An aerial view of green Azorean islands scattered across a deep blue Atlantic." width="1920" height="900" class="w-full h-full object-cover" loading="lazy"/>
+    <div class="absolute inset-0 bg-gradient-to-r from-deep/92 via-deep/72 to-deep/45"></div>
+  </div>
+  <div class="relative z-10 mx-auto max-w-edge px-5 md:px-10 py-24 md:py-36">
+    <div class="max-w-2xl reveal">
+      <p class="kicker text-gold mb-5">Go</p>
+      <h2 class="font-display font-bold text-paper h1 mb-5">The garden is open.<br class="hidden md:block"/> The Atlantic is waiting.</h2>
+      <p class="font-poetry italic text-paper/90 lead mb-9 max-w-prose" style="line-height:1.3">
+        Five days from now you could be standing on a caldera rim, the cloud lifting off a lake the colour of weather.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <a href="#plan" class="btn-gold font-sans font-medium text-[0.82rem] tracking-wide2 uppercase px-8 py-4 rounded-sm text-center inline-flex items-center justify-center gap-2.5">
+          Start planning
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#itinerary" class="btn-ghost font-sans font-medium text-[0.82rem] tracking-wide2 uppercase px-8 py-4 rounded-sm text-center">Re-read the five days</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ PLAN — REQUEST ITINERARY (the real #plan conversion surface) ============================ -->
+<section id="plan" aria-labelledby="plan-heading" class="sand-panel py-24 md:py-36 relative scroll-mt-20">
+  <div class="mx-auto max-w-edge px-5 md:px-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+
+      <!-- left: pitch -->
+      <div class="lg:col-span-5 reveal-l">
+        <p class="kicker text-ocean mb-5">Request an itinerary</p>
+        <h2 id="plan-heading" class="font-display font-bold text-ink h1 mb-5">Tell us how you like to travel.<br class="hidden md:block"/> We'll draft the five days.</h2>
+        <p class="font-sans text-mute lead font-light mb-8" style="line-height:1.55">
+          No deposit, no automated quote. A short reply from a person who knows the islands — a route built around your dates, your islands, and the kind of slow you're after.
+        </p>
+
+        <!-- justified price anchor — tied to a named package, footnoted in data mono -->
+        <div class="border-l-2 border-gold/60 pl-5 py-2">
+          <p class="stamp text-golddark text-[0.62rem] mb-2">Indicative · the five-day route</p>
+          <p class="font-display font-bold text-ink text-4xl md:text-5xl tnum">€1,890<span class="font-sans font-light text-mute text-base align-top ml-1">/ person</span></p>
+          <p class="font-data text-mute text-[0.66rem] tracking-wider mt-3 leading-relaxed">
+            EST. PER PERSON, DOUBLE OCCUPANCY · 5 NIGHTS, 2 ISLANDS · EXCL. INT'L FLIGHTS · CONFIRMED IN YOUR DRAFT
+          </p>
+        </div>
+
+        <p class="mt-8 font-poetry italic text-ink/70 text-lg" style="line-height:1.4">
+          We answer within two working days. The Atlantic isn't going anywhere.
+        </p>
+      </div>
+
+      <!-- right: the form -->
+      <div class="lg:col-span-7 reveal-r">
+        <form id="plan-form" class="bg-paper/80 backdrop-blur-sm rounded-sm p-7 md:p-10 border border-line" aria-label="Request your Azores itinerary">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="sm:col-span-2">
+              <label for="pf-name" class="block kicker text-mute mb-2">Your name</label>
+              <input id="pf-name" name="name" type="text" required autocomplete="name" placeholder="Ada Lovelace"
+                class="w-full bg-sand/50 border border-line rounded-sm px-4 py-3 text-ink placeholder:text-mute/75 text-sm focus:bg-paper focus:border-gold transition-colors"/>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="pf-email" class="block kicker text-mute mb-2">Email</label>
+              <input id="pf-email" name="email" type="email" required autocomplete="email" placeholder="you@somewhere.com"
+                class="w-full bg-sand/50 border border-line rounded-sm px-4 py-3 text-ink placeholder:text-mute/75 text-sm focus:bg-paper focus:border-gold transition-colors"/>
+            </div>
+            <div>
+              <label for="pf-dates" class="block kicker text-mute mb-2">Rough dates</label>
+              <input id="pf-dates" name="dates" type="text" placeholder="e.g. late September"
+                class="w-full bg-sand/50 border border-line rounded-sm px-4 py-3 text-ink placeholder:text-mute/75 text-sm focus:bg-paper focus:border-gold transition-colors"/>
+            </div>
+            <div>
+              <label for="pf-party" class="block kicker text-mute mb-2">Travellers</label>
+              <select id="pf-party" name="party"
+                class="w-full bg-sand/50 border border-line rounded-sm px-4 py-3 text-ink text-sm focus:bg-paper focus:border-gold transition-colors">
+                <option>1 person</option>
+                <option selected>2 — a couple</option>
+                <option>3–4 — small group</option>
+                <option>5+ — family / friends</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="pf-island" class="block kicker text-mute mb-2">Which island calls?</label>
+              <select id="pf-island" name="island"
+                class="w-full bg-sand/50 border border-line rounded-sm px-4 py-3 text-ink text-sm focus:bg-paper focus:border-gold transition-colors">
+                <option value="">Surprise me — you choose</option>
+                <option>São Miguel (the green isle)</option>
+                <option>Pico (the volcano)</option>
+                <option>Faial (the blue isle)</option>
+                <option>São Jorge (the cliffs)</option>
+                <option>Terceira (the festival isle)</option>
+                <option>Flores (the waterfalls)</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="pf-notes" class="block kicker text-mute mb-2">What kind of slow? <span class="font-sans normal-case tracking-normal text-mute/70">(optional)</span></label>
+              <textarea id="pf-notes" name="notes" rows="3" placeholder="Whales over nightlife. Walking over buses. A real coffee in the morning."
+                class="w-full bg-sand/50 border border-line rounded-sm px-4 py-3 text-ink placeholder:text-mute/75 text-sm focus:bg-paper focus:border-gold transition-colors resize-none"></textarea>
+            </div>
+          </div>
+
+          <div class="mt-7 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <button type="submit" class="btn-gold font-sans font-medium text-[0.82rem] tracking-wide2 uppercase px-8 py-4 rounded-sm inline-flex items-center justify-center gap-2.5">
+              Request my itinerary
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <p class="stamp text-mute text-[0.58rem] leading-relaxed">No spam · human reply · unsubscribe anytime</p>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="bg-deep text-paper pt-20 md:pt-28 pb-10">
+  <div class="mx-auto max-w-edge px-5 md:px-10">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 pb-16 border-b border-paper/10">
+
+      <!-- brand -->
+      <div class="lg:col-span-4">
+        <p class="font-display font-black text-4xl md:text-5xl tracking-tight">AZORES</p>
+        <p class="font-poetry italic text-gold text-xl mt-1">The Floating Garden</p>
+        <p class="font-sans text-paper/70 text-sm mt-5 leading-relaxed max-w-xs">
+          Nine islands where the Atlantic grows flowers. A cinematic guide, written for people who travel with their eyes first.
+        </p>
+      </div>
+
+      <!-- link columns -->
+      <nav class="lg:col-span-2" aria-label="Explore">
+        <h3 class="kicker text-gold mb-4">Explore</h3>
+        <ul class="space-y-2.5 font-sans text-paper/80 text-sm">
+          <li><a href="#story" class="hover:text-gold transition-colors">The story</a></li>
+          <li><a href="#experiences" class="hover:text-gold transition-colors">Things to do</a></li>
+          <li><a href="#itinerary" class="hover:text-gold transition-colors">5-day itinerary</a></li>
+          <li><a href="#islands" class="hover:text-gold transition-colors">The islands</a></li>
+        </ul>
+      </nav>
+      <nav class="lg:col-span-2" aria-label="Plan">
+        <h3 class="kicker text-gold mb-4">Plan</h3>
+        <ul class="space-y-2.5 font-sans text-paper/80 text-sm">
+          <li><a href="#practical" class="hover:text-gold transition-colors">When to go</a></li>
+          <li><a href="#practical" class="hover:text-gold transition-colors">Flights</a></li>
+          <li><a href="#practical" class="hover:text-gold transition-colors">Weather</a></li>
+          <li><a href="#plan" class="hover:text-gold transition-colors">Plan your trip</a></li>
+        </ul>
+      </nav>
+      <nav class="lg:col-span-1" aria-label="About">
+        <h3 class="kicker text-gold mb-4">About</h3>
+        <ul class="space-y-2.5 font-sans text-paper/80 text-sm">
+          <li><a href="#story" class="hover:text-gold transition-colors">Field notes</a></li>
+          <li><a href="#islands" class="hover:text-gold transition-colors">Press</a></li>
+          <li><a href="#plan" class="hover:text-gold transition-colors">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- newsletter -->
+      <div class="lg:col-span-3">
+        <h3 class="kicker text-gold mb-4">Island dispatches</h3>
+        <p class="font-sans text-paper/70 text-sm mb-4 leading-relaxed">A slow letter, four times a year. No logistics, just light.</p>
+        <form id="newsletter" class="flex flex-col gap-2" aria-label="Newsletter signup">
+          <label for="email" class="sr-only">Email address</label>
+          <input id="email" type="email" required placeholder="you@somewhere.com"
+            class="bg-paper/10 border border-paper/25 rounded-sm px-4 py-3 text-paper placeholder:text-paper/45 text-sm focus:bg-paper/15 focus:border-gold transition-colors"/>
+          <button type="submit" class="btn-gold font-sans font-medium text-[0.78rem] tracking-wide2 uppercase px-5 py-3 rounded-sm">Get island dispatches</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- bottom bar -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-8">
+      <div class="flex items-center gap-4">
+        <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" class="text-paper/70 hover:text-gold transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+        <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)" class="text-paper/70 hover:text-gold transition-colors"><i data-lucide="youtube" class="w-5 h-5"></i></a>
+        <a href="https://pinterest.com" target="_blank" rel="noopener" aria-label="Pinterest (opens in a new tab)" class="text-paper/70 hover:text-gold transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 19c-.5-2 0-4 1-6 .5-1 1-3-1-3a4 4 0 1 0 4 4c.5-2 1.5-4 3-4"/></svg></a>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 stamp text-paper/60 text-[0.6rem]">
+        <span>© 2026 Azores · The Floating Garden</span>
+        <span class="hidden md:inline text-paper/30">/</span>
+        <span>Reduced-motion respected</span>
+        <span class="hidden md:inline text-paper/30">/</span>
+        <span>Imagery via picsum.photos</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+
+<script>
+  // icons
+  if (window.lucide) { lucide.createIcons(); }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- nav background on scroll ----
+  const nav = document.getElementById('nav');
+  const onScroll = () => {
+    if (window.scrollY > 40) {
+      nav.classList.add('bg-deep/85','backdrop-blur-md','shadow-[0_1px_0_rgba(244,239,230,0.08)]');
+    } else {
+      nav.classList.remove('bg-deep/85','backdrop-blur-md','shadow-[0_1px_0_rgba(244,239,230,0.08)]');
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  // ---- mobile nav disclosure ----
+  const navToggle = document.getElementById('nav-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const setMenu = (open) => {
+    if (!navToggle || !mobileMenu) return;
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) { mobileMenu.hidden = false; }
+    else { mobileMenu.hidden = true; }
+  };
+  if (navToggle && mobileMenu) {
+    navToggle.addEventListener('click', () => {
+      const open = navToggle.getAttribute('aria-expanded') === 'true';
+      setMenu(!open);
+    });
+    // close on link click, on Escape, and on resize to desktop
+    mobileMenu.querySelectorAll('.mobile-link').forEach(a => a.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 768) setMenu(false); });
+  }
+
+  // ---- scroll reveal (generic) ----
+  const revealEls = document.querySelectorAll('.reveal, .reveal-l, .reveal-r');
+  if (reduceMotion) {
+    revealEls.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+    revealEls.forEach(el => io.observe(el));
+  }
+
+  // ---- rainfall bars: set heights + animate via scaleY on scroll-in ----
+  // Safety: the chart must never render as an empty row of month letters. If the
+  // IntersectionObserver silently fails or the card never reaches the 0.35 threshold
+  // (very tall viewport / zoom / observer unsupported), a 2.5s fallback forces the
+  // bars to full height. A load listener catches the slow-loading-page case too.
+  const rainBars = document.querySelectorAll('.rain-bar');
+  rainBars.forEach(bar => { bar.style.height = bar.dataset.h + '%'; });
+  const forceRainIn = () => { rainBars.forEach(bar => bar.classList.add('in')); };
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    forceRainIn();
+  } else {
+    let rainRevealed = false;
+    const revealRain = () => {
+      if (rainRevealed) return;
+      rainRevealed = true;
+      rainBars.forEach((bar, i) => { setTimeout(() => bar.classList.add('in'), i * 55); });
+    };
+    const weatherCard = document.getElementById('weather-card');
+    if (weatherCard) {
+      const wio = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) { revealRain(); wio.unobserve(entry.target); } });
+      }, { threshold: 0.35 });
+      wio.observe(weatherCard);
+    }
+    // fallbacks — guarantee a non-empty chart regardless of observer outcome
+    setTimeout(forceRainIn, 2500);
+    window.addEventListener('load', () => { setTimeout(forceRainIn, 2500); }, { once:true });
+  }
+
+  // ---- interactive islands map ----
+  const islands = {
+    flores:      { kicker:'Western Group · waterfall isle', name:'Flores',      poem:'Where every cliff weeps moss and rainbow.', body:'The westernmost point of Europe — sheer basalt waterfalls drop into the sea, blue hydrangea hedges line roads that end at the ocean. Listed among the world\'s most beautiful islands for a reason that becomes obvious the moment you arrive.', known:'Waterfalls & hydrangeas', best:'Photographers, slow travel' },
+    corvo:       { kicker:'Western Group · 430 souls',       name:'Corvo',       poem:'A caldera with a village inside its rim.',       body:'The smallest, most remote island — a single village, a single caldera you can walk the rim of in an afternoon. The ferry from Flores brings fewer than a hundred visitors a day. This is the end of the world, and it is gentle.', known:'Caldeirão crater',     best:'Solitude seekers' },
+    faial:       { kicker:'Central Group · the blue isle',    name:'Faial',       poem:'A marina painted by every sailor who passed.',   body:'Horta\'s marina wall is a gallery of murals left by transatlantic yachtsmen — superstition says you must paint one before you sail on. Inland, the Capelinhos volcano looks like the moon, its lighthouse half-buried in ash from 1957.', known:'Marina murals · volcano', best:'Sailors, day-trippers' },
+    pico:        { kicker:'Central Group · 2,351m',           name:'Pico',        poem:'Climb a mountain that still remembers being made.', body:'The black pyramid of the Atlantic — Mount Pico is Portugal\'s highest point, a 2,351m volcanic cone you can summit in a single demanding day. Below it, black-stone vineyards lattice the UNESCO-listed lava fields, and the lava caves run cold and silent under the vines.', known:'Volcanic ascent',        best:'Climbers, wine lovers' },
+    sjorge:      { kicker:'Central Group · the narrow isle',  name:'São Jorge',   poem:'A blade of green falling sheer into the sea.',   body:'A long thin island of vertical cliffs and the fajãs — flat fertile ledges at the cliff base, reached by switchback tracks. World-famous for its aged cheese, and for canyoning down waterfalls that end in the Atlantic.', known:'Fajãs & canyoning',     best:'Hikers, cheese lovers' },
+    graciosa:    { kicker:'Central Group · the graceful isle', name:'Graciosa',    poem:'A furnace you can climb into, then bathe in.',     body:'The quietest of the central group — windmills on the hilltops, a volcanic Furna do Enxofre cave you descend into by spiral staircase, and thermal springs for the afternoon. Almost no tourism infrastructure. Almost no crowds.', known:'Furna cave · windmills', best:'Quiet escape' },
+    terceira:    { kicker:'Central Group · festival isle',    name:'Terceira',    poem:'Where the bull runs the street, not the ring.',  body:'Angra do Heroísmo is a UNESCO old town of pastel façades and baroque churches. The island is famous for touradas à corda — bulls run the village streets on a rope through summer festivals. The Algar do Carvão is a volcanic chimney you can walk inside.', known:'Bullfights · cave volcano', best:'Culture, festivals' },
+    smiguel:     { kicker:'Eastern Group · the green isle',   name:'São Miguel',  poem:'Two lakes, one blue, one green, in one crater.',  body:'The largest island and the gateway — Ponta Delgada airport. Home to Sete Cidades\' twin lakes, Furnas\' geothermal cozido, Gorreana\'s tea rows, and the best whale-watching in Europe. This is where most five-day trips live, and rightly.', known:'Calderas · whales · tea', best:'First-timers' },
+    'santa-maria': { kicker:'Eastern Group · the sandy isle', name:'Santa Maria', poem:'The only beach in the Azores that is actually sand.', body:'The warmest, driest island — and the only one with real white-sand beaches (the others are black volcanic). Praia Formosa draws locals in August. Columbus stopped here to resupply on his return from the Americas; you can stand where he stood.', known:'White-sand beaches',     best:'Beach, families' },
+  };
+
+  const islandGroups = document.querySelectorAll('.island-group');
+  const islandDetail = document.getElementById('island-detail');
+  const setDetail = (key) => {
+    const d = islands[key]; if (!d) return;
+    document.getElementById('island-kicker').textContent = d.kicker;
+    document.getElementById('island-name').textContent = d.name;
+    document.getElementById('island-poem').textContent = d.poem;
+    document.getElementById('island-body').textContent = d.body;
+    document.getElementById('island-known').textContent = d.known;
+    document.getElementById('island-best').textContent = d.best;
+    islandGroups.forEach(g => g.classList.toggle('active', g.dataset.island === key));
+    // re-trigger the cross-fade so the new selection feels alive (no-op under reduced motion)
+    if (islandDetail) {
+      islandDetail.classList.remove('island-fade');
+      void islandDetail.offsetWidth; // force reflow to restart the animation
+      islandDetail.classList.add('island-fade');
+    }
+  };
+  islandGroups.forEach(g => {
+    const activate = () => setDetail(g.dataset.island);
+    g.addEventListener('click', activate);
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+    g.addEventListener('mouseenter', activate);
+    g.addEventListener('focus', activate);
+  });
+
+  // ---- newsletter submit confirmation ----
+  const form = document.getElementById('newsletter');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const input = form.querySelector('#email');
+      if (btn && input && input.value) {
+        btn.textContent = 'Subscribed — see you in the islands';
+        input.value = '';
+        input.placeholder = 'A slow letter is on its way.';
+      }
+    });
+  }
+
+  // ---- plan-form (the real #plan conversion surface) ----
+  const planForm = document.getElementById('plan-form');
+  if (planForm) {
+    planForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = planForm.querySelector('button[type="submit"]');
+      const name = planForm.querySelector('#pf-name');
+      const email = planForm.querySelector('#pf-email');
+      if (btn && email && email.value && name && name.value) {
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = 'Drafting your five days…';
+        setTimeout(() => {
+          btn.innerHTML = 'Request received — check your inbox';
+          planForm.querySelectorAll('input, select, textarea').forEach(el => { if (el.type !== 'submit') el.value = ''; });
+        }, 900);
+      }
+    });
+  }
+
+  // ---- hero parallax (pointer) — coexists with kenburns via a wrapper, fine-pointer only, gated by reduced motion; rAF-throttled, will-change only while moving ----
+  if (!reduceMotion && window.matchMedia('(pointer:fine)').matches) {
+    const heroSection = document.querySelector('section[aria-label="Azores hero"]');
+    const heroWrap = heroSection && heroSection.querySelector('.absolute.inset-0');
+    const heroImg = heroWrap && heroWrap.querySelector('img');
+    if (heroImg) {
+      // apply parallax as an additional transform on a parent wrapper, leaving kenburns on the img
+      const parallaxLayer = document.createElement('div');
+      parallaxLayer.style.cssText = 'position:absolute; inset:-6%;';
+      heroWrap.insertBefore(parallaxLayer, heroImg);
+      parallaxLayer.appendChild(heroImg);
+      let rafId = null, idleTimer = null, tx = 0, ty = 0;
+      const apply = () => {
+        parallaxLayer.style.transform = `translate3d(${tx}%, ${ty}%, 0)`;
+        rafId = null;
+      };
+      window.addEventListener('mousemove', (e) => {
+        tx = -((e.clientX / window.innerWidth) - 0.5) * 1.6;
+        ty = -((e.clientY / window.innerHeight) - 0.5) * 1.6;
+        parallaxLayer.style.willChange = 'transform';
+        if (rafId === null) rafId = requestAnimationFrame(apply);
+        clearTimeout(idleTimer);
+        // drop will-change shortly after the last move so the transform stack doesn't linger
+        idleTimer = setTimeout(() => { parallaxLayer.style.willChange = 'auto'; }, 700);
+      }, { passive:true });
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth" style="scroll-padding-top:5rem;">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BUILD/2026 — No keynotes. Just code.</title>
+<meta name="description" content="BUILD/2026 — a three-day developer conference where the people building the platform give it to you straight. Brooklyn Navy Yard, Oct 13–15, 2026. 240 builders. 3 tracks. 0 filler sessions." />
+<meta name="theme-color" content="#0A0A0B" />
+
+<!-- Tailwind (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts: Inter Tight (display) + Geist (UI/body) + JetBrains Mono (data) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink:    '#0A0A0B',   /* near-black ground */
+        ink2:   '#101016',   /* layered elevation */
+        ink3:   '#16161E',   /* card surface */
+        ink4:   '#1E1E28',   /* raised surface */
+        rule:   '#232330',   /* hairline on dark */
+        rule2:  '#32323D',
+        paper:  '#FAFAF7',   /* warm off-white ground */
+        paper2: '#F2F1EB',   /* paper elevation */
+        line:   '#E5E2DA',   /* hairline on light */
+        bone:   '#F4F4F1',   /* high-contrast ink on dark */
+        signal: '#FF5C1F',   /* signal-orange — the single accent */
+        signald:'#C9471A',   /* deeper burnt-orange — passes AA on paper (~4.56:1) */
+        mute:   '#6B6B72',   /* paper secondary text */
+        mute2:  '#4A4A52',   /* paper tertiary, still AA on paper */
+        dim:    '#8A8A95',   /* dark-surface secondary (AA on ink) */
+        dim2:   '#7A7A85',   /* dark-surface label minimum */
+        compile:'#5B6BB5',   /* muted indigo — desaturated so orange stays the only saturated accent */
+        compilelt:'#9AA6DE', /* lighter indigo for small text on dark (#0A0A0B) — ~7.0:1, AA */
+        edge:   '#5E9B8F',   /* muted teal — distinguishable, low chroma; passes AA on dark */
+      },
+      fontFamily: {
+        display: ['"Inter Tight"','system-ui','sans-serif'],
+        sans:    ['Geist','system-ui','sans-serif'],
+        mono:    ['"JetBrains Mono"','ui-monospace','monospace'],
+      },
+      letterSpacing: {
+        tightest: '-0.045em',
+        tighter2: '-0.02em',
+        micro:    '0.16em',
+      },
+      fontSize: {
+        'xs2':   ['0.6875rem',{lineHeight:'1rem'}],
+        micro:   ['0.6875rem',{lineHeight:'1rem', letterSpacing:'0.16em'}],
+      },
+      maxWidth: { edge: '1280px' },
+    }
+  }
+}
+</script>
+
+<style>
+  :root{
+    --ink:#0A0A0B; --paper:#FAFAF7; --signal:#FF5C1F; --signald:#C9471A;
+    --bone:#F4F4F1; --rule:#232330; --line:#E5E2DA;
+    --grid:rgba(255,255,255,0.03);
+  }
+
+  html,body{background:var(--paper);}
+  body{font-family:'Geist',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;}
+  ::selection{background:var(--signal);color:var(--ink);}
+
+  /* ---- type roles (system, not per-instance literals) ---- */
+  .font-display{font-family:'Inter Tight',sans-serif;font-weight:800;letter-spacing:-0.045em;line-height:0.92;}
+  .font-mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+  .micro{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.16em;font-weight:500;font-size:0.6875rem;}
+  .tabnum{font-variant-numeric:tabular-nums;}
+
+  /* ---- wordmark ---- */
+  .wordmark{font-family:'Inter Tight',sans-serif;font-weight:800;letter-spacing:-0.055em;line-height:0.84;}
+
+  /* ---- dependency-graph / grid textures ---- */
+  .grid-dark{
+    background-image:
+      linear-gradient(to right,var(--grid) 1px,transparent 1px),
+      linear-gradient(to bottom,var(--grid) 1px,transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse 85% 70% at 50% 25%,#000 35%,transparent 85%);
+            mask-image:radial-gradient(ellipse 85% 70% at 50% 25%,#000 35%,transparent 85%);
+  }
+  .grid-light{
+    background-image:
+      linear-gradient(to right,rgba(10,10,11,0.035) 1px,transparent 1px),
+      linear-gradient(to bottom,rgba(10,10,11,0.035) 1px,transparent 1px);
+    background-size:56px 56px;
+  }
+
+  /* ---- buttons: ONE primary fill per scroll-view ---- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-weight:600;text-transform:uppercase;letter-spacing:0.13em;font-size:0.72rem;padding:.9rem 1.4rem;border-radius:999px;transition:transform .16s ease,background .16s ease,color .16s ease,border-color .16s ease,box-shadow .16s ease;}
+  .btn:focus-visible{outline:2px solid var(--signal);outline-offset:3px;}
+  .btn-primary{background:var(--signal);color:var(--ink);}
+  .btn-primary:hover{background:#FF7340;transform:translateY(-1px);box-shadow:0 12px 30px -10px rgba(255,92,31,.6);}
+  .btn-ghost{background:transparent;color:var(--bone);border:1px solid #34343F;}
+  .btn-ghost:hover{border-color:var(--signal);color:var(--signal);}
+  .btn-ghost-light{background:transparent;color:var(--ink);border:1px solid #C9C7BC;}
+  .btn-ghost-light:hover{border-color:var(--ink);}
+  .btn-dark{background:var(--ink);color:var(--bone);}
+  .btn-dark:hover{background:var(--ink4);}
+
+  /* link underline reveal */
+  .ulink{position:relative;}
+  .ulink::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .22s ease;}
+  .ulink:hover::after,.ulink:focus-visible::after{transform:scaleX(1);}
+
+  /* ---- countdown: quiet utility, hairline panel (NOT a co-equal headline) ---- */
+  .cd-panel{border:1px solid var(--rule);border-radius:4px;background:rgba(16,16,22,.6);}
+  .cd-cell{border:1px solid rgba(244,244,241,.10);border-radius:3px;padding:.6rem .25rem;text-align:center;}
+  .cd-num{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:1.6rem;line-height:1;letter-spacing:-0.02em;color:var(--bone);}
+  .cd-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.18em;color:#7A7A85;text-transform:uppercase;margin-top:.35rem;}
+
+  /* ---- speaker cards ---- */
+  .spk-img{filter:grayscale(1) contrast(1.05) brightness(.94);transition:filter .26s ease,transform .26s ease;}
+  .spk-card:hover .spk-img,.spk-card:focus-within .spk-img{filter:grayscale(0) contrast(1) brightness(1);transform:scale(1.03);}
+  .spk-hook{opacity:0;transform:translateY(6px);transition:opacity .22s ease,transform .22s ease;}
+  .spk-card:hover .spk-hook,.spk-card:focus-within .spk-hook{opacity:1;transform:none;}
+  .spk-underline{position:relative;display:inline;}
+  .spk-underline::after{content:"";position:absolute;left:0;bottom:-2px;height:1px;width:0;background:var(--signal);transition:width .26s ease;}
+  .spk-card:hover .spk-underline::after,.spk-card:focus-within .spk-underline::after{width:100%;}
+
+  /* ---- schedule session cards: lift + 1px accent edge ---- */
+  .sess{position:absolute;left:0;right:6px;border-radius:3px;border:1px solid #2A2A33;background:#15151C;cursor:pointer;overflow:hidden;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;}
+  .sess:hover,.sess:focus-visible{transform:translateY(-2px);box-shadow:0 10px 28px -14px rgba(0,0,0,.85);outline:none;}
+  .sess::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--bar,#5b5b62);transition:width .16s ease;}
+  .sess:hover::before{width:5px;}
+  .sess.compile{--bar:#5B6BB5;}
+  .sess.runtime{--bar:var(--signal);}
+  .sess.edge{--bar:#5E9B8F;}
+  /* breaks read as breaks, not as sessions: hatched, lower mass, no hover lift */
+  .sess.is-break{background:transparent;border:1px dashed #2A2A33;}
+  .sess.is-break::before{display:none;}
+  .sess.is-break:hover{transform:none;box-shadow:none;}
+
+  /* ---- day tabs: full keyboard contract ---- */
+  .daytab{transition:color .16s ease,border-color .16s ease;cursor:pointer;}
+  .daytab[aria-selected="true"]{color:var(--signal);}
+  .daytab::after{content:"";display:block;height:2px;margin-top:.55rem;background:var(--signal);transform:scaleX(0);transform-origin:left;transition:transform .22s ease;}
+  .daytab[aria-selected="true"]::after{transform:scaleX(1);}
+  .daytab:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:2px;}
+
+  /* ---- filter chips ---- */
+  .chip{transition:color .16s ease,background .16s ease,border-color .16s ease;cursor:pointer;}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  /* ---- sponsor logos: monochrome → accent only on hover ---- */
+  .sponsor{color:#56565E;transition:color .2s ease,transform .2s ease;}
+  .sponsor-dark{color:#5A5A62;}
+  .sponsor-cell:hover .sponsor{color:var(--signal);transform:translateY(-1px);}
+  .sponsor-cell:hover .sponsor-dark{color:var(--bone);}
+
+  /* ---- ticket pro: elevated ---- */
+  .ticket-pro{box-shadow:0 28px 64px -32px rgba(255,92,31,.55),0 0 0 1px rgba(255,92,31,.5);}
+
+  /* ---- scroll reveal: per-element, indexed stagger (micro-interaction, ≤200ms) ---- */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .2s cubic-bezier(.2,.7,.2,1),transform .2s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 40ms);}
+  .reveal.in{opacity:1;transform:none;}
+
+  /* schedule panel fade/slide on day swap */
+  .sched-fade{animation:schedIn .32s cubic-bezier(.2,.7,.2,1) both;}
+  @keyframes schedIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  /* hero kinetic wordmark reveal — entrance choreography, each line ~200ms w/ 60ms stagger */
+  .wm-line{display:block;overflow:hidden;}
+  .wm-line>span{display:block;transform:translateY(108%);transition:transform .22s cubic-bezier(.16,.84,.3,1);}
+  .wm-ready .wm-line>span{transform:translateY(0);}
+  .wm-line:nth-child(2)>span{transition-delay:.06s;}
+  .wm-slash{display:inline-block;color:var(--signal);transform-origin:left center;clip-path:inset(0 100% 0 0);transition:clip-path .22s cubic-bezier(.7,0,.2,1) .14s;}
+  .wm-ready .wm-slash{clip-path:inset(0 0 0 0);}
+
+  /* self-drawing dependency graph — full choreography capped under ~1.2s */
+  .graph-line{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
+  .graph-ready .graph-line{stroke-dashoffset:0;}
+  .graph-node{opacity:0;transform:scale(.4);transform-origin:center;transform-box:fill-box;transition:opacity .3s ease,transform .3s ease;}
+  .graph-ready .graph-node{opacity:1;transform:scale(1);}
+  .graph-node.hot{fill:var(--signal);}
+  .graph-node.hot.live{fill:var(--signal);}
+  /* signature moment: after the draw-in settles, the source + EMIT nodes keep a quiet live pulse —
+     the build is "running". One animation only, gated entirely by prefers-reduced-motion. */
+  @keyframes graphLive{
+    0%,100%{r:4; filter:none;}
+    50%{r:5.6; filter:drop-shadow(0 0 6px rgba(255,92,31,.65));}
+  }
+  .graph-ready .graph-node.live{animation:graphLive 2.6s cubic-bezier(.4,0,.2,1) .9s infinite;}
+  .graph-ready .graph-node.emit{animation:graphLive 2.6s cubic-bezier(.4,0,.2,1) 1.5s infinite;}
+  .graph-caption{opacity:0;transition:opacity .4s ease .7s;}
+  .graph-ready .graph-caption{opacity:1;}
+
+  /* sparkline bars */
+  .spark{display:flex;align-items:flex-end;gap:3px;height:30px;}
+  .spark i{display:block;width:4px;background:#2F2F38;border-radius:1px;}
+  .spark i.hot{background:var(--signal);}
+
+  /* Gantt rail */
+  .gantt-row{position:relative;height:14px;background:rgba(255,255,255,.045);border-radius:2px;overflow:hidden;}
+  .gantt-fill{position:absolute;top:0;bottom:0;border-radius:2px;}
+
+  /* thin scrollbars */
+  .no-sb::-webkit-scrollbar{height:6px;width:6px;}
+  .no-sb::-webkit-scrollbar-thumb{background:#2A2A30;border-radius:3px;}
+  .no-sb{scrollbar-width:thin;scrollbar-color:#2A2A30 transparent;}
+
+  /* schedule desktop/mobile toggle */
+  @media (max-width:767px){ .schedule-desktop{display:none;} }
+  @media (min-width:768px){ .schedule-mobile{display:none;} }
+
+  /* nav scrolled */
+  #nav.scrolled{background:rgba(10,10,11,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);}
+
+  /* focus-visible default */
+  a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--signal);outline-offset:2px;border-radius:2px;}
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important;}
+    .reveal{opacity:1!important;transform:none!important;}
+    .wm-line>span,.wm-slash,.graph-line,.graph-node{transform:none!important;clip-path:none!important;stroke-dashoffset:0!important;opacity:1!important;}
+    .graph-caption{opacity:1!important;}
+    html{scroll-behavior:auto!important;}
+  }
+</style>
+</head>
+<body class="font-sans antialiased">
+
+<!-- ============ NAV ============ -->
+<header id="nav" class="fixed top-0 inset-x-0 z-50 transition-colors duration-300">
+  <nav class="mx-auto max-w-edge px-5 md:px-8 h-16 flex items-center justify-between" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2.5 group">
+      <span class="inline-block w-2.5 h-2.5 bg-signal rounded-[1px] group-hover:rotate-45 transition-transform duration-200"></span>
+      <span class="font-display text-bone text-[17px] tracking-tighter2">BUILD<span class="text-signal">/</span>2026</span>
+    </a>
+    <ul class="hidden md:flex items-center gap-7 micro text-dim">
+      <li><a href="#theme" class="hover:text-bone transition-colors">Theme</a></li>
+      <li><a href="#speakers" class="hover:text-bone transition-colors">Speakers</a></li>
+      <li><a href="#schedule" class="hover:text-bone transition-colors">Schedule</a></li>
+      <li><a href="#venue" class="hover:text-bone transition-colors">Venue</a></li>
+      <li><a href="#tickets" class="hover:text-bone transition-colors">Tickets</a></li>
+    </ul>
+    <div class="flex items-center gap-3">
+      <a href="#cfp" class="hidden sm:inline-block micro text-dim hover:text-bone transition-colors">Submit a talk</a>
+      <a href="#tickets" class="btn btn-primary !text-[0.7rem] !px-4 !py-2.5">Get tickets</a>
+      <!-- Mobile hamburger (below md) -->
+      <button id="menuBtn" class="md:hidden w-10 h-10 -mr-2 flex items-center justify-center text-bone" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg id="menuIconOpen" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg id="menuIconClose" class="w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M6 6l12 12M6 18L18 6"/></svg>
+      </button>
+    </div>
+  </nav>
+  <!-- Mobile dropdown panel -->
+  <div id="mobileMenu" class="md:hidden hidden bg-ink2 border-b border-rule" role="menu" aria-label="Mobile navigation">
+    <ul class="mx-auto max-w-edge px-5 py-3 flex flex-col">
+      <li><a href="#theme" class="micro text-dim hover:text-signal py-2.5 block transition-colors" role="menuitem">Theme</a></li>
+      <li><a href="#speakers" class="micro text-dim hover:text-signal py-2.5 block transition-colors" role="menuitem">Speakers</a></li>
+      <li><a href="#schedule" class="micro text-dim hover:text-signal py-2.5 block transition-colors" role="menuitem">Schedule</a></li>
+      <li><a href="#venue" class="micro text-dim hover:text-signal py-2.5 block transition-colors" role="menuitem">Venue</a></li>
+      <li><a href="#tickets" class="micro text-dim hover:text-signal py-2.5 block transition-colors" role="menuitem">Tickets</a></li>
+      <li class="pt-2 pb-1"><a href="#cfp" class="micro text-signal py-2.5 block transition-colors" role="menuitem">Submit a talk →</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="relative bg-ink text-bone overflow-hidden pt-16">
+  <div class="absolute inset-0 grid-dark pointer-events-none opacity-70"></div>
+
+  <!-- Self-drawing dependency graph (signature compilation moment) -->
+  <svg id="heroGraph" class="hidden md:block absolute right-0 top-24 w-[560px] h-[560px] pointer-events-none" viewBox="0 0 560 560" fill="none" aria-hidden="true">
+    <g stroke="#FF5C1F" stroke-width="1" opacity="0.55" pathLength="1">
+      <line class="graph-line" x1="80" y1="80" x2="230" y2="150" style="transition-delay:.08s"/>
+      <line class="graph-line" x1="230" y1="150" x2="390" y2="90" style="transition-delay:.16s"/>
+      <line class="graph-line" x1="230" y1="150" x2="180" y2="300" style="transition-delay:.24s"/>
+      <line class="graph-line" x1="180" y1="300" x2="340" y2="360" style="transition-delay:.32s"/>
+      <line class="graph-line" x1="390" y1="90" x2="470" y2="220" style="transition-delay:.40s"/>
+      <line class="graph-line" x1="470" y1="220" x2="340" y2="360" style="transition-delay:.48s"/>
+      <line class="graph-line" x1="80" y1="80" x2="180" y2="300" style="transition-delay:.56s"/>
+    </g>
+    <g>
+      <circle class="graph-node hot live" cx="80" cy="80" r="4" style="transition-delay:.05s"/>
+      <circle class="graph-node" cx="230" cy="150" r="5" fill="#F4F4F1" opacity=".7" style="transition-delay:.13s"/>
+      <circle class="graph-node" cx="390" cy="90" r="4" fill="#F4F4F1" opacity=".7" style="transition-delay:.21s"/>
+      <circle class="graph-node hot" cx="180" cy="300" r="5" style="transition-delay:.29s"/>
+      <circle class="graph-node" cx="470" cy="220" r="4" fill="#F4F4F1" opacity=".7" style="transition-delay:.37s"/>
+      <circle class="graph-node hot emit" cx="340" cy="360" r="5" style="transition-delay:.45s"/>
+    </g>
+    <g font-family="JetBrains Mono" font-size="10" fill="#7A7A85" letter-spacing="0.1em">
+      <text x="92" y="74">NODE.ENTRY</text>
+      <text x="242" y="144">PARSE</text>
+      <text x="402" y="84">RESOLVE</text>
+      <text x="192" y="294">SCHEDULE</text>
+      <text x="482" y="214">OPTIMIZE</text>
+      <text x="352" y="354">EMIT</text>
+    </g>
+    <!-- signature caption: the graph is the build, compiling live -->
+    <g class="graph-caption" font-family="JetBrains Mono" font-size="9" fill="#FF5C1F" letter-spacing="0.16em">
+      <text x="352" y="334" text-anchor="end">// build · compiling</text>
+    </g>
+  </svg>
+
+  <!-- top meta bar -->
+  <div class="relative mx-auto max-w-edge px-5 md:px-8 pt-6 pb-3 flex flex-wrap items-center justify-between gap-4 border-b border-rule">
+    <p class="micro text-dim2">Oct 13—15 · 2026</p>
+    <p class="micro text-dim2">Brooklyn Navy Yard · NYC</p>
+    <p class="micro text-signal hidden md:flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-signal"></span>CFP open</p>
+  </div>
+
+  <div class="relative mx-auto max-w-edge px-5 md:px-8 pt-10 md:pt-16 pb-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-end">
+    <!-- LEFT: wordmark + tagline + CTAs -->
+    <div class="lg:col-span-7">
+      <p id="heroPre" class="micro text-dim2 mb-6 reveal" style="--i:0">A conference · year three</p>
+      <h1 id="wordmark" class="wordmark text-bone text-[20vw] sm:text-[16vw] md:text-[13.5vw] lg:text-[10.5vw]">
+        <span class="wm-line"><span>BUILD<i class="wm-slash not-italic">/</i></span></span>
+        <span class="wm-line"><span>2026</span></span>
+      </h1>
+      <p class="mt-7 font-display text-bone text-2xl md:text-[2rem] tracking-tighter2 leading-tight reveal" style="--i:2">
+        No keynotes. <span class="text-bone/70">Just code.</span>
+      </p>
+      <p class="mt-5 max-w-xl text-dim text-[15px] leading-relaxed reveal" style="--i:3">
+        Three days of practical systems engineering from the people who actually ship the platform. No keynote theater, no vendor puffery — just the talks you'd want to read the source for.
+      </p>
+      <!-- headline stat: committed to one face (mono) — it is a data line, reinforces the manifesto -->
+      <p class="mt-6 font-mono text-[15px] md:text-base text-bone/85 leading-relaxed reveal" style="--i:4">
+        <span class="font-semibold text-signal tabnum">240</span> builders.
+        <span class="font-semibold text-signal tabnum">3</span> tracks.
+        <span class="font-semibold text-signal tabnum">0</span> filler sessions.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-3 reveal" style="--i:5">
+        <a href="#tickets" class="btn btn-primary">Get tickets
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#cfp" class="btn btn-ghost">Submit a talk</a>
+      </div>
+    </div>
+
+    <!-- RIGHT: countdown only — quiet utility, single hairline row. Sub-progress moved into CFP section. -->
+    <aside class="lg:col-span-5 lg:pl-8 lg:border-l border-rule reveal" style="--i:6" aria-label="CFP countdown">
+      <div class="cd-panel p-4 md:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <p class="micro text-dim2">CFP closes in</p>
+          <p class="micro text-dim2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-signal"></span>Open</p>
+        </div>
+        <div class="grid grid-cols-4 gap-2" id="countdown" role="timer" aria-live="off" aria-label="Time until CFP closes">
+          <div class="cd-cell"><div class="cd-num tabnum" data-d>00</div><div class="cd-lbl">Days</div></div>
+          <div class="cd-cell"><div class="cd-num tabnum" data-h>00</div><div class="cd-lbl">Hrs</div></div>
+          <div class="cd-cell"><div class="cd-num tabnum" data-m>00</div><div class="cd-lbl">Min</div></div>
+          <div class="cd-cell"><div class="cd-num tabnum" data-s>00</div><div class="cd-lbl">Sec</div></div>
+        </div>
+        <p class="mt-4 micro text-dim2">Blind-reviewed · written feedback guaranteed</p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- bottom rail -->
+  <div class="relative mx-auto max-w-edge px-5 md:px-8 py-4 border-t border-rule flex items-center justify-between">
+    <p class="micro text-dim2">Scroll · schedule is the proof</p>
+    <div class="hidden sm:flex items-center gap-6 micro text-dim2">
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-[1px] bg-compile"></span>Compile</span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-[1px] bg-signal"></span>Runtime</span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-[1px] bg-edge"></span>Edge</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THEME / MANIFESTO ============ -->
+<section id="theme" class="bg-paper relative overflow-hidden">
+  <div class="absolute inset-0 grid-light opacity-80 pointer-events-none"></div>
+  <div class="relative mx-auto max-w-edge px-5 md:px-8 py-20 md:py-32">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+      <div class="lg:col-span-4 reveal" style="--i:0">
+        <div class="lg:sticky lg:top-28">
+          <p class="micro text-signald mb-5">// 01 — Theme</p>
+          <h2 class="font-display text-4xl md:text-6xl tracking-tightest leading-[0.9]">
+            Year Three:<br/><span class="text-ink/35">Compilation.</span>
+          </h2>
+          <p class="mt-6 text-mute text-[15px] leading-relaxed max-w-sm">
+            Two years of talks became a corpus. This year we compile it — the patterns, the failures, the load-bearing primitives — into something you can run in production on Monday.
+          </p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-8 lg:pl-10 lg:border-l border-line">
+        <p class="text-lg md:text-xl leading-relaxed text-ink/85 max-w-2xl reveal" style="--i:1">
+          Two years in, we stopped counting talks and started reading transcripts. The throughline wasn't a framework or a hype cycle — it was <em class="not-italic font-medium">compilation</em>: the unglamorous work of taking intent, resolving dependencies, and shipping something that runs without surprises. That's the lens for 2026.
+        </p>
+
+        <ol class="mt-12">
+          <li class="grid grid-cols-[2.5rem_1fr] gap-5 py-6 border-t border-line reveal" style="--i:2">
+            <span class="font-mono text-signald text-sm pt-1 tabnum">01</span>
+            <div>
+              <h3 class="font-display text-xl md:text-2xl tracking-tighter2">Practical over Promotional</h3>
+              <p class="mt-2 text-mute text-[15px] leading-relaxed">Every talk ships with a repo, a config, or a postmortem. If it can't survive a code review, it doesn't make the schedule.</p>
+            </div>
+          </li>
+          <li class="grid grid-cols-[2.5rem_1fr] gap-5 py-6 border-t border-line reveal" style="--i:3">
+            <span class="font-mono text-signald text-sm pt-1 tabnum">02</span>
+            <div>
+              <h3 class="font-display text-xl md:text-2xl tracking-tighter2">Systems over Trends</h3>
+              <p class="mt-2 text-mute text-[15px] leading-relaxed">We track what compounds: scheduling, storage, observability, the cost of a cold start. Trends come and go; tradeoffs don't.</p>
+            </div>
+          </li>
+          <li class="grid grid-cols-[2.5rem_1fr] gap-5 py-6 border-t border-b border-line reveal" style="--i:4">
+            <span class="font-mono text-signald text-sm pt-1 tabnum">03</span>
+            <div>
+              <h3 class="font-display text-xl md:text-2xl tracking-tighter2">Source over Slides</h3>
+              <p class="mt-2 text-mute text-[15px] leading-relaxed">Speakers paste code, not stock photos. Q&amp;A runs as long as the talk. The hallway track is a scheduled, indexed resource.</p>
+            </div>
+          </li>
+        </ol>
+
+        <figure class="mt-14 max-w-3xl reveal" style="--i:5">
+          <blockquote class="font-display text-2xl md:text-[2.1rem] tracking-tighter2 leading-[1.08] text-ink">
+            <span class="text-signald">"</span>I came in skeptical and left with three things I changed in our scheduler on Monday morning. That has never happened to me at a conference.<span class="text-signald">"</span>
+          </blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-ink text-signal font-mono text-xs flex items-center justify-center">PA</span>
+            <span class="micro text-mute">Priya Anand · Staff SRE, Ledgerline · BUILD/2025</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED SPEAKERS ============ -->
+<section id="speakers" class="bg-paper border-t border-line">
+  <div class="mx-auto max-w-edge px-5 md:px-8 py-20 md:py-28">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+      <div class="reveal" style="--i:0">
+        <p class="micro text-signald mb-4">// 02 — Speakers</p>
+        <h2 class="font-display text-4xl md:text-6xl tracking-tightest leading-[0.9]">
+          Practitioners,<br/>not presenters.
+        </h2>
+      </div>
+      <p class="md:max-w-sm text-mute text-[15px] leading-relaxed reveal" style="--i:1">
+        Six of the forty-two confirmed speakers. Each picked because their work survives contact with production. Hover a card for the talk hook.
+      </p>
+    </div>
+
+    <!-- Filter chips: single taxonomy — the same 3 tracks as the schedule.
+         Dot color + track label + filter value all read from data-track. -->
+    <div class="flex md:flex-wrap items-center gap-2 mb-8 reveal overflow-x-auto no-sb md:overflow-visible -mx-5 px-5 md:mx-0 md:px-0 pb-1 md:pb-0" style="--i:2" role="group" aria-label="Filter speakers by track">
+      <button class="chip micro px-3 py-2 border border-ink/20 rounded-full text-mute hover:border-ink whitespace-nowrap shrink-0" aria-pressed="true" data-filter="all">All</button>
+      <button class="chip micro px-3 py-2 border border-ink/20 rounded-full text-mute hover:border-ink whitespace-nowrap shrink-0 inline-flex items-center gap-1.5" aria-pressed="false" data-filter="compile"><span class="w-1.5 h-1.5 rounded-[1px] bg-compile"></span>Compile</button>
+      <button class="chip micro px-3 py-2 border border-ink/20 rounded-full text-mute hover:border-ink whitespace-nowrap shrink-0 inline-flex items-center gap-1.5" aria-pressed="false" data-filter="runtime"><span class="w-1.5 h-1.5 rounded-[1px] bg-signal"></span>Runtime</button>
+      <button class="chip micro px-3 py-2 border border-ink/20 rounded-full text-mute hover:border-ink whitespace-nowrap shrink-0 inline-flex items-center gap-1.5" aria-pressed="false" data-filter="edge"><span class="w-1.5 h-1.5 rounded-[1px] bg-edge"></span>Edge</button>
+      <span class="micro text-mute2/70 ml-1 hidden sm:inline" aria-hidden="true">· same 3 tracks as the schedule</span>
+    </div>
+    <!-- live region: announces filtered count for screen readers -->
+    <p class="sr-only" id="speaker-count" aria-live="polite" aria-atomic="true"></p>
+    <!-- no-results fallback -->
+    <p class="hidden micro text-mute2 mt-4" id="speaker-empty">// No speakers in this track yet — check the full program.</p>
+
+    <!-- Asymmetric 6-up: 1 anchor (2x2) + 5 standard -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5" id="speaker-grid">
+      <!-- ANCHOR -->
+      <article class="spk-card col-span-2 lg:col-span-2 lg:row-span-2 reveal group" style="--i:0" data-track="compile">
+        <div class="aspect-square overflow-hidden rounded-[3px] bg-ink/5">
+          <img class="spk-img w-full h-full object-cover" src="https://picsum.photos/seed/build-anchor-okafor/800/800" alt="Portrait of Adaora Okafor, Principal Engineer at Nebula Compute" loading="lazy" />
+        </div>
+        <div class="mt-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-[1px] bg-compile"></span>
+            <span class="micro text-mute">Compile · keynote-free opener</span>
+          </div>
+          <h3 class="font-display text-2xl md:text-3xl tracking-tighter2">Adaora Okafor</h3>
+          <p class="micro text-mute2 mt-1">Principal Engineer · Nebula Compute · fleet scheduling</p>
+          <p class="spk-hook mt-3 text-ink/80 text-[15px] leading-relaxed max-w-md">
+            <span class="spk-underline">"The scheduler is the product."</span> What five years of multi-tenant fleet data taught us about fairness, preemption, and saying no to features.
+          </p>
+        </div>
+      </article>
+
+      <article class="spk-card reveal group" style="--i:1" data-track="runtime">
+        <div class="aspect-square overflow-hidden rounded-[3px] bg-ink/5">
+          <img class="spk-img w-full h-full object-cover" src="https://picsum.photos/seed/build-sp-petrov/400/400" alt="Portrait of Ivan Petrov" loading="lazy" />
+        </div>
+        <div class="mt-3">
+          <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 rounded-[1px] bg-signal"></span><span class="micro text-mute2">Runtime</span></div>
+          <h3 class="font-display text-lg tracking-tighter2">Ivan Petrov</h3>
+          <p class="micro text-mute2 mt-0.5">Inference Lead · Tessellate</p>
+          <p class="spk-hook text-ink/80 text-[13px] leading-snug mt-2"><span class="spk-underline">KV-cache eviction at p99</span> — 40k req/s, field report.</p>
+        </div>
+      </article>
+
+      <article class="spk-card reveal group" style="--i:2" data-track="compile">
+        <div class="aspect-square overflow-hidden rounded-[3px] bg-ink/5">
+          <img class="spk-img w-full h-full object-cover" src="https://picsum.photos/seed/build-sp-saito/400/400" alt="Portrait of Mira Saito" loading="lazy" />
+        </div>
+        <div class="mt-3">
+          <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 rounded-[1px] bg-compile"></span><span class="micro text-mute2">Compile</span></div>
+          <h3 class="font-display text-lg tracking-tighter2">Mira Saito</h3>
+          <p class="micro text-mute2 mt-0.5">Build Systems · Northbound CI</p>
+          <p class="spk-hook text-ink/80 text-[13px] leading-snug mt-2"><span class="spk-underline">Your build cache hates you</span> — a 14-min restore, debugged.</p>
+        </div>
+      </article>
+
+      <article class="spk-card reveal group" style="--i:3" data-track="edge">
+        <div class="aspect-square overflow-hidden rounded-[3px] bg-ink/5">
+          <img class="spk-img w-full h-full object-cover" src="https://picsum.photos/seed/build-sp-vargas/400/400" alt="Portrait of Diego Vargas" loading="lazy" />
+        </div>
+        <div class="mt-3">
+          <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 rounded-[1px] bg-edge"></span><span class="micro text-mute2">Edge</span></div>
+          <h3 class="font-display text-lg tracking-tighter2">Diego Vargas</h3>
+          <p class="micro text-mute2 mt-0.5">Edge Runtime · Stratus</p>
+          <p class="spk-hook text-ink/80 text-[13px] leading-snug mt-2"><span class="spk-underline">Islands without the island tax</span> — streaming partial hydration.</p>
+        </div>
+      </article>
+
+      <article class="spk-card reveal group" style="--i:4" data-track="runtime">
+        <div class="aspect-square overflow-hidden rounded-[3px] bg-ink/5">
+          <img class="spk-img w-full h-full object-cover" src="https://picsum.photos/seed/build-sp-reyes/400/400" alt="Portrait of Hannah Reyes" loading="lazy" />
+        </div>
+        <div class="mt-3">
+          <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 rounded-[1px] bg-signal"></span><span class="micro text-mute2">Runtime</span></div>
+          <h3 class="font-display text-lg tracking-tighter2">Hannah Reyes</h3>
+          <p class="micro text-mute2 mt-0.5">Supply-Chain Security · Redshift Foundry</p>
+          <p class="spk-hook text-ink/80 text-[13px] leading-snug mt-2"><span class="spk-underline">Supply-chain as a compile pass</span> — provenance in CI.</p>
+        </div>
+      </article>
+
+      <article class="spk-card reveal group" style="--i:5" data-track="compile">
+        <div class="aspect-square overflow-hidden rounded-[3px] bg-ink/5">
+          <img class="spk-img w-full h-full object-cover" src="https://picsum.photos/seed/build-sp-engstrom/400/400" alt="Portrait of Tomas Engström" loading="lazy" />
+        </div>
+        <div class="mt-3">
+          <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 rounded-[1px] bg-compile"></span><span class="micro text-mute2">Compile</span></div>
+          <h3 class="font-display text-lg tracking-tighter2">Tomas Engström</h3>
+          <p class="micro text-mute2 mt-0.5">Storage · ApertureDB</p>
+          <p class="spk-hook text-ink/80 text-[13px] leading-snug mt-2"><span class="spk-underline">Why we rewrote our WAL</span> — and the seven prod bugs we found.</p>
+        </div>
+      </article>
+    </div>
+    <p class="mt-10 micro text-mute2">+ 36 more practitioners across three days</p>
+  </div>
+</section>
+
+<!-- ============ SCHEDULE / SIGNATURE ============ -->
+<section id="schedule" class="bg-ink text-bone relative overflow-hidden">
+  <div class="absolute inset-0 grid-dark opacity-60 pointer-events-none"></div>
+  <div class="relative mx-auto max-w-edge px-5 md:px-8 py-20 md:py-28">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+      <div class="reveal" style="--i:0">
+        <p class="micro text-signal mb-4">// 03 — Schedule</p>
+        <h2 class="font-display text-4xl md:text-6xl tracking-tightest leading-[0.9]">
+          The program,<br/>as a build timeline.
+        </h2>
+      </div>
+      <p class="md:max-w-sm text-dim text-[15px] leading-relaxed reveal" style="--i:1">
+        Three days. Three parallel tracks — <span class="text-compilelt">Compile</span>, <span class="text-signal">Runtime</span>, <span class="text-edge">Edge</span> — plotted on a vertical clock. Sized to duration. Read it like a pipeline.
+      </p>
+    </div>
+
+    <!-- DAY TABS (roving tabindex + arrow keys) -->
+    <div class="flex gap-6 md:gap-8 border-b border-rule mb-8 overflow-x-auto no-sb" role="tablist" aria-label="Schedule day" id="dayTabs">
+      <button class="daytab micro py-3 text-dim2 whitespace-nowrap" role="tab" id="tab-0" aria-selected="true" aria-controls="sched-panel" tabindex="0" data-day="0">Oct 13 · Mon · Foundations</button>
+      <button class="daytab micro py-3 text-dim2 whitespace-nowrap" role="tab" id="tab-1" aria-selected="false" aria-controls="sched-panel" tabindex="-1" data-day="1">Oct 14 · Tue · Systems</button>
+      <button class="daytab micro py-3 text-dim2 whitespace-nowrap" role="tab" id="tab-2" aria-selected="false" aria-controls="sched-panel" tabindex="-1" data-day="2">Oct 15 · Wed · Edge Cases</button>
+    </div>
+
+    <!-- DESKTOP: Gantt rail + grid -->
+    <div class="schedule-desktop grid grid-cols-[160px_1fr] gap-6">
+      <aside class="sticky top-24 self-start reveal" style="--i:2" aria-label="Day overview">
+        <p class="micro text-dim2 mb-4">Overview · <span id="gantt-day" class="text-signal">OCT 13</span></p>
+        <div class="space-y-4">
+          <div>
+            <p class="micro text-compilelt mb-2">Compile</p>
+            <div class="gantt-row" id="gantt-compile"></div>
+          </div>
+          <div>
+            <p class="micro text-signal mb-2">Runtime</p>
+            <div class="gantt-row" id="gantt-runtime"></div>
+          </div>
+          <div>
+            <p class="micro text-edge mb-2">Edge</p>
+            <div class="gantt-row" id="gantt-edge"></div>
+          </div>
+        </div>
+        <div class="mt-6 pt-4 border-t border-rule">
+          <p class="micro text-dim2">Total sessions</p>
+          <p class="font-mono text-2xl text-bone mt-1 tabnum" id="gantt-total">—</p>
+          <p class="micro text-dim2 mt-1">hours of content</p>
+        </div>
+      </aside>
+
+      <div id="sched-panel" role="tabpanel" aria-labelledby="tab-0" class="relative overflow-x-auto no-sb reveal" style="--i:3" tabindex="0">
+        <div class="min-w-[680px]" id="sched-inner">
+          <div class="grid grid-cols-[56px_1fr_1fr_1fr] gap-px mb-2">
+            <div></div>
+            <div class="micro text-compilelt pb-2 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-[1px] bg-compile"></span>Compile</div>
+            <div class="micro text-signal pb-2 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-[1px] bg-signal"></span>Runtime</div>
+            <div class="micro text-edge pb-2 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-[1px] bg-edge"></span>Edge</div>
+          </div>
+          <div class="grid grid-cols-[56px_1fr_1fr_1fr] gap-px relative" id="schedule-body" style="min-height:560px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE: single-track stacked by time -->
+    <div class="schedule-mobile reveal" style="--i:4">
+      <div class="flex gap-2 mb-4 overflow-x-auto no-sb pb-1" role="group" aria-label="Filter mobile schedule by track">
+        <button class="chip micro px-3 py-1.5 border border-rule2 rounded-full text-dim2" data-mfilter="all" aria-pressed="true">All tracks</button>
+        <button class="chip micro px-3 py-1.5 border border-rule2 rounded-full text-dim2" data-mfilter="compile" aria-pressed="false">Compile</button>
+        <button class="chip micro px-3 py-1.5 border border-rule2 rounded-full text-dim2" data-mfilter="runtime" aria-pressed="false">Runtime</button>
+        <button class="chip micro px-3 py-1.5 border border-rule2 rounded-full text-dim2" data-mfilter="edge" aria-pressed="false">Edge</button>
+      </div>
+      <div class="space-y-2.5" id="schedule-mobile"></div>
+    </div>
+
+    <p class="mt-8 micro text-dim2">Times in ET · Subject to refinement · All sessions recorded &amp; transcribed</p>
+  </div>
+</section>
+
+<!-- ============ VENUE & TRAVEL ============ -->
+<section id="venue" class="bg-paper border-t border-line">
+  <div class="mx-auto max-w-edge px-5 md:px-8 py-20 md:py-28">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-7 reveal" style="--i:0">
+        <p class="micro text-signald mb-4">// 04 — Venue</p>
+        <h2 class="font-display text-4xl md:text-6xl tracking-tightest leading-[0.9] mb-6">
+          Brooklyn Navy Yard,<br/><span class="text-ink/35">Building 77.</span>
+        </h2>
+        <p class="text-mute text-[15px] leading-relaxed max-w-lg mb-6">
+          A former ship-fitting hall, retrofitted. 40ft ceilings, real power drops, fiber on two diverse paths. The room is built for long attention spans and long days.
+        </p>
+        <div class="aspect-[16/10] overflow-hidden rounded-[3px] bg-ink/5 mb-6">
+          <img class="w-full h-full object-cover" src="https://picsum.photos/seed/build-navy-yard-b77/1200/750" alt="Brooklyn Navy Yard Building 77, an industrial brick warehouse interior" loading="lazy" />
+        </div>
+        <!-- real street sketch: Flushing Ave + Yard footprint, labeled -->
+        <div class="relative h-44 rounded-[3px] border border-line overflow-hidden bg-paper2">
+          <svg class="absolute inset-0 w-full h-full" viewBox="0 0 800 176" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Sketch map: Brooklyn Navy Yard Building 77 on Flushing Avenue">
+            <!-- Yard footprint -->
+            <rect x="200" y="40" width="440" height="96" fill="#0A0A0B" fill-opacity="0.05" stroke="#0A0A0B" stroke-opacity="0.18" stroke-width="1" rx="2"/>
+            <!-- Flushing Ave (south edge, the approach street) -->
+            <line x1="0" y1="150" x2="800" y2="150" stroke="#0A0A0B" stroke-opacity="0.35" stroke-width="2"/>
+            <!-- Park Ave (parallel, north) -->
+            <line x1="0" y1="34" x2="800" y2="34" stroke="#0A0A0B" stroke-opacity="0.14" stroke-width="1"/>
+            <!-- Kent Ave / Wythe (west) -->
+            <line x1="150" y1="0" x2="150" y2="176" stroke="#0A0A0B" stroke-opacity="0.14" stroke-width="1"/>
+            <!-- Flushing Ave approach: dashed walk from Navy St gate -->
+            <path d="M120 150 L300 110" stroke="#FF5C1F" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+            <!-- B77 marker -->
+            <rect x="360" y="64" width="80" height="40" fill="#FF5C1F" fill-opacity="0.14" stroke="#FF5C1F" stroke-width="1.5" rx="1"/>
+            <circle cx="400" cy="84" r="4" fill="#FF5C1F"/>
+            <!-- street labels -->
+            <g font-family="JetBrains Mono" font-size="10" fill="#4A4A52" letter-spacing="0.12em">
+              <text x="12" y="146">FLUSHING AVE</text>
+              <text x="12" y="30">PARK AVE</text>
+              <text x="156" y="14" transform="rotate(90 156 14)">KENT AVE</text>
+              <text x="380" y="58" fill="#C9471A" font-weight="600">B77</text>
+              <text x="412" y="120" fill="#6B6B72">NAVY YARD</text>
+            </g>
+            <!-- transit dot: Flushing–Myrtle G -->
+            <circle cx="120" cy="150" r="4" fill="none" stroke="#0A0A0B" stroke-opacity="0.5" stroke-width="1.5"/>
+            <text x="34" y="166" font-family="JetBrains Mono" font-size="9" fill="#4A4A52" letter-spacing="0.1em">G · FLUSHING–MYRTLE</text>
+          </svg>
+          <span class="absolute bottom-2 left-3 micro text-mute">Building 77 · 141 Flushing Ave</span>
+          <span class="absolute top-2 right-3 micro text-signald flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-signal"></span>You are here</span>
+        </div>
+      </div>
+
+      <!-- Runbook -->
+      <div class="lg:col-span-5 lg:pl-8 lg:border-l border-line reveal" style="--i:1">
+        <p class="micro text-mute2 mb-6">Runbook</p>
+        <dl>
+          <div class="py-5 border-t border-line grid grid-cols-[2rem_1fr] gap-4">
+            <span class="font-mono text-signald text-sm pt-0.5">A</span>
+            <div>
+              <dt class="font-display text-lg tracking-tighter2">Nearest transit</dt>
+              <dd class="mt-1 text-mute text-[15px] leading-relaxed">Roughly 12 min. <span class="font-mono text-ink">G</span> to Flushing–Myrtle, or <span class="font-mono text-ink">B/Q</span> to Dekalb + the free Yard shuttle. Shuttle runs every 8 min, 07:30–19:30.</dd>
+            </div>
+          </div>
+          <div class="py-5 border-t border-line grid grid-cols-[2rem_1fr] gap-4">
+            <span class="font-mono text-signald text-sm pt-0.5">B</span>
+            <div>
+              <dt class="font-display text-lg tracking-tighter2">Hotel block</dt>
+              <dd class="mt-1 text-mute text-[15px] leading-relaxed">The Williamsburg Hotel, 15 min out. Use code <span class="font-mono text-ink bg-paper2 border border-line px-1.5 py-0.5 rounded-[2px]">BUILD26</span> through Sept 1 for the group rate ($249/night, taxes in).</dd>
+            </div>
+          </div>
+          <div class="py-5 border-t border-b border-line grid grid-cols-[2rem_1fr] gap-4">
+            <span class="font-mono text-signald text-sm pt-0.5">C</span>
+            <div>
+              <dt class="font-display text-lg tracking-tighter2">Accessibility</dt>
+              <dd class="mt-1 text-mute text-[15px] leading-relaxed">Step-free throughout. Live captions on every track. Quiet room on the mezzanine. Tell us what else you need at <a href="mailto:access@build2026.dev" class="ulink text-signald">access@build2026.dev</a> — we read every line.</dd>
+            </div>
+          </div>
+        </dl>
+        <p class="mt-6 micro text-mute2">Childcare on request · Nursing room on site</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SPONSORS ============ -->
+<section class="bg-ink text-bone border-t border-rule">
+  <div class="mx-auto max-w-edge px-5 md:px-8 py-16 md:py-20">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+      <div class="reveal" style="--i:0">
+        <p class="micro text-signal mb-3">// 05 — Sponsors</p>
+        <h2 class="font-display text-3xl md:text-5xl tracking-tightest leading-[0.95]">Built with, not sold to.</h2>
+      </div>
+      <p class="md:max-w-xs text-dim2 text-sm leading-relaxed reveal" style="--i:1">Sponsors keep tickets cheap and the CFP open. In return we ask for engineers at the booth, not sales decks.</p>
+    </div>
+
+    <div class="reveal" style="--i:2">
+      <p class="micro text-dim2 mb-4">Tier · Backstage</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-px bg-rule rounded-[3px] overflow-hidden">
+        <div class="sponsor-cell bg-ink p-8 flex items-center justify-center"><span class="sponsor-dark font-display text-2xl tracking-tighter2">NEBULA</span></div>
+        <div class="sponsor-cell bg-ink p-8 flex items-center justify-center"><span class="sponsor-dark font-display text-2xl tracking-tighter2">tessellate</span></div>
+        <div class="sponsor-cell bg-ink p-8 flex items-center justify-center"><span class="sponsor-dark font-display text-2xl tracking-tighter2">APERTURE</span></div>
+      </div>
+    </div>
+
+    <div class="mt-px reveal" style="--i:3">
+      <p class="micro text-dim2 mb-4">Tier · Runtime</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-rule rounded-[3px] overflow-hidden">
+        <div class="sponsor-cell bg-ink p-6 flex items-center justify-center"><span class="sponsor-dark font-mono text-base tracking-widest">STRATUS</span></div>
+        <div class="sponsor-cell bg-ink p-6 flex items-center justify-center"><span class="sponsor-dark font-mono text-base tracking-widest">NORTHBOUND</span></div>
+        <div class="sponsor-cell bg-ink p-6 flex items-center justify-center"><span class="sponsor-dark font-mono text-base tracking-widest">FOUNDRY</span></div>
+        <div class="sponsor-cell bg-ink p-6 flex items-center justify-center"><span class="sponsor-dark font-mono text-base tracking-widest">HALCYON</span></div>
+      </div>
+    </div>
+
+    <div class="mt-px reveal" style="--i:4">
+      <p class="micro text-dim2 mb-4">Tier · Edge</p>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-px bg-rule rounded-[3px] overflow-hidden">
+        <div class="sponsor-cell bg-ink p-4 flex items-center justify-center"><span class="sponsor-dark font-mono text-xs tracking-widest">LEDGER</span></div>
+        <div class="sponsor-cell bg-ink p-4 flex items-center justify-center"><span class="sponsor-dark font-mono text-xs tracking-widest">MERIDIAN</span></div>
+        <div class="sponsor-cell bg-ink p-4 flex items-center justify-center"><span class="sponsor-dark font-mono text-xs tracking-widest">QUANTA</span></div>
+        <div class="sponsor-cell bg-ink p-4 flex items-center justify-center"><span class="sponsor-dark font-mono text-xs tracking-widest">OBSERVE</span></div>
+        <div class="sponsor-cell bg-ink p-4 flex items-center justify-center"><span class="sponsor-dark font-mono text-xs tracking-widest">PARSEC</span></div>
+        <div class="sponsor-cell bg-ink p-4 flex items-center justify-center"><span class="sponsor-dark font-mono text-xs tracking-widest">CINDERS</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TICKETS ============ -->
+<section id="tickets" class="bg-paper border-t border-line">
+  <div class="mx-auto max-w-edge px-5 md:px-8 py-20 md:py-28">
+    <div class="text-center max-w-2xl mx-auto mb-14 reveal" style="--i:0">
+      <p class="micro text-signald mb-4">// 06 — Tickets</p>
+      <h2 class="font-display text-4xl md:text-6xl tracking-tightest leading-[0.9]">Pick a build target.</h2>
+      <p class="mt-5 text-mute text-[15px] leading-relaxed">All tiers include the same content, recordings, and the hallway track. You're paying for access logistics, not a paywall.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-4 items-stretch mt-5 md:mt-0">
+      <!-- Community -->
+      <article class="border border-line rounded-[3px] p-7 flex flex-col reveal bg-paper" style="--i:1">
+        <p class="micro text-mute2">Community</p>
+        <p class="mt-4 font-display text-5xl tracking-tightest">$0</p>
+        <p class="micro text-mute2 mt-1">Waitlisted · need-based</p>
+        <ul class="mt-7 space-y-3 text-[14px] text-ink/75 flex-1">
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> All talks, all three days</li>
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> Recordings + transcripts</li>
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> Hallway track access</li>
+          <li class="flex gap-2.5"><span class="text-ink/30 font-mono">–</span> <span class="text-mute2">Workshop pass</span></li>
+          <li class="flex gap-2.5"><span class="text-ink/30 font-mono">–</span> <span class="text-mute2">Speaker dinner</span></li>
+        </ul>
+        <a href="#" class="btn btn-ghost-light mt-7 justify-center">Join waitlist</a>
+      </article>
+
+      <!-- Pro (featured) — the ONE primary CTA in this scroll-view -->
+      <article class="ticket-pro relative border-2 border-signal rounded-[3px] p-7 flex flex-col reveal bg-ink text-bone md:-my-3 md:py-10" style="--i:2">
+        <span class="absolute -top-3 left-7 bg-signal text-ink micro px-2.5 py-1 rounded-full">Most popular</span>
+        <p class="micro text-signal">Pro</p>
+        <p class="mt-4 font-display text-5xl tracking-tightest">$899</p>
+        <p class="micro text-dim2 mt-1">Per builder · early bird</p>
+        <ul class="mt-7 space-y-3 text-[14px] text-bone/85 flex-1">
+          <li class="flex gap-2.5"><span class="text-signal font-mono">+</span> Everything in Community</li>
+          <li class="flex gap-2.5"><span class="text-signal font-mono">+</span> Day-one workshop pass</li>
+          <li class="flex gap-2.5"><span class="text-signal font-mono">+</span> Speaker &amp; sponsor dinner</li>
+          <li class="flex gap-2.5"><span class="text-signal font-mono">+</span> Priority CFP review</li>
+          <li class="flex gap-2.5"><span class="text-signal font-mono">+</span> Office-hours slot with the program committee</li>
+          <li class="flex gap-2.5"><span class="text-signal font-mono">+</span> Full archive (2024 + 2025)</li>
+          <li class="flex gap-2.5"><span class="text-signal font-mono">+</span> Refundable to Aug 15</li>
+        </ul>
+        <a href="#" class="btn btn-primary mt-7 justify-center">Get tickets</a>
+      </article>
+
+      <!-- Team -->
+      <article class="border border-line rounded-[3px] p-7 flex flex-col reveal bg-paper" style="--i:3">
+        <p class="micro text-mute2">Team</p>
+        <p class="mt-4 font-display text-5xl tracking-tightest">$2,400</p>
+        <p class="micro text-mute2 mt-1">3 seats · $800/each</p>
+        <ul class="mt-7 space-y-3 text-[14px] text-ink/75 flex-1">
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> Everything in Pro, ×3</li>
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> Shared CFP sandbox</li>
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> Team dinner seating</li>
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> Consolidated invoice</li>
+          <li class="flex gap-2.5"><span class="text-signald font-mono">+</span> Transferable until Oct 1</li>
+        </ul>
+        <a href="#" class="btn btn-dark mt-7 justify-center">Bring the team</a>
+      </article>
+    </div>
+    <p class="mt-10 text-center micro text-mute2">All prices in USD · No processing fee · Diversity scholarships cover 40 seats</p>
+  </div>
+</section>
+
+<!-- ============ PAST EDITION STATS ============ -->
+<section class="bg-ink text-bone border-t border-rule">
+  <div class="mx-auto max-w-edge px-5 md:px-8 py-20 md:py-24">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+      <div class="reveal" style="--i:0">
+        <p class="micro text-signal mb-3">// 07 — Traction</p>
+        <h2 class="font-display text-3xl md:text-5xl tracking-tightest leading-[0.95]">Two editions, measured.</h2>
+      </div>
+      <p class="md:max-w-xs text-dim2 text-sm leading-relaxed reveal" style="--i:1">Numbers from BUILD/2024 and BUILD/2025 combined. We publish the raw survey data with the recordings.</p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-rule rounded-[3px] overflow-hidden">
+      <div class="bg-ink p-6 md:p-8 reveal" style="--i:2">
+        <p class="font-mono text-4xl md:text-6xl text-bone tabnum">4,200</p>
+        <p class="micro text-dim2 mt-3">Attendees · 3 yrs</p>
+        <div class="spark mt-4" aria-hidden="true"><i style="height:38%"></i><i style="height:52%"></i><i style="height:68%"></i><i style="height:90%" class="hot"></i></div>
+      </div>
+      <div class="bg-ink p-6 md:p-8 reveal" style="--i:3">
+        <p class="font-mono text-4xl md:text-6xl text-bone tabnum">96</p>
+        <p class="micro text-dim2 mt-3">Talks shipped</p>
+        <div class="spark mt-4" aria-hidden="true"><i style="height:55%"></i><i style="height:70%"></i><i style="height:85%"></i><i style="height:95%" class="hot"></i></div>
+      </div>
+      <div class="bg-ink p-6 md:p-8 reveal" style="--i:4">
+        <p class="font-mono text-4xl md:text-6xl text-bone tabnum">38</p>
+        <p class="micro text-dim2 mt-3">Countries</p>
+        <div class="spark mt-4" aria-hidden="true"><i style="height:30%"></i><i style="height:48%"></i><i style="height:66%"></i><i style="height:80%"></i></div>
+      </div>
+      <!-- hero metric: larger + orange -->
+      <div class="bg-ink p-6 md:p-8 reveal" style="--i:5">
+        <p class="font-mono text-5xl md:text-7xl text-signal tabnum">4.8<span class="text-2xl md:text-3xl text-bone/50">/5</span></p>
+        <p class="micro text-dim2 mt-3">Satisfaction · n=2,140</p>
+        <div class="spark mt-4" aria-hidden="true"><i style="height:78%"></i><i style="height:82%"></i><i style="height:86%"></i><i style="height:92%" class="hot"></i></div>
+      </div>
+    </div>
+
+    <!-- past editions archive -->
+    <div class="mt-14 pt-10 border-t border-rule grid md:grid-cols-2 gap-8 reveal" style="--i:6">
+      <div>
+        <div class="micro text-dim2 mb-3">Past editions</div>
+        <div class="flex flex-wrap gap-3">
+          <a href="#" class="border border-rule rounded-[3px] px-4 py-3 hover:border-signal transition-colors group">
+            <div class="font-mono text-[11px] text-dim2">2025 · LISBON</div>
+            <div class="font-display text-bone group-hover:text-signal transition-colors">Year Two: Refactor</div>
+          </a>
+          <a href="#" class="border border-rule rounded-[3px] px-4 py-3 hover:border-signal transition-colors group">
+            <div class="font-mono text-[11px] text-dim2">2024 · INNSBRUCK</div>
+            <div class="font-display text-bone group-hover:text-signal transition-colors">Year One: Bootstrapped</div>
+          </a>
+        </div>
+      </div>
+      <div class="md:text-right">
+        <div class="micro text-dim2 mb-3">2026 is year three</div>
+        <p class="text-dim text-sm max-w-sm md:ml-auto">Every prior talk is in the archive, repos linked. <a href="#" class="ulink text-signal">Browse the archive →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CFP SECONDARY CTA (demoted: ghost, not accent) ============ -->
+<section id="cfp" class="bg-paper border-t border-line">
+  <div class="mx-auto max-w-edge px-5 md:px-8 py-16 md:py-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center reveal" style="--i:0">
+      <div>
+        <p class="micro text-signald mb-3">CFP · open through Aug 1</p>
+        <h2 class="font-display text-3xl md:text-5xl tracking-tightest leading-[0.95]">Got a talk the source code is already written for?</h2>
+      </div>
+      <div class="md:text-right">
+        <p class="text-mute text-[15px] leading-relaxed mb-6 md:max-w-sm md:ml-auto">Submissions are blind-reviewed by a rotating panel of staff-plus engineers. We tell you the rubric up front; you'll get written feedback either way. <span class="font-mono text-ink">312 / 360</span> reviewed so far.</p>
+        <div class="flex items-center gap-4 md:justify-end flex-wrap">
+          <a href="mailto:cfp@build2026.dev?subject=BUILD%2F2026%20CFP%20submission" class="btn btn-ghost-light">Submit a draft
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#schedule" class="ulink text-signald text-[13px]">See what a talk looks like →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-ink text-bone border-t border-rule">
+  <div class="mx-auto max-w-edge px-5 md:px-8 py-16">
+    <div class="grid grid-cols-2 md:grid-cols-12 gap-8">
+      <div class="col-span-2 md:col-span-4">
+        <a href="#top" class="flex items-center gap-2.5 mb-4">
+          <span class="inline-block w-2.5 h-2.5 bg-signal rounded-[1px]"></span>
+          <span class="font-display text-2xl tracking-tighter2">BUILD<span class="text-signal">/</span>2026</span>
+        </a>
+        <p class="font-display text-2xl md:text-3xl tracking-tighter2 leading-tight max-w-sm">No keynotes.<br/>Just code.</p>
+        <p class="mt-6 micro text-dim2">Run by a committee of working engineers.</p>
+      </div>
+
+      <nav class="md:col-span-2" aria-label="Conference">
+        <p class="micro text-dim2 mb-4">Conference</p>
+        <ul class="space-y-2.5 text-sm text-dim">
+          <li><a href="#theme" class="hover:text-signal transition-colors">Theme</a></li>
+          <li><a href="#schedule" class="hover:text-signal transition-colors">Schedule</a></li>
+          <li><a href="#tickets" class="hover:text-signal transition-colors">Tickets</a></li>
+          <li><a href="#cfp" class="hover:text-signal transition-colors">Submit a talk</a></li>
+        </ul>
+      </nav>
+
+      <nav class="md:col-span-2" aria-label="Project">
+        <p class="micro text-dim2 mb-4">Project</p>
+        <ul class="space-y-2.5 text-sm text-dim">
+          <li><a href="#" class="hover:text-signal transition-colors">Code of Conduct</a></li>
+          <li><a href="#" class="hover:text-signal transition-colors">Diversity</a></li>
+          <li><a href="#" class="hover:text-signal transition-colors">Press kit</a></li>
+          <li><a href="#" class="hover:text-signal transition-colors">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="md:col-span-4">
+        <p class="micro text-dim2 mb-4">Stay in the loop</p>
+        <form class="flex border border-rule2 rounded-full overflow-hidden bg-ink2" onsubmit="event.preventDefault();">
+          <label for="nl" class="sr-only">Email address</label>
+          <input id="nl" type="email" required placeholder="you@dev.io" class="flex-1 bg-transparent px-4 py-2.5 text-[13px] text-bone placeholder-dim2 focus:outline-none font-mono"/>
+          <button type="submit" aria-label="Subscribe" class="px-3 text-dim hover:text-signal transition-colors border-l border-rule2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+        <p class="mt-3 micro text-dim2">One email per drop. No tracking pixels.</p>
+        <div class="mt-5 flex gap-3">
+          <a href="#" aria-label="GitHub" class="w-9 h-9 rounded-full border border-rule2 flex items-center justify-center text-dim hover:text-signal hover:border-signal transition-colors"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.4 9.4 0 0 1 12 6.84c.85 0 1.71.12 2.51.34 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg></a>
+          <a href="#" aria-label="Mastodon" class="w-9 h-9 rounded-full border border-rule2 flex items-center justify-center text-dim hover:text-signal hover:border-signal transition-colors"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.3 8.4c0-4.3-2.8-5.5-2.8-5.5-1.4-.7-3.8-.9-6.3-.9h-.1c-2.5 0-4.9.3-6.3.9 0 0-2.8 1.2-2.8 5.5 0 1 0 2.1.1 3.3.2 3.4.8 6.7 3.5 7.5 1.3.4 2.5.5 3.4.4 1.6-.2 2.5-1 2.5-1l-.1-1.6s-1.1.4-2.4.3c-1.3 0-2.6-.4-2.8-2.2.9.4 2 .5 3.1.4 1 0 2-.1 3-.3 0 0 .4-2.8-2.3-3.2-1.5-.2-3.4-.2-4-.2-.5-.1-1.5-.1-2-.1-1.8.1-3.4.4-3.4.4z"/></svg></a>
+          <a href="#" aria-label="RSS" class="w-9 h-9 rounded-full border border-rule2 flex items-center justify-center text-dim hover:text-signal hover:border-signal transition-colors"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.18 17.82a2.18 2.18 0 1 1-4.36 0 2.18 2.18 0 0 1 4.36 0zM2 9.6v3.1c5.1 0 9.3 4.2 9.3 9.3h3.1C14.4 15.1 8.9 9.6 2 9.6zm0-5.2v3.1c8 0 14.5 6.5 14.5 14.5h3.1C19.6 11.5 11.7 4.4 2 4.4z"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-14 pt-6 border-t border-rule flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <p class="micro text-dim2">© 2026 BUILD Conference · MIT-licensed site</p>
+      <p class="font-mono text-[12px] text-dim2">v3.1.0 · compiled 2026-06-12 · commit #a1f3c2</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- nav scrolled state ---------- */
+  const nav = document.getElementById('nav');
+  const onScroll = ()=>{ if(window.scrollY>24) nav.classList.add('scrolled'); else nav.classList.remove('scrolled'); };
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* ---------- mobile menu (hamburger + sheet) ---------- */
+  const menuBtn=document.getElementById('menuBtn');
+  const mobileMenu=document.getElementById('mobileMenu');
+  const menuOpen=document.getElementById('menuIconOpen');
+  const menuClose=document.getElementById('menuIconClose');
+  const menuLinks=mobileMenu ? mobileMenu.querySelectorAll('a[role="menuitem"]') : [];
+  function setMenu(open){
+    if(!menuBtn||!mobileMenu) return;
+    menuBtn.setAttribute('aria-expanded', open?'true':'false');
+    mobileMenu.classList.toggle('hidden', !open);
+    menuOpen.classList.toggle('hidden', open);
+    menuClose.classList.toggle('hidden', !open);
+    if(open){
+      // focus first link after the panel paints
+      requestAnimationFrame(()=>menuLinks[0] && menuLinks[0].focus());
+    } else {
+      menuBtn.focus();
+    }
+  }
+  if(menuBtn){
+    menuBtn.addEventListener('click',()=> setMenu(mobileMenu.classList.contains('hidden')));
+    // close on link click
+    menuLinks.forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+    // Escape closes; focus-trap within panel
+    mobileMenu.addEventListener('keydown',(e)=>{
+      if(e.key==='Escape'){ e.preventDefault(); setMenu(false); return; }
+      if(e.key==='Tab' && menuLinks.length){
+        const first=menuLinks[0], last=menuLinks[menuLinks.length-1];
+        if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+      }
+    });
+    // reset on resize to desktop
+    window.addEventListener('resize',()=>{ if(window.innerWidth>=768) setMenu(false); });
+  }
+
+  /* ---------- hero kinetic wordmark + self-drawing graph ---------- */
+  const wm = document.getElementById('wordmark');
+  const graph = document.getElementById('heroGraph');
+  requestAnimationFrame(()=>{ setTimeout(()=>{
+    if(wm) wm.classList.add('wm-ready');
+    if(graph) graph.classList.add('graph-ready');
+  }, prefersReduced ? 0 : 120); });
+
+  /* ---------- staggered scroll reveal (per-element --i) ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  if(prefersReduced || !('IntersectionObserver' in window)){
+    revealEls.forEach(el=>el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:0.12, rootMargin:'0px 0px -6% 0px'});
+    revealEls.forEach(el=>io.observe(el));
+  }
+
+  /* ---------- countdown to CFP close (Aug 1, 2026 23:59:59 local) ---------- */
+  const target = new Date(2026,7,1,23,59,59).getTime();
+  const elD=document.querySelector('#countdown [data-d]'),
+        elH=document.querySelector('#countdown [data-h]'),
+        elM=document.querySelector('#countdown [data-m]'),
+        elS=document.querySelector('#countdown [data-s]');
+  const pad=n=>String(Math.max(0,n)).padStart(2,'0');
+  function tick(){
+    const diff=Math.max(0,target-Date.now());
+    elD.textContent=pad(Math.floor(diff/86400000));
+    elH.textContent=pad(Math.floor(diff%86400000/3600000));
+    elM.textContent=pad(Math.floor(diff%3600000/60000));
+    elS.textContent=pad(Math.floor(diff%60000/1000));
+  }
+  tick(); setInterval(tick,1000);
+
+  /* ============================================================
+     SCHEDULE — build-pipeline data-viz
+     ============================================================ */
+  const OPEN=9*60, CLOSE=18*60, SPAN=CLOSE-OPEN; // 540 min
+  const PX=1.04; // px per minute -> 560px body
+  const trackColor={compile:'#5B6BB5', runtime:'#FF5C1F', edge:'#5E9B8F'};
+  const trackClass={compile:'compile', runtime:'runtime', edge:'edge'};
+  const dayLabels=['OCT 13','OCT 14','OCT 15'];
+
+  const days=[
+    { sessions:[
+      {track:'compile', start:0,  dur:45, title:'The scheduler is the product', who:'Adaora Okafor'},
+      {track:'runtime', start:0,  dur:60, title:'KV-cache eviction at p99', who:'Ivan Petrov'},
+      {track:'edge',    start:0,  dur:30, title:'Why partial hydration won', who:'Diego Vargas'},
+      {track:'compile', start:55, dur:50, title:'Rewriting the WAL, in production', who:'Tomas Engström'},
+      {track:'runtime', start:70, dur:40, title:'Cold-start economics', who:'Ivan Petrov'},
+      {track:'edge',    start:40, dur:45, title:'Islands without the island tax', who:'Diego Vargas'},
+      {track:'compile', start:120,dur:30, title:'Coffee · mezzanine', who:'—', break:true},
+      {track:'runtime', start:120,dur:60, title:'SLOs as a compile target', who:'Priya Anand'},
+      {track:'edge',    start:95, dur:55, title:'Edge databases, the truth', who:'Mara Lindqvist'},
+      {track:'compile', start:165,dur:60, title:'Multi-tenant fairness, five years in', who:'Adaora Okafor'},
+      {track:'runtime', start:195,dur:45, title:'Observability without the tax', who:'Sam Okeke'},
+      {track:'edge',    start:170,dur:50, title:'Streaming SSR, measured', who:'Diego Vargas'},
+      {track:'compile', start:240,dur:50, title:'Panel: what we deleted this year', who:'Panel'},
+      {track:'runtime', start:255,dur:45, title:'Supply-chain as a compile pass', who:'Hannah Reyes'},
+      {track:'edge',    start:235,dur:60, title:'Workshop: ship an edge function', who:'Mara Lindqvist'},
+      {track:'compile', start:300,dur:60, title:'Hallway track & demos', who:'—'},
+      {track:'runtime', start:315,dur:45, title:'Closing lightning talks', who:'Various'},
+    ]},
+    { sessions:[
+      {track:'compile', start:0,  dur:60, title:'Build-cache forensics', who:'Mira Saito'},
+      {track:'runtime', start:0,  dur:45, title:'GPU scheduling at fleet scale', who:'Ivan Petrov'},
+      {track:'edge',    start:0,  dur:40, title:'Latency budgets that hold', who:'Diego Vargas'},
+      {track:'compile', start:70, dur:50, title:'Monorepo, year six', who:'Tomas Engström'},
+      {track:'runtime', start:55, dur:55, title:'Inference on the cheap', who:'Ivan Petrov'},
+      {track:'edge',    start:50, dur:45, title:'CDN as a runtime', who:'Mara Lindqvist'},
+      {track:'compile', start:130,dur:30, title:'Break', who:'—', break:true},
+      {track:'runtime', start:120,dur:60, title:'Queueing theory, applied', who:'Priya Anand'},
+      {track:'edge',    start:105,dur:50, title:'WASM on the server', who:'Sam Okeke'},
+      {track:'compile', start:170,dur:55, title:'Type-safe infra as code', who:'Mira Saito'},
+      {track:'runtime', start:190,dur:45, title:'Autoscaling without thrash', who:'Sam Okeke'},
+      {track:'edge',    start:170,dur:60, title:'Workshop: edge databases', who:'Mara Lindqvist'},
+      {track:'compile', start:240,dur:50, title:'Postmortem: the 47-minute outage', who:'Tomas Engström'},
+      {track:'runtime', start:250,dur:50, title:'Security in the pipeline', who:'Hannah Reyes'},
+      {track:'edge',    start:240,dur:60, title:'Lightning: edge war stories', who:'Various'},
+      {track:'runtime', start:310,dur:50, title:'Hallway track', who:'—'},
+    ]},
+    { sessions:[
+      {track:'compile', start:0,  dur:50, title:'Compilers for config', who:'Mira Saito'},
+      {track:'runtime', start:0,  dur:60, title:'The cost of a cold start, redux', who:'Ivan Petrov'},
+      {track:'edge',    start:0,  dur:45, title:'Edge auth that scales', who:'Hannah Reyes'},
+      {track:'compile', start:60, dur:55, title:'Dependency graphs at 10M nodes', who:'Tomas Engström'},
+      {track:'runtime', start:70, dur:50, title:'Provenance for everything', who:'Hannah Reyes'},
+      {track:'edge',    start:55, dur:50, title:'Image CDN deep dive', who:'Mara Lindqvist'},
+      {track:'compile', start:125,dur:30, title:'Break', who:'—', break:true},
+      {track:'runtime', start:130,dur:60, title:'Capacity planning, honestly', who:'Priya Anand'},
+      {track:'edge',    start:115,dur:55, title:'Streaming, the numbers', who:'Diego Vargas'},
+      {track:'compile', start:165,dur:60, title:'Closing panel: what ships next', who:'Panel'},
+      {track:'runtime', start:200,dur:50, title:'When to delete the abstraction', who:'Sam Okeke'},
+      {track:'edge',    start:180,dur:60, title:'Workshop: ship to production', who:'Diego Vargas'},
+      {track:'compile', start:235,dur:60, title:'AMA: the maintainers', who:'Various'},
+      {track:'runtime', start:260,dur:50, title:'Open mic: your war story', who:'—'},
+      {track:'edge',    start:250,dur:50, title:'Closing: edge in 2027', who:'Mara Lindqvist'},
+    ]}
+  ];
+
+  const fmt=min=>{ const h=Math.floor((OPEN+min)/60), m=(OPEN+min)%60; return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'); };
+
+  const body=document.getElementById('schedule-body');
+  function renderDay(idx){
+    body.classList.remove('sched-fade'); void body.offsetWidth; body.classList.add('sched-fade');
+    body.innerHTML='';
+    // time axis
+    const axis=document.createElement('div'); axis.className='relative';
+    for(let t=0;t<=SPAN;t+=60){
+      const tick=document.createElement('div');
+      tick.style.position='absolute'; tick.style.top=(t*PX)+'px'; tick.style.left=0; tick.style.right=0;
+      tick.innerHTML=`<div class="flex items-center gap-2 -translate-y-1/2">
+        <span class="font-mono text-[10px] text-dim2">${fmt(t)}</span>
+        <span class="h-px flex-1 bg-rule/70"></span></div>`;
+      axis.appendChild(tick);
+    }
+    body.appendChild(axis);
+    // 3 lanes — with overlap guard
+    ['compile','runtime','edge'].forEach(tr=>{
+      const lane=document.createElement('div'); lane.className='relative border-l border-rule';
+      const items=[...days[idx].sessions].filter(s=>s.track===tr).sort((a,b)=>a.start-b.start);
+      // guard: warn if a non-break session overruns the next start in the same lane
+      for(let i=0;i<items.length-1;i++){
+        const cur=items[i], nxt=items[i+1];
+        if(!cur.break && !nxt.break && cur.start+cur.dur>nxt.start){
+          console.warn(`[schedule] overlap in ${tr} day ${idx}: "${cur.title}" (${cur.start}+${cur.dur}) > next "${nxt.title}" start (${nxt.start})`);
+        }
+      }
+      items.forEach(s=>{
+        const card=document.createElement('div');
+        card.className='sess '+trackClass[tr]+(s.break?' is-break':'');
+        card.style.top=(s.start*PX)+'px';
+        // breaks render as thin hairlines; talks honor the 22px floor so small sessions stay distinguishable from breaks
+        card.style.height=(s.break?16:Math.max(22,s.dur*PX-4))+'px';
+        card.setAttribute('tabindex','0');
+        card.setAttribute('role','button');
+        card.setAttribute('aria-label',`${fmt(s.start)}, ${s.dur} minutes: ${s.title}, by ${s.who}, ${tr} track`);
+        const dark=tr==='runtime';
+        // shorter than ~40px: card height already encodes duration → drop the pill to free space for the title
+        const showDur = s.dur>=40 && !s.break;
+        card.innerHTML=`
+          <div class="px-3 ${s.break?'py-1':'py-2'}">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] ${dark?'text-ink':'text-dim'} tabnum">${fmt(s.start)}</span>
+              ${showDur?`<span class="font-mono text-[10px] uppercase tracking-widest ${dark?'text-ink/60':'text-dim2'}">${s.dur}m</span>`:''}
+            </div>
+            ${s.break ? '' : `<p class="mt-1 text-[12.5px] leading-snug ${dark?'text-ink font-semibold':'text-bone font-medium'}">${s.title}</p>
+            <p class="mt-0.5 font-mono text-[11px] ${dark?'text-ink/55':'text-dim2'}">${s.who}</p>`}
+          </div>`;
+        lane.appendChild(card);
+      });
+      body.appendChild(lane);
+    });
+    renderGantt(idx);
+    renderMobile(idx);
+    const gl=document.getElementById('gantt-day'); if(gl) gl.textContent=dayLabels[idx];
+  }
+
+  function renderGantt(idx){
+    ['compile','runtime','edge'].forEach(tr=>{
+      const wrap=document.getElementById('gantt-'+tr); if(!wrap) return;
+      wrap.innerHTML='';
+      days[idx].sessions.filter(s=>s.track===tr && !s.break).forEach(s=>{
+        const f=document.createElement('div'); f.className='gantt-fill';
+        f.style.left=(s.start/SPAN*100)+'%';
+        f.style.width=(s.dur/SPAN*100)+'%';
+        f.style.background=trackColor[tr];
+        wrap.appendChild(f);
+      });
+    });
+    const total=days[idx].sessions.filter(s=>!s.break).reduce((a,s)=>a+s.dur,0);
+    const gt=document.getElementById('gantt-total'); if(gt) gt.textContent=(total/60).toFixed(1)+'h';
+  }
+
+  let mobileFilter='all';
+  function renderMobile(idx){
+    const wrap=document.getElementById('schedule-mobile'); if(!wrap) return;
+    wrap.classList.remove('sched-fade'); void wrap.offsetWidth; wrap.classList.add('sched-fade');
+    let sorted=[...days[idx].sessions].sort((a,b)=>a.start-b.start);
+    if(mobileFilter!=='all') sorted=sorted.filter(s=>s.track===mobileFilter);
+    wrap.innerHTML=sorted.map(s=>{
+      const dark=s.track==='runtime';
+      return `<div class="flex gap-3 p-3 border border-rule rounded-[3px] bg-ink2" style="border-left:3px solid ${trackColor[s.track]}">
+        <div class="font-mono text-xs text-dim w-12 shrink-0 pt-0.5 tabnum">${fmt(s.start)}</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:${trackColor[s.track]}">${s.track}</span>
+            <span class="font-mono text-[10px] text-dim2">${s.dur}m</span>
+          </div>
+          <p class="text-sm ${dark?'text-signal font-semibold':'text-bone font-medium'} leading-snug">${s.title}</p>
+          <p class="font-mono text-[11px] text-dim2 mt-0.5">${s.who}</p>
+        </div>`;
+    }).join('');
+  }
+
+  /* ---------- day tabs: roving tabindex + arrow keys ---------- */
+  const tabs=Array.from(document.querySelectorAll('#dayTabs .daytab'));
+  let currentDay=0;
+  function activate(idx){
+    currentDay=idx;
+    tabs.forEach((t,i)=>{
+      const sel=i===idx;
+      t.setAttribute('aria-selected', sel?'true':'false');
+      t.tabIndex = sel ? 0 : -1;
+      t.classList.toggle('text-signal', sel);
+      t.classList.toggle('text-dim2', !sel);
+    });
+    // wire tabpanel labelledby
+    const panel=document.getElementById('sched-panel');
+    if(panel) panel.setAttribute('aria-labelledby', tabs[idx].id);
+    renderDay(idx);
+  }
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>activate(i));
+    t.addEventListener('keydown',(e)=>{
+      let n=null;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') n=(i+1)%tabs.length;
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') n=(i-1+tabs.length)%tabs.length;
+      else if(e.key==='Home') n=0;
+      else if(e.key==='End') n=tabs.length-1;
+      if(n!==null){ e.preventDefault(); activate(n); tabs[n].focus(); }
+    });
+  });
+
+  /* ---------- mobile track filter chips ---------- */
+  document.querySelectorAll('[data-mfilter]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('[data-mfilter]').forEach(b=>b.setAttribute('aria-pressed', b===btn?'true':'false'));
+      mobileFilter=btn.dataset.mfilter;
+      renderMobile(currentDay);
+    });
+  });
+
+  activate(0);
+
+  /* ---------- speaker filter (fade/scale stagger + a11y) ----------
+     Single taxonomy: data-track is one of compile/runtime/edge, matching
+     the dot color + visible label on each card. No second taxonomy. */
+  const speakerCards=document.querySelectorAll('#speaker-grid .spk-card');
+  const speakerCount=document.getElementById('speaker-count');
+  const speakerEmpty=document.getElementById('speaker-empty');
+  document.querySelectorAll('[data-filter]').forEach(c=>{
+    c.addEventListener('click',()=>{
+      document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed', x===c?'true':'false'));
+      const f=c.dataset.filter;
+      let shown=0;
+      speakerCards.forEach(card=>{
+        const show=(f==='all')||(card.dataset.track===f);
+        if(show){ shown++; card.removeAttribute('hidden'); }
+        card.style.transition='opacity .22s ease, transform .22s ease';
+        card.style.opacity=show?'1':'0.16';
+        card.style.transform=show?'none':'scale(.97)';
+        card.style.pointerEvents=show?'auto':'none';
+        // a11y: remove hidden cards from tab order + AT tree
+        card.setAttribute('tabindex', show?'0':'-1');
+        card.setAttribute('aria-hidden', show?'false':'true');
+      });
+      if(speakerCount) speakerCount.textContent=`Showing ${shown} of ${speakerCards.length} speakers.`;
+      if(speakerEmpty) speakerEmpty.classList.toggle('hidden', shown!==0);
+    });
+  });
+  // init count for "All"
+  if(speakerCount) speakerCount.textContent=`Showing ${speakerCards.length} of ${speakerCards.length} speakers.`;
+})();
+</script>
+</body>
+</html>

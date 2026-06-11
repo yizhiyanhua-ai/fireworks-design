@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ECHOES OF THE VOID — Deep-Space Survival Epic · 11.07.2027</title>
+<meta name="description" content="ECHOES OF THE VOID — a cinematic AAA deep-space survival epic. Wishlist now. Available 11.07.2027 on PC, PS5, and Xbox Series X|S." />
+<meta name="theme-color" content="#05060A" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700;800&family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<!-- Tailwind (Play CDN, configured synchronously) -->
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          void:  { base:'#05060A', deep:'#0A0C14', panel:'#0E1018', edge:'#1A1E2B' },
+          cyan:  { glow:'#22F0E8', beam:'#00E5FF', deep:'#0E3A3F' },
+          amber: { flare:'#FF8A1E', warm:'#FFB347' },
+          violet:{ spectral:'#9D7BFF', nebula:'#2A1840' },
+          ink:   { hi:'#F2F5FA', mid:'#B8C0D0', dim:'#828B9E' }
+        },
+        fontFamily: {
+          display:  ['Oxanium','sans-serif'],
+          headline: ['"Chakra Petch"','sans-serif'],
+          body:     ['"Space Grotesk"','sans-serif'],
+          mono:     ['"JetBrains Mono"','monospace']
+        },
+        letterSpacing: {
+          tk1: '0.08em',
+          tk2: '0.16em',
+          tk3: '0.24em',
+          tk4: '0.32em'
+        }
+      }
+    }
+  }
+</script>
+<style>
+  :root{
+    --ease-cine: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur: 1s;
+    /* modular type scale (1.25 ratio) */
+    --t-eyebrow: 0.6875rem;
+    --t-body:    1rem;
+    --t-h3:      1.25rem;
+    --t-h2:      2rem;
+    --t-h1:      3.5rem;
+  }
+
+  html,body{ background:#05060A; }
+  body{
+    color:#B8C0D0;
+    font-family:'Space Grotesk',sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ===== Atmospheric canvas: never a flat fill ===== */
+  .mesh-nebula{
+    position:absolute; inset:-15% -8%; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(42% 38% at 16% 22%, rgba(34,240,232,0.16), transparent 62%),
+      radial-gradient(40% 36% at 84% 16%, rgba(139,92,246,0.16), transparent 64%),
+      radial-gradient(55% 50% at 72% 88%, rgba(0,229,255,0.10), transparent 66%),
+      radial-gradient(42% 42% at 24% 82%, rgba(42,24,64,0.45), transparent 70%);
+    filter: blur(10px) saturate(1.05);
+    animation: meshDrift 42s var(--ease-cine) infinite alternate;
+    will-change: transform;
+  }
+  @keyframes meshDrift{
+    0%  { transform: translate3d(0,0,0) scale(1.05); }
+    50% { transform: translate3d(-2%,1.2%,0) scale(1.12); }
+    100%{ transform: translate3d(2%,-1.5%,0) scale(1.08); }
+  }
+
+  /* Static layered radial glow (non-animated, for sections that shouldn't move) */
+  .radial-cyan{ background: radial-gradient(60% 70% at 22% 30%, rgba(14,58,63,0.55) 0%, rgba(14,58,63,0) 60%); }
+  .radial-violet{ background: radial-gradient(55% 60% at 82% 75%, rgba(42,24,64,0.55) 0%, rgba(42,24,64,0) 65%); }
+
+  .starfield{
+    position:absolute; inset:0; pointer-events:none; opacity:0.6;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(242,245,250,0.7), transparent),
+      radial-gradient(1px 1px at 28% 42%, rgba(242,245,250,0.45), transparent),
+      radial-gradient(1.4px 1.4px at 55% 22%, rgba(184,192,208,0.6), transparent),
+      radial-gradient(1px 1px at 72% 68%, rgba(242,245,250,0.55), transparent),
+      radial-gradient(1px 1px at 88% 32%, rgba(184,192,208,0.5), transparent),
+      radial-gradient(1.2px 1.2px at 38% 78%, rgba(242,245,250,0.5), transparent),
+      radial-gradient(1px 1px at 64% 88%, rgba(184,192,208,0.4), transparent),
+      radial-gradient(1px 1px at 8% 62%, rgba(242,245,250,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 92% 14%, rgba(34,240,232,0.5), transparent),
+      radial-gradient(1px 1px at 48% 54%, rgba(242,245,250,0.35), transparent);
+    background-size: 100% 100%;
+  }
+
+  /* ===== Film grain overlay ===== */
+  .grain::after{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:6;
+    opacity:0.045; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .grain-fixed{
+    position:fixed; inset:0; pointer-events:none; opacity:0.035; z-index:60;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  /* ===== Scanlines — hero only ===== */
+  .scanlines::before{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:5;
+    background:repeating-linear-gradient(to bottom,
+      rgba(255,255,255,0) 0px, rgba(255,255,255,0) 2px,
+      rgba(0,229,255,0.028) 3px, rgba(0,229,255,0) 4px);
+  }
+
+  /* ===== Cinematic display title ===== */
+  .title-display{
+    font-family:'Oxanium',sans-serif;
+    font-weight:800;
+    line-height:0.86;
+    letter-spacing:0.01em;            /* mobile-safe tight tracking */
+    text-transform:uppercase;
+    /* Flat near-white fill — crisp iconic silhouette; cyan lives only in the glow */
+    color:#F2F5FA;
+    text-shadow:0 0 80px rgba(34,240,232,0.25), 0 0 30px rgba(34,240,232,0.15);
+  }
+  .title-display .line{ display:block; overflow:hidden; }
+  /* Tracking ladder — softened so both lines feel deliberately spaced, not one
+     tight and one stranded. Tablet (768px) sits between mobile and full md. */
+  @media (min-width:768px){
+    .title-display{ letter-spacing:0.03em; }
+    .title-display .line:nth-child(2){ letter-spacing:0.10em; }
+  }
+  @media (min-width:1024px){
+    .title-display{ letter-spacing:0.045em; }
+    .title-display .line:nth-child(2){ letter-spacing:0.14em; }
+  }
+
+  /* per-letter cinematic reveal: fade+rise+rotateX, transmission resolving */
+  .reveal-letters span{
+    display:inline-block; opacity:0;
+    transform:translateY(0.5em) rotateX(-40deg);
+    transform-origin:50% 100%;
+  }
+  .reveal-letters.go span{
+    animation: letterIn 0.9s var(--ease-cine) forwards;
+  }
+  @keyframes letterIn{ to{ opacity:1; transform:translateY(0) rotateX(0); } }
+
+  /* Glitch flicker on the assembled title — reads as transmission interference
+     (cool cyan/teal aberration), never a red 'error' flare. */
+  .reveal-letters.glitching .line span{
+    animation: letterFlicker 0.18s steps(2) 1;
+  }
+  @keyframes letterFlicker{
+    0%   { filter:none; text-shadow:0 0 80px rgba(34,240,232,0.25), 0 0 30px rgba(34,240,232,0.15); }
+    50%  { filter:hue-rotate(8deg) brightness(1.18); text-shadow:1px 0 rgba(34,80,120,0.5), -1px 0 rgba(34,240,232,0.7), 0 0 80px rgba(34,240,232,0.4); }
+    100% { filter:none; text-shadow:0 0 80px rgba(34,240,232,0.25), 0 0 30px rgba(34,240,232,0.15); }
+  }
+
+  /* Delayed resolve-in for meta + CTAs (mood first, demand second) */
+  .resolve{ opacity:0; transform:translateY(18px); animation: resolveIn 1s var(--ease-cine) forwards; }
+  @keyframes resolveIn{ to{ opacity:1; transform:translateY(0); } }
+
+  /* ===== Scroll reveal =====
+     The transform lives ONLY on .sr/.sr-in so layout margins on the
+     same element (e.g. md:mt-16 on feat cards) never fight the rise. */
+  .sr{ opacity:0; transition: opacity var(--dur) var(--ease-cine); will-change:opacity; }
+  .sr .sr-inner{ transform:translateY(34px); transition: transform var(--dur) var(--ease-cine); will-change:transform; }
+  .sr.in{ opacity:1; }
+  .sr.in .sr-inner{ transform:translateY(0); }
+  /* Back-compat: any .sr without an explicit .sr-inner wrapper animates itself. */
+  .sr:not(:has(> .sr-inner)){ transform:translateY(34px); transition: opacity var(--dur) var(--ease-cine), transform var(--dur) var(--ease-cine); }
+  .sr.in:not(:has(> .sr-inner)){ transform:translateY(0); }
+  .sr-d1{ transition-delay:0.10s; } .sr-d2{ transition-delay:0.20s; } .sr-d3{ transition-delay:0.30s; } .sr-d4{ transition-delay:0.40s; }
+  .sr-d5{ transition-delay:0.50s; } .sr-d6{ transition-delay:0.60s; }
+
+  /* ===== Glow utilities ===== */
+  .glow-cyan{ box-shadow:0 0 0 1px rgba(34,240,232,0.5), 0 0 24px rgba(34,240,232,0.35), 0 0 60px rgba(34,240,232,0.18); }
+  .glow-amber{ box-shadow:0 0 0 1px rgba(255,138,30,0.55), 0 0 28px rgba(255,138,30,0.38), 0 0 70px rgba(255,138,30,0.2); }
+  .text-glow-cyan{ text-shadow:0 0 18px rgba(34,240,232,0.55), 0 0 40px rgba(34,240,232,0.25); }
+  .text-glow-amber{ text-shadow:0 0 18px rgba(255,138,30,0.5), 0 0 40px rgba(255,138,30,0.22); }
+  .edge-grad{ background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.018)); border:1px solid rgba(255,255,255,0.08); backdrop-filter:blur(14px) saturate(1.1); }
+
+  /* ===== Buttons ===== */
+  .btn-primary{
+    background:linear-gradient(180deg,#22F0E8 0%,#00C2CF 100%);
+    color:#03171A;
+    font-family:'Oxanium',sans-serif; font-weight:700; letter-spacing:0.12em;
+    box-shadow:0 0 0 1px rgba(34,240,232,0.6), 0 0 30px rgba(34,240,232,0.45), 0 8px 30px rgba(0,229,255,0.25);
+    transition: transform 0.5s var(--ease-cine), box-shadow 0.5s var(--ease-cine), filter 0.5s var(--ease-cine);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 0 0 1px rgba(34,240,232,0.9), 0 0 48px rgba(34,240,232,0.65), 0 14px 40px rgba(0,229,255,0.35); }
+  .btn-primary:active{ transform:translateY(0) scale(0.97); }
+
+  .btn-amber{
+    background:linear-gradient(180deg,#FFB347,#FF8A1E);
+    color:#1A0A02;
+    font-family:'Oxanium',sans-serif; font-weight:700; letter-spacing:0.12em;
+    box-shadow:0 0 0 1px rgba(255,138,30,0.6), 0 0 30px rgba(255,138,30,0.45);
+    transition: transform 0.5s var(--ease-cine), box-shadow 0.5s var(--ease-cine), filter 0.5s var(--ease-cine);
+  }
+  .btn-amber:hover{ transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 0 0 1px rgba(255,138,30,0.9), 0 0 50px rgba(255,138,30,0.65); }
+  .btn-amber:active{ transform:translateY(0) scale(0.97); }
+
+  /* Outline cyan — bordered ghost for featured-but-not-primary tiers (Deluxe).
+     Keeps the section to ONE solid filled CTA (Collector's amber). */
+  .btn-outline-cyan{
+    border:1px solid rgba(34,240,232,0.55); color:#7CF0EC;
+    background:transparent;
+    transition: border-color 0.5s var(--ease-cine), color 0.5s var(--ease-cine), box-shadow 0.5s var(--ease-cine), background 0.5s var(--ease-cine), transform 0.5s var(--ease-cine);
+  }
+  .btn-outline-cyan:hover{ border-color:rgba(34,240,232,0.9); color:#F2F5FA; background:rgba(34,240,232,0.08); box-shadow:0 0 24px rgba(34,240,232,0.28); transform:translateY(-2px); }
+  .btn-outline-cyan:active{ transform:translateY(0) scale(0.97); }
+
+  .btn-ghost{
+    border:1px solid rgba(184,192,208,0.35); color:#F2F5FA;
+    background:rgba(10,12,20,0.35); backdrop-filter:blur(6px);
+    transition: border-color 0.5s var(--ease-cine), color 0.5s var(--ease-cine), box-shadow 0.5s var(--ease-cine), transform 0.5s var(--ease-cine);
+  }
+  .btn-ghost:hover{ border-color:rgba(34,240,232,0.7); color:#7CF0EC; box-shadow:0 0 24px rgba(34,240,232,0.25); transform:translateY(-2px); }
+  .btn-ghost:active{ transform:translateY(0) scale(0.97); }
+
+  /* Ghost pill for low-priority nav wishlist */
+  .btn-pill-ghost{
+    border:1px solid rgba(184,192,208,0.3); color:#B8C0D0;
+    background:rgba(255,255,255,0.02);
+    transition: border-color 0.4s var(--ease-cine), color 0.4s var(--ease-cine);
+  }
+  .btn-pill-ghost:hover{ border-color:rgba(34,240,232,0.6); color:#7CF0EC; }
+
+  /* focus-visible */
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid #22F0E8; outline-offset:3px; border-radius:2px;
+  }
+
+  /* ===== Feature card ===== */
+  .feat-card{
+    transition: transform 0.6s var(--ease-cine), box-shadow 0.6s var(--ease-cine), border-color 0.6s var(--ease-cine);
+    border:1px solid rgba(255,255,255,0.07);
+  }
+  .feat-card:hover, .feat-card:focus-within{
+    transform:translateY(-8px);
+    border-color:rgba(34,240,232,0.55);
+    box-shadow:0 0 0 1px rgba(34,240,232,0.3), 0 24px 60px -20px rgba(34,240,232,0.25);
+  }
+  .feat-card .feat-glow{ opacity:0.4; transition:opacity 0.6s var(--ease-cine); }
+  .feat-card:hover .feat-glow, .feat-card:focus-within .feat-glow{ opacity:1; }
+  .feat-card img{ transition: transform 1.2s var(--ease-cine), filter 1.2s var(--ease-cine); filter:grayscale(0.4) contrast(1.05); }
+  .feat-card:hover img, .feat-card:focus-within img{ transform:scale(1.05); filter:grayscale(0) contrast(1.1); }
+
+  /* ===== Faction dossier ===== */
+  .faction{ transition: transform 0.6s var(--ease-cine), border-color 0.6s var(--ease-cine), box-shadow 0.6s var(--ease-cine); }
+  .faction:hover{ transform:translateY(-6px); }
+  .faction[data-f="c"]{ --ac:#22F0E8; }
+  .faction[data-f="a"]{ --ac:#FF8A1E; }
+  /* The Unspoken — a cold, desaturated spectral violet. Reads as ghostly-purple
+     ('a color that shouldn't exist'), not flat grey. ~40% mix toward neutral. */
+  .faction[data-f="v"]{ --ac:#7B6FA8; }
+  .faction .sigil{ color:var(--ac); filter:drop-shadow(0 0 14px color-mix(in srgb, var(--ac) 60%, transparent)); }
+  .faction .doctrine-bar{ background:color-mix(in srgb, var(--ac) 25%, transparent); transition:background 0.6s var(--ease-cine); }
+  .faction:hover .doctrine-bar{ background:color-mix(in srgb, var(--ac) 60%, transparent); }
+
+  /* ===== Gallery ===== */
+  .gallery-item{ transition: transform 0.6s var(--ease-cine), box-shadow 0.6s var(--ease-cine); }
+  .gallery-item:hover, .gallery-item:focus-within{ transform:translateY(-6px); box-shadow:0 20px 50px -20px rgba(0,0,0,0.9), 0 0 40px -12px rgba(34,240,232,0.35); }
+
+  /* ===== Marquee ===== */
+  .marquee{ display:flex; gap:4rem; width:max-content; animation: scrollX 44s linear infinite; }
+  @keyframes scrollX{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  /* ===== Lightbox (real open/close transition) ===== */
+  .lightbox{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(3,4,8,0.92); backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; padding:5vh 5vw;
+    opacity:0; visibility:hidden;
+    transition: opacity 0.5s var(--ease-cine), visibility 0.5s var(--ease-cine);
+  }
+  .lightbox.open{ opacity:1; visibility:visible; }
+  .lightbox figure{ transform:scale(0.96); transition: transform 0.6s var(--ease-cine); }
+  .lightbox.open figure{ transform:scale(1); }
+
+  /* ===== Storefront picker modal (reuses the lightbox surface) ===== */
+  .modal{
+    position:fixed; inset:0; z-index:110;
+    background:rgba(3,4,8,0.88); backdrop-filter:blur(10px);
+    display:flex; align-items:center; justify-content:center; padding:5vh 5vw;
+    opacity:0; visibility:hidden;
+    transition: opacity 0.4s var(--ease-cine), visibility 0.4s var(--ease-cine);
+  }
+  .modal.open{ opacity:1; visibility:visible; }
+  .modal-panel{
+    transform:translateY(14px) scale(0.98); transition: transform 0.5s var(--ease-cine);
+  }
+  .modal.open .modal-panel{ transform:translateY(0) scale(1); }
+  .storefront{
+    transition: border-color 0.4s var(--ease-cine), background 0.4s var(--ease-cine), transform 0.4s var(--ease-cine), box-shadow 0.4s var(--ease-cine);
+  }
+  .storefront:hover, .storefront:focus-visible{
+    border-color:rgba(34,240,232,0.7); background:rgba(34,240,232,0.06);
+    transform:translateY(-2px);
+    box-shadow:0 0 24px rgba(34,240,232,0.18);
+  }
+
+  /* ===== Mobile nav toggle — swap hamburger / close on aria-expanded ===== */
+  .nav-ico-close{ display:none; }
+  #navToggle[aria-expanded="true"] .nav-ico-open{ display:none; }
+  #navToggle[aria-expanded="true"] .nav-ico-close{ display:block; }
+
+  /* ===== Skip-to-content link (visually hidden until focused) ===== */
+  .skip-link{
+    position:fixed; top:-100px; left:1rem; z-index:200;
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.14em;
+    text-transform:uppercase; padding:12px 18px;
+    background:#22F0E8; color:#03171A; border-radius:2px;
+    transition: top 0.25s var(--ease-cine);
+  }
+  .skip-link:focus{ top:1rem; outline:2px solid #22F0E8; outline-offset:2px; }
+
+  /* ===== The Unspoken — glitching redacted dossier ===== */
+  .faction-anomaly{
+    position:relative;
+    border-style:dashed !important;
+    border-color:rgba(120,120,140,0.28) !important;
+  }
+  .faction-anomaly::before{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:1; opacity:0.5;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 6px, rgba(130,139,158,0.05) 6px 7px),
+      linear-gradient(180deg, transparent 30%, rgba(5,6,10,0.5) 100%);
+    mix-blend-mode:overlay;
+  }
+  .faction-anomaly .redact{
+    background:repeating-linear-gradient(90deg, rgba(130,139,158,0.45) 0 6px, rgba(130,139,158,0.18) 6px 8px);
+    color:transparent; border-radius:1px; padding:0 4px; user-select:none;
+  }
+  .faction-anomaly h3{
+    animation: anomalyShift 5.2s steps(8) infinite;
+  }
+  @keyframes anomalyShift{
+    0%,92%,100%{ transform:translate(0,0); letter-spacing:0; }
+    93%{ transform:translate(-1.5px, 0.5px); letter-spacing:0.04em; }
+    96%{ transform:translate(1px, -0.5px); }
+  }
+  /* Anomaly accent: desaturated spectral violet, readable as ghostly-purple.
+     Low-opacity glow restored so the sigil reads as 'a color that shouldn't
+     exist' rather than absent. Glitch/redaction treatment is preserved. */
+  .faction[data-f="v"] .sigil{ color:#7B6FA8; filter:drop-shadow(0 0 6px rgba(123,111,168,0.45)); }
+  .faction[data-f="v"] .doctrine-bar{ background:color-mix(in srgb, #7B6FA8 24%, transparent); }
+  .faction[data-f="v"]:hover .doctrine-bar{ background:color-mix(in srgb, #7B6FA8 45%, transparent); }
+
+  /* ===== Parallax ===== */
+  .plx{ will-change:transform; }
+
+  /* ===== Ship-status HUD (signature delight) ===== */
+  .hud{
+    position:fixed; bottom:18px; right:18px; z-index:55;
+    width:212px; padding:12px 14px;
+    background:rgba(5,6,10,0.72);
+    border:1px solid rgba(34,240,232,0.25);
+    backdrop-filter:blur(8px);
+    font-family:'JetBrains Mono',monospace;
+    color:#B8C0D0;
+    pointer-events:none;
+    opacity:0;
+    transform:translateY(12px);
+    animation: hudIn 1s var(--ease-cine) 1.6s forwards;
+  }
+  @keyframes hudIn{ to{ opacity:1; transform:translateY(0); } }
+  .hud-row{ display:flex; justify-content:space-between; align-items:center; font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; }
+  .hud-row + .hud-row{ margin-top:6px; }
+  .hud-bar{ position:relative; height:3px; background:rgba(255,255,255,0.08); margin-top:3px; overflow:hidden; }
+  .hud-bar > i{ position:absolute; left:0; top:0; bottom:0; display:block; }
+  .hud-o2 > i{ background:linear-gradient(90deg,#22F0E8,#00E5FF); }
+  .hud-hull > i{ background:linear-gradient(90deg,#3F7E82,#4A8B8F); }
+  .hud-wave{ height:18px; margin-top:8px; }
+  .hud-wave svg{ width:100%; height:100%; display:block; }
+  .hud-tag{ font-size:8px; letter-spacing:0.2em; color:#828B9E; margin-top:8px; }
+
+  /* ===== Section divider ===== */
+  .div-rule{ height:1px; background:linear-gradient(90deg, transparent, rgba(34,240,232,0.25), transparent); }
+
+  /* Pauseable decorative animations — toggled by visibilitychange/IO */
+  .paused-anim{ animation-play-state:paused !important; }
+
+  /* hide scrollbar on horizontal galleries */
+  .no-bar::-webkit-scrollbar{ display:none; }
+  .no-bar{ -ms-overflow-style:none; scrollbar-width:none; }
+
+  /* selection */
+  ::selection{ background:rgba(34,240,232,0.3); color:#FFFFFF; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important; animation-iteration-count:1 !important;
+      animation-delay:0s !important;                       /* no staggered wait */
+      transition-duration:0.001ms !important; scroll-behavior:auto !important;
+    }
+    .sr{ opacity:1 !important; transform:none !important; }
+    .sr .sr-inner{ transform:none !important; }
+    .reveal-letters span{ opacity:1 !important; transform:none !important; }
+    .resolve{ opacity:1 !important; transform:none !important; }
+    .mesh-nebula, .marquee, .starfield{ animation:none !important; }
+    .hud{ opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+
+<body class="bg-void-base">
+
+<!-- Skip-to-content — first focusable element in the document -->
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<!-- Persistent film grain -->
+<div class="grain-fixed" aria-hidden="true"></div>
+
+<!-- ===================== NAV ===================== -->
+<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" id="topnav" style="background:linear-gradient(180deg, rgba(5,6,10,0.85) 0%, rgba(5,6,10,0) 100%); backdrop-filter:blur(0px);">
+  <nav class="max-w-[1400px] mx-auto px-5 md:px-10 py-4 md:py-5 flex items-center justify-between" aria-label="Primary">
+    <a href="#hero" class="flex items-center gap-3 group" aria-label="Echoes of the Void — home">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true" class="transition-transform duration-700 group-hover:rotate-90">
+        <circle cx="16" cy="16" r="14" stroke="#22F0E8" stroke-width="1.2" opacity="0.6"/>
+        <circle cx="16" cy="16" r="6" stroke="#22F0E8" stroke-width="1.2"/>
+        <circle cx="16" cy="16" r="2" fill="#22F0E8"/>
+      </svg>
+      <span class="font-mono text-[11px] text-ink-hi tracking-tk4 uppercase">ECHOES<span class="text-cyan-glow">/</span>VOID</span>
+    </a>
+    <ul class="hidden lg:flex items-center gap-9 font-mono text-[11px] tracking-tk2 uppercase text-ink-mid">
+      <li><a href="#story" class="hover:text-cyan-glow transition-colors duration-300">01 Story</a></li>
+      <li><a href="#features" class="hover:text-cyan-glow transition-colors duration-300">02 Systems</a></li>
+      <li><a href="#factions" class="hover:text-cyan-glow transition-colors duration-300">03 Factions</a></li>
+      <li><a href="#gallery" class="hover:text-cyan-glow transition-colors duration-300">04 Gallery</a></li>
+      <li><a href="#editions" class="hover:text-cyan-glow transition-colors duration-300">05 Editions</a></li>
+    </ul>
+    <div class="flex items-center gap-3">
+      <!-- Demoted to ghost so only ONE primary CTA lives above the fold -->
+      <a href="#editions" class="btn-pill-ghost font-mono text-[11px] tracking-tk2 uppercase px-4 py-2 rounded-sm hidden sm:inline-block">Wishlist</a>
+      <button id="navToggle" class="lg:hidden grid place-items-center w-10 h-10 border border-white/15 text-ink-hi transition-colors hover:border-cyan-glow/60 hover:text-cyan-glow" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+        <svg class="nav-ico-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg class="nav-ico-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </nav>
+  <!-- Mobile drawer -->
+  <div id="mobileNav" class="lg:hidden overflow-y-auto max-h-0 transition-[max-height] duration-500 ease-out bg-void-base/95 backdrop-blur-xl border-t border-white/5" style="overscroll-behavior:contain;">
+    <ul class="px-6 py-5 flex flex-col gap-4 font-mono text-xs uppercase tracking-tk2 text-ink-mid">
+      <li><a href="#story" class="block py-1">01 Story</a></li>
+      <li><a href="#features" class="block py-1">02 Systems</a></li>
+      <li><a href="#factions" class="block py-1">03 Factions</a></li>
+      <li><a href="#gallery" class="block py-1">04 Gallery</a></li>
+      <li><a href="#editions" class="block py-1">05 Editions</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ===================== 01 HERO ===================== -->
+<section id="hero" class="relative min-h-[100svh] w-full overflow-hidden grain scanlines flex flex-col justify-center" aria-label="Hero — Echoes of the Void">
+  <!-- Parallax key art -->
+  <div class="absolute inset-0 z-0">
+    <div id="heroArt" class="plx absolute inset-0 bg-cover bg-center" data-speed="0.15"
+         style="background-image:url('https://picsum.photos/seed/echoes-void-derelict-keyart-deep/1920/1200'); filter:grayscale(0.35) contrast(1.1) brightness(0.5) saturate(0.85);"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(5,6,10,0.5) 0%, rgba(5,6,10,0.2) 38%, rgba(5,6,10,0.82) 88%, #05060A 100%);"></div>
+  </div>
+  <!-- Mesh nebula + starfield -->
+  <div class="mesh-nebula" aria-hidden="true"></div>
+  <div class="starfield" style="opacity:0.45;" aria-hidden="true"></div>
+  <!-- Vignette -->
+  <div class="absolute inset-0 z-[2]" style="background:radial-gradient(120% 90% at 50% 40%, transparent 38%, rgba(5,6,10,0.78) 100%);" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto w-full px-5 md:px-10 pt-28 pb-24 md:py-24">
+    <!-- Eyebrow — unified to the '§ NN —' systems-readout system -->
+    <div class="resolve flex items-center gap-4 mb-8 md:mb-12" style="animation-delay:0.1s;">
+      <span class="block w-8 h-px bg-cyan-glow"></span>
+      <span class="font-mono text-[11px] tracking-tk3 uppercase text-cyan-glow">§ 00 — A Deep-Space Survival Epic</span>
+      <span class="hidden md:inline-block h-px w-12 bg-cyan-glow/40"></span>
+      <span class="hidden md:inline font-mono text-[10px] tracking-tk2 text-ink-dim">// SIGNAL ACQUIRED · SECTOR VEYR-9</span>
+    </div>
+
+    <!-- Title — breaks across two lines, per-letter transmission reveal.
+         Mobile clamp floor dropped to 2.6rem so 'ECHOES OF THE' fits at 320–390px. -->
+    <h1 id="heroTitle" class="title-display reveal-letters" style="font-size:clamp(2.6rem,11.5vw,12rem);">
+      <span class="line" data-split>ECHOES OF THE</span>
+      <span class="line" data-split>VOID</span>
+    </h1>
+
+    <!-- Meta + CTAs resolve in after the cinematic beat (target ~0.9s total) -->
+    <div class="resolve mt-8 md:mt-12 flex flex-col gap-8" style="animation-delay:0.9s;">
+      <!-- Date + platforms demoted to a quiet supporting row -->
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
+        <div>
+          <div class="font-mono text-[10px] text-ink-dim tracking-tk3 uppercase mb-1">Release</div>
+          <div class="font-mono text-cyan-glow text-lg md:text-xl tracking-tk2">11.07.2027</div>
+        </div>
+        <div class="h-9 w-px bg-ink-dim/30 hidden sm:block"></div>
+        <ul class="flex flex-wrap gap-2" aria-label="Platforms">
+          <li class="font-mono text-[10px] tracking-tk2 uppercase px-3 py-1.5 border border-white/15 text-ink-mid">PC</li>
+          <li class="font-mono text-[10px] tracking-tk2 uppercase px-3 py-1.5 border border-white/15 text-ink-mid">PS5</li>
+          <li class="font-mono text-[10px] tracking-tk2 uppercase px-3 py-1.5 border border-white/15 text-ink-mid">Xbox Series X|S</li>
+        </ul>
+      </div>
+
+      <!-- Two-CTA hierarchy, per the brief: ONE primary (Wishlist, opens storefront
+           modal) + ONE secondary ghost (Reveal trailer). The editions grid is
+           reachable via nav (05 Editions) and the footer wishlist row. -->
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
+        <button type="button" id="wishlistCTA" class="btn-primary text-[15px] uppercase px-8 py-4 rounded-sm inline-flex items-center justify-center gap-3"
+                aria-haspopup="dialog" aria-controls="storeModal">
+          Wishlist now
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button type="button" id="revealCTA" class="btn-ghost text-[13px] uppercase px-8 py-4 rounded-sm inline-flex items-center justify-center gap-3" aria-haspopup="dialog" aria-controls="trailerModal">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Reveal trailer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 resolve flex flex-col items-center gap-2" style="animation-delay:1.2s;" aria-hidden="true">
+    <span class="font-mono text-[9px] text-ink-dim tracking-tk4 uppercase">Descend</span>
+    <div class="h-10 w-px bg-gradient-to-b from-cyan-glow/60 to-transparent"></div>
+  </div>
+</section>
+
+<!-- ===================== 02 STORY / SYNOPSIS ===================== -->
+<!-- Promoted to a larger H2 — a secondary narrative climax -->
+<section id="story" class="relative overflow-hidden py-28 md:py-44" aria-label="Story — Synopsis">
+  <!-- Atmospheric backdrop -->
+  <div class="absolute inset-0 z-0">
+    <div id="storyArt" class="plx absolute inset-0 bg-cover bg-center opacity-28" data-speed="0.08"
+         style="background-image:url('https://picsum.photos/seed/echoes-silence-between-stars-corridor/1920/900'); filter:blur(2px) grayscale(0.5) brightness(0.5) saturate(0.5);"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, #05060A 0%, rgba(5,6,10,0.4) 30%, rgba(5,6,10,0.4) 70%, #05060A 100%);"></div>
+    <div class="absolute inset-0 radial-violet" style="opacity:0.6;" aria-hidden="true"></div>
+  </div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto px-5 md:px-10">
+    <div class="grid grid-cols-12 gap-6 md:gap-10">
+      <!-- Left rail: systems-readout transmission header -->
+      <aside class="col-span-12 md:col-span-3 sr">
+        <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-3">// TRANSMISSION 01 — Intercepted</div>
+        <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase leading-relaxed">
+          FROM: UNSCRIPTED<br/>
+          TO: ALL RECEIVERS<br/>
+          FREQ: 7.83 Hz<br/>
+          STATUS: <span class="text-cyan-glow">UNRESOLVED</span>
+        </div>
+      </aside>
+
+      <!-- Editorial column -->
+      <div class="col-span-12 md:col-span-9">
+        <!-- Pull quote — type carries it; no ornamental quote glyphs -->
+        <blockquote class="sr mb-12 md:mb-16 border-l border-cyan-glow/40 pl-6 md:pl-8">
+          <span class="font-mono text-[10px] tracking-tk2 uppercase text-cyan-glow/80 block mb-4">// INTERCEPTED · FRAGMENT 01</span>
+          <p class="font-headline font-medium text-ink-hi text-[1.9rem] sm:text-[2.5rem] md:text-[3.4rem] leading-[1.1] max-w-[16ch]">
+            In the silence between the stars, <em class="font-medium text-ink-mid">something</em> is answering.
+          </p>
+        </blockquote>
+
+        <div class="max-w-2xl space-y-6 md:space-y-7 text-[1.02rem] md:text-[1.08rem] leading-relaxed text-ink-mid">
+          <p class="sr sr-d1">The <em class="not-italic text-ink-hi">Verity-Annan</em> went dark forty-three days ago, somewhere past the rim of the charted void. You are the salvage contractor they sent after it. You are alone, you are under-supplied, and you are the first human being to hear what its hull has been repeating — in a frequency that should not carry voice.</p>
+          <p class="sr sr-d2">ECHOES OF THE VOID is a cinematic survival epic set aboard derelicts that drift through unmapped sectors. Each wreck is a self-contained mystery, each one a place where the laws of physics learned to whisper. Salvage what you can. Repair what fails. Decide, every hour, what you are willing to become to keep breathing.</p>
+          <p class="sr sr-d3">There is no cavalry. There is no map home. There is only the cold instrument-light of your suit, the slow decay of your oxygen, and the growing certainty that the thing answering you has been waiting a very long time to be understood.</p>
+        </div>
+
+        <div class="sr sr-d3 mt-12 flex items-center gap-4">
+          <span class="h-px w-16 bg-cyan-glow/40"></span>
+          <span class="font-mono text-[10px] text-ink-dim tracking-tk3 uppercase">Single-player · 2-player co-op · ~40hr campaign</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div-rule max-w-[1400px] mx-auto"></div>
+
+<!-- ===================== 03 FEATURES / HIGHLIGHTS ===================== -->
+<!-- Demoted to a tighter H2 — reference tier, not a climax -->
+<section id="features" class="relative py-28 md:py-40 overflow-hidden" aria-label="Systems — Features">
+  <div class="absolute inset-0 z-0" style="background:radial-gradient(50% 50% at 80% 10%, rgba(14,58,63,0.35) 0%, rgba(14,58,63,0) 60%), radial-gradient(40% 40% at 10% 90%, rgba(42,24,64,0.3) 0%, transparent 70%);" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto px-5 md:px-10">
+    <div class="grid grid-cols-12 gap-6 mb-16 md:mb-20 items-end">
+      <div class="col-span-12 md:col-span-8 sr">
+        <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-5">§ 02 — Core Systems</div>
+        <h2 class="font-display font-bold text-ink-hi text-[1.75rem] sm:text-[2.25rem] md:text-[2.8rem] leading-[1.02] tracking-tk1 uppercase">
+          Built to survive.<br/>Engineered to unnerve.
+        </h2>
+      </div>
+      <div class="col-span-12 md:col-span-4 sr sr-d1">
+        <p class="font-body text-ink-mid text-[0.95rem] leading-relaxed max-w-sm md:ml-auto">
+          Four systems define every hour aboard the wreck. None of them are kind. All of them are listening.
+        </p>
+      </div>
+    </div>
+
+    <!-- Asymmetric staggered grid (NOT a 2x2) -->
+    <div class="grid grid-cols-12 gap-5 md:gap-6">
+      <!-- Card 1 — wide left -->
+      <article class="feat-card sr md:col-span-7 edge-grad rounded-sm overflow-hidden relative group">
+        <div class="feat-glow absolute inset-0 -z-10" style="background:radial-gradient(60% 80% at 30% 20%, rgba(34,240,232,0.18), transparent 70%);"></div>
+        <div class="relative h-56 md:h-72 overflow-hidden">
+          <img src="https://picsum.photos/seed/echoes-zerog-salvage-combat-corridor/1200/700" alt="A suited Void-Walker cutting through hull plating in zero gravity, cyan cutter beam igniting the dark." loading="lazy" class="w-full h-full object-cover" />
+          <div class="absolute inset-0" style="background:linear-gradient(180deg, transparent 40%, #0E1018 100%);"></div>
+          <span class="absolute top-4 left-4 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">SYS_01</span>
+        </div>
+        <div class="p-7 md:p-9 flex flex-col gap-3 flex-1">
+          <h3 class="font-headline font-semibold text-ink-hi text-xl md:text-2xl tracking-tk1 uppercase leading-tight">Zero-G Salvage Combat</h3>
+          <p class="font-body text-ink-mid text-[0.92rem] leading-relaxed">Tether, breach, and strip derelicts in full six-axis zero-gravity. Every hull plate you pry loose is one more minute of oxygen — and one more thing the wreck has noticed about you.</p>
+        </div>
+      </article>
+
+      <!-- Card 2 — narrow right, offset down -->
+      <article class="feat-card sr sr-d1 md:col-span-5 md:mt-16 edge-grad rounded-sm overflow-hidden relative group">
+        <div class="feat-glow absolute inset-0 -z-10" style="background:radial-gradient(70% 70% at 70% 30%, rgba(0,229,255,0.16), transparent 70%);"></div>
+        <div class="relative h-56 md:h-60 overflow-hidden">
+          <img src="https://picsum.photos/seed/echoes-living-dying-starmap-nebula/900/620" alt="A holographic starmap re-drawing itself in cyan wireframe as a distant star dies." loading="lazy" class="w-full h-full object-cover" />
+          <div class="absolute inset-0" style="background:linear-gradient(180deg, transparent 40%, #0E1018 100%);"></div>
+          <span class="absolute top-4 left-4 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">SYS_02</span>
+        </div>
+        <div class="p-7 md:p-9 flex flex-col gap-3 flex-1">
+          <h3 class="font-headline font-semibold text-ink-hi text-xl md:text-2xl tracking-tk1 uppercase leading-tight">Living, Dying Starmap</h3>
+          <p class="font-body text-ink-mid text-[0.92rem] leading-relaxed">The sector is not static. Stars collapse, lanes shift, and yesterday's safe route is tonight's ambush. Chart it yourself — or trust the corrupted logs of the dead.</p>
+        </div>
+      </article>
+
+      <!-- Card 3 — narrow left, offset -->
+      <article class="feat-card sr md:col-span-5 md:mt-4 edge-grad rounded-sm overflow-hidden relative group">
+        <div class="feat-glow absolute inset-0 -z-10" style="background:radial-gradient(70% 70% at 30% 70%, rgba(34,240,232,0.14), transparent 70%);"></div>
+        <div class="relative h-56 md:h-60 overflow-hidden">
+          <img src="https://picsum.photos/seed/echoes-adaptive-soundsystem-waveform/900/620" alt="Adaptive soundsystem visualized as reactive waveforms across a dark salvage HUD." loading="lazy" class="w-full h-full object-cover" />
+          <div class="absolute inset-0" style="background:linear-gradient(180deg, transparent 40%, #0E1018 100%);"></div>
+          <span class="absolute top-4 left-4 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">SYS_03</span>
+        </div>
+        <div class="p-7 md:p-9 flex flex-col gap-3 flex-1">
+          <h3 class="font-headline font-semibold text-ink-hi text-xl md:text-2xl tracking-tk1 uppercase leading-tight">Adaptive Soundsystem</h3>
+          <p class="font-body text-ink-mid text-[0.92rem] leading-relaxed">A reactive score that learns your fear. Silence is the default state; music arrives only when the ship decides you have earned its attention — and it always decides too late.</p>
+        </div>
+      </article>
+
+      <!-- Card 4 — wide right, offset down (positive only, no overlap into prior row) -->
+      <article class="feat-card sr sr-d1 md:col-span-7 md:mt-16 edge-grad rounded-sm overflow-hidden relative group">
+        <div class="feat-glow absolute inset-0 -z-10" style="background:radial-gradient(60% 80% at 80% 80%, rgba(34,240,232,0.16), transparent 70%);"></div>
+        <div class="relative h-56 md:h-72 overflow-hidden">
+          <img src="https://picsum.photos/seed/echoes-solo-coop-two-figures-airlock/1200/700" alt="Two lone Void-Walker silhouettes back-to-back at a derelict airlock, dwarfed by the void." loading="lazy" class="w-full h-full object-cover" />
+          <div class="absolute inset-0" style="background:linear-gradient(180deg, transparent 40%, #0E1018 100%);"></div>
+          <span class="absolute top-4 left-4 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">SYS_04</span>
+        </div>
+        <div class="p-7 md:p-9 flex flex-col gap-3 flex-1">
+          <h3 class="font-headline font-semibold text-ink-hi text-xl md:text-2xl tracking-tk1 uppercase leading-tight">Solo or Co-op Void</h3>
+          <p class="font-body text-ink-mid text-[0.92rem] leading-relaxed">Endure alone, or bring one trusted operator into drop-in co-op. Shared oxygen, shared dread, shared blame. There is no respawning in the cold — only what you chose to leave behind.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 WORLD / FACTIONS ===================== -->
+<section id="factions" class="relative py-28 md:py-44 overflow-hidden bg-void-deep" aria-label="World — Factions">
+  <div class="absolute inset-0 z-0" style="background:radial-gradient(60% 50% at 20% 80%, rgba(42,24,64,0.4) 0%, rgba(42,24,64,0) 60%), radial-gradient(50% 50% at 85% 20%, rgba(14,58,63,0.35) 0%, rgba(14,58,63,0) 60%);" aria-hidden="true"></div>
+  <div class="starfield" style="opacity:0.25;" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto px-5 md:px-10">
+    <div class="text-center mb-16 md:mb-20 sr">
+      <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-5">// DOSSIER ACCESS — The Known Powers</div>
+      <h2 class="font-display font-bold text-ink-hi text-[1.75rem] sm:text-[2.25rem] md:text-[2.8rem] leading-[1.02] tracking-tk1 uppercase max-w-3xl mx-auto">
+        Three creeds. Three definitions of <em class="not-italic text-cyan-glow">salvation</em>.
+      </h2>
+      <p class="font-body text-ink-mid text-[0.95rem] mt-6 max-w-xl mx-auto leading-relaxed">The void was not empty before you arrived. These are the powers that survived it — and what they want from your wreck.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+      <!-- Faction 1 — LUMENARCH (cyan) -->
+      <article class="faction sr edge-grad rounded-sm p-8 md:p-10 relative overflow-hidden group" data-f="c" style="box-shadow: inset 0 0 60px rgba(14,58,63,0.3);">
+        <div class="absolute -top-20 -right-20 w-48 h-48 rounded-full" style="background:radial-gradient(circle, rgba(34,240,232,0.25) 0%, transparent 70%);" aria-hidden="true"></div>
+        <div class="relative">
+          <div class="flex items-start justify-between mb-8">
+            <span class="sigil">
+              <svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                <circle cx="32" cy="32" r="20" opacity="0.5"/>
+                <path d="M32 8 L40 32 L32 56 L24 32 Z" fill="rgba(34,240,232,0.08)"/>
+                <circle cx="32" cy="32" r="4" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase">DOSSIER // F-01</span>
+          </div>
+          <div class="font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase mb-2">Allegiance · Order</div>
+          <h3 class="font-headline font-semibold text-ink-hi text-2xl tracking-tight mb-1">The Lumenarch Conclave</h3>
+          <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-6">EST. PRE-COLLAPSE · 14 SYSTEMS</div>
+          <p class="font-headline font-medium italic text-ink-mid text-[0.95rem] leading-relaxed mb-8">
+            “Light is the only honest record. We illuminate so that nothing is forgotten — and so that what hides in the dark learns it is no longer welcome.”
+          </p>
+          <div class="doctrine-bar h-px w-full"></div>
+          <div class="mt-4 flex items-center justify-between font-mono text-[10px] tracking-tk2 uppercase text-ink-dim">
+            <span>Doctrine · Preservation</span><span class="text-cyan-glow">▲ FLEET 412</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Faction 2 — DRIFT SOVEREIGNTY (amber) -->
+      <article class="faction sr sr-d1 edge-grad rounded-sm p-8 md:p-10 relative overflow-hidden group lg:-mt-8" data-f="a" style="box-shadow: inset 0 0 60px rgba(80,40,10,0.3);">
+        <div class="absolute -top-20 -right-20 w-48 h-48 rounded-full" style="background:radial-gradient(circle, rgba(255,138,30,0.22) 0%, transparent 70%);" aria-hidden="true"></div>
+        <div class="relative">
+          <div class="flex items-start justify-between mb-8">
+            <span class="sigil">
+              <svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                <path d="M10 32 L32 10 L54 32 L32 54 Z" fill="rgba(255,138,30,0.06)"/>
+                <path d="M18 32 L32 18 L46 32 L32 46 Z" opacity="0.6"/>
+                <circle cx="32" cy="32" r="3" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase">DOSSIER // F-02</span>
+          </div>
+          <div class="font-mono text-[10px] text-amber-flare tracking-tk2 uppercase mb-2">Allegiance · Freedom</div>
+          <h3 class="font-headline font-semibold text-ink-hi text-2xl tracking-tight mb-1">The Drift Sovereignty</h3>
+          <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-6">FREEFLEET · UNCOUNTED HULLS</div>
+          <p class="font-headline font-medium italic text-ink-mid text-[0.95rem] leading-relaxed mb-8">
+            “A flag is a chain you agree to wear. We fly no colors but our wake. Take what the void abandoned — it never belonged to the dead anyway.”
+          </p>
+          <div class="doctrine-bar h-px w-full"></div>
+          <div class="mt-4 flex items-center justify-between font-mono text-[10px] tracking-tk2 uppercase text-ink-dim">
+            <span>Doctrine · Salvage</span><span class="text-amber-flare">◆ FLEET 88</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Faction 3 — THE UNSPOKEN (anomaly — desaturated, glitching, redacted) -->
+      <article class="faction faction-anomaly sr sr-d2 edge-grad rounded-sm p-8 md:p-10 relative overflow-hidden group" data-f="v" style="box-shadow: inset 0 0 40px rgba(20,22,32,0.5);">
+        <div class="relative z-[2]">
+          <div class="flex items-start justify-between mb-8">
+            <span class="sigil">
+              <svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                <circle cx="32" cy="32" r="22" opacity="0.35" stroke-dasharray="2 4"/>
+                <circle cx="32" cy="32" r="14" stroke-width="1.2" opacity="0.6"/>
+                <path d="M32 18 Q38 32 32 46 Q26 32 32 18 Z" fill="none" opacity="0.5"/>
+                <circle cx="32" cy="32" r="2.5" fill="currentColor" opacity="0.7"/>
+              </svg>
+            </span>
+            <span class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase">DOSSIER // <span class="redact">F-03</span></span>
+          </div>
+          <div class="font-mono text-[10px] tracking-tk2 uppercase mb-2 text-ink-dim">Allegiance · <span class="redact">???</span></div>
+          <h3 class="font-headline font-semibold text-ink-hi text-2xl tracking-tight mb-1">The Unspoken</h3>
+          <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-6">ORIGIN: <span class="redact">REDACTED</span> · NATURE: UNCERTAIN</div>
+          <p class="font-headline font-medium italic text-ink-mid text-[0.95rem] leading-relaxed mb-8">
+            “We are the answer the silence has been giving. <span class="redact">You will not name us.</span> You will not need to. By the time you understand what we are, you will already have begun to agree.”
+          </p>
+          <div class="doctrine-bar h-px w-full"></div>
+          <div class="mt-4 flex items-center justify-between font-mono text-[10px] tracking-tk2 uppercase text-ink-dim">
+            <span>Doctrine · <span class="redact">Translation</span></span><span class="text-ink-dim">● UNKNOWN</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 MEDIA GALLERY ===================== -->
+<section id="gallery" class="relative py-28 md:py-40 overflow-hidden grain" aria-label="Gallery — Screenshots">
+  <div class="absolute inset-0 z-0" style="background:linear-gradient(180deg, #0A0C14 0%, #05060A 100%);" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto px-5 md:px-10 mb-12 md:mb-16">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div class="sr">
+        <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-5">// FRAME LOG — Captured Frames</div>
+        <h2 class="font-display font-bold text-ink-hi text-[1.75rem] sm:text-[2.25rem] md:text-[2.8rem] leading-[1.02] tracking-tk1 uppercase">
+          Field recordings from the wreck.
+        </h2>
+      </div>
+      <div class="sr sr-d1 font-mono text-[10px] text-ink-dim tracking-tk2 uppercase md:text-right">
+        06 FRAMES · UNVERIFIED · CLICK TO EXPAND
+      </div>
+    </div>
+  </div>
+
+  <!-- Horizontal strip -->
+  <div class="relative z-10 no-bar overflow-x-auto pb-6">
+    <div class="flex gap-5 md:gap-7 px-5 md:px-10 w-max">
+      <button class="gallery-item group relative shrink-0 sr" data-full="https://picsum.photos/seed/echoes-frame-corridor-cyan-glow/1600/1000" data-cap="CORRIDOR 7B · CYAN EMERGENCY · 03:41 UTC" aria-label="Expand frame 01">
+        <div class="w-[280px] md:w-[440px] aspect-[16/10] overflow-hidden relative border border-white/10">
+          <img src="https://picsum.photos/seed/echoes-frame-corridor-cyan-glow/800/520" alt="A long derelict corridor lit by failing cyan emergency strips." loading="lazy" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500" style="filter:grayscale(0.3) contrast(1.05) brightness(0.85)"/>
+          <span class="absolute bottom-3 left-3 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">FRM_01 · CORRIDOR-7B</span>
+          <span class="absolute inset-0 border border-transparent group-hover:border-cyan-glow/50 group-focus-visible:border-cyan-glow/60 transition-colors duration-500"></span>
+        </div>
+      </button>
+      <button class="gallery-item group relative shrink-0 sr sr-d1" data-full="https://picsum.photos/seed/echoes-frame-salvage-helmet-cam/1600/1000" data-cap="VOID-WALKER SUIT · HELMET-CAM · BREACH MODE" aria-label="Expand frame 02">
+        <div class="w-[280px] md:w-[440px] aspect-[16/10] overflow-hidden relative border border-white/10">
+          <img src="https://picsum.photos/seed/echoes-frame-salvage-helmet-cam/800/520" alt="A salvage helmet reflecting emergency cyan lights." loading="lazy" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500" style="filter:grayscale(0.3) contrast(1.05) brightness(0.85)"/>
+          <span class="absolute bottom-3 left-3 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">FRM_02 · HELMET-CAM</span>
+          <span class="absolute inset-0 border border-transparent group-hover:border-cyan-glow/50 transition-colors duration-500"></span>
+        </div>
+      </button>
+      <button class="gallery-item group relative shrink-0 sr sr-d2" data-full="https://picsum.photos/seed/echoes-frame-starmap-violet-nebula/1600/1000" data-cap="STARMAP · TYCHO-BRAHE RIFT · 3 ROUTES REMAIN" aria-label="Expand frame 03">
+        <div class="w-[280px] md:w-[440px] aspect-[16/10] overflow-hidden relative border border-white/10">
+          <img src="https://picsum.photos/seed/echoes-frame-starmap-violet-nebula/800/520" alt="A dying starmap re-drawing itself over a violet nebula." loading="lazy" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500" style="filter:grayscale(0.3) contrast(1.05) brightness(0.85)"/>
+          <span class="absolute bottom-3 left-3 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">FRM_03 · STARMAP</span>
+          <span class="absolute inset-0 border border-transparent group-hover:border-cyan-glow/50 transition-colors duration-500"></span>
+        </div>
+      </button>
+      <button class="gallery-item group relative shrink-0 sr sr-d3" data-full="https://picsum.photos/seed/echoes-frame-coop-airlock-two/1600/1000" data-cap="AIRLOCK 9 · TWO SIGNATURES · ONE ANOMALOUS" aria-label="Expand frame 04">
+        <div class="w-[280px] md:w-[440px] aspect-[16/10] overflow-hidden relative border border-white/10">
+          <img src="https://picsum.photos/seed/echoes-frame-coop-airlock-two/800/520" alt="Two silhouettes standing at a derelict airlock." loading="lazy" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500" style="filter:grayscale(0.3) contrast(1.05) brightness(0.85)"/>
+          <span class="absolute bottom-3 left-3 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">FRM_04 · AIRLOCK</span>
+          <span class="absolute inset-0 border border-transparent group-hover:border-cyan-glow/50 transition-colors duration-500"></span>
+        </div>
+      </button>
+      <button class="gallery-item group relative shrink-0 sr sr-d4" data-full="https://picsum.photos/seed/echoes-frame-hold-shadow-shape/1600/1000" data-cap="HOLD 3 · SHADOW SIGNATURE · NON-EUCLIDEAN" aria-label="Expand frame 05">
+        <div class="w-[280px] md:w-[440px] aspect-[16/10] overflow-hidden relative border border-white/10">
+          <img src="https://picsum.photos/seed/echoes-frame-hold-shadow-shape/800/520" alt="A shadowed shape coiling in a flooded cargo hold." loading="lazy" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500" style="filter:grayscale(0.3) contrast(1.05) brightness(0.85)"/>
+          <span class="absolute bottom-3 left-3 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">FRM_05 · HOLD-3</span>
+          <span class="absolute inset-0 border border-transparent group-hover:border-cyan-glow/50 transition-colors duration-500"></span>
+        </div>
+      </button>
+      <button class="gallery-item group relative shrink-0 sr sr-d5" data-full="https://picsum.photos/seed/echoes-frame-bridge-dead-consoles/1600/1000" data-cap="BRIDGE · NAV CONSOLE · LAST ENTRY 11Y AGO" aria-label="Expand frame 06">
+        <div class="w-[280px] md:w-[440px] aspect-[16/10] overflow-hidden relative border border-white/10">
+          <img src="https://picsum.photos/seed/echoes-frame-bridge-dead-consoles/800/520" alt="A derelict bridge with a single dead console still glowing." loading="lazy" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500" style="filter:grayscale(0.3) contrast(1.05) brightness(0.85)"/>
+          <span class="absolute bottom-3 left-3 font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase">FRM_06 · BRIDGE</span>
+          <span class="absolute inset-0 border border-transparent group-hover:border-cyan-glow/50 transition-colors duration-500"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Marquee ticker of in-world coordinates -->
+  <div class="relative z-10 mt-10 py-5 border-y border-white/8 overflow-hidden">
+    <div class="marquee font-mono text-[11px] tracking-tk2 uppercase text-ink-dim whitespace-nowrap" aria-hidden="true">
+      <span class="flex gap-16">
+        <span><span class="text-cyan-glow">●</span> SECTOR VEYR-9</span>
+        <span>11.07.2027</span>
+        <span>LAT 47.2°N · LONG −118.0°</span>
+        <span>VERITY-ANNAN · DARK 43D</span>
+        <span><span class="text-amber-flare">▲</span> SOVEREIGNTY · GRID K-7</span>
+        <span>O2 17%</span>
+        <span>FREQ 7.83 Hz</span>
+        <span>UNSPOKEN · NO SIGNATURE</span>
+      </span>
+      <span class="flex gap-16">
+        <span><span class="text-cyan-glow">●</span> SECTOR VEYR-9</span>
+        <span>11.07.2027</span>
+        <span>LAT 47.2°N · LONG −118.0°</span>
+        <span>VERITY-ANNAN · DARK 43D</span>
+        <span><span class="text-amber-flare">▲</span> SOVEREIGNTY · GRID K-7</span>
+        <span>O2 17%</span>
+        <span>FREQ 7.83 Hz</span>
+        <span>UNSPOKEN · NO SIGNATURE</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 06 EDITIONS / PRE-ORDER ===================== -->
+<!-- Promoted to a larger H2 — the conversion climax -->
+<section id="editions" class="relative py-28 md:py-44 overflow-hidden" aria-label="Editions — Pre-order">
+  <div class="absolute inset-0 z-0" style="background:radial-gradient(50% 50% at 50% 0%, rgba(14,58,63,0.3) 0%, rgba(14,58,63,0) 60%), radial-gradient(40% 40% at 50% 50%, rgba(255,138,30,0.07) 0%, transparent 70%), linear-gradient(180deg, #05060A 0%, #0A0C14 100%);" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto px-5 md:px-10">
+    <div class="text-center mb-16 md:mb-20 sr">
+      <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-5">§ 05 — Acquire Access</div>
+      <h2 class="font-display font-bold text-ink-hi text-[2rem] sm:text-[2.6rem] md:text-[3.6rem] leading-[1.02] tracking-tk1 uppercase">
+        Choose your descent.
+      </h2>
+      <p class="font-body text-ink-mid text-[0.95rem] mt-6 max-w-xl mx-auto leading-relaxed">All pre-orders receive the <span class="text-cyan-glow">“Signal Ghost”</span> operator skin and the unreleased <span class="text-cyan-glow">“Pre-Collapse”</span> salvage suit. Founders' rewards scale with tier.</p>
+    </div>
+
+    <!-- Single unambiguous hero tier: Collector's sits center (DOM order Standard →
+         Collector's → Deluxe; on lg, order utilities place Standard left, Collector's
+         middle, Deluxe right). Visual ladder: Standard subdued → Deluxe featured
+         (single cyan glow, 'BEST VALUE') → Collector's aspirational (amber, largest). -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
+      <!-- Standard — left column -->
+      <article class="sr order-1 edge-grad rounded-sm p-8 md:p-9 flex flex-col">
+        <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-3">TIER 01</div>
+        <h3 class="font-display font-bold text-ink-hi text-2xl tracking-tk1 uppercase mb-2">Standard</h3>
+        <div class="font-mono text-cyan-glow text-3xl mb-1">$59<span class="text-base text-ink-dim">.99</span></div>
+        <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-8">USD · DIGITAL</div>
+        <ul class="font-mono text-[12px] text-ink-mid space-y-3 mb-10 flex-1 leading-relaxed">
+          <li class="flex gap-3"><span class="text-cyan-glow">[01]</span> Full base campaign (~40hr)</li>
+          <li class="flex gap-3"><span class="text-cyan-glow">[02]</span> Solo + 2-player co-op</li>
+          <li class="flex gap-3"><span class="text-cyan-glow">[03]</span> Pre-order: Signal Ghost skin</li>
+          <li class="flex gap-3"><span class="text-cyan-glow">[04]</span> Pre-order: Pre-Collapse suit</li>
+        </ul>
+        <a href="#" class="btn-ghost font-mono text-[12px] tracking-tk2 uppercase px-6 py-3.5 rounded-sm text-center block">Pre-order</a>
+      </article>
+
+      <!-- Collector's — CENTER column, the unambiguous hero tier (amber, largest scale) -->
+      <article class="sr sr-d1 order-2 rounded-sm p-8 md:p-10 flex flex-col lg:scale-[1.06] relative z-10" style="background:linear-gradient(180deg, rgba(255,138,30,0.10), rgba(255,255,255,0.02)); border:1px solid rgba(255,138,30,0.5); box-shadow: 0 0 0 1px rgba(255,138,30,0.4), 0 0 60px rgba(255,138,30,0.18), inset 0 0 70px rgba(80,40,10,0.3);">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[9px] text-amber-flare tracking-tk3 uppercase px-3 py-1 bg-void-base border border-amber-flare/50 whitespace-nowrap">LIMITED · FOUNDERS</div>
+        <div class="font-mono text-[10px] text-amber-flare tracking-tk2 uppercase mb-3 mt-2">TIER 03 · COLLECTOR'S</div>
+        <h3 class="font-display font-bold text-ink-hi text-3xl tracking-tk1 uppercase mb-2 text-glow-amber">Collector's</h3>
+        <div class="font-mono text-amber-flare text-4xl mb-1 text-glow-amber">$249<span class="text-base text-ink-dim">.99</span></div>
+        <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-8">USD · PHYSICAL + DIGITAL</div>
+        <ul class="font-mono text-[12px] text-ink-mid space-y-3 mb-10 flex-1 leading-relaxed">
+          <li class="flex gap-3"><span class="text-amber-flare">[01]</span> Everything in Deluxe</li>
+          <li class="flex gap-3"><span class="text-amber-flare">[02]</span> 30cm Verity-Annan statue (hand-painted)</li>
+          <li class="flex gap-3"><span class="text-amber-flare">[03]</span> Steelbook + cloth starmap</li>
+          <li class="flex gap-3"><span class="text-amber-flare">[04]</span> Hardcover lore codex (240pp)</li>
+          <li class="flex gap-3"><span class="text-amber-flare">[05]</span> Founder's name in the Hall of Signals</li>
+          <li class="flex gap-3"><span class="text-amber-flare">[06]</span> Lifetime exclusive operator skins</li>
+        </ul>
+        <a href="#" class="btn-amber font-mono text-[12px] tracking-tk2 uppercase px-6 py-4 rounded-sm text-center block">Pre-order</a>
+      </article>
+
+      <!-- Deluxe — right column, featured ('BEST VALUE') but quieter than Collector's:
+           thin static cyan edge (no inset glow), outline CTA. Only Collector's carries
+           a solid filled CTA in this section. -->
+      <article class="sr sr-d2 order-3 rounded-sm p-8 md:p-9 flex flex-col" style="background:linear-gradient(180deg, rgba(34,240,232,0.03), rgba(255,255,255,0.01)); border:1px solid rgba(34,240,232,0.28);">
+        <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-3">TIER 02 · BEST VALUE</div>
+        <h3 class="font-display font-bold text-ink-hi text-2xl tracking-tk1 uppercase mb-2">Deluxe</h3>
+        <div class="font-mono text-cyan-glow text-3xl mb-1">$89<span class="text-base text-ink-dim">.99</span></div>
+        <div class="font-mono text-[10px] text-ink-dim tracking-tk2 uppercase mb-8">USD · DIGITAL</div>
+        <ul class="font-mono text-[12px] text-ink-mid space-y-3 mb-10 flex-1 leading-relaxed">
+          <li class="flex gap-3"><span class="text-cyan-glow">[01]</span> Everything in Standard</li>
+          <li class="flex gap-3"><span class="text-cyan-glow">[02]</span> Season Pass (2 story expansions)</li>
+          <li class="flex gap-3"><span class="text-cyan-glow">[03]</span> Digital art book + original score</li>
+          <li class="flex gap-3"><span class="text-cyan-glow">[04]</span> “Drift Sovereignty” skin pack</li>
+          <li class="flex gap-3"><span class="text-cyan-glow">[05]</span> 72hr early access</li>
+        </ul>
+        <a href="#" class="btn-outline-cyan font-mono text-[12px] tracking-tk2 uppercase px-6 py-3.5 rounded-sm text-center block">Pre-order</a>
+      </article>
+    </div>
+
+    <p class="sr sr-d1 font-mono text-[10px] text-ink-dim tracking-tk2 uppercase text-center mt-10">All editions ship 11.07.2027 · Cancel anytime before launch · Region restrictions apply</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== 07 FOOTER ===================== -->
+<footer class="relative pt-24 md:pt-32 pb-12 overflow-hidden" aria-label="Footer — Newsletter and links">
+  <div class="absolute inset-0 z-0" style="background:
+      radial-gradient(50% 60% at 75% 25%, rgba(14,58,63,0.5) 0%, rgba(14,58,63,0) 65%),
+      radial-gradient(45% 55% at 15% 60%, rgba(42,24,64,0.5) 0%, rgba(42,24,64,0) 70%);" aria-hidden="true"></div>
+  <div class="starfield absolute inset-0 z-0" style="opacity:0.3;" aria-hidden="true"></div>
+  <div class="absolute inset-x-0 top-0 h-px z-[1]" style="background:linear-gradient(90deg, transparent, rgba(34,240,232,0.3), transparent);" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto px-5 md:px-10">
+    <!-- Newsletter -->
+    <div class="grid grid-cols-12 gap-8 mb-20 md:mb-28 items-center">
+      <div class="col-span-12 md:col-span-6 sr">
+        <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-4">// OPEN CHANNEL</div>
+        <h2 class="font-display font-bold text-ink-hi text-[1.8rem] sm:text-[2.4rem] md:text-[3rem] leading-[1.02] tracking-tk1 uppercase">
+          Transmit your coordinates.
+        </h2>
+        <p class="font-body text-ink-mid text-[0.95rem] mt-4 max-w-md leading-relaxed">Receive intercepted lore drops, dev transmissions, and launch-window alerts. No noise — only signal.</p>
+      </div>
+      <div class="col-span-12 md:col-span-6 sr sr-d1">
+        <form id="nlForm" class="flex flex-col sm:flex-row gap-3" aria-label="Newsletter signup">
+          <label for="email" class="sr-only">Email address</label>
+          <input id="email" type="email" required placeholder="operator@frequency.net" class="flex-1 bg-void-panel/70 border border-white/12 focus:border-cyan-glow/70 px-5 py-4 font-mono text-sm text-ink-hi placeholder:text-ink-dim rounded-sm transition-colors duration-300 outline-none" />
+          <button type="submit" class="btn-primary font-mono text-[12px] tracking-tk2 uppercase px-7 py-4 rounded-sm glow-cyan whitespace-nowrap inline-flex items-center justify-center gap-2">
+            <span>Transmit</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </form>
+        <p id="nlConfirm" aria-live="polite" class="hidden font-mono text-[11px] text-cyan-glow tracking-tk2 uppercase mt-3">// SIGNAL LOCKED · Stand by for transmission</p>
+        <p id="nlError" aria-live="assertive" class="hidden font-mono text-[11px] tracking-tk2 uppercase mt-3" style="color:#FF6B5E;">// TRANSMISSION REJECTED · Enter a valid email frequency</p>
+      </div>
+    </div>
+
+    <div class="div-rule mb-12"></div>
+
+    <!-- Link columns + wishlist -->
+    <div class="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6 mb-16">
+      <div class="col-span-2 md:col-span-4">
+        <a href="#hero" class="flex items-center gap-3 mb-5">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" stroke="#22F0E8" stroke-width="1.2" opacity="0.6"/>
+            <circle cx="16" cy="16" r="6" stroke="#22F0E8" stroke-width="1.2"/>
+            <circle cx="16" cy="16" r="2" fill="#22F0E8"/>
+          </svg>
+          <span class="font-mono text-[11px] text-ink-hi tracking-tk4 uppercase">ECHOES<span class="text-cyan-glow">/</span>VOID</span>
+        </a>
+        <p class="font-body text-ink-dim text-[0.85rem] leading-relaxed max-w-xs">A cinematic deep-space survival epic. Developed by Halcyon Rift Studio. Published worldwide 11.07.2027.</p>
+      </div>
+
+      <nav class="col-span-1 md:col-span-2 md:col-start-6" aria-label="Game">
+        <div class="font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase mb-4">Game</div>
+        <ul class="space-y-2.5 font-mono text-[12px] text-ink-mid">
+          <li><a href="#story" class="hover:text-cyan-glow transition-colors">Story</a></li>
+          <li><a href="#features" class="hover:text-cyan-glow transition-colors">Systems</a></li>
+          <li><a href="#factions" class="hover:text-cyan-glow transition-colors">Factions</a></li>
+          <li><a href="#gallery" class="hover:text-cyan-glow transition-colors">Gallery</a></li>
+        </ul>
+      </nav>
+
+      <nav class="col-span-1 md:col-span-2" aria-label="Acquire">
+        <div class="font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase mb-4">Acquire</div>
+        <ul class="space-y-2.5 font-mono text-[12px] text-ink-mid">
+          <li><a href="#editions" class="hover:text-cyan-glow transition-colors">Editions</a></li>
+          <li><a href="#" class="hover:text-cyan-glow transition-colors">Pre-order FAQ</a></li>
+          <li><a href="#" class="hover:text-cyan-glow transition-colors">System specs</a></li>
+          <li><a href="#" class="hover:text-cyan-glow transition-colors">Press kit</a></li>
+        </ul>
+      </nav>
+
+      <div class="col-span-2 md:col-span-3 md:col-start-10">
+        <div class="font-mono text-[10px] text-cyan-glow tracking-tk2 uppercase mb-4">Wishlist now</div>
+        <div class="flex flex-wrap gap-2 mb-5">
+          <a href="#" aria-label="Wishlist on Steam (PC)" class="font-mono text-[10px] tracking-tk2 uppercase px-3 py-2 border border-white/12 text-ink-mid hover:border-cyan-glow/70 hover:text-cyan-glow transition-colors duration-300">Steam</a>
+          <a href="#" aria-label="Wishlist on Epic Games Store" class="font-mono text-[10px] tracking-tk2 uppercase px-3 py-2 border border-white/12 text-ink-mid hover:border-cyan-glow/70 hover:text-cyan-glow transition-colors duration-300">Epic</a>
+          <a href="#" aria-label="Wishlist on PlayStation Store (PS5)" class="font-mono text-[10px] tracking-tk2 uppercase px-3 py-2 border border-white/12 text-ink-mid hover:border-cyan-glow/70 hover:text-cyan-glow transition-colors duration-300">PS5</a>
+          <a href="#" aria-label="Wishlist on Xbox Store" class="font-mono text-[10px] tracking-tk2 uppercase px-3 py-2 border border-white/12 text-ink-mid hover:border-cyan-glow/70 hover:text-cyan-glow transition-colors duration-300">Xbox</a>
+        </div>
+        <div class="flex gap-4" aria-label="Social links">
+          <a href="#" aria-label="Discord" class="text-ink-dim hover:text-cyan-glow transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.4a14.6 14.6 0 0 1 4.3 1.4 13 13 0 0 0-11-.0A14.6 14.6 0 0 1 12.8 3l-.2-.4a19.8 19.8 0 0 0-4.9 1.4C4.4 9.3 3.5 14 3.9 18.7a19.9 19.9 0 0 0 6 3l.5-.7a13 13 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4a13 13 0 0 1-2 1l.5.7a19.9 19.9 0 0 0 6-3c.5-5.5-.8-10.2-3.8-14.3zM9.5 15.6c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm5 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg></a>
+          <a href="#" aria-label="X (Twitter)" class="text-ink-dim hover:text-cyan-glow transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2H21l-6.6 7.5L22 22h-6l-4.7-6.1L5.8 22H3l7-8L2 2h6.2l4.3 5.6L18.2 2zm-1 18h1.6L7.9 4H6.2l11 16z"/></svg></a>
+          <a href="#" aria-label="YouTube" class="text-ink-dim hover:text-cyan-glow transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.5a3 3 0 0 0-2.1-2.1C19 5 12 5 12 5s-7 0-8.9.4A3 3 0 0 0 1 7.5 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1C5 19 12 19 12 19s7 0 8.9-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 23.5 12 31 31 0 0 0 23 7.5zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></a>
+          <a href="#" aria-label="Twitch" class="text-ink-dim hover:text-cyan-glow transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 2L3 6v14h5v3h3l3-3h4l5-5V2H4zm17 11l-3 3h-5l-3 3v-3H6V4h15v9zm-4-6h-2v5h2V7zm-5 0H9v5h2V7z"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="div-rule mb-8"></div>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div class="flex flex-wrap items-center gap-4 font-mono text-[10px] text-ink-dim tracking-tk2 uppercase">
+        <span class="inline-flex items-center gap-2">
+          <span class="w-7 h-7 border border-white/20 flex items-center justify-center text-ink-mid font-bold text-sm">18</span>
+          Rated M · Mature 17+
+        </span>
+        <span class="hidden md:inline text-ink-dim/50">|</span>
+        <span>© 2027 Halcyon Rift Studio</span>
+      </div>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] text-ink-dim tracking-tk2 uppercase">
+        <li><a href="#" class="hover:text-cyan-glow transition-colors">Privacy</a></li>
+        <li><a href="#" class="hover:text-cyan-glow transition-colors">Terms</a></li>
+        <li><a href="#" class="hover:text-cyan-glow transition-colors">Cookies</a></li>
+        <li><a href="#" class="hover:text-cyan-glow transition-colors">EULA</a></li>
+      </ul>
+    </div>
+
+    <!-- Faint persistent wordmark closer -->
+    <div class="mt-16 md:mt-24 border-t border-white/5 pt-8 overflow-hidden">
+      <div class="font-display font-bold uppercase tracking-tk4 select-none whitespace-nowrap text-center" style="font-size:clamp(1.6rem, 7vw, 5.5rem); line-height:0.9; color:rgba(130,139,158,0.18);">
+        ECHOES OF THE VOID
+      </div>
+      <div class="mt-6 flex flex-col sm:flex-row justify-between gap-2 font-mono text-[9px] tracking-tk2 uppercase text-ink-dim">
+        <span>© 2027 — All transmissions logged.</span>
+        <span>Built to survive the drift.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Ship-status HUD (signature delight) =====
+     Signal row desaturated to dim cyan — no third competing violet neon. -->
+<aside class="hud" aria-hidden="true">
+  <div class="hud-row">
+    <span style="color:#22F0E8;">O₂</span>
+    <span id="hudO2Val">17%</span>
+  </div>
+  <div class="hud-bar hud-o2"><i id="hudO2Bar" style="width:17%;"></i></div>
+
+  <div class="hud-row" style="margin-top:8px;">
+    <span style="color:#4A8B8F;">HULL</span>
+    <span id="hudHullVal">38%</span>
+  </div>
+  <div class="hud-bar hud-hull"><i id="hudHullBar" style="width:38%;"></i></div>
+
+  <div class="hud-row" style="margin-top:8px;">
+    <span style="color:#828B9E;">SIGNAL</span>
+    <span id="hudSigVal">−84dB</span>
+  </div>
+  <div class="hud-wave" id="hudWave">
+    <svg viewBox="0 0 200 18" preserveAspectRatio="none">
+      <polyline id="hudWavePath" fill="none" stroke="#5A7E80" stroke-width="1" points=""/>
+    </svg>
+  </div>
+  <div class="hud-tag">SHIP-STATUS · LIVE</div>
+</aside>
+<!-- AT-friendly flavor: a single static line (no aria-live loop). Sighted users
+     never see it; screen-reader users hear it once, not every 2.4s. -->
+<p class="sr-only" id="hudA11y">Aboard the Verity-Annan — ship status critical. Decorative live readouts follow.</p>
+
+<!-- ===== Lightbox ===== -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Expanded screenshot">
+  <button class="absolute top-6 right-6 text-ink-hi hover:text-cyan-glow transition-colors z-10" aria-label="Close" id="lbClose">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <figure>
+    <img src="" alt="" id="lbImg" class="max-w-full max-h-[82vh]" style="box-shadow:0 0 0 1px rgba(34,240,232,0.4), 0 0 80px rgba(34,240,232,0.2);" />
+    <figcaption id="lbCap" class="mt-4 text-center font-mono text-[11px] tracking-tk2 uppercase text-cyan-glow"></figcaption>
+  </figure>
+</div>
+
+<!-- ===== Storefront wishlist picker (hero primary CTA lands here) ===== -->
+<div class="modal" id="storeModal" role="dialog" aria-modal="true" aria-labelledby="storeTitle">
+  <div class="modal-panel w-full max-w-md edge-grad rounded-sm p-8 md:p-10 relative" style="background:rgba(10,12,20,0.92);">
+    <button class="absolute top-4 right-4 text-ink-hi hover:text-cyan-glow transition-colors z-10" aria-label="Close storefront picker" id="storeClose">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-3">// SELECT FREQUENCY</div>
+    <h2 id="storeTitle" class="font-display font-bold text-ink-hi text-2xl md:text-3xl tracking-tk1 uppercase mb-2">Wishlist now</h2>
+    <p class="font-body text-ink-mid text-[0.9rem] leading-relaxed mb-7">Lock in your storefront of choice. Wishlist alerts fire the moment pre-orders open — 11.07.2027.</p>
+    <div class="grid grid-cols-2 gap-3" role="list">
+      <a href="#" role="listitem" aria-label="Wishlist on Steam (PC)" class="storefront font-mono text-[12px] tracking-tk2 uppercase px-4 py-5 rounded-sm border border-white/15 text-ink-hi flex flex-col gap-1.5">
+        <span class="text-cyan-glow">STEAM</span><span class="text-[10px] text-ink-dim normal-case tracking-normal">PC · Steam Deck verified</span>
+      </a>
+      <a href="#" role="listitem" aria-label="Wishlist on Epic Games Store" class="storefront font-mono text-[12px] tracking-tk2 uppercase px-4 py-5 rounded-sm border border-white/15 text-ink-hi flex flex-col gap-1.5">
+        <span class="text-cyan-glow">EPIC</span><span class="text-[10px] text-ink-dim normal-case tracking-normal">PC · Epic Games Store</span>
+      </a>
+      <a href="#" role="listitem" aria-label="Wishlist on PlayStation Store (PS5)" class="storefront font-mono text-[12px] tracking-tk2 uppercase px-4 py-5 rounded-sm border border-white/15 text-ink-hi flex flex-col gap-1.5">
+        <span class="text-cyan-glow">PS5</span><span class="text-[10px] text-ink-dim normal-case tracking-normal">PlayStation 5</span>
+      </a>
+      <a href="#" role="listitem" aria-label="Wishlist on Xbox Store" class="storefront font-mono text-[12px] tracking-tk2 uppercase px-4 py-5 rounded-sm border border-white/15 text-ink-hi flex flex-col gap-1.5">
+        <span class="text-cyan-glow">XBOX</span><span class="text-[10px] text-ink-dim normal-case tracking-normal">Series X|S · Game Pass TBD</span>
+      </a>
+    </div>
+    <p class="font-mono text-[9px] text-ink-dim tracking-tk2 uppercase mt-6">// NO SPAM · ONE ALERT ON REVEAL</p>
+  </div>
+</div>
+
+<!-- ===== Trailer / reveal modal (honest — no bait) ===== -->
+<div class="modal" id="trailerModal" role="dialog" aria-modal="true" aria-labelledby="trailerTitle" aria-describedby="trailerDesc">
+  <div class="modal-panel w-full max-w-3xl edge-grad rounded-sm p-8 md:p-10 relative" style="background:rgba(10,12,20,0.92);">
+    <button class="absolute top-4 right-4 text-ink-hi hover:text-cyan-glow transition-colors z-10" aria-label="Close reveal" id="trailerClose">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="font-mono text-[11px] text-cyan-glow tracking-tk3 uppercase mb-3">// REVEAL WINDOW</div>
+    <h2 id="trailerTitle" class="font-display font-bold text-ink-hi text-2xl md:text-3xl tracking-tk1 uppercase mb-3">The reveal is incoming.</h2>
+    <p id="trailerDesc" class="font-body text-ink-mid text-[0.95rem] leading-relaxed mb-7 max-w-xl">The cinematic reveal trailer transmits at the next showcase. Drop your frequency and we'll fire it to your inbox the second it goes live — no spoilers, no noise.</p>
+    <!-- Embedded cinematic poster frame as a stand-in — honest, not a bait play button -->
+    <div class="relative aspect-video overflow-hidden rounded-sm border border-cyan-glow/25 mb-2" style="background:url('https://picsum.photos/seed/echoes-reveal-poster-cinematic/1600/900') center/cover; filter:grayscale(0.4) contrast(1.1) brightness(0.55);">
+      <div class="absolute inset-0 flex items-center justify-center">
+        <span class="font-mono text-[10px] tracking-tk4 uppercase text-cyan-glow/90 px-4 py-2 border border-cyan-glow/40 backdrop-blur-sm">REVEAL · PENDING</span>
+      </div>
+      <div class="absolute inset-0" style="background:linear-gradient(180deg, transparent 50%, rgba(5,6,10,0.8) 100%);"></div>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 mt-6">
+      <a href="#nlForm" id="trailerNotify" class="btn-primary font-mono text-[12px] tracking-tk2 uppercase px-6 py-3.5 rounded-sm text-center block">Notify me at reveal</a>
+      <a href="#gallery" id="trailerFrames" class="btn-ghost font-mono text-[12px] tracking-tk2 uppercase px-6 py-3.5 rounded-sm text-center block">See captured frames</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // ====== Per-letter title split + cinematic reveal ======
+  // Capped stagger (max 0.035s/char, total title reveal clamped to ~0.8s) so the
+  // whole hero settles inside ~1.6s. Fires on DOMContentLoaded — not load — so a
+  // slow connection doesn't leave the title blank while picsum/fonts trickle in.
+  const titleEls = document.querySelectorAll('#heroTitle [data-split]');
+  const STAGGER = 0.035;     // max per-letter delay
+  const TBASE = 0.10;        // initial offset
+  const TCAP = 0.7;          // clamp total title reveal window
+  let total = 0;
+  titleEls.forEach(line => {
+    const text = line.textContent;
+    line.textContent = '';
+    [...text].forEach((ch) => {
+      const s = document.createElement('span');
+      s.textContent = ch === ' ' ? ' ' : ch;
+      s.style.animationDelay = (TBASE + Math.min(total, TCAP / STAGGER) * STAGGER) + 's';
+      line.appendChild(s);
+      total++;
+    });
+  });
+  function revealTitle(){
+    const h1 = document.getElementById('heroTitle');
+    if (h1) h1.classList.add('go');
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', () => setTimeout(revealTitle, 120));
+  } else {
+    setTimeout(revealTitle, 120);
+  }
+
+  // ====== Glitch flicker — CSS-class toggle only (no per-letter JS work) ======
+  const heroTitle = document.getElementById('heroTitle');
+  if (heroTitle && !prefersReduced){
+    const flicker = () => {
+      heroTitle.classList.add('glitching');
+      setTimeout(() => heroTitle.classList.remove('glitching'), 180);
+    };
+    document.getElementById('hero').addEventListener('mousemove', () => {
+      if (Math.random() < 0.015) flicker();
+    });
+    setInterval(() => { if (Math.random() < 0.5) flicker(); }, 9000);
+  }
+
+  // ====== Scroll reveal ======
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.sr').forEach(el => io.observe(el));
+
+  // ====== Nav background on scroll ======
+  const nav = document.getElementById('topnav');
+  const onScroll = () => {
+    if (window.scrollY > 40){
+      nav.style.background = 'rgba(5,6,10,0.88)';
+      nav.style.backdropFilter = 'blur(10px)';
+      nav.style.borderBottom = '1px solid rgba(34,240,232,0.12)';
+    } else {
+      nav.style.background = 'linear-gradient(180deg, rgba(5,6,10,0.85) 0%, rgba(5,6,10,0) 100%)';
+      nav.style.backdropFilter = 'blur(0px)';
+      nav.style.borderBottom = '1px solid transparent';
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ====== Mobile nav ======
+  const navToggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  navToggle.addEventListener('click', () => {
+    const open = mobileNav.style.maxHeight && mobileNav.style.maxHeight !== '0px';
+    mobileNav.style.maxHeight = open ? '0px' : (mobileNav.scrollHeight + 'px');
+    navToggle.setAttribute('aria-expanded', String(!open));
+  });
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileNav.style.maxHeight = '0px';
+    navToggle.setAttribute('aria-expanded','false');
+  }));
+
+  // ====== Parallax — transform/opacity only, GPU-friendly ======
+  if (!prefersReduced){
+    const layers = document.querySelectorAll('.plx');
+    let ticking = false;
+    const update = () => {
+      const sy = window.scrollY;
+      layers.forEach(layer => {
+        const speed = parseFloat(layer.dataset.speed || 0.1);
+        const speedMul = sy * speed;
+        layer.style.transform = `translate3d(0, ${speedMul}px, 0)`;
+      });
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking){ requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+  }
+
+  // ====== Shared focus-trapped overlay controller (lightbox + modals) ======
+  // Stores the opener, traps Tab between first/last focusable, restores focus on close.
+  function trapOverlay(overlayEl, firstFocusEl){
+    let lastFocused = document.activeElement;
+    const focusables = () => overlayEl.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    function onKey(e){
+      if (e.key === 'Escape'){ close(); return; }
+      if (e.key !== 'Tab') return;
+      const f = Array.from(focusables());
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+    function open(){
+      overlayEl.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', onKey);
+      requestAnimationFrame(() => (firstFocusEl || overlayEl).focus());
+    }
+    function close(){
+      overlayEl.classList.remove('open');
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    }
+    return { open, close };
+  }
+
+  // ====== Lightbox (focus trap + restore) ======
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCap = document.getElementById('lbCap');
+  const lbClose = document.getElementById('lbClose');
+  const lbCtrl = trapOverlay(lb, lbClose);
+  document.querySelectorAll('[data-full]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      lbImg.src = btn.dataset.full;
+      lbImg.alt = btn.dataset.cap || 'Expanded screenshot';
+      lbCap.textContent = btn.dataset.cap || '';
+      lbCtrl.open();
+    });
+  });
+  lbClose.addEventListener('click', lbCtrl.close);
+  lb.addEventListener('click', (e) => { if (e.target === lb) lbCtrl.close(); });
+
+  // ====== Storefront wishlist modal (hero primary CTA) ======
+  const storeModal = document.getElementById('storeModal');
+  const storeClose = document.getElementById('storeClose');
+  const wishlistCTA = document.getElementById('wishlistCTA');
+  const storeCtrl = trapOverlay(storeModal, storeClose);
+  if (wishlistCTA) wishlistCTA.addEventListener('click', storeCtrl.open);
+  if (storeClose) storeClose.addEventListener('click', storeCtrl.close);
+  storeModal.addEventListener('click', (e) => { if (e.target === storeModal) storeCtrl.close(); });
+
+  // ====== Trailer / reveal modal (honest — no bait play button) ======
+  const trailerModal = document.getElementById('trailerModal');
+  const trailerClose = document.getElementById('trailerClose');
+  const revealCTA = document.getElementById('revealCTA');
+  const trailerCtrl = trapOverlay(trailerModal, trailerClose);
+  if (revealCTA) revealCTA.addEventListener('click', trailerCtrl.open);
+  if (trailerClose) trailerClose.addEventListener('click', trailerCtrl.close);
+  trailerModal.addEventListener('click', (e) => { if (e.target === trailerModal) trailerCtrl.close(); });
+  ['trailerNotify','trailerFrames'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => setTimeout(trailerCtrl.close, 0));
+  });
+
+  // ====== Newsletter — real validation + aria-live success/error ======
+  const nlForm = document.getElementById('nlForm');
+  if (nlForm){
+    const input = nlForm.querySelector('input');
+    const nlConfirm = document.getElementById('nlConfirm');
+    const nlError = document.getElementById('nlError');
+    nlForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = (input.value || '').trim();
+      nlConfirm.classList.add('hidden');
+      if (!emailRe.test(val)){
+        nlError.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+      nlError.classList.add('hidden');
+      input.removeAttribute('aria-invalid');
+      input.value = '';
+      input.placeholder = 'Coordinates received';
+      nlConfirm.classList.remove('hidden');
+    });
+    input.addEventListener('input', () => {
+      nlError.classList.add('hidden');
+      input.removeAttribute('aria-invalid');
+    });
+  }
+
+  // ====== Ship-status HUD — gated, throttled, offscreen/hidden-safe ======
+  const hud = document.querySelector('.hud');
+  if (!prefersReduced && hud){
+    let o2 = 17.0, hull = 38.0;
+    const o2Val = document.getElementById('hudO2Val');
+    const o2Bar = document.getElementById('hudO2Bar');
+    const hullVal = document.getElementById('hudHullVal');
+    const hullBar = document.getElementById('hudHullBar');
+    const sigVal = document.getElementById('hudSigVal');
+    const wavePath = document.getElementById('hudWavePath');
+
+    // ambient tick — oxygen slowly bleeds, hull jitters. Cleared when the HUD
+    // is offscreen so there is NO always-on timer for a purely decorative element.
+    let ambientTimer = null;
+    function startAmbient(){
+      if (ambientTimer) return;
+      ambientTimer = setInterval(() => {
+        o2 = Math.max(4, o2 - 0.1);
+        hull = Math.min(100, Math.max(30, hull + (Math.random() - 0.5) * 0.6));
+        if (o2Val){ o2Val.textContent = o2.toFixed(0) + '%'; o2Bar.style.width = o2 + '%'; }
+        if (hullVal){ hullVal.textContent = hull.toFixed(0) + '%'; hullBar.style.width = hull + '%'; }
+      }, 2400);
+    }
+    function stopAmbient(){
+      if (ambientTimer){ clearInterval(ambientTimer); ambientTimer = null; }
+    }
+
+    // signal waveform — reacts to scroll velocity, gated by visibility + viewport
+    const W = 200, H = 18, N = 40;
+    let phase = 0, intensity = 0.3;
+    let lastScroll = window.scrollY;
+    let scrollVel = 0;
+    let hudVisible = false;
+    let tabHidden = document.hidden;
+    let rafId = null;
+
+    window.addEventListener('scroll', () => {
+      scrollVel = Math.min(1, Math.abs(window.scrollY - lastScroll) / 40);
+      lastScroll = window.scrollY;
+    }, { passive: true });
+
+    // Truly sleep the HUD when offscreen: cancel the rAF + clear the interval on
+    // 'not intersecting', restart both on 'intersecting'. No perpetual wake-ups.
+    function startWave(){
+      if (rafId == null) rafId = requestAnimationFrame(drawWave);
+    }
+    function stopWave(){
+      if (rafId != null){ cancelAnimationFrame(rafId); rafId = null; }
+    }
+    function onHudVisible(v){
+      hudVisible = v;
+      if (v && !tabHidden){ startWave(); startAmbient(); }
+      else { stopWave(); stopAmbient(); }
+    }
+
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver((entries) => {
+        entries.forEach(e => onHudVisible(e.isIntersecting));
+      }, { threshold: 0 }).observe(hud);
+    } else {
+      onHudVisible(true);
+    }
+
+    // Pause ALL decorative animation (marquee / meshDrift) when the tab is hidden
+    const decoAnims = document.querySelectorAll('.marquee, .mesh-nebula');
+    document.addEventListener('visibilitychange', () => {
+      tabHidden = document.hidden;
+      decoAnims.forEach(el => el.classList.toggle('paused-anim', tabHidden));
+      // Also gate the HUD timers on tab visibility
+      if (tabHidden || !hudVisible){ stopWave(); stopAmbient(); }
+      else { startWave(); startAmbient(); }
+    });
+
+    let lastFrame = 0;
+    function drawWave(ts){
+      rafId = requestAnimationFrame(drawWave);
+      // Skip work when offscreen, tab hidden, or faster than ~10fps once energy dies
+      const lowEnergy = intensity < 0.06 && scrollVel < 0.02;
+      const minInterval = lowEnergy ? 100 : 16;
+      if (tabHidden || !hudVisible || (ts - lastFrame) < minInterval) return;
+      lastFrame = ts;
+
+      phase += 0.18;
+      intensity = intensity * 0.9 + scrollVel * 0.8;
+      scrollVel *= 0.85;
+      const amp = 2 + intensity * 7;
+      let pts = '';
+      for (let i = 0; i <= N; i++){
+        const x = (i / N) * W;
+        const y = H/2 + Math.sin(i * 0.6 + phase) * amp * (0.5 + 0.5*Math.sin(i*0.2));
+        pts += x.toFixed(1) + ',' + y.toFixed(1) + ' ';
+      }
+      if (wavePath) wavePath.setAttribute('points', pts);
+      if (sigVal){
+        const db = -84 + Math.round(intensity * 40);
+        sigVal.textContent = db + 'dB';
+      }
+    }
+    // Loop starts only when the HUD first intersects (see onHudVisible).
+  }
+})();
+</script>
+</body>
+</html>

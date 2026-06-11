@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OBJECT &amp; ECHO — Art-direction-first design studio</title>
+<meta name="description" content="OBJECT & ECHO is an art-direction-first design studio. We make objects. We chase their echo. Brands become impossible to ignore." />
+<meta name="theme-color" content="#0A0A0A" />
+
+<!-- Tailwind (CDN for the single-file deliverable; design tokens below) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts: Archivo (object grotesque) + Fraunces (echo serif, variable) + JetBrains Mono (index) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    '#0A0A0A',
+          ink2:   '#131316',
+          panel:  '#15151A',
+          bone:   '#F2EFE9',
+          acid:   '#D6FF3D',
+          smoke:  '#9A968C',   // AA-safe dim on ink (~6.7:1)
+          edge:   '#1C1C20',
+        },
+        fontFamily: {
+          display: ['Archivo', 'sans-serif'],
+          echo:    ['Fraunces', 'serif'],
+          mono:    ['"JetBrains Mono"', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  /* ════════════ DESIGN TOKENS ════════════ */
+  :root{
+    --ink:#0A0A0A; --ink2:#131316; --panel:#15151A;
+    --bone:#F2EFE9; --acid:#D6FF3D; --smoke:#9A968C; --edge:#1C1C20;
+
+    /* Modular type scale — one ladder, every size traces back to it */
+    --mono-xs: 0.66rem;   /* 10.5px — micro meta, caption tags */
+    --mono-sm: 0.74rem;   /* 11.8px — nav links, labels */
+    --mono-md: 0.82rem;   /* 13.1px — running mono */
+
+    --step--1: clamp(0.83rem, 0.80rem + 0.15vw, 0.94rem);
+    --step-0:  clamp(1.00rem, 0.94rem + 0.30vw, 1.22rem);
+    --step-1:  clamp(1.18rem, 1.08rem + 0.50vw, 1.55rem);
+    --step-2:  clamp(1.42rem, 1.22rem + 0.95vw, 2.10rem);
+    --step-3:  clamp(1.70rem, 1.36rem + 1.65vw, 3.00rem);   /* content H2 baseline */
+    --step-4:  clamp(2.05rem, 1.50rem + 2.60vw, 4.20rem);   /* section H2 */
+    --step-5:  clamp(2.45rem, 1.65rem + 3.90vw, 5.80rem);   /* section statements */
+    --step-6:  clamp(2.95rem, 1.78rem + 5.80vw, 8.00rem);   /* marquee / oversized — FILLED object */
+    --step-7:  clamp(3.50rem, 1.88rem + 8.30vw, 11.0rem);   /* outline echo marquee — LARGEST */
+    --step-hero: clamp(3.2rem, 0.55rem + 13.4vw, 16.5rem);   /* hero — absolute max */
+
+    /* Spacing rhythm — 8px base */
+    --s-1:0.5rem; --s-2:1rem; --s-3:1.5rem; --s-4:2rem; --s-5:3rem;
+    --s-6:4rem; --s-7:6rem; --s-8:8rem; --s-9:12rem; --s-10:16rem;
+    --gutter: clamp(1.25rem, 0.8rem + 2.4vw, 3.5rem);
+  }
+
+  html{ scroll-behavior: smooth; }
+  html, body { background: var(--ink); color: var(--bone); }
+  body{
+    font-family: 'Archivo', sans-serif;
+    font-feature-settings: "ss01","ss02","cv01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection{ background: var(--acid); color: var(--ink); }
+
+  /* Type primitives */
+  .font-display{ font-family:'Archivo', sans-serif; }
+  .font-echo{ font-family:'Fraunces', serif; }
+  .font-mono{ font-family:'JetBrains Mono', monospace; }
+
+  .display-tight{ letter-spacing:-0.04em; line-height:0.86; }
+  .echo-tight{ line-height:0.98; letter-spacing:-0.01em; }
+
+  /* Fraunces variable axes driven at display sizes (the echo voice) */
+  .echo-display{
+    font-family:'Fraunces', serif; font-style: italic;
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 144, 'wght' 400, 'SOFT' 50;
+  }
+  .echo-body{
+    font-family:'Fraunces', serif; font-style: italic;
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 24, 'wght' 400;
+  }
+
+  /* tabular figures on stat numerals */
+  .tnum{ font-variant-numeric: tabular-nums; }
+
+  .container-edge{ width:100%; margin-inline:auto; padding-inline:var(--gutter); max-width:1680px; }
+
+  /* ampersand — brand kinetic glyph */
+  .amp{ font-family:'Fraunces', serif; font-style:italic; font-weight:500; font-optical-sizing:auto; font-variation-settings:'opsz' 144; }
+  .amp-acid{ color: var(--acid); }
+
+  /* index labels */
+  .index-label{ font-family:'JetBrains Mono', monospace; font-size:var(--mono-sm); letter-spacing:0.16em; text-transform:uppercase; color:var(--smoke); }
+
+  /* ── KINETIC HERO ───────────────────────────
+     Compressed timeline: headline lands by ~1.0–1.2s, echo trails after.
+     Hero h1 drifts on a WRAPPER (not h1 directly) so the text layer
+     stays composited cheaply; will-change added/removed by JS. */
+  .hero-drift{ will-change: transform; transition: transform .3s cubic-bezier(.16,.84,.3,1); }
+  .hero-word{ display:inline-block; transform: translateY(108%) rotate(5deg); opacity:0; will-change:transform,opacity; }
+  .hero-word.in{ animation: heroIn 0.85s cubic-bezier(.16,.84,.3,1) forwards; }
+  @keyframes heroIn{
+    0%{ transform: translateY(108%) rotate(5deg); opacity:0; }
+    55%{ opacity:1; }
+    100%{ transform: translateY(0) rotate(0); opacity:1; }
+  }
+
+  /* Echo manifesto — now rendered as STROKED/outline Fraunces (mirror of the
+     marquee object/echo pairing) and pulled to bone/40 so it reads as a true
+     ghost / afterimage of the object, not a de-emphasized caption.
+     Drop ~2 steps in scale too. */
+  .hero-echo-word{
+    display:inline-block; opacity:0; transform: translateY(0.4em); filter:blur(7px);
+    will-change:transform,opacity,filter;
+    -webkit-text-stroke: 1px rgba(242,239,233,0.4); /* bone/40 ghost stroke */
+    color: transparent;
+  }
+  .hero-echo-word.in{ animation: echoIn 1.2s ease forwards; animation-delay: inherit; }
+  @keyframes echoIn{
+    0%{ opacity:0; transform: translateY(0.4em); filter:blur(7px); }
+    100%{ opacity:.6; transform: translateY(0); filter:blur(0); }
+  }
+
+  /* Hero trailing afterimage — a spatial echo of OBJECT & ECHO displaced
+     behind the headline as a genuine object, not just an italic line.
+     Static presence (fades in after headline settles) so touch / reduced-motion
+     users still get the signature delight; cursor proximity intensifies it. */
+  .hero-afterimage{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
+    font-optical-sizing:auto; font-variation-settings:'opsz' 144;
+    -webkit-text-stroke: 1px rgba(214,255,61,0.0);
+    color: transparent;
+    /* Displaced VERTICALLY behind the object so it reads as a spatial echo, not a
+       perfect overlay. Pure vertical translate — no horizontal component, no scale —
+       so a full-bleed block can never push the hero's scrollWidth past its clientWidth. */
+    transform: translateY(3.4vh);
+    opacity: 0;
+    transition: -webkit-text-stroke-color 1.1s ease, opacity 1.1s ease, transform 1.2s cubic-bezier(.16,.84,.3,1);
+    will-change: opacity, transform;
+  }
+  .hero-afterimage.live{ opacity:1; -webkit-text-stroke: 1px rgba(214,255,61,0.20); transform: translateY(3.4vh); }
+  @media (max-width: 639.98px){
+    /* On narrow screens the echo is carried by the acid stroke alone — no transform,
+       so nothing competes with the headline on a small canvas. */
+    .hero-afterimage, .hero-afterimage.live{ transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-afterimage{ opacity:.5; -webkit-text-stroke: 1px rgba(214,255,61,0.16); transform: translateY(3.4vh); }
+  }
+
+  /* Hero echo ghost (cursor-following ampersand) — now also gets a passive
+     static presence after the headline settles, so it is never invisible. */
+  .hero-ghost{
+    position: fixed; top:0; left:0; pointer-events:none; z-index:30;
+    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
+    font-optical-sizing:auto; font-variation-settings:'opsz' 144;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(214,255,61,0.0);
+    opacity: 0; transition: -webkit-text-stroke-color .8s ease, opacity .8s ease;
+    will-change: transform, opacity;
+  }
+  .hero-ghost.live{ -webkit-text-stroke: 1px rgba(214,255,61,0.22); opacity:1; }
+  /* passive baseline: faintly present even without cursor motion */
+  .hero-ghost.passive{ opacity:1; -webkit-text-stroke: 1px rgba(214,255,61,0.12); }
+  @media (prefers-reduced-motion: reduce){
+    .hero-ghost{ opacity:.5; -webkit-text-stroke: 1px rgba(214,255,61,0.12); }
+  }
+
+  /* Magnetic CTA — dot softened to a heartbeat (amplitude 7px, 3.6s) */
+  .magnet{ position:relative; display:inline-flex; align-items:center; gap:0.85rem; will-change:transform; transition: transform .35s cubic-bezier(.16,.84,.3,1); }
+  .magnet .dot{ width:11px; height:11px; border-radius:999px; background:var(--acid); box-shadow:0 0 0 0 rgba(214,255,61,.5); animation: pulse 3.6s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(214,255,61,.4);} 50%{ box-shadow:0 0 0 7px rgba(214,255,61,0);} }
+  .magnet .arrow{ transition: transform .4s cubic-bezier(.16,.84,.3,1); }
+  .magnet:hover .arrow, .magnet:focus-visible .arrow{ transform: translateX(6px); }
+
+  /* Cursor follow blob — ADDITIVE accent; native cursor always retained (a11y affordance) */
+  .cursor-blob{
+    position:fixed; top:0; left:0; width:16px; height:16px; border-radius:999px;
+    background:var(--acid); pointer-events:none; z-index:90; mix-blend-mode:difference;
+    transform: translate(-50%,-50%);
+    transition: width .25s ease, height .25s ease, opacity .25s ease;
+    opacity:0;
+  }
+  html.has-cursor .cursor-blob.active{ opacity:1; }
+  html.has-cursor .cursor-blob.big{ width:58px; height:58px; }
+  /* NOTE: native cursor is intentionally NOT hidden. The blob layers on top as an accent.
+     Links/buttons keep their native pointer; selectable text keeps the caret. */
+  @media (hover:none){ .cursor-blob{ display:none; } }
+
+  /* Work tiles */
+  .tile{
+    position:relative; overflow:hidden; border:1px solid rgba(242,239,233,.08);
+    background:var(--panel); will-change:transform;
+    transition: transform .5s cubic-bezier(.16,.84,.3,1), border-color .4s ease;
+  }
+  .tile img{
+    width:100%; height:100%; object-fit:cover;
+    transition: transform 1.1s cubic-bezier(.16,.84,.3,1), filter .6s ease;
+    filter: grayscale(40%) contrast(1.05) brightness(.86);
+  }
+  .tile:hover img, .tile:focus-within img{ transform: scale(1.05); filter: grayscale(0%) contrast(1.08) brightness(1); }
+  .tile:hover, .tile:focus-within{ border-color: rgba(214,255,61,.35); }
+  .tile .panel-reveal{
+    position:absolute; inset:auto 0 0 0; padding:1.4rem 1.5rem 1.5rem;
+    background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,.82) 40%, rgba(10,10,10,.95) 100%);
+    backdrop-filter: blur(2px);
+    transform: translateY(101%); transition: transform .55s cubic-bezier(.16,.84,.3,1);
+  }
+  .tile:hover .panel-reveal, .tile:focus-within .panel-reveal{ transform: translateY(0); }
+  .tile .name-overlay{ transition: transform .5s cubic-bezier(.16,.84,.3,1), opacity .4s ease; }
+  .tile:hover .name-overlay, .tile:focus-within .name-overlay{ transform: translateY(-6px); }
+  .tile .tile-corner{
+    position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:999px;
+    border:1px solid rgba(242,239,233,.2); display:grid; place-items:center; color:var(--bone);
+    background: rgba(10,10,10,.4); backdrop-filter: blur(6px);
+    transition: transform .5s cubic-bezier(.16,.84,.3,1), background .4s ease, color .4s ease, border-color .4s ease;
+  }
+  .tile:hover .tile-corner, .tile:focus-within .tile-corner{ transform: rotate(-45deg); background: var(--acid); color: var(--ink); border-color: var(--acid); }
+  /* Persistent but subtle "view case" affordance — visible to keyboard/focus, faint on hover */
+  .tile .view-hint{ opacity:0; transition: opacity .4s ease; }
+  .tile:focus-within .view-hint{ opacity:.85; }
+
+  /* Services manifesto rows — now genuinely toggleable (click/Enter/Space pins open) */
+  .svc-row{
+    position:relative; border-top:1px solid rgba(242,239,233,.12);
+    display:block; width:100%; text-align:left; background:transparent; color:inherit;
+  }
+  .svc-row:last-child{ border-bottom:1px solid rgba(242,239,233,.12); }
+  /* Fill softened per 60-30-10: BONE fill (not solid acid) with a thin ACID
+     left-edge swipe bar — reserve the loud acid for the surgical signal. */
+  .svc-fill{
+    position:absolute; inset:0; background:var(--bone);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform .5s cubic-bezier(.7,0,.2,1); z-index:0;
+  }
+  .svc-edge{
+    position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--acid);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform .45s cubic-bezier(.7,0,.2,1); z-index:1;
+  }
+  /* hover = preview only; .open = pinned (keyboard/touch can keep it open) */
+  .svc-row:hover .svc-fill, .svc-row:focus-visible .svc-fill, .svc-row.open .svc-fill{ transform: scaleY(1); transform-origin: top; }
+  .svc-row:hover .svc-edge, .svc-row:focus-visible .svc-edge, .svc-row.open .svc-edge{ transform: scaleY(1); transform-origin: top; }
+  .svc-row > *{ position:relative; z-index:2; transition: color .35s ease; }
+  /* Ink text reads against the bone fill */
+  .svc-row:hover .svc-name, .svc-row:hover .svc-num, .svc-row:hover .svc-stmt,
+  .svc-row:focus-visible .svc-name, .svc-row:focus-visible .svc-num, .svc-row:focus-visible .svc-stmt,
+  .svc-row.open .svc-name, .svc-row.open .svc-num, .svc-row.open .svc-stmt{ color:var(--ink); }
+  .svc-detail{ max-height:0; opacity:0; overflow:hidden; transition: max-height .5s ease, opacity .4s ease, margin-top .4s ease; }
+  .svc-row:hover .svc-detail, .svc-row:focus-visible .svc-detail, .svc-row.open .svc-detail{ max-height:140px; opacity:1; margin-top:.6rem; }
+  .svc-row:hover .svc-name, .svc-row:focus-visible .svc-name, .svc-row.open .svc-name{ transform: translateX(0.5rem); }
+
+  /* Marquee — now oversized per the brief: object filled at step-6, echo outline at step-7 */
+  .marquee{ display:flex; overflow:hidden; user-select:none; gap:3rem; }
+  .marquee-track{ display:flex; flex-shrink:0; align-items:center; gap:3rem; padding-right:3rem; animation: scrollX 38s linear infinite; }
+  .marquee.reverse .marquee-track{ animation-direction: reverse; animation-duration: 52s; }
+  .marquee:hover .marquee-track, .marquee:focus-within .marquee-track{ animation-play-state: paused; }
+  @keyframes scrollX{ from{ transform: translateX(0);} to{ transform: translateX(-100%);} }
+  .outline-type{ -webkit-text-stroke: 1.3px var(--bone); color: transparent; }
+
+  /* Awards — staggered reveal on the X-axis (varied motion language) */
+  .award-cell{ border:1px solid rgba(242,239,233,.1); transition: border-color .35s ease, background .35s ease; }
+  .award-cell:hover, .award-cell:focus-within{ border-color: var(--acid); background: rgba(214,255,61,.04); }
+
+  /* ════════════ MOTION LANGUAGE (varied per section, tied to object/echo) ════════════ */
+  /* DEFAULT reveal still exists for headers/intros but with shorter travel + duration */
+  .reveal{ opacity:0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.16,.84,.3,1), transform .7s cubic-bezier(.16,.84,.3,1); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* WORK tiles — scale-fade up from a tight crop (varied motion language) */
+  .reveal-scale{ opacity:0; transform: scale(.94); transform-origin: center bottom; transition: opacity .8s cubic-bezier(.16,.84,.3,1), transform .8s cubic-bezier(.16,.84,.3,1); }
+  .reveal-scale.in{ opacity:1; transform: scale(1); }
+
+  /* AWARDS — staggered slide-in on the X-axis */
+  .reveal-stagger > *{ opacity:0; transform: translateX(-22px); transition: opacity .6s cubic-bezier(.16,.84,.3,1), transform .6s cubic-bezier(.16,.84,.3,1); }
+  .reveal-stagger.in > *:nth-child(1){ transition-delay: 0ms; }
+  .reveal-stagger.in > *:nth-child(2){ transition-delay: 80ms; }
+  .reveal-stagger.in > *:nth-child(3){ transition-delay: 160ms; }
+  .reveal-stagger.in > *:nth-child(4){ transition-delay: 240ms; }
+  .reveal-stagger.in > *:nth-child(5){ transition-delay: 320ms; }
+  .reveal-stagger.in > *:nth-child(6){ transition-delay: 400ms; }
+  .reveal-stagger.in > *{ opacity:1; transform:none; }
+
+  /* NOTE: the #studio manifesto / void section has NO entrance motion — it is the breath
+     that contrasts the kinetic hero. (No .reveal class applied there.) */
+
+  /* Nav links */
+  .nav-link{ position:relative; }
+  .nav-link::after{ content:""; position:absolute; left:0; bottom:-4px; height:2px; width:100%; background:var(--acid); transform: scaleX(0); transform-origin:right; transition: transform .4s cubic-bezier(.7,0,.2,1); }
+  .nav-link:hover::after, .nav-link:focus-visible::after{ transform: scaleX(1); }
+
+  /* Scroll cue */
+  .scroll-cue{ width:1px; height:54px; background: linear-gradient(180deg, transparent, var(--bone) 50%, transparent); position:relative; overflow:hidden; }
+  .scroll-cue::after{ content:""; position:absolute; top:-54px; left:0; width:1px; height:54px; background:var(--acid); animation: cueRun 2.2s ease-in-out infinite; }
+  @keyframes cueRun{ 0%{ top:-54px;} 60%,100%{ top:100%;} }
+
+  /* Visually-hidden — for screen-reader-only content (accessible client list, labels) */
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  /* Skip-to-content link — visible on focus only (WCAG 2.4.1) */
+  .skip-link{
+    position:fixed; top:0; left:0; z-index:100; transform:translateY(-120%);
+    padding:.85rem 1.25rem; background:var(--acid); color:var(--ink);
+    font-family:'JetBrains Mono', monospace; font-size:var(--mono-sm);
+    letter-spacing:.16em; text-transform:uppercase; font-weight:600;
+    transition: transform .25s cubic-bezier(.16,.84,.3,1);
+  }
+  .skip-link:focus{ transform:translateY(0); outline:2px solid var(--bone); outline-offset:2px; }
+
+  /* Focus styles */
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--acid); outline-offset:3px; border-radius:2px; }
+
+  /* Forced-colors (Windows High Contrast) — keep borders/edges legible */
+  @media (forced-colors: active){
+    .tile, .award-cell, .svc-row{ border:1px solid CanvasText; }
+    .tile .tile-corner{ border:1px solid CanvasText; }
+    .accent-fc{ forced-color-adjust: none; }
+  }
+
+  /* Footer glyph */
+  .glyph-massive{ font-family:'Fraunces', serif; font-style:italic; font-weight:400; font-optical-sizing:auto; font-variation-settings:'opsz' 144; line-height:.7; letter-spacing:-.06em; }
+
+  /* Mobile nav drawer */
+  #mobileMenu{ transition: opacity .3s ease, transform .35s cubic-bezier(.16,.84,.3,1); }
+  #mobileMenu.closed{ opacity:0; transform: translateY(-12px); pointer-events:none; }
+
+  /* Mobile: tie '&' to ECHO so the wordmark never breaks; clean edges, no insets */
+  @media (max-width: 639.98px){
+    .hero-row-2{ flex-wrap: nowrap; white-space: nowrap; }
+    /* mx-3 insets removed below sm via this override for tile edges */
+    .tile-inset{ margin-left:0 !important; margin-right:0 !important; }
+  }
+
+  /* prefers-reduced-motion — neutralize everything, keep content fully visible */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+    .hero-word, .hero-echo-word{ transform:none; opacity:1; filter:none; }
+    .hero-echo-word{ opacity:.6; -webkit-text-stroke: 1px rgba(242,239,233,0.4); color: transparent; }
+    .reveal,.reveal-scale,.reveal-stagger > *{ opacity:1; transform:none; }
+    /* Marquees: stop motion AND reveal all names in a static wrap so nothing is clipped */
+    .marquee{ overflow: visible; flex-wrap: wrap; gap:1.5rem 2.5rem; }
+    .marquee-track{ animation:none; flex-wrap: wrap; padding:0; gap:1.5rem 2.5rem; }
+  }
+</style>
+
+<!-- No-JS fallback: force hero headline + echo fully visible if JS never arms the reveal -->
+<noscript><style>
+  .hero-word, .hero-echo-word{ opacity:1 !important; transform:none !important; filter:none !important; }
+  .reveal, .reveal-scale, .reveal-stagger > *{ opacity:1 !important; transform:none !important; }
+</style></noscript>
+</head>
+
+<body class="bg-ink text-bone antialiased">
+
+<a href="#top" class="skip-link">Skip to content</a>
+
+<div class="cursor-blob" id="cursorBlob" aria-hidden="true"></div>
+<div class="hero-ghost" id="heroGhost" aria-hidden="true">&amp;</div>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<header class="fixed top-0 inset-x-0 z-50" id="nav">
+  <div class="container-edge flex items-center justify-between py-5">
+    <a href="#top" class="font-display font-extrabold tracking-tight text-bone text-[clamp(1.05rem,0.95rem+0.5vw,1.5rem)] leading-none flex items-baseline gap-[0.15em]" aria-label="OBJECT & ECHO — home">
+      OBJECT<span class="amp amp-acid text-[1.15em] -mx-[0.04em]">&amp;</span>ECHO
+    </a>
+    <nav class="hidden md:flex items-center gap-9 font-mono text-[var(--mono-sm)] uppercase tracking-[0.16em]" aria-label="Primary">
+      <a href="#work"     class="nav-link text-bone/80 hover:text-bone">Work</a>
+      <a href="#services" class="nav-link text-bone/80 hover:text-bone">Services</a>
+      <a href="#studio"   class="nav-link text-bone/80 hover:text-bone">Studio</a>
+      <a href="#contact"  class="nav-link text-bone/80 hover:text-bone">Contact</a>
+    </nav>
+    <div class="flex items-center gap-4 font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-smoke">
+      <span class="hidden sm:inline"><span id="navIndex" class="text-bone" aria-live="polite">01</span> / 07</span>
+      <a href="#contact" class="hidden md:inline-flex items-center gap-2 px-4 py-2 border border-bone/20 hover:border-acid hover:text-acid transition-colors">
+        Start a project
+      </a>
+      <button id="menuBtn" class="md:hidden text-bone p-1 -mr-1" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h18M3 17h18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- mobile drawer -->
+  <div id="mobileMenu" class="md:hidden closed border-t border-bone/10 bg-ink/97 backdrop-blur-lg">
+    <nav class="container-edge py-6 flex flex-col gap-5" aria-label="Mobile">
+      <a href="#work"     class="font-display font-black text-bone text-3xl display-tight">Work</a>
+      <a href="#services" class="font-display font-black text-bone text-3xl display-tight">Services</a>
+      <a href="#studio"   class="font-display font-black text-bone text-3xl display-tight">Studio</a>
+      <a href="#contact"  class="font-display font-black text-acid text-3xl display-tight">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top" tabindex="-1"><!-- tabindex lets the skip-link land focus here -->
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="relative min-h-[100svh] flex flex-col justify-between pt-32 pb-10 overflow-hidden" data-index="01">
+
+  <!-- faint index meta -->
+  <div class="container-edge flex items-start justify-between pointer-events-none">
+    <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-smoke leading-relaxed">
+      <div>Studio Index</div>
+      <div class="text-bone/75">EST. MMXIX</div>
+    </div>
+    <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-smoke text-right leading-relaxed hidden sm:block">
+      <div>Brooklyn / Lisbon</div>
+      <div class="text-bone/75">Art-direction studio</div>
+    </div>
+  </div>
+
+  <!-- kinetic headline with trailing afterimage (echo as a spatial object) -->
+  <div class="container-edge relative">
+    <!-- HERO AFTERIMAGE: a displaced, acid-outlined Fraunces echo of the wordmark,
+         positioned behind the headline so the duality is FELT in one glance. -->
+    <div class="hero-afterimage select-none" id="heroAfterimage" aria-hidden="true" style="font-size: var(--step-hero); line-height:0.86; letter-spacing:-0.04em;">
+      <span class="block">OBJECT</span>
+      <span class="block">&amp;ECHO</span>
+    </div>
+
+    <div class="hero-drift relative z-10">
+      <h1 class="font-display font-black display-tight select-none" style="font-size: var(--step-hero);" aria-label="OBJECT & ECHO">
+        <span class="block overflow-hidden">
+          <span class="hero-word" style="animation-delay:.05s">OBJECT</span>
+        </span>
+        <span class="block overflow-hidden -mt-[0.04em] flex items-baseline flex-wrap hero-row-2" style="gap:0.16em;">
+          <!-- non-breaking tie so & and ECHO never split on the narrowest screens -->
+          <span class="hero-word amp amp-acid" style="font-size:1.04em; animation-delay:.12s">&amp;</span><span class="hero-word" style="animation-delay:.19s">ECHO</span>
+        </span>
+      </h1>
+
+      <!-- echoed manifesto — now STROKED Fraunces at bone/40: a true ghost afterimage,
+           dropped ~2 steps in scale so the scale gap from the object is felt. -->
+      <p class="echo-display echo-tight mt-6 sm:mt-8 max-w-[44ch] sm:max-w-[52ch]" style="font-size: var(--step-0);">
+        <span class="hero-echo-word" style="animation-delay:.42s">We&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:.5s">build&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:.58s">the&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:.66s">object.&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:.78s">Then&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:.86s">we&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:.94s">chase&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:1.02s">its&nbsp;</span>
+        <span class="hero-echo-word" style="animation-delay:1.1s">echo.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- bottom row: CTA + scroll cue -->
+  <div class="container-edge flex items-end justify-between gap-6 flex-wrap">
+    <div>
+      <p class="font-mono text-[var(--mono-sm)] uppercase tracking-[0.2em] text-smoke mb-4">Selected work, 2019—2026</p>
+      <a href="#work" class="magnet font-display font-bold uppercase tracking-[0.02em] text-[clamp(1.4rem,1.1rem+1.4vw,2.2rem)] display-tight text-bone" data-magnet aria-label="View selected work">
+        <span class="dot" aria-hidden="true"></span>
+        View work
+        <span class="arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
+    <div class="hidden sm:flex flex-col items-center gap-3">
+      <div class="scroll-cue" aria-hidden="true"></div>
+      <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.2em] text-smoke">Scroll</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SELECTED WORK ═══════════════ -->
+<section id="work" class="py-[var(--s-9)] relative" data-index="02">
+  <div class="container-edge">
+
+    <div class="flex items-end justify-between flex-wrap gap-6 mb-12 sm:mb-16 reveal">
+      <div>
+        <div class="index-label mb-4">02 / Selected Work</div>
+        <h2 class="font-display font-black display-tight" style="font-size: var(--step-4);">
+          Six objects.<br>
+          <span class="echo-body font-normal text-smoke">and the resonance they left.</span>
+        </h2>
+      </div>
+      <p class="echo-body text-smoke max-w-[34ch] text-[var(--step-1)] leading-snug">
+        A studio's portfolio is its loudest argument. These are the ones still ringing.
+      </p>
+    </div>
+
+    <!-- ASYMMETRIC GRID — genuine composition: one full-bleed tile (edge-to-edge of the
+         viewport, breaking the container), one genuine void (deliberately empty cell),
+         and one tile overlapping its neighbor via negative margin. Inset/offset reserved
+         for >= sm where the asymmetric intent reads; mobile keeps clean container edges. -->
+    <div class="grid grid-cols-12 gap-3 sm:gap-4 lg:gap-5">
+
+      <!-- Tile 1: 8 cols, tall -->
+      <a href="#work" class="tile group col-span-12 lg:col-span-8 aspect-[16/10] lg:aspect-[16/9] reveal-scale" data-magnet aria-label="Halcyon — rebrand for an atmospheric sound technology company. View case study.">
+        <img src="https://picsum.photos/seed/echo-halcyon-aurora/1600/900" alt="Halcyon — copper-toned identity for an atmospheric sound company, shown on a device and launch poster" loading="lazy">
+        <span class="tile-corner" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <div class="absolute top-5 left-5 name-overlay">
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.2em] text-smoke">▸ 01</span>
+        </div>
+        <div class="absolute bottom-5 left-5 right-5 name-overlay flex items-end justify-between gap-4">
+          <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-4);">Halcyon</h3>
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-bone/65 mb-2">Sound · 2025</span>
+        </div>
+        <div class="panel-reveal">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-bone/70 mb-2">
+            <span>Sound Tech</span><span>·</span><span>2025</span><span>·</span><span>Identity</span><span>·</span><span>Site</span><span>·</span><span>Motion</span>
+          </div>
+          <p class="echo-body text-bone/90 text-[var(--step-1)] leading-snug">A rebrand for an atmospheric-sound company. 3× pre-orders, an Awwwards SOTD, and a launch film that broke the fourth wall.</p>
+          <span class="view-hint inline-block mt-3 font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-acid">View case ↗</span>
+        </div>
+      </a>
+
+      <!-- Tile 2: 4 cols, offset -->
+      <a href="#work" class="tile group col-span-12 sm:col-span-6 lg:col-span-4 lg:mt-16 aspect-[4/5] lg:aspect-[16/9] reveal-scale" data-magnet aria-label="Meridian — identity system for a contemporary art archive. View case study.">
+        <img src="https://picsum.photos/seed/echo-meridian-archive/900/1100" alt="Meridian — identity system for a contemporary art archive, season re-compositions on a gallery wall" loading="lazy">
+        <span class="tile-corner" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <div class="absolute top-5 left-5 name-overlay">
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.2em] text-smoke">▸ 02</span>
+        </div>
+        <div class="absolute bottom-5 left-5 right-5 name-overlay">
+          <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-3);">Meridian</h3>
+        </div>
+        <div class="panel-reveal">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-bone/70 mb-2">
+            <span>Art Archive</span><span>·</span><span>2024</span><span>·</span><span>Identity</span><span>·</span><span>Print</span>
+          </div>
+          <p class="echo-body text-bone/90 text-[var(--step-1)] leading-snug">A living identity for a contemporary archive — a wordmark that re-composes with every season.</p>
+          <span class="view-hint inline-block mt-3 font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-acid">View case ↗</span>
+        </div>
+      </a>
+
+      <!-- Tile 3: 5 cols, offset start — inset on >=sm only (tile-inset cleared below sm) -->
+      <a href="#work" class="tile group col-span-12 sm:col-span-7 lg:col-span-5 lg:col-start-2 aspect-[5/4] reveal-scale tile-inset" style="--inset:1rem;" data-magnet aria-label="Nocturne — packaging and world-building for a spirits label. View case study.">
+        <img src="https://picsum.photos/seed/echo-nocturne-bottle/1200/960" alt="Nocturne — nocturnal-city world-building for a spirits label, bottle and map system" loading="lazy">
+        <span class="tile-corner" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <div class="absolute top-5 left-5 name-overlay">
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.2em] text-smoke">▸ 03</span>
+        </div>
+        <div class="absolute bottom-5 left-5 right-5 name-overlay">
+          <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-3);">Nocturne</h3>
+        </div>
+        <div class="panel-reveal">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-bone/70 mb-2">
+            <span>Spirits</span><span>·</span><span>2024</span><span>·</span><span>Packaging</span><span>·</span><span>World-build</span>
+          </div>
+          <p class="echo-body text-bone/90 text-[var(--step-1)] leading-snug">A spirits label built as a nocturnal city. Distribution in 14 markets inside a year.</p>
+          <span class="view-hint inline-block mt-3 font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-acid">View case ↗</span>
+        </div>
+      </a>
+
+      <!-- VOID: a deliberately empty grid cell — genuine negative space / collision,
+           not a timid margin offset. Holds a tiny index marker so it reads as composition,
+           not a layout mistake. Hidden on mobile (clean single column there). -->
+      <div class="hidden sm:flex col-span-12 sm:col-span-5 lg:col-span-5 items-start justify-end pt-6" aria-hidden="true">
+        <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.22em] text-smoke/60 text-right leading-relaxed max-w-[18ch]">
+          ─── void<br>
+          the space an<br>object makes
+        </div>
+      </div>
+
+      <!-- Tile 4: OVERLAPS its neighbor (Tile 3) via negative left margin on lg,
+           so the collision is literal, not a 16px nudge. -->
+      <a href="#work" class="tile group col-span-12 sm:col-span-5 lg:col-span-5 lg:-ml-8 xl:-ml-12 aspect-[5/4] sm:mt-0 mt-4 reveal-scale z-10" data-magnet aria-label="Vector Fields — generative campaign for a climate fund. View case study.">
+        <img src="https://picsum.photos/seed/echo-vector-fields/1100/900" alt="Vector Fields — generative climate-fund campaign producing a unique poster per donor" loading="lazy">
+        <span class="tile-corner" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <div class="absolute top-5 left-5 name-overlay">
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.2em] text-smoke">▸ 04</span>
+        </div>
+        <div class="absolute bottom-5 left-5 right-5 name-overlay">
+          <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-3);">Vector Fields</h3>
+        </div>
+        <div class="panel-reveal">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-bone/70 mb-2">
+            <span>Climate Fund</span><span>·</span><span>2023</span><span>·</span><span>Campaign</span><span>·</span><span>Generative</span>
+          </div>
+          <p class="echo-body text-bone/90 text-[var(--step-1)] leading-snug">A generative campaign that drew a different poster for every donor. $42M raised.</p>
+          <span class="view-hint inline-block mt-3 font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-acid">View case ↗</span>
+        </div>
+      </a>
+
+      <!-- Tile 5: 4 cols -->
+      <a href="#work" class="tile group col-span-12 sm:col-span-6 lg:col-span-4 aspect-[4/5] reveal-scale" data-magnet aria-label="Static Press — editorial system for an independent publisher. View case study.">
+        <img src="https://picsum.photos/seed/echo-static-press/900/1100" alt="Static Press — editorial system for an independent publisher, modular grid and type spec" loading="lazy">
+        <span class="tile-corner" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <div class="absolute top-5 left-5 name-overlay">
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.2em] text-smoke">▸ 05</span>
+        </div>
+        <div class="absolute bottom-5 left-5 right-5 name-overlay">
+          <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-3);">Static Press</h3>
+        </div>
+        <div class="panel-reveal">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-bone/70 mb-2">
+            <span>Publisher</span><span>·</span><span>2023</span><span>·</span><span>Editorial</span><span>·</span><span>Web</span>
+          </div>
+          <p class="echo-body text-bone/90 text-[var(--step-1)] leading-snug">An editorial system for an independent press. Subscription lift of 2.4× in nine months.</p>
+          <span class="view-hint inline-block mt-3 font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-acid">View case ↗</span>
+        </div>
+      </a>
+
+      <!-- Tile 6: FULL-BLEED — edge-to-edge of the viewport, breaking the container.
+           Achieved by negative margins equal to the gutter clamp. -->
+      <a href="#work" class="tile group col-span-12 aspect-[16/10] reveal-scale" style="margin-left:calc(-1 * var(--gutter)); margin-right:calc(-1 * var(--gutter)); width:calc(100% + 2 * var(--gutter));" data-magnet aria-label="Orbital — launch experience for a satellite internet challenger. View case study.">
+        <img src="https://picsum.photos/seed/echo-orbital-launch/2000/1250" alt="Orbital — launch experience for a satellite-internet challenger, countdown interface and film still" loading="lazy">
+        <span class="tile-corner" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <div class="absolute top-5 left-5 sm:left-[var(--gutter)] name-overlay">
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.2em] text-smoke">▸ 06</span>
+        </div>
+        <div class="absolute bottom-5 left-5 right-5 sm:left-[var(--gutter)] sm:right-[var(--gutter)] name-overlay flex items-end justify-between gap-4">
+          <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-4);">Orbital</h3>
+          <span class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-bone/65 mb-2">Aerospace · 2022</span>
+        </div>
+        <div class="panel-reveal">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-bone/70 mb-2">
+            <span>Aerospace</span><span>·</span><span>2022</span><span>·</span><span>Launch</span><span>·</span><span>Site</span><span>·</span><span>Film</span>
+          </div>
+          <p class="echo-body text-bone/90 text-[var(--step-1)] leading-snug">A launch experience for a satellite-internet challenger. 11M visits in week one; FWA Site of the Day.</p>
+          <span class="view-hint inline-block mt-3 font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-acid">View case ↗</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SERVICES / EXPERTISE ═══════════════ -->
+<section id="services" class="py-[var(--s-9)] border-t border-bone/10" data-index="03">
+  <div class="container-edge">
+    <div class="flex items-end justify-between flex-wrap gap-6 mb-12 sm:mb-16 reveal">
+      <div>
+        <div class="index-label mb-4">03 / Expertise</div>
+        <h2 class="font-display font-black display-tight" style="font-size: var(--step-4);">
+          Four disciplines.<br>
+          <span class="echo-body font-normal text-smoke">one obsession.</span>
+        </h2>
+      </div>
+      <p class="echo-body text-smoke max-w-[34ch] text-[var(--step-1)] leading-snug">
+        We don't sell deliverables. We sell the conviction that your brand can be impossible to ignore.
+      </p>
+    </div>
+
+    <!-- Manifesto list — real toggle buttons: click/Enter/Space pins open, hover is a preview only.
+         The acid swipe IS the reveal language here (no translate-fade on these rows). -->
+    <ul role="list">
+      <li>
+        <button type="button" class="svc-row group py-7 sm:py-9" tabindex="0" aria-expanded="false" aria-controls="svc-detail-1">
+          <div class="svc-fill" aria-hidden="true"></div>
+          <div class="svc-edge" aria-hidden="true"></div>
+          <div class="grid grid-cols-12 items-baseline gap-4 px-1 sm:px-4">
+            <span class="svc-num col-span-2 sm:col-span-1 font-mono text-[var(--mono-sm)] tracking-[0.16em] text-smoke tnum">01</span>
+            <div class="col-span-10 sm:col-span-11">
+              <h3 class="svc-name font-display font-black display-tight text-bone inline-block transition-transform" style="font-size: var(--step-4);">Brand</h3>
+              <p id="svc-detail-1" class="svc-detail echo-body text-[var(--step-2)] leading-snug max-w-[52ch]">
+                Identity systems, naming, voice. The object we hand you — and the grammar that lets it echo for a decade.
+              </p>
+            </div>
+          </div>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="svc-row group py-7 sm:py-9" tabindex="0" aria-expanded="false" aria-controls="svc-detail-2">
+          <div class="svc-fill" aria-hidden="true"></div>
+          <div class="svc-edge" aria-hidden="true"></div>
+          <div class="grid grid-cols-12 items-baseline gap-4 px-1 sm:px-4">
+            <span class="svc-num col-span-2 sm:col-span-1 font-mono text-[var(--mono-sm)] tracking-[0.16em] text-smoke tnum">02</span>
+            <div class="col-span-10 sm:col-span-11">
+              <h3 class="svc-name font-display font-black display-tight text-bone inline-block transition-transform" style="font-size: var(--step-4);">Digital</h3>
+              <p id="svc-detail-2" class="svc-detail echo-body text-[var(--step-2)] leading-snug max-w-[52ch]">
+                Sites, products, interactive worlds. Built to win awards — and to convert the people who judge them.
+              </p>
+            </div>
+          </div>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="svc-row group py-7 sm:py-9" tabindex="0" aria-expanded="false" aria-controls="svc-detail-3">
+          <div class="svc-fill" aria-hidden="true"></div>
+          <div class="svc-edge" aria-hidden="true"></div>
+          <div class="grid grid-cols-12 items-baseline gap-4 px-1 sm:px-4">
+            <span class="svc-num col-span-2 sm:col-span-1 font-mono text-[var(--mono-sm)] tracking-[0.16em] text-smoke tnum">03</span>
+            <div class="col-span-10 sm:col-span-11">
+              <h3 class="svc-name font-display font-black display-tight text-bone inline-block transition-transform" style="font-size: var(--step-4);">Motion</h3>
+              <p id="svc-detail-3" class="svc-detail echo-body text-[var(--step-2)] leading-snug max-w-[52ch]">
+                Film, kinetic identity, sound. The afterimage — what stays in the room after the screen goes dark.
+              </p>
+            </div>
+          </div>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="svc-row group py-7 sm:py-9" tabindex="0" aria-expanded="false" aria-controls="svc-detail-4">
+          <div class="svc-fill" aria-hidden="true"></div>
+          <div class="svc-edge" aria-hidden="true"></div>
+          <div class="grid grid-cols-12 items-baseline gap-4 px-1 sm:px-4">
+            <span class="svc-num col-span-2 sm:col-span-1 font-mono text-[var(--mono-sm)] tracking-[0.16em] text-smoke tnum">04</span>
+            <div class="col-span-10 sm:col-span-11">
+              <h3 class="svc-name font-display font-black display-tight text-bone inline-block transition-transform" style="font-size: var(--step-4);">Strategy</h3>
+              <p id="svc-detail-4" class="svc-detail echo-body text-[var(--step-2)] leading-snug max-w-[52ch]">
+                Positioning, narrative, cultural timing. The decision about which object to build before anyone draws a line.
+              </p>
+            </div>
+          </div>
+        </button>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ MANIFESTO / ABOUT — the void / breath ═══════════════
+     NOTE: deliberately NO .reveal / entrance motion here. This section is the
+     motion-silence that contrasts the kinetic hero and the swipey services. -->
+<section id="studio" class="pt-[var(--s-9)] pb-[var(--s-10)]" data-index="04">
+  <div class="container-edge">
+    <div class="grid grid-cols-12 gap-6 lg:gap-12 items-start">
+
+      <!-- Left: oversized editorial statement — reduced density, more breath -->
+      <div class="col-span-12 lg:col-span-7 lg:col-start-2">
+        <div class="index-label mb-10">04 / Studio</div>
+        <h2 class="font-display font-black display-tight text-bone" style="font-size: var(--step-5);">
+          We make <span class="echo-display font-normal text-acid">objects.</span><br>
+          Then we make sure<br>
+          they <span class="echo-display font-normal text-smoke">echo.</span>
+        </h2>
+
+        <!-- ONE paragraph — the void lets the statement breathe -->
+        <p class="echo-body text-bone/85 text-[var(--step-1)] leading-relaxed mt-12 max-w-[46ch]">
+          OBJECT &amp; ECHO is a nine-person studio in Brooklyn and Lisbon, founded on a small, stubborn idea: art direction is not decoration — it is the architecture of attention. We are paid for the object. We work for the echo.
+        </p>
+      </div>
+
+      <!-- Right: editorial portrait, more negative space, pushed and breathing -->
+      <div class="col-span-12 lg:col-span-3 mt-10 lg:mt-32 lg:ml-4">
+        <figure class="tile aspect-[4/5] border-bone/10" data-magnet aria-label="The studio at work — editorial still">
+          <img src="https://picsum.photos/seed/echo-studio-portrait/800/1000" alt="The OBJECT & ECHO studio at work — a long table, art-direction boards, afternoon light" loading="lazy" class="!filter-none">
+        </figure>
+        <figcaption class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.18em] text-smoke mt-3 leading-relaxed">
+          Fig. 01 — Studio, Brooklyn.<br>Gowanus, fourth floor, north light.
+        </figcaption>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MARQUEE CLIENTS — oversized object/echo ═══════════════ -->
+<section id="clients" class="py-[var(--s-8)] border-y border-bone/10 overflow-hidden" data-index="05" aria-label="Selected clients">
+  <div class="container-edge mb-10 reveal">
+    <div class="index-label">05 / In good company</div>
+  </div>
+
+  <!-- Accessible client roster (the marquees above are aria-hidden decoration) -->
+  <h2 class="sr-only">Selected clients</h2>
+  <ul class="sr-only" role="list">
+    <li>Neon Current</li>
+    <li>Vesper Museum</li>
+    <li>Holdfast Bank</li>
+    <li>Maison Lior</li>
+    <li>Groundswell Foundation</li>
+    <li>Atlas Type</li>
+    <li>Northwind Records</li>
+    <li>Coda Health</li>
+    <li>Brunel Aviation</li>
+    <li>Saffron Press</li>
+    <li>Salt &amp; Smoke</li>
+  </ul>
+
+  <!-- FILLED marquee (object) at step-6 — genuine client brands, NOT portfolio project names -->
+  <div class="marquee py-2">
+    <div class="marquee-track" aria-hidden="true">
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Neon Current</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Vesper Museum</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Holdfast Bank</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Maison Lior</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Groundswell Foundation</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Atlas&nbsp;Type</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+    </div>
+    <div class="marquee-track" aria-hidden="true">
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Neon Current</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Vesper Museum</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Holdfast Bank</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Maison Lior</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Groundswell Foundation</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+      <span class="font-display font-black display-tight whitespace-nowrap text-bone" style="font-size: var(--step-6);">Atlas&nbsp;Type</span><span class="amp text-bone/40 text-[1em]">&amp;</span>
+    </div>
+  </div>
+
+  <!-- OUTLINE marquee (echo) at step-7 — second distinct client set in outline, counter-direction -->
+  <div class="marquee reverse py-2 mt-1">
+    <div class="marquee-track" aria-hidden="true">
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Northwind Records</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Coda Health</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Brunel Aviation</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Saffron Press</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Salt &amp; Smoke</span>
+    </div>
+    <div class="marquee-track" aria-hidden="true">
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Northwind Records</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Coda Health</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Brunel Aviation</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Saffron Press</span>
+      <span class="outline-type font-display font-black display-tight whitespace-nowrap" style="font-size: var(--step-7);">Salt &amp; Smoke</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ AWARDS ROW ═══════════════ -->
+<section id="awards" class="py-[var(--s-9)]" data-index="06" aria-label="Awards">
+  <div class="container-edge">
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-10 reveal">
+      <div class="index-label">06 / Recognition</div>
+      <p class="echo-body text-smoke text-[var(--step-0)]">Fourteen honors. Two we keep on the shelf; the rest are in the work.</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 reveal-stagger">
+      <div class="award-cell p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-smoke">Awwwards</div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A968C" stroke-width="1.5" aria-hidden="true"><path d="M12 2l2.4 5.8L20 9l-4.5 4 1.3 6L12 16l-4.8 3 1.3-6L4 9l5.6-1.2L12 2z"/></svg>
+        </div>
+        <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-1);">Site of the Day</h3>
+        <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.14em] text-smoke mt-2">2025 · Halcyon</div>
+      </div>
+      <div class="award-cell p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-smoke">FWA</div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A968C" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 7 5-3 5 3-2-7"/></svg>
+        </div>
+        <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-1);">Site of the Day</h3>
+        <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.14em] text-smoke mt-2">2022 · Orbital</div>
+      </div>
+      <div class="award-cell p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-smoke">D&amp;AD</div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A968C" stroke-width="1.5" aria-hidden="true"><path d="M6 2h12l-2 8a4 4 0 11-8 0L6 2z"/><path d="M9 14l3 8 3-8"/></svg>
+        </div>
+        <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-1);">Yellow Pencil</h3>
+        <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.14em] text-smoke mt-2">2024 · Meridian</div>
+      </div>
+      <div class="award-cell p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-smoke">Webby</div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A968C" stroke-width="1.5" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M8 12l3 3 5-6"/></svg>
+        </div>
+        <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-1);">Best Visual Design</h3>
+        <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.14em] text-smoke mt-2">2023 · Vector Fields</div>
+      </div>
+      <div class="award-cell p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-smoke">CSS Design Awards</div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A968C" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <h3 class="font-display font-black display-tight text-bone" style="font-size: var(--step-1);">Website of the Day</h3>
+        <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.14em] text-smoke mt-2">2024 · Nocturne</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════ CONTACT FOOTER ═══════════════ -->
+<footer id="contact" class="pt-[var(--s-8)] pb-10 border-t border-bone/10 relative" data-index="07">
+  <div class="container-edge">
+
+    <div class="reveal">
+      <div class="index-label mb-8">07 / Contact</div>
+      <!-- Demoted ~2 steps from hero: closing CTA, not a second hero -->
+      <h2 class="font-display font-black display-tight text-bone" style="font-size: var(--step-5);">
+        Let's make<br>
+        something <span class="echo-display font-normal text-acid">loud.</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6 lg:gap-10 mt-14 sm:mt-20">
+
+      <!-- Primary mailto -->
+      <div class="col-span-12 lg:col-span-7 reveal">
+        <p class="font-mono text-[var(--mono-sm)] uppercase tracking-[0.2em] text-smoke mb-4">New business</p>
+        <a href="mailto:hello@objectandecho.studio" class="magnet font-display font-bold display-tight text-bone hover:text-acid transition-colors inline-flex flex-wrap items-baseline gap-x-2 max-w-full break-all" style="font-size: clamp(1.35rem, 1.0rem + 1.8vw, var(--step-3));" data-magnet aria-label="Email the studio">
+          hello@objectandecho.studio
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+        <p class="echo-body text-smoke text-[var(--step-1)] mt-6 max-w-[44ch] leading-snug">
+          Tell us what you're building and what you want it to leave behind. We answer every note within two days.
+        </p>
+      </div>
+
+      <!-- Studios + social -->
+      <div class="col-span-12 lg:col-span-5 grid grid-cols-2 gap-8 reveal">
+        <div>
+          <p class="font-mono text-[var(--mono-sm)] uppercase tracking-[0.2em] text-smoke mb-4">Studio — Brooklyn</p>
+          <p class="echo-body text-bone/90 text-[var(--step-0)] leading-relaxed">
+            261 Bond St, 4F<br>
+            Brooklyn, NY 11231
+          </p>
+        </div>
+        <div>
+          <p class="font-mono text-[var(--mono-sm)] uppercase tracking-[0.2em] text-smoke mb-4">Studio — Lisbon</p>
+          <p class="echo-body text-bone/90 text-[var(--step-0)] leading-relaxed">
+            Rua da Boavista 84<br>
+            1200-068 Lisboa
+          </p>
+        </div>
+        <div class="col-span-2 mt-4">
+          <p class="font-mono text-[var(--mono-sm)] uppercase tracking-[0.2em] text-smoke mb-4">Elsewhere</p>
+          <ul class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[var(--mono-sm)] uppercase tracking-[0.12em]" role="list">
+            <li><a href="#" class="nav-link text-bone/90 hover:text-acid">Instagram</a></li>
+            <li><a href="#" class="nav-link text-bone/90 hover:text-acid">Are.na</a></li>
+            <li><a href="#" class="nav-link text-bone/90 hover:text-acid">LinkedIn</a></li>
+            <li><a href="#" class="nav-link text-bone/90 hover:text-acid">Read.cv</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sign-off: oversized glyph echo -->
+    <div class="mt-20 sm:mt-28 flex items-end justify-between gap-6 flex-wrap border-t border-bone/10 pt-8">
+      <a href="#top" class="font-mono text-[var(--mono-sm)] uppercase tracking-[0.2em] text-smoke hover:text-acid transition-colors inline-flex items-center gap-2">
+        <span aria-hidden="true">↑</span> Back to top
+      </a>
+      <div class="font-mono text-[var(--mono-xs)] uppercase tracking-[0.16em] text-smoke text-right leading-relaxed">
+        © MMXXVI OBJECT &amp; ECHO<br>
+        Made as our own commission.
+      </div>
+    </div>
+
+    <div class="glyph-massive text-acid mt-10 sm:mt-14 text-center select-none pointer-events-none" style="font-size: clamp(8rem, 4rem + 28vw, 34rem);" aria-hidden="true">&amp;</div>
+
+    <div class="text-center -mt-4 sm:-mt-8">
+      <span class="font-display font-extrabold tracking-tight text-bone/55 text-[clamp(0.9rem,0.8rem+0.5vw,1.3rem)]">
+        OBJECT<span class="amp text-acid/70">&amp;</span>ECHO
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // ── Hero kinetic reveal — single-fire guard so load + fallback can't double-fire ──
+  let heroFired = false;
+  function fireHero(){
+    if(heroFired) return;
+    heroFired = true;
+    document.querySelectorAll('.hero-word').forEach(el=>{
+      const d = parseFloat(el.style.animationDelay||'0')*1000;
+      setTimeout(()=> el.classList.add('in'), d);
+    });
+    document.querySelectorAll('.hero-echo-word').forEach(el=>{
+      const d = parseFloat(el.style.animationDelay||'0')*1000;
+      setTimeout(()=> el.classList.add('in'), d);
+    });
+    // After the headline settles, fade in the trailing afterimage (the spatial echo)
+    // and the passive ghost baseline so the signature delight is never hidden.
+    const after = document.getElementById('heroAfterimage');
+    const ghost = document.getElementById('heroGhost');
+    setTimeout(()=>{
+      if(after) after.classList.add('live');
+      if(ghost) ghost.classList.add('passive');
+    }, reduce ? 0 : 1250);
+  }
+  if(reduce){
+    heroFired = true; // guard set; we just force .in directly below
+    document.querySelectorAll('.hero-word,.hero-echo-word').forEach(el=>el.classList.add('in'));
+    const after = document.getElementById('heroAfterimage');
+    const ghost = document.getElementById('heroGhost');
+    if(after) after.classList.add('live');
+    if(ghost) ghost.classList.add('passive');
+  } else {
+    const trigger = ()=> setTimeout(fireHero, 80);
+    if(document.readyState === 'complete') trigger();
+    else window.addEventListener('load', trigger);
+    // safety fallback — cannot double-fire now thanks to the guard
+    setTimeout(fireHero, 700);
+  }
+
+  // ── Scroll reveal (IntersectionObserver) — now picks up the varied classes ──
+  const io = ('IntersectionObserver' in window) ? new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }) : null;
+  if(io){
+    document.querySelectorAll('.reveal, .reveal-scale, .reveal-stagger').forEach(el=> io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal, .reveal-scale, .reveal-stagger').forEach(el=> el.classList.add('in'));
+  }
+
+  // ── Scroll index counter (rAF-throttled) ──
+  // Each section now carries a real, unique 01..07 index — no synthetic '05b' to collapse.
+  const sections = document.querySelectorAll('[data-index]');
+  const navIdx = document.getElementById('navIndex');
+  let scrollTicking = false;
+  function updateIndex(){
+    scrollTicking = false;
+    const mid = window.scrollY + window.innerHeight * 0.4;
+    let active = '01';
+    sections.forEach(s=>{
+      if(s.offsetTop <= mid){
+        const v = s.dataset.index;
+        if(v) active = v;
+      }
+    });
+    if(navIdx && navIdx.textContent !== active) navIdx.textContent = active;
+  }
+  window.addEventListener('scroll', ()=>{
+    if(!scrollTicking){ scrollTicking = true; requestAnimationFrame(updateIndex); }
+  }, { passive:true });
+  updateIndex();
+
+  // ── Mobile nav drawer ──
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if(menuBtn && mobileMenu){
+    menuBtn.addEventListener('click', ()=>{
+      const open = mobileMenu.classList.toggle('closed') === false;
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=>{
+      mobileMenu.classList.add('closed');
+      menuBtn.setAttribute('aria-expanded','false');
+    }));
+  }
+
+  // ── Neutralize bare "#" anchors (demo social links) so they never jump to top ──
+  document.querySelectorAll('a[href="#"]').forEach(a=>{
+    a.addEventListener('click', (e)=>{ e.preventDefault(); });
+  });
+
+  // ── Service rows: genuinely toggleable on click/Enter/Space (pin .open).
+  //    Hover remains a preview-only via CSS; the pinned state survives keyboard/touch.
+  document.querySelectorAll('.svc-row').forEach(row=>{
+    const setOpen = (open)=>{
+      row.setAttribute('aria-expanded', open ? 'true' : 'false');
+      row.classList.toggle('open', open);
+    };
+    row.addEventListener('click', ()=>{
+      setOpen(row.getAttribute('aria-expanded') !== 'true');
+    });
+    // Enter / Space already activate a <button>, but ensure the toggle fires
+    row.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' ' || e.code === 'Space'){
+        e.preventDefault();
+        setOpen(row.getAttribute('aria-expanded') !== 'true');
+      }
+    });
+    // Focus = preview (CSS handles the fill/detail via :focus-visible),
+    // but it does NOT force aria-expanded=true. Only an explicit action toggles it.
+  });
+
+  // ── Magnetic elements + cursor blob + hero echo ghost (pointer devices only) ──
+  if(!reduce && canHover){
+    // arm custom cursor accent. Native cursor is retained (see CSS — no cursor:none),
+    // so links keep pointer affordance and selectable text keeps the caret.
+    document.documentElement.classList.add('has-cursor');
+    const blob = document.getElementById('cursorBlob');
+    const ghost = document.getElementById('heroGhost');
+    const heroSection = document.querySelector('[data-index="01"]');
+
+    let bx=0,by=0,tx=0,ty=0, blobActive=false, ghostActive=false;
+    let gx=0,gy=0,gtx=0,gty=0; // ghost lerp targets (cursor)
+    let running = false;
+
+    window.addEventListener('mousemove',(e)=>{
+      tx = e.clientX; ty = e.clientY;
+      if(!blobActive){ blob.classList.add('active'); blobActive = true; }
+      // ghost target = cursor, but only while inside hero
+      if(heroSection){
+        const r = heroSection.getBoundingClientRect();
+        if(e.clientY >= r.top && e.clientY <= r.bottom){
+          // promote from passive to live (cursor presence intensifies it)
+          if(!ghostActive){ ghost.classList.add('live'); ghostActive = true; }
+          gtx = e.clientX; gty = e.clientY;
+          // size the ghost relative to hero
+          ghost.style.fontSize = (r.height * 0.42) + 'px';
+        } else if(ghostActive){
+          ghost.classList.remove('live'); ghostActive = false;
+        }
+      }
+    });
+
+    function loop(){
+      // blob: lerp toward cursor
+      bx += (tx-bx)*0.20; by += (ty-by)*0.20;
+      if(blobActive) blob.style.transform = `translate(${bx}px, ${by}px) translate(-50%,-50%)`;
+      // ghost: trail further (slower lerp) for echo decay
+      if(ghostActive){
+        gx += (gtx-gx)*0.10; gy += (gty-gy)*0.10;
+        ghost.style.transform = `translate(${gx}px, ${gy}px) translate(-50%,-50%)`;
+      }
+      // only keep looping while there is something to animate
+      const blobDelta = Math.abs(tx-bx) + Math.abs(ty-by);
+      const ghostDelta = ghostActive ? (Math.abs(gtx-gx) + Math.abs(gty-gy)) : 0;
+      if(blobDelta > 0.4 || ghostDelta > 0.4){
+        requestAnimationFrame(loop);
+      } else {
+        running = false;
+      }
+    }
+    function ensureLoop(){ if(!running){ running = true; requestAnimationFrame(loop); } }
+    window.addEventListener('mousemove', ensureLoop);
+
+    document.addEventListener('mouseleave', ()=>{
+      blob.classList.remove('active'); blobActive = false;
+      ghost.classList.remove('live'); ghostActive = false;
+    });
+
+    document.querySelectorAll('a, button, [data-magnet]').forEach(el=>{
+      el.addEventListener('mouseenter',()=> blob.classList.add('big'));
+      el.addEventListener('mouseleave',()=> blob.classList.remove('big'));
+    });
+
+    // magnetic pull
+    document.querySelectorAll('[data-magnet]').forEach(el=>{
+      const strength = el.classList.contains('magnet') ? 0.32 : 0.16;
+      el.addEventListener('mousemove', (e)=>{
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - (r.left + r.width/2)) * strength;
+        const y = (e.clientY - (r.top + r.height/2)) * strength;
+        el.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      el.addEventListener('mouseleave', ()=>{ el.style.transform = ''; });
+    });
+
+    // ── Subtle hero headline drift on cursor (the object settles, echo trails).
+    //    Drifts a WRAPPER (.hero-drift), not the h1 directly, so the text layer
+    //    stays composited cheaply; will-change set in CSS and removed after settle. ──
+    const heroWrap = document.querySelector('.hero-drift');
+    if(heroWrap && heroSection){
+      heroWrap.style.willChange = 'transform';
+      let htx=0, hty=0, hbx=0, hby=0, hRunning=false;
+      heroSection.addEventListener('mousemove', (e)=>{
+        const r = heroSection.getBoundingClientRect();
+        htx = ((e.clientX - r.left)/r.width - 0.5) * 14;
+        hty = ((e.clientY - r.top)/r.height - 0.5) * 8;
+        if(!hRunning){ hRunning = true; requestAnimationFrame(hloop); }
+      });
+      heroSection.addEventListener('mouseleave', ()=>{ htx=0; hty=0; if(!hRunning){ hRunning=true; requestAnimationFrame(hloop);} });
+      function hloop(){
+        hbx += (htx-hbx)*0.12; hby += (hty-hby)*0.12;
+        heroWrap.style.transform = `translate(${hbx}px, ${hby}px)`;
+        if(Math.abs(htx-hbx)>0.3 || Math.abs(hty-hby)>0.3){ requestAnimationFrame(hloop); }
+        else { hRunning = false; heroWrap.style.transform = ''; /* settle clears inline transform; will-change retained until page idle */ }
+      }
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

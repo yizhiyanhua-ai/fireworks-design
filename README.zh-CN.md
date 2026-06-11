@@ -109,7 +109,7 @@ Workflow({
 
 ## 💼 使用案例
 
-> 📖 **真实生成成品**(非假设)在 [`examples/`](./examples/README.md) —— 三张完整页面由真实工作流跑出,含胜出风格、agent/token 成本、以及每个流水线阶段修了什么。
+> 📖 **真实生成成品**(非假设)在 [`examples/`](./examples/README.md) —— 14 张完整页面由真实工作流跑出,含胜出风格、agent/token 成本、以及每个流水线阶段修了什么。
 
 ### 案例 1 —— SaaS 落地页
 ```
@@ -155,6 +155,19 @@ variants: 6, refineRounds: 2
 | 只要特定风格 | `lenses: ["editorial","dark-premium"]` |
 
 </details>
+
+## ✨ 精选成品(效果解读)
+
+14 个跨完全不同领域的真实页面 —— [**全部 GitHub Pages 在线**](https://yizhiyanhua-ai.github.io/fireworks-design/) · [完整表格 + 深度解读](./examples/README.md)。四个亮点:
+
+| | 页面 | 胜出风格 & 契合理由 | 签名时刻 |
+|---|------|---------------------|----------|
+| 🎬 | [**LUMIÈRE**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html) — 电影评分 | **Dark Premium** —— 影院沉浸感胜过编辑式;古金作为"声望货币"严格定量(只给评分/CTA/前两名) | 一次性金色放映机光束扫过 9.2 分 |
+| 🎵 | [**NOVA · AURORA**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html) — 专辑 | **Bold Editorial** —— 超大 Didone 字标,午夜紫青 60/30/10 | 生成式封面 + 32 段可视化器 + 播放时整个房间都变暖 |
+| 🎨 | [**OBJECT & ECHO**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html) — 工作室 | **Bold Editorial** —— 画廊杂志风,动感无衬线"物体"对撞幽灵斜体"回声" | hero 字标背后的空间残影回声 |
+| ✈️ | [**AZORES**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html) — 旅行 | **Bold Editorial** —— 照片即产品,国家地理 × Cereal 杂志质感 | 可交互岛屿地图 + 呼吸光晕 + 淡入切换详情 |
+
+> **胜出风格的多样性正说明问题:** 14 个 brief 里,Bold Editorial ×8、Dark Premium ×3(电影/餐厅/电商)、Swiss Minimal ×2(健身/教育)、Editorial ×1(公益)。不同气质的 brief 选出不同的最优解 —— 这正是"评审而非一次生成"的价值。完整的 **效果解读**(胜出理由、签名时刻、打磨阶段揪出的真实 bug)在 [`examples/README.md`](./examples/README.md#-featured--效果解读-effect-deep-dives)。
 
 ## ⚙️ 参数
 

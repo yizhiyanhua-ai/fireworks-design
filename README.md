@@ -109,7 +109,7 @@ Workflow({
 
 ## 💼 Example cases
 
-> 📖 **Real generated outputs** (not hypothetical) live in [`examples/`](./examples/README.md) — three full pages produced by actual workflow runs, with the winner, agent/token cost, and what each pipeline stage fixed.
+> 📖 **Real generated outputs** (not hypothetical) live in [`examples/`](./examples/README.md) — 14 full pages produced by actual workflow runs, with the winner, agent/token cost, and what each pipeline stage fixed.
 
 ### Case 1 — SaaS landing page
 ```
@@ -155,6 +155,19 @@ variants: 6, refineRounds: 2
 | Specific aesthetics only | `lenses: ["editorial","dark-premium"]` |
 
 </details>
+
+## ✨ Featured outputs (效果解读)
+
+14 real pages across totally different domains — [**all live on GitHub Pages**](https://yizhiyanhua-ai.github.io/fireworks-design/) · [full table + deep-dives](./examples/README.md). Four highlights:
+
+| | Page | Winner & why it fits | Signature moment |
+|---|------|---------------------|------------------|
+| 🎬 | [**LUMIÈRE**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html) — movie rating | **Dark Premium** — theatrical immersion beat editorial; antique-gold rationed as "prestige currency" (only ratings/CTA/top ranks) | one-shot gold projector-beam sweeps the 9.2 score |
+| 🎵 | [**NOVA · AURORA**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html) — album | **Bold Editorial** — oversized Didone wordmark, midnight-violet-teal 60/30/10 | generative cover + 32-bar visualizer + play-state changes the whole room |
+| 🎨 | [**OBJECT & ECHO**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html) — studio | **Bold Editorial** — gallery-zine, kinetic grotesque "object" vs ghosted italic "echo" | spatial afterimage echo behind the hero wordmark |
+| ✈️ | [**AZORES**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html) — travel | **Bold Editorial** — photography-as-product, NatGeo-meets-Cereal | interactive islands map with breathing halo + cross-fade detail panel |
+
+> **Winner diversity proves the point:** across 14 briefs, Bold Editorial won ×8, Dark Premium ×3 (movie/restaurant/ecommerce), Swiss Minimal ×2 (fitness/edtech), Editorial ×1 (nonprofit). Different briefs crown different winners — that's why we judge instead of generating once. Read the full **效果解读** (winning rationale, signature moments, real bugs the refine/polish pass caught) in [`examples/README.md`](./examples/README.md#-featured--效果解读-effect-deep-dives).
 
 ## ⚙️ Arguments
 

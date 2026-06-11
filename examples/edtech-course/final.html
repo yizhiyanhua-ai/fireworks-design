@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LUMEN — Finish what you started learning</title>
+<meta name="description" content="LUMEN is a structured learning platform where adult learners follow guided paths to real, project-backed outcomes — taught by working practitioners, not lecturers." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500;1,9..144,600;1,9..144,900&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Lucide pinned to a fixed version for runtime stability -->
+<script src="https://unpkg.com/lucide@0.456.0/dist/umd/lucide.min.js" defer></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#1F2A2E',
+          'ink-soft': '#4B5856',
+          'ink-mute': '#5E6864',
+          teal: { DEFAULT: '#0E4D4A', deep: '#0A3A38', soft: '#1A635F', 50: '#EAF1F0' },
+          coral: { DEFAULT: '#FF6A4D', deep: '#E85638', ink: '#C8391C' },
+          cream: { DEFAULT: '#FBF8F2', warm: '#F3EEE3', deep: '#ECE5D5', line: '#E2DAC8' },
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          tight: ['"Inter Tight"', 'Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        letterSpacing: {
+          'tightest2': '-0.04em',
+          'tightest': '-0.035em',
+        },
+        maxWidth: { edge: '1280px' },
+        // Tokenized modular type scale (1.2 ratio, named & reproducible)
+        fontSize: {
+          '2xs': ['0.6875rem', { lineHeight: '1.1' }],
+          'xs':   ['0.75rem',  { lineHeight: '1.2' }],
+          'sm':   ['0.8125rem',{ lineHeight: '1.35' }],
+          'mb':   ['0.875rem', { lineHeight: '1.4' }],
+          'base': ['1rem',     { lineHeight: '1.5' }],
+          'lg':   ['1.125rem', { lineHeight: '1.5' }],
+          'xl':   ['1.25rem',  { lineHeight: '1.35' }],
+          '2xl':  ['1.5rem',   { lineHeight: '1.2' }],
+          '3xl':  ['1.875rem', { lineHeight: '1.1' }],
+          '4xl':  ['2.25rem',  { lineHeight: '1.05' }],
+          '5xl':  ['3rem',     { lineHeight: '1.0' }],
+          '6xl':  ['3.75rem',  { lineHeight: '0.98' }],
+          '7xl':  ['4.5rem',   { lineHeight: '0.95' }],
+          '8xl':  ['5.25rem',  { lineHeight: '0.92' }],
+        },
+        boxShadow: {
+          'cardlift': '0 22px 40px -28px rgba(14,77,74,.45)',
+          'coralg': '0 8px 24px -12px rgba(255,106,77,.55)',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root {
+    --ink: #1F2A2E;
+    --ink-soft: #4B5856;
+    --ink-mute: #5E6864; /* ~4.8:1 on cream — AA-clean pass for de-emphasized rows */
+    --teal: #0E4D4A;
+    --teal-deep: #0A3A38;
+    --coral: #FF6A4D;
+    --coral-deep: #E85638;
+    --coral-ink: #C8391C; /* AA-compliant coral for text/icons on cream (~5.0:1) */
+    --cream: #FBF8F2;
+    --cream-warm: #F3EEE3;
+    --cream-deep: #ECE5D5;
+    --line: #E2DAC8;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 76px; /* fixes sticky-nav covering anchored headings */
+  }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--cream); color: var(--ink); font-feature-settings: "ss01","cv01","cv11"; }
+
+  /* Tabular numerals for every stat / price / rating */
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* === Display type — Fraunces optical sizing & tracking === */
+  .display {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+    font-weight: 500;
+  }
+  .display-tight { line-height: 0.92; font-weight: 600; }
+
+  /* Hero: lighter weight + open optical size for crispness at display sizes */
+  .hero-display { font-weight: 500; letter-spacing: -0.04em; font-variation-settings: 'opsz' 120; }
+  /* Small display headings (course titles, instructor names, journey steps) get a touch more weight */
+  .display-sm { font-weight: 600; }
+
+  /* Recurring brand motif: coral italic emphasis word */
+  .em-coral { font-style: italic; color: var(--coral-ink); font-weight: 600; }
+  .em-coral-bright { font-style: italic; color: var(--coral); font-weight: 600; } /* large display sizes only */
+  /* Hero keyword gets a deliberate size + weight step up so the emotional
+     anchor physically dominates — not italic alone. Fraunces' large optical
+     italic is the payoff; let it sing by contrast against 500-weight siblings. */
+  .em-coral-hero {
+    font-style: italic; color: var(--coral); font-weight: 700;
+    font-size: 1.09em; line-height: 0.9; display: inline-block;
+    transform: translateY(.02em);
+  }
+
+  /* Section index labels */
+  .idx { font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; letter-spacing: 0.04em; color: var(--ink-soft); text-transform: uppercase; }
+  .hairline { height: 1px; background: var(--line); }
+
+  /* === Buttons === */
+  .btn-coral {
+    background: var(--coral); color: #1F2A2E; border-radius: 14px;
+    transition: transform .25s cubic-bezier(.2,.7,.2,1), background-color .2s ease, box-shadow .25s ease;
+    box-shadow: 0 1px 0 rgba(31,42,46,.06), 0 8px 22px -12px rgba(255,106,77,.6);
+  }
+  .btn-coral:hover { background: #FF7C62; transform: translateY(-1px); box-shadow: 0 1px 0 rgba(31,42,46,.06), 0 14px 30px -12px rgba(255,106,77,.65); }
+  .btn-coral:active { transform: translateY(0); }
+  .btn-coral:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+  .btn-teal { background: var(--teal); color: var(--cream); border-radius: 14px; transition: background-color .2s ease, transform .2s ease; }
+  .btn-teal:hover { background: var(--teal-deep); transform: translateY(-1px); }
+  .btn-teal:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+
+  .btn-outline { border: 1px solid var(--line); color: var(--ink); border-radius: 14px; background: transparent; transition: border-color .2s, background-color .2s; }
+  .btn-outline:hover { border-color: var(--teal); background: #fff; }
+  .btn-outline:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+
+  .link-ghost { color: var(--teal); border-bottom: 1px solid rgba(14,77,74,.35); transition: border-color .2s, color .2s; padding-bottom: 2px; }
+  .link-ghost:hover { border-color: var(--coral-ink); color: var(--ink); }
+
+  .chip {
+    border: 1px solid var(--line); background: var(--cream); color: var(--ink); border-radius: 999px;
+    transition: border-color .2s, background-color .2s, color .2s, transform .2s;
+  }
+  .chip:hover { border-color: var(--teal); background: #fff; transform: translateY(-1px); }
+  .chip:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+  .chip[data-active="true"] { background: var(--teal); color: var(--cream); border-color: var(--teal); }
+
+  /* === Cards === */
+  .card {
+    border: 1px solid var(--line); background: var(--cream); border-radius: 16px;
+    transition: transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s, box-shadow .3s, background-color .3s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--teal); box-shadow: 0 1px 0 rgba(31,42,46,.04), 0 22px 40px -28px rgba(14,77,74,.45); }
+
+  /* Course / instructor image zoom on hover */
+  .zoom-frame { overflow: hidden; }
+  .zoom-frame img { transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+  .card:hover .zoom-frame img, .group:hover .zoom-frame img { transform: scale(1.05); }
+
+  /* Editorial curation accents — break the grid rhythm on 1–2 cards */
+  .card-featured { box-shadow: inset 0 2px 0 0 var(--coral), 0 1px 0 rgba(31,42,46,.04); }
+  .card-featured:hover { box-shadow: inset 0 2px 0 0 var(--coral), 0 1px 0 rgba(31,42,46,.04), 0 22px 40px -28px rgba(255,106,77,.4); border-color: var(--coral) !important; }
+  .badge-coral {
+    display: inline-flex; align-items: center; gap: .25rem;
+    background: var(--coral); color: var(--ink); font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 500; letter-spacing: .06em; padding: 3px 7px; border-radius: 6px;
+    line-height: 1; text-transform: uppercase;
+  }
+  .status-free {
+    background: rgba(14,77,74,.08); color: var(--teal); border-color: rgba(14,77,74,.18);
+  }
+
+  /* === Nav === */
+  .nav-blur {
+    background: rgba(251,248,242,.82);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .3s, background .3s;
+  }
+  .nav-blur.scrolled { border-bottom-color: var(--line); background: rgba(251,248,242,.92); }
+
+  /* === Hero background === */
+  .hero-grid {
+    background-image: linear-gradient(to right, rgba(14,77,74,.045) 1px, transparent 1px);
+    background-size: calc(100%/12) 100%;
+  }
+  .hero-glow {
+    background:
+      radial-gradient(120% 90% at 82% -12%, rgba(255,106,77,.10), rgba(255,106,77,0) 55%),
+      radial-gradient(80% 70% at 10% 110%, rgba(14,77,74,.07), rgba(14,77,74,0) 60%);
+  }
+
+  /* === Signature: the journey path === */
+  .journey-track { position: absolute; left: 0; right: 0; top: 50%; height: 3px; background: var(--cream-deep); transform: translateY(-50%); border-radius: 999px; }
+  .journey-fill { position: absolute; left: 0; top: 50%; height: 3px; transform: translateY(-50%); width: 0; border-radius: 999px;
+    background: linear-gradient(90deg, var(--teal), var(--coral));
+    transition: width 1.6s cubic-bezier(.2,.7,.2,1); }
+  .journey-node {
+    width: 22px; height: 22px; border-radius: 999px; background: var(--cream); border: 2px solid var(--line);
+    transition: border-color .4s, background-color .4s, transform .4s, box-shadow .4s; position: relative; z-index: 2;
+  }
+  .journey-node::after { content: ''; position: absolute; inset: -6px; border-radius: 999px; border: 1px solid transparent; transition: border-color .4s; }
+  /* Completed-node checkmark: an SVG-free tick drawn with borders, fades in */
+  .journey-node .node-tick {
+    position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transform: scale(.5);
+    transition: opacity .3s ease .08s, transform .3s cubic-bezier(.2,.9,.3,1.2) .08s;
+  }
+  .journey-node .node-tick::before {
+    content: ''; width: 9px; height: 5px; border-left: 2px solid var(--cream); border-bottom: 2px solid var(--cream);
+    transform: rotate(-45deg) translateY(-1px);
+  }
+  .is-complete .journey-node { border-color: var(--teal); background: var(--teal); }
+  .is-complete .journey-node::after { border-color: rgba(14,77,74,.18); }
+  .is-complete .journey-node .node-tick { opacity: 1; transform: scale(1); }
+  /* Finish-line node goes coral when reached — the payoff color */
+  .journey-step.is-finish .journey-node { width: 26px; height: 26px; }
+  .journey-step.is-finish.is-complete .journey-node { border-color: var(--coral); background: var(--coral); }
+  .journey-step.is-finish.is-complete .journey-node::after { border-color: rgba(255,106,77,.28); }
+  .journey-step.is-finish.is-complete .journey-node .node-tick::before { border-color: var(--ink); }
+  /* Signature 'arrived' pulse: each node pops a single frame the instant the
+     runner reaches it. Class is keyed off .is-complete (the working branch),
+     so it fires once per node in sequence. */
+  @keyframes nodePop { 0% { transform: scale(1); } 50% { transform: scale(1.28); } 100% { transform: scale(1); } }
+  .journey-node.is-popping { animation: nodePop .42s cubic-bezier(.2,.7,.2,1); }
+  /* Finish-line celebration: a one-shot ring burst when the runner lands on node 4 */
+  @keyframes finishBurst { 0% { box-shadow: 0 0 0 0 rgba(255,106,77,.5); } 100% { box-shadow: 0 0 0 22px rgba(255,106,77,0); } }
+  .journey-step.is-finish.is-complete .journey-node { animation: finishBurst .9s ease-out .25s 1; }
+  /* The traveling learner marker */
+  .journey-runner {
+    position: absolute; top: 50%; width: 30px; height: 30px; border-radius: 999px; transform: translate(-50%, -50%);
+    background: var(--coral); border: 3px solid var(--cream);
+    box-shadow: 0 0 0 4px rgba(255,106,77,.18), 0 6px 16px -6px rgba(255,106,77,.6);
+    transition: left 1.6s cubic-bezier(.2,.7,.2,1); z-index: 3;
+    display: grid; place-items: center; color: var(--ink);
+  }
+  /* Ambient breathing ring on the runner while it travels — the "live" pulse */
+  @keyframes runnerBreath { 0%,100% { box-shadow: 0 0 0 4px rgba(255,106,77,.18), 0 0 0 8px rgba(255,106,77,0), 0 6px 16px -6px rgba(255,106,77,.6); } 50% { box-shadow: 0 0 0 4px rgba(255,106,77,.22), 0 0 0 12px rgba(255,106,77,0), 0 6px 16px -6px rgba(255,106,77,.7); } }
+  .journey-runner.is-traveling { animation: runnerBreath 2s ease-in-out infinite; }
+
+  /* Project thumbnail that reveals on node hover */
+  .node-pop {
+    position: absolute; bottom: calc(100% + 14px); left: 50%; transform: translateX(-50%) translateY(6px);
+    width: 168px; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: 0 18px 40px -20px rgba(31,42,46,.35); opacity: 0; pointer-events: none;
+    transition: opacity .25s, transform .25s; z-index: 5;
+  }
+  .journey-step:hover .node-pop, .journey-step:focus-within .node-pop { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* === Pricing toggle === */
+  .tgl { width: 46px; height: 26px; border-radius: 999px; background: var(--cream-deep); position: relative; transition: background-color .25s; flex-shrink: 0; }
+  .tgl::after { content: ""; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 999px; background: var(--cream); transition: transform .25s cubic-bezier(.2,.7,.2,1); box-shadow: 0 1px 2px rgba(31,42,46,.2); }
+  .tgl[data-on="true"] { background: var(--teal); }
+  .tgl[data-on="true"]::after { transform: translateX(20px); }
+  .tgl:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+
+  /* Star rating */
+  .stars { color: var(--coral-ink); letter-spacing: 1px; }
+  /* On the dark teal instructor section, coral-ink fails contrast — use bright coral */
+  #instructors .stars { color: var(--coral); }
+  /* Instructor card subtitle-meta on dark teal was cream/70 — keep AA-safe */
+  #instructors .inst-quote { color: rgba(251,248,242,.92); }
+  /* Credibility line on dark teal: cream/80 base (AA-safe) with the leading
+     stat in solid coral so the proof layer reads at a glance. Alpha-coral on
+     teal-deep never reaches AA at 11px mono — avoided entirely. */
+  #instructors .inst-meta { color: rgba(251,248,242,.82); }
+  #instructors .inst-meta .num { color: var(--coral); font-weight: 500; }
+
+  /* Pricing: excluded rows — solid AA-safe tone + strikethrough, never alpha */
+  .tier-excluded { color: var(--ink-mute); }
+  .tier-excluded > span { text-decoration: line-through; text-decoration-color: rgba(94,104,100,.55); text-decoration-thickness: 1px; }
+
+  /* Count-up stat number */
+  .stat-num { font-family: 'Fraunces', serif; font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+
+  /* === Reveal === */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* Focus visibility */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 8px; }
+
+  /* Live dot pulse */
+  @keyframes pulseDot { 0%,100% { opacity: 1 } 50% { opacity: .4 } }
+  .live-dot { animation: pulseDot 2.4s ease-in-out infinite; }
+
+  /* Section rhythm */
+  .section { padding-top: clamp(72px, 9vw, 132px); padding-bottom: clamp(72px, 9vw, 132px); }
+
+  /* Avatar ring */
+  .avatar { box-shadow: 0 0 0 1px var(--line), 0 0 0 4px var(--cream); }
+
+  /* Skip link */
+  .skip-link { position: absolute; left: -9999px; top: 0; z-index: 200; }
+  .skip-link:focus { left: 12px; top: 12px; background: var(--teal); color: var(--cream); padding: .6rem 1rem; border-radius: 10px; font-weight: 600; }
+
+  /* Selection */
+  ::selection { background: var(--teal); color: var(--cream); }
+
+  /* === Reduced motion === */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .journey-fill { width: 100% !important; }
+    .journey-runner { left: 100% !important; }
+    .zoom-frame img { transform: none !important; }
+  }
+</style>
+</head>
+
+<body class="font-sans antialiased text-ink">
+
+<a href="#top" class="skip-link">Skip to content</a>
+
+<!-- ============ STICKY NAV ============ -->
+<header class="nav-blur sticky top-0 z-50">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+    <nav class="flex items-center justify-between h-[68px]" aria-label="Primary">
+      <a href="#top" class="flex items-center gap-2 group" aria-label="LUMEN home">
+        <span class="display text-teal text-[22px] font-semibold tracking-tightest2">LUMEN</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-teal live-dot" aria-hidden="true"></span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-9 text-sm text-ink-soft">
+        <a href="#categories" class="hover:text-teal transition-colors">Courses</a>
+        <a href="#paths" class="hover:text-teal transition-colors">Paths</a>
+        <a href="#instructors" class="hover:text-teal transition-colors">Instructors</a>
+        <a href="#pricing" class="hover:text-teal transition-colors">Pricing</a>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" id="navSearch" aria-label="Search courses" class="hidden sm:inline-flex items-center gap-2 chip px-3.5 h-9 text-xs text-ink-soft">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i>
+          <span class="hidden lg:inline">Search</span>
+          <span class="hidden lg:inline-flex items-center gap-0.5 font-mono text-[10px] text-ink-soft/70 border border-cream-line rounded px-1 py-0.5">⌘K</span>
+        </button>
+        <a href="#hero-search" class="btn-coral inline-flex items-center gap-1.5 h-9 px-4 text-[13px] font-semibold">
+          Start learning
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="relative overflow-hidden" aria-labelledby="hero-title">
+  <div class="absolute inset-0 hero-glow pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-0 hero-grid opacity-60 pointer-events-none" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-edge px-5 sm:px-8 pt-14 sm:pt-20 lg:pt-24 pb-14 sm:pb-20">
+    <div class="grid grid-cols-12 gap-x-6 gap-y-10">
+
+      <!-- Headline column -->
+      <div class="col-span-12 lg:col-span-8">
+        <div class="reveal flex items-center gap-3 mb-7">
+          <span class="idx">[ 00 — INTRODUCTION ]</span>
+          <span class="hairline flex-1 max-w-[120px]"></span>
+          <span class="idx text-teal">BUILT FOR PEOPLE WHO FINISH</span>
+        </div>
+
+        <h1 id="hero-title" class="reveal display hero-display text-5xl sm:text-7xl lg:text-8xl text-ink">
+          Finish what<br />
+          you <span class="em-coral-hero">started</span><br />
+          learning.
+        </h1>
+
+        <p class="reveal mt-7 max-w-xl text-lg leading-relaxed text-ink-soft">
+          LUMEN is a structured path to a real, project-backed outcome — taught by working practitioners, not lecturers. No infinite catalog. A direction, a cadence, and a finish line you can point to.
+        </p>
+
+        <!-- Search affordance — single loudest hero element -->
+        <div id="hero-search" class="reveal mt-9">
+          <form role="search" aria-label="Find your path" class="card flex flex-col sm:flex-row sm:items-center gap-2.5 p-2 max-w-2xl">
+            <div class="flex flex-col sm:contents">
+              <div class="relative flex items-center sm:border-r sm:border-cream-line sm:pr-2 border-b sm:border-b-0 border-cream-line pb-1 sm:pb-0">
+                <label for="cat" class="sr-only">Category</label>
+                <select id="cat" class="bg-transparent text-sm font-medium text-ink pl-3 pr-8 py-2 focus:outline-none cursor-pointer" style="-webkit-appearance:none; -moz-appearance:none; appearance:none;">
+                  <option>All categories</option>
+                  <option>Data</option>
+                  <option>Design</option>
+                  <option>Engineering</option>
+                  <option>Product</option>
+                  <option>Marketing</option>
+                  <option>AI / ML</option>
+                </select>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-ink-soft absolute right-3 pointer-events-none"></i>
+              </div>
+              <div class="relative flex-1 flex items-center border-b sm:border-b-0 border-cream-line pb-1 sm:pb-0">
+                <i data-lucide="search" class="w-4 h-4 text-ink-soft absolute left-3" aria-hidden="true"></i>
+                <label for="q" class="sr-only">What do you want to learn?</label>
+                <input id="q" type="text" placeholder="What do you want to learn? e.g. data analysis, product design" class="w-full bg-transparent text-sm pl-9 pr-3 py-2.5 placeholder:text-ink-soft/70 focus:outline-none" />
+              </div>
+              <button type="submit" class="btn-coral inline-flex items-center justify-center gap-1.5 h-11 px-5 text-sm font-semibold w-full sm:w-auto">
+                Start learning
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </form>
+
+          <!-- Quiet secondary discovery row -->
+          <div class="mt-4 flex flex-wrap items-center gap-2" aria-label="Popular searches">
+            <span class="idx mr-1">POPULAR →</span>
+            <button class="chip px-3 h-7 text-xs" data-active="true">Data Analyst</button>
+            <button class="chip px-3 h-7 text-xs">UX Design</button>
+            <button class="chip px-3 h-7 text-xs">Full-Stack</button>
+            <button class="chip px-3 h-7 text-xs">Product Mgmt</button>
+            <button class="chip px-3 h-7 text-xs">Applied AI</button>
+          </div>
+        </div>
+
+        <div class="reveal mt-7">
+          <a href="#paths" class="link-ghost text-sm font-medium">Browse guided paths instead</a>
+        </div>
+      </div>
+
+      <!-- Right rail: MUTED live proof card — deliberately quieter than the
+           search bar so the coral CTA inside the form stays the single loudest
+           hero element. Smaller padding, muted border, two stats not three. -->
+      <aside class="col-span-12 lg:col-span-4 lg:pl-6">
+        <div class="reveal card p-5 lg:mt-3 border-cream-line/60">
+          <div class="flex items-center justify-between mb-4">
+            <span class="idx">[ A LIVE PATH ]</span>
+            <span class="inline-flex items-center gap-1.5 text-[11px] text-teal font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal live-dot" aria-hidden="true"></span> IN PROGRESS
+              <span class="sr-only">Status: a learner is currently in progress on this path</span>
+            </span>
+          </div>
+          <p class="display text-lg text-ink mb-1">Data Analyst, 0 → Hireable</p>
+          <p class="text-xs text-ink-soft mb-5">Mara K. · Week 6 of 12</p>
+
+          <div class="flex items-end justify-between mb-2">
+            <span class="font-mono text-[11px] text-ink-soft">PROGRESS</span>
+            <span class="font-mono text-xs text-teal font-semibold tnum">50%</span>
+          </div>
+          <div class="h-2 rounded-full bg-cream-deep overflow-hidden">
+            <div class="h-full rounded-full" style="width:50%; background: var(--teal);"></div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-2 gap-3 text-center">
+            <div class="border border-cream-line rounded-xl py-3">
+              <div class="stat-num text-base text-ink">3</div>
+              <div class="font-mono text-[10px] text-ink-soft mt-0.5">PROJECTS</div>
+            </div>
+            <div class="border border-cream-line rounded-xl py-3">
+              <div class="stat-num text-base text-ink">42h</div>
+              <div class="font-mono text-[10px] text-ink-soft mt-0.5">STUDIED</div>
+            </div>
+          </div>
+
+          <p class="mt-5 text-xs text-ink-soft italic font-display leading-snug">“First time I've actually finished a course.”</p>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAT ROW (stepped down to ~34px so it doesn't compete with H2s) ============ -->
+<section aria-label="LUMEN by the numbers" class="border-y border-cream-line bg-cream-warm/50">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+    <dl class="grid grid-cols-2 md:grid-cols-4 md:divide-x md:divide-cream-line">
+      <div class="reveal py-8 md:py-10 px-2 md:px-8 md:first:pl-0">
+        <dt class="font-mono text-[11px] text-ink-soft tracking-wide">ACTIVE LEARNERS</dt>
+        <dd class="stat-num text-[34px] sm:text-[36px] text-teal mt-2" data-count="48200" data-suffix="+">0</dd>
+      </div>
+      <div class="reveal py-8 md:py-10 px-2 md:px-8">
+        <dt class="font-mono text-[11px] text-ink-soft tracking-wide">GUIDED PATHS</dt>
+        <dd class="stat-num text-[34px] sm:text-[36px] text-teal mt-2" data-count="126">0</dd>
+      </div>
+      <div class="reveal py-8 md:py-10 px-2 md:px-8">
+        <dt class="font-mono text-[11px] text-ink-soft tracking-wide">INSTRUCTORS</dt>
+        <dd class="stat-num text-[34px] sm:text-[36px] text-teal mt-2" data-count="310">0</dd>
+      </div>
+      <div class="reveal py-8 md:py-10 px-2 md:px-8">
+        <dt class="font-mono text-[11px] text-ink-soft tracking-wide">COMPLETION RATE</dt>
+        <dd class="stat-num text-[34px] sm:text-[36px] text-teal mt-2"><span data-count="73">0</span><span class="text-coral">%</span></dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section id="categories" class="section">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-12">
+      <div>
+        <div class="reveal flex items-center gap-3 mb-5">
+          <span class="idx">[ 01 — DIRECTION ]</span>
+          <span class="hairline w-16"></span>
+        </div>
+        <h2 class="reveal display text-3xl sm:text-5xl text-ink max-w-2xl">Pick a direction.<br />We handle the route.</h2>
+      </div>
+      <a href="#courses" class="reveal link-ghost text-sm font-medium self-end">See all 8 disciplines</a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-cream-line border border-cream-line rounded-2xl overflow-hidden" id="catGrid">
+      <!-- Cards rendered below -->
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-teal-50 text-teal inline-flex items-center justify-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-ink-soft">01</div>
+        <div class="display text-xl text-ink mt-1">Data</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">24 courses · 6 paths</div>
+      </a>
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-teal-50 text-teal inline-flex items-center justify-center"><i data-lucide="pen-tool" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-ink-soft">02</div>
+        <div class="display text-xl text-ink mt-1">Design</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">31 courses · 8 paths</div>
+      </a>
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-teal-50 text-teal inline-flex items-center justify-center"><i data-lucide="code-2" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-ink-soft">03</div>
+        <div class="display text-xl text-ink mt-1">Engineering</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">42 courses · 11 paths</div>
+      </a>
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-teal-50 text-teal inline-flex items-center justify-center"><i data-lucide="package" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-ink-soft">04</div>
+        <div class="display text-xl text-ink mt-1">Product</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">19 courses · 5 paths</div>
+      </a>
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-teal-50 text-teal inline-flex items-center justify-center"><i data-lucide="megaphone" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-ink-soft">05</div>
+        <div class="display text-xl text-ink mt-1">Marketing</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">22 courses · 4 paths</div>
+      </a>
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-teal-50 text-teal inline-flex items-center justify-center"><i data-lucide="briefcase" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-ink-soft">06</div>
+        <div class="display text-xl text-ink mt-1">Business</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">17 courses · 3 paths</div>
+      </a>
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-teal-50 text-teal inline-flex items-center justify-center"><i data-lucide="languages" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-ink-soft">07</div>
+        <div class="display text-xl text-ink mt-1">Languages</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">14 courses · 2 paths</div>
+      </a>
+      <a href="#courses" class="reveal group bg-cream p-6 sm:p-7 hover:bg-white transition-colors">
+        <div class="flex items-center justify-between mb-8">
+          <span class="w-10 h-10 rounded-xl bg-coral/15 text-coral-ink inline-flex items-center justify-center"><i data-lucide="sparkles" class="w-5 h-5"></i></span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-ink-soft group-hover:text-teal transition-colors"></i>
+        </div>
+        <div class="font-mono text-[10px] text-coral-ink">08 · NEW</div>
+        <div class="display text-xl text-ink mt-1">AI / ML</div>
+        <div class="text-xs text-ink-soft mt-1 tnum">28 courses · 7 paths</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED COURSES ============ -->
+<section id="courses" class="section bg-cream-warm/40 border-y border-cream-line">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-12">
+      <div>
+        <div class="reveal flex items-center gap-3 mb-5">
+          <span class="idx">[ 02 — IN PRACTICE ]</span>
+          <span class="hairline w-16"></span>
+        </div>
+        <h2 class="reveal display text-3xl sm:text-5xl text-ink max-w-2xl">Courses that end with something <span class="em-coral">to show</span>.</h2>
+      </div>
+      <a href="#pricing" class="reveal link-ghost text-sm font-medium self-end">View all courses</a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="courseGrid">
+
+      <!-- Course 1 -->
+      <a href="#pricing" class="reveal card overflow-hidden flex flex-col group/course focus-visible:outline-2 focus-visible:outline-teal">
+        <div class="relative aspect-[16/10] zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-course-data/640/400" alt="Data dashboard on a laptop screen" class="w-full h-full object-cover" loading="lazy" />
+          <span class="absolute top-3 left-3 chip px-2.5 h-6 text-[11px] font-mono bg-cream/90">DATA</span>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex items-center gap-1.5 mb-2 text-xs text-ink-soft font-mono">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i><span class="tnum">24h</span>
+            <span class="mx-1">·</span>
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i><span>Intermediate</span>
+          </div>
+          <h3 class="display display-sm text-xl text-ink leading-snug">SQL to Story: Analyst Foundations</h3>
+          <div class="mt-3 flex items-center gap-2">
+            <img src="https://picsum.photos/seed/lumen-inst-amara/64/64" alt="" class="avatar w-6 h-6 rounded-full object-cover" loading="lazy" />
+            <span class="text-[13px] text-ink-soft">Amara Okafor · Sr. Analyst, Stripe</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span class="font-semibold text-ink tnum">4.9</span>
+            <span class="text-ink-soft tnum">(2,140)</span>
+          </div>
+          <div class="mt-auto pt-5 flex items-center justify-between border-t border-cream-line">
+            <span class="inline-flex items-center gap-1.5 chip px-2.5 h-6 text-[11px] font-mono bg-teal-50 text-teal border-teal-50"><i data-lucide="check" class="w-3 h-3"></i>Pro-included</span>
+            <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-teal">View <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/course:translate-x-0.5 group-hover/course:-translate-y-0.5"></i></span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Course 2 -->
+      <a href="#pricing" class="reveal card overflow-hidden flex flex-col group/course focus-visible:outline-2 focus-visible:outline-teal">
+        <div class="relative aspect-[16/10] zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-course-design/640/400" alt="Design workspace with sketches and a tablet" class="w-full h-full object-cover" loading="lazy" />
+          <span class="absolute top-3 left-3 chip px-2.5 h-6 text-[11px] font-mono bg-cream/90">DESIGN</span>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex items-center gap-1.5 mb-2 text-xs text-ink-soft font-mono">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i><span class="tnum">32h</span>
+            <span class="mx-1">·</span>
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i><span>Beginner</span>
+          </div>
+          <h3 class="display display-sm text-xl text-ink leading-snug">Product Design, From First Screen</h3>
+          <div class="mt-3 flex items-center gap-2">
+            <img src="https://picsum.photos/seed/lumen-inst-jonas/64/64" alt="" class="avatar w-6 h-6 rounded-full object-cover" loading="lazy" />
+            <span class="text-[13px] text-ink-soft">Jonas Welti · Design Lead, Linear</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span class="font-semibold text-ink tnum">4.8</span>
+            <span class="text-ink-soft tnum">(1,860)</span>
+          </div>
+          <div class="mt-auto pt-5 flex items-center justify-between border-t border-cream-line">
+            <span class="inline-flex items-center gap-1.5 chip px-2.5 h-6 text-[11px] font-mono bg-teal-50 text-teal border-teal-50"><i data-lucide="check" class="w-3 h-3"></i>Pro-included</span>
+            <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-teal">View <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/course:translate-x-0.5 group-hover/course:-translate-y-0.5"></i></span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Course 3 — featured: top-rated, most enrolled -->
+      <a href="#pricing" class="reveal card card-featured overflow-hidden flex flex-col group/course focus-visible:outline-2 focus-visible:outline-teal">
+        <div class="relative aspect-[16/10] zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-course-eng/640/400" alt="Code editor with syntax highlighting" class="w-full h-full object-cover" loading="lazy" />
+          <span class="absolute top-3 left-3 chip px-2.5 h-6 text-[11px] font-mono bg-cream/90">ENG</span>
+          <span class="absolute top-3 right-3 badge-coral">Most enrolled</span>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex items-center gap-1.5 mb-2 text-xs text-ink-soft font-mono">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i><span class="tnum">48h</span>
+            <span class="mx-1">·</span>
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i><span>Advanced</span>
+          </div>
+          <h3 class="display display-sm text-xl text-ink leading-snug">Full-Stack With a Deadline</h3>
+          <div class="mt-3 flex items-center gap-2">
+            <img src="https://picsum.photos/seed/lumen-inst-rafa/64/64" alt="" class="avatar w-6 h-6 rounded-full object-cover" loading="lazy" />
+            <span class="text-[13px] text-ink-soft">Rafael Mendes · Staff Eng, Vercel</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span class="font-semibold text-ink tnum">4.9</span>
+            <span class="text-ink-soft tnum">(3,022)</span>
+          </div>
+          <div class="mt-auto pt-5 flex items-center justify-between border-t border-cream-line">
+            <span class="inline-flex items-center gap-1.5 chip px-2.5 h-6 text-[11px] font-mono bg-teal-50 text-teal border-teal-50"><i data-lucide="check" class="w-3 h-3"></i>Pro-included</span>
+            <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-teal">View <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/course:translate-x-0.5 group-hover/course:-translate-y-0.5"></i></span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Course 4 — new this season -->
+      <a href="#pricing" class="reveal card overflow-hidden flex flex-col group/course focus-visible:outline-2 focus-visible:outline-teal">
+        <div class="relative aspect-[16/10] zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-course-pm/640/400" alt="Whiteboard with product roadmap sticky notes" class="w-full h-full object-cover" loading="lazy" />
+          <span class="absolute top-3 left-3 chip px-2.5 h-6 text-[11px] font-mono bg-cream/90">PRODUCT</span>
+          <span class="absolute top-3 right-3 badge-coral">New</span>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex items-center gap-1.5 mb-2 text-xs text-ink-soft font-mono">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i><span class="tnum">20h</span>
+            <span class="mx-1">·</span>
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i><span>Intermediate</span>
+          </div>
+          <h3 class="display display-sm text-xl text-ink leading-snug">Shipping as a Product Manager</h3>
+          <div class="mt-3 flex items-center gap-2">
+            <img src="https://picsum.photos/seed/lumen-inst-noor/64/64" alt="" class="avatar w-6 h-6 rounded-full object-cover" loading="lazy" />
+            <span class="text-[13px] text-ink-soft">Noor Haddad · PM, Notion</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span class="font-semibold text-ink tnum">4.7</span>
+            <span class="text-ink-soft tnum">(982)</span>
+          </div>
+          <div class="mt-auto pt-5 flex items-center justify-between border-t border-cream-line">
+            <span class="inline-flex items-center gap-1.5 chip px-2.5 h-6 text-[11px] font-mono bg-teal-50 text-teal border-teal-50"><i data-lucide="check" class="w-3 h-3"></i>Pro-included</span>
+            <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-teal">View <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/course:translate-x-0.5 group-hover/course:-translate-y-0.5"></i></span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Course 5 -->
+      <a href="#pricing" class="reveal card overflow-hidden flex flex-col group/course focus-visible:outline-2 focus-visible:outline-teal">
+        <div class="relative aspect-[16/10] zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-course-ai/640/400" alt="Abstract neural network visualization" class="w-full h-full object-cover" loading="lazy" />
+          <span class="absolute top-3 left-3 chip px-2.5 h-6 text-[11px] font-mono bg-cream/90">AI / ML</span>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex items-center gap-1.5 mb-2 text-xs text-ink-soft font-mono">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i><span class="tnum">36h</span>
+            <span class="mx-1">·</span>
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i><span>Intermediate</span>
+          </div>
+          <h3 class="display display-sm text-xl text-ink leading-snug">Applied AI: Build, Don't Watch</h3>
+          <div class="mt-3 flex items-center gap-2">
+            <img src="https://picsum.photos/seed/lumen-inst-sora/64/64" alt="" class="avatar w-6 h-6 rounded-full object-cover" loading="lazy" />
+            <span class="text-[13px] text-ink-soft">Sora Tanaka · ML Eng, Anthropic</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span class="font-semibold text-ink tnum">4.9</span>
+            <span class="text-ink-soft tnum">(1,405)</span>
+          </div>
+          <div class="mt-auto pt-5 flex items-center justify-between border-t border-cream-line">
+            <span class="inline-flex items-center gap-1.5 chip px-2.5 h-6 text-[11px] font-mono bg-teal-50 text-teal border-teal-50"><i data-lucide="check" class="w-3 h-3"></i>Pro-included</span>
+            <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-teal">View <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/course:translate-x-0.5 group-hover/course:-translate-y-0.5"></i></span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Course 6 -->
+      <a href="#pricing" class="reveal card overflow-hidden flex flex-col group/course focus-visible:outline-2 focus-visible:outline-teal">
+        <div class="relative aspect-[16/10] zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-course-mkt/640/400" alt="Marketing analytics dashboard" class="w-full h-full object-cover" loading="lazy" />
+          <span class="absolute top-3 left-3 chip px-2.5 h-6 text-[11px] font-mono bg-cream/90">MARKETING</span>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex items-center gap-1.5 mb-2 text-xs text-ink-soft font-mono">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i><span class="tnum">18h</span>
+            <span class="mx-1">·</span>
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i><span>Beginner</span>
+          </div>
+          <h3 class="display display-sm text-xl text-ink leading-snug">Growth Marketing, Measured</h3>
+          <div class="mt-3 flex items-center gap-2">
+            <img src="https://picsum.photos/seed/lumen-inst-eli/64/64" alt="" class="avatar w-6 h-6 rounded-full object-cover" loading="lazy" />
+            <span class="text-[13px] text-ink-soft">Eli Brennan · Head of Growth, Figma</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span class="font-semibold text-ink tnum">4.6</span>
+            <span class="text-ink-soft tnum">(744)</span>
+          </div>
+          <div class="mt-auto pt-5 flex items-center justify-between border-t border-cream-line">
+            <span class="inline-flex items-center gap-1.5 chip status-free px-2.5 h-6 text-[11px] font-mono"><i data-lucide="gift" class="w-3 h-3"></i>Free preview</span>
+            <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-teal">View <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/course:translate-x-0.5 group-hover/course:-translate-y-0.5"></i></span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS — THE SIGNATURE JOURNEY (elevated) ============ -->
+<section id="paths" class="section relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none opacity-70" aria-hidden="true"
+       style="background-image: radial-gradient(60% 50% at 50% 0%, rgba(14,77,74,.04), transparent 70%);"></div>
+
+  <div class="relative mx-auto max-w-edge px-5 sm:px-8">
+
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <div class="reveal flex items-center justify-center gap-3 mb-5">
+        <span class="idx">[ 03 — THE PATH ]</span>
+        <span class="hairline w-16"></span>
+      </div>
+      <h2 class="reveal display text-3xl sm:text-5xl text-ink">From stalled to <span class="em-coral">shipped</span><br />in four moves.</h2>
+      <p class="reveal mt-5 text-base text-ink-soft">Every LUMEN path is the same shape: assess, follow, build, prove. You always know which move is next — and exactly how far the finish line is.</p>
+    </div>
+
+    <!-- The interactive path -->
+    <div class="reveal" id="journey">
+      <!-- Desktop track + traveling runner -->
+      <div class="hidden md:block relative h-[200px] mb-2">
+        <div class="journey-track" style="top:96px;"></div>
+        <div class="journey-fill" id="journeyFill" style="top:96px;"></div>
+        <div class="journey-runner" id="journeyRunner" style="top:96px; left:0;" aria-hidden="true">
+          <i data-lucide="flag" class="w-3.5 h-3.5"></i>
+        </div>
+        <!-- Node anchors centered above columns -->
+        <div class="absolute inset-x-0" style="top:84px;">
+          <div class="grid grid-cols-4 gap-6">
+            <div class="flex justify-center"><span class="journey-node" data-node="1"><span class="node-tick"></span></span></div>
+            <div class="flex justify-center"><span class="journey-node" data-node="2"><span class="node-tick"></span></span></div>
+            <div class="flex justify-center"><span class="journey-node" data-node="3"><span class="node-tick"></span></span></div>
+            <div class="flex justify-center"><span class="journey-node" data-node="4"><span class="node-tick"></span></span></div>
+          </div>
+        </div>
+        <!-- live % counter -->
+        <div class="absolute right-0 top-0 text-right">
+          <div class="idx">PATH PROGRESS</div>
+          <div class="stat-num text-2xl text-teal tnum" id="livePct">0%</div>
+        </div>
+      </div>
+
+      <!-- Step columns -->
+      <ol class="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-6 relative">
+        <li class="journey-step is-complete relative" tabindex="0" aria-label="Step 1, Assess: a 12-minute diagnostic places you on the right path. Completed.">
+          <!-- hover popover -->
+          <div class="node-pop hidden md:block">
+            <img src="https://picsum.photos/seed/lumen-proj-assess/300/160" alt="Skills diagnostic report preview" class="w-full h-20 object-cover rounded-md mb-2" loading="lazy" />
+            <div class="font-mono text-[10px] text-ink-soft">PROJECT 01</div>
+            <div class="text-xs font-semibold text-ink mt-0.5">Skills diagnostic report</div>
+          </div>
+          <div class="font-mono text-[11px] text-ink-soft mb-3">STEP 01</div>
+          <div class="w-12 h-12 rounded-2xl bg-teal text-cream inline-flex items-center justify-center mb-5"><i data-lucide="compass" class="w-5 h-5"></i></div>
+          <h3 class="display display-sm text-xl text-ink mb-2">Assess</h3>
+          <p class="text-sm text-ink-soft leading-relaxed">A 12-minute diagnostic places you on the right path and skips what you already know. No starting from zero.</p>
+        </li>
+
+        <li class="journey-step relative" tabindex="0" aria-label="Step 2, Follow the path: one curated sequence with weekly cadence. Current.">
+          <div class="node-pop hidden md:block">
+            <img src="https://picsum.photos/seed/lumen-proj-path/300/160" alt="Weekly milestone roadmap preview" class="w-full h-20 object-cover rounded-md mb-2" loading="lazy" />
+            <div class="font-mono text-[10px] text-ink-soft">PROJECT 02</div>
+            <div class="text-xs font-semibold text-ink mt-0.5">Weekly milestone roadmap</div>
+          </div>
+          <div class="font-mono text-[11px] text-ink-soft mb-3">STEP 02</div>
+          <div class="w-12 h-12 rounded-2xl bg-teal text-cream inline-flex items-center justify-center mb-5"><i data-lucide="route" class="w-5 h-5"></i></div>
+          <h3 class="display display-sm text-xl text-ink mb-2">Follow the path</h3>
+          <p class="text-sm text-ink-soft leading-relaxed">One curated sequence. Weekly cadence. Each module unlocks the next — momentum by design, not willpower.</p>
+        </li>
+
+        <li class="journey-step relative" tabindex="0" aria-label="Step 3, Build real projects: three portfolio-grade projects reviewed by your practitioner instructor.">
+          <div class="node-pop hidden md:block">
+            <img src="https://picsum.photos/seed/lumen-proj-build/300/160" alt="Portfolio project build preview" class="w-full h-20 object-cover rounded-md mb-2" loading="lazy" />
+            <div class="font-mono text-[10px] text-ink-soft">PROJECT 03</div>
+            <div class="text-xs font-semibold text-ink mt-0.5">Three portfolio projects</div>
+          </div>
+          <div class="font-mono text-[11px] text-ink-soft mb-3">STEP 03</div>
+          <div class="w-12 h-12 rounded-2xl bg-teal text-cream inline-flex items-center justify-center mb-5"><i data-lucide="hammer" class="w-5 h-5"></i></div>
+          <h3 class="display display-sm text-xl text-ink mb-2">Build real projects</h3>
+          <p class="text-sm text-ink-soft leading-relaxed">Three portfolio-grade projects, reviewed by the practitioner teaching you. You finish with work, not watch-time.</p>
+        </li>
+
+        <li class="journey-step relative is-finish" tabindex="0" aria-label="Step 4, Earn a verified outcome: a shareable review-backed credential and a recruiter-ready portfolio.">
+          <div class="node-pop hidden md:block">
+            <img src="https://picsum.photos/seed/lumen-proj-credential/300/160" alt="Verified outcome credential preview" class="w-full h-20 object-cover rounded-md mb-2" loading="lazy" />
+            <div class="font-mono text-[10px] text-ink-soft">PROJECT 04</div>
+            <div class="text-xs font-semibold text-ink mt-0.5">Verified outcome credential</div>
+          </div>
+          <div class="font-mono text-[11px] text-ink-soft mb-3">STEP 04</div>
+          <div class="w-12 h-12 rounded-2xl bg-ink text-cream inline-flex items-center justify-center mb-5"><i data-lucide="badge-check" class="w-5 h-5"></i></div>
+          <h3 class="display display-sm text-xl text-ink mb-2">Earn a verified outcome</h3>
+          <p class="text-sm text-ink-soft leading-relaxed">A shareable, review-backed credential and a portfolio recruiters can actually open. The finish line, made visible.</p>
+        </li>
+      </ol>
+
+      <!-- Mobile progress -->
+      <div class="md:hidden mt-10">
+        <div class="flex items-center justify-between font-mono text-[11px] text-ink-soft mb-2">
+          <span>YOUR PROGRESS</span><span class="text-teal font-semibold tnum" id="mobilePct">0%</span>
+        </div>
+        <div class="h-2 rounded-full bg-cream-deep overflow-hidden">
+          <div class="h-full rounded-full" id="mobileFill" style="width:0%; background:linear-gradient(90deg,var(--teal),var(--coral));"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal mt-14 flex justify-center">
+      <a href="#hero-search" class="btn-coral inline-flex items-center gap-2 h-12 px-7 text-base font-semibold">
+        Start your path
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED INSTRUCTORS (MasterClass treatment on dark teal) ============ -->
+<section id="instructors" class="section bg-teal text-cream relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none opacity-40" aria-hidden="true"
+       style="background-image: radial-gradient(circle at 85% 12%, rgba(255,106,77,.16) 0, transparent 42%);"></div>
+
+  <div class="relative mx-auto max-w-edge px-5 sm:px-8">
+
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-12">
+      <div>
+        <div class="reveal flex items-center gap-3 mb-5">
+          <span class="idx text-cream/70">[ 04 — TAUGHT BY ]</span>
+          <span class="h-px w-16 bg-cream/25"></span>
+        </div>
+        <h2 class="reveal display text-3xl sm:text-5xl text-cream max-w-2xl">People who do the work,<br />teach the work.</h2>
+      </div>
+      <p class="reveal text-sm text-cream/70 max-w-xs self-end">Not career lecturers. Every LUMEN instructor ships in their field — this week. They review your projects on Friday.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <article class="reveal group">
+        <div class="relative overflow-hidden rounded-2xl mb-5 aspect-[4/5] border border-cream/10 zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-portrait-amara/480/600" alt="Portrait of Amara Okafor, Senior Data Analyst at Stripe" class="w-full h-full object-cover" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-teal-deep/95 via-teal-deep/10 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <p class="inst-meta font-mono text-[11px] mb-1">DATA · <span class="num">8,400</span> STUDENTS</p>
+            <p class="inst-quote text-xs leading-snug italic font-display">“Built the analytics layer behind Stripe Tax.”</p>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="display display-sm text-xl text-cream">Amara Okafor</h3>
+          <span class="stars text-xs" aria-hidden="true">★ 4.9</span>
+        </div>
+        <p class="text-sm text-cream/70 mt-0.5">Sr. Data Analyst · Stripe</p>
+      </article>
+
+      <article class="reveal group">
+        <div class="relative overflow-hidden rounded-2xl mb-5 aspect-[4/5] border border-cream/10 zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-portrait-jonas/480/600" alt="Portrait of Jonas Welti, Design Lead at Linear" class="w-full h-full object-cover" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-teal-deep/95 via-teal-deep/10 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <p class="inst-meta font-mono text-[11px] mb-1">DESIGN · <span class="num">6,120</span> STUDENTS</p>
+            <p class="inst-quote text-xs leading-snug italic font-display">“Ships the interface you're probably using.”</p>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="display display-sm text-xl text-cream">Jonas Welti</h3>
+          <span class="stars text-xs" aria-hidden="true">★ 4.8</span>
+        </div>
+        <p class="text-sm text-cream/70 mt-0.5">Design Lead · Linear</p>
+      </article>
+
+      <article class="reveal group">
+        <div class="relative overflow-hidden rounded-2xl mb-5 aspect-[4/5] border border-cream/10 zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-portrait-rafa/480/600" alt="Portrait of Rafael Mendes, Staff Engineer at Vercel" class="w-full h-full object-cover" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-teal-deep/95 via-teal-deep/10 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <p class="inst-meta font-mono text-[11px] mb-1">ENGINEERING · <span class="num">11,300</span> STUDENTS</p>
+            <p class="inst-quote text-xs leading-snug italic font-display">“Maintains the build system behind Next.js.”</p>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="display display-sm text-xl text-cream">Rafael Mendes</h3>
+          <span class="stars text-xs" aria-hidden="true">★ 4.9</span>
+        </div>
+        <p class="text-sm text-cream/70 mt-0.5">Staff Engineer · Vercel</p>
+      </article>
+
+      <article class="reveal group">
+        <div class="relative overflow-hidden rounded-2xl mb-5 aspect-[4/5] border border-cream/10 zoom-frame">
+          <img src="https://picsum.photos/seed/lumen-portrait-sora/480/600" alt="Portrait of Sora Tanaka, ML Engineer at Anthropic" class="w-full h-full object-cover" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-teal-deep/95 via-teal-deep/10 to-transparent"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <p class="inst-meta font-mono text-[11px] mb-1">AI / ML · <span class="num">5,860</span> STUDENTS</p>
+            <p class="inst-quote text-xs leading-snug italic font-display">“Ships evals for frontier models, daily.”</p>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="display display-sm text-xl text-cream">Sora Tanaka</h3>
+          <span class="stars text-xs" aria-hidden="true">★ 4.9</span>
+        </div>
+        <p class="text-sm text-cream/70 mt-0.5">ML Engineer · Anthropic</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section id="testimonials" class="section">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+
+    <div class="flex items-center gap-3 mb-12">
+      <span class="idx reveal">[ 05 — FINISHED ]</span>
+      <span class="hairline flex-1 reveal"></span>
+      <span class="idx reveal text-teal">4.8★ · 2.4K REVIEWS</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <figure class="reveal card p-7 flex flex-col">
+        <div class="stars text-sm mb-5" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote class="display text-xl text-ink leading-relaxed flex-1">
+          “I'd quit three MOOCs before this. LUMEN's path told me exactly what came next — so I just kept going. <span class="em-coral">Finished</span> with a dashboard I still use.”
+        </blockquote>
+        <figcaption class="mt-7 flex items-center gap-3">
+          <img src="https://picsum.photos/seed/lumen-learner-mara/96/96" alt="" class="avatar w-11 h-11 rounded-full object-cover" loading="lazy" />
+          <div>
+            <div class="text-sm font-semibold text-ink">Mara Kessler</div>
+            <div class="text-xs text-ink-soft">Support Analyst → Data Analyst · Berlin</div>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure class="reveal card p-7 flex flex-col">
+        <div class="stars text-sm mb-5" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote class="display text-xl text-ink leading-relaxed flex-1">
+          “The projects got reviewed by someone who actually ships. That feedback was the whole point. Got hired off the portfolio two months later.”
+        </blockquote>
+        <figcaption class="mt-7 flex items-center gap-3">
+          <img src="https://picsum.photos/seed/lumen-learner-dev/96/96" alt="" class="avatar w-11 h-11 rounded-full object-cover" loading="lazy" />
+          <div>
+            <div class="text-sm font-semibold text-ink">Devon Achebe</div>
+            <div class="text-xs text-ink-soft">Bootcamp grad → Frontend Eng · Lisbon</div>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure class="reveal card p-7 flex flex-col">
+        <div class="stars text-sm mb-5" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote class="display text-xl text-ink leading-relaxed flex-1">
+          “I'm 38 with two kids. I needed a finish line, not a library. The credential opened a door my resume alone never could.”
+        </blockquote>
+        <figcaption class="mt-7 flex items-center gap-3">
+          <img src="https://picsum.photos/seed/lumen-learner-priya/96/96" alt="" class="avatar w-11 h-11 rounded-full object-cover" loading="lazy" />
+          <div>
+            <div class="text-sm font-semibold text-ink">Priya Raman</div>
+            <div class="text-xs text-ink-soft">Teacher → Product Manager · Toronto</div>
+          </div>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING (dark, AA-checked) ============ -->
+<section id="pricing" class="section bg-ink text-cream">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="reveal flex items-center justify-center gap-3 mb-5">
+        <span class="idx text-cream/60">[ 06 — MEMBERSHIP ]</span>
+        <span class="h-px w-16 bg-cream/25"></span>
+      </div>
+      <h2 class="reveal display text-3xl sm:text-5xl">One price.<br />Every path to the <span class="em-coral-bright">end</span>.</h2>
+
+      <!-- Toggle -->
+      <div class="reveal mt-8 inline-flex items-center gap-3 text-sm">
+        <span id="lblMonthly" class="font-semibold">Monthly</span>
+        <button id="priceToggle" class="tgl" role="switch" aria-checked="false" aria-label="Toggle annual billing" data-on="false"></button>
+        <span id="lblAnnual" class="text-cream/60">Annual <span class="text-cream text-xs font-semibold">save 20%</span></span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+      <!-- Free -->
+      <div class="reveal card bg-cream text-ink p-7 flex flex-col">
+        <div class="font-mono text-[11px] text-ink-soft">TIER 01</div>
+        <h3 class="display text-2xl mt-1">Free</h3>
+        <p class="text-sm text-ink-soft mt-2">For tasting the path.</p>
+        <div class="mt-6 mb-6">
+          <span class="display text-4xl tnum">$0</span>
+          <span class="text-sm text-ink-soft ml-1">/ forever</span>
+        </div>
+        <ul class="space-y-3 text-sm flex-1">
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>3 starter modules</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>Community access</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>1 diagnostic assessment</li>
+          <li class="flex gap-2.5 tier-excluded"><i data-lucide="minus" class="w-4 h-4 mt-0.5 shrink-0"></i><span>Project reviews</span></li>
+          <li class="flex gap-2.5 tier-excluded"><i data-lucide="minus" class="w-4 h-4 mt-0.5 shrink-0"></i><span>Verified credential</span></li>
+        </ul>
+        <a href="#hero-search" class="mt-7 btn-outline inline-flex items-center justify-center h-11 px-5 text-sm font-semibold">Start free</a>
+      </div>
+
+      <!-- Pro — highlighted -->
+      <div class="reveal relative bg-teal text-cream rounded-2xl p-7 flex flex-col shadow-[0_30px_60px_-30px_rgba(14,77,74,.6)] lg:-mt-4 lg:mb-0 border-2 border-coral">
+        <span class="absolute -top-3 left-7 chip bg-cream text-teal-deep border-transparent px-3 h-6 text-[11px] font-semibold font-mono tracking-wide">MOST POPULAR</span>
+        <div class="font-mono text-[11px] text-cream/70">TIER 02</div>
+        <h3 class="display text-2xl mt-1">Pro</h3>
+        <p class="text-sm text-cream/80 mt-2">For people who will finish.</p>
+        <div class="mt-6 mb-6">
+          <span class="display text-4xl tnum price" data-monthly="24" data-annual="19">$24</span>
+          <span class="text-sm text-cream/80 ml-1 price-period">/ month</span>
+        </div>
+        <ul class="space-y-3 text-sm flex-1">
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-coral mt-0.5 shrink-0"></i>All 126 guided paths</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-coral mt-0.5 shrink-0"></i>Project reviews by instructors</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-coral mt-0.5 shrink-0"></i>Verified outcome credential</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-coral mt-0.5 shrink-0"></i>Weekly cadence + reminders</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-coral mt-0.5 shrink-0"></i>Portfolio hosting</li>
+        </ul>
+        <a href="#hero-search" class="mt-7 btn-coral inline-flex items-center justify-center gap-1.5 h-11 px-5 text-sm font-semibold">Start learning <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+
+      <!-- Teams -->
+      <div class="reveal card bg-cream text-ink p-7 flex flex-col">
+        <div class="font-mono text-[11px] text-ink-soft">TIER 03</div>
+        <h3 class="display text-2xl mt-1">Teams</h3>
+        <p class="text-sm text-ink-soft mt-2">For orgs that ship together.</p>
+        <div class="mt-6 mb-6">
+          <span class="display text-4xl tnum price" data-monthly="49" data-annual="39">$49</span>
+          <span class="text-sm text-ink-soft ml-1 price-period">/ seat / month</span>
+        </div>
+        <ul class="space-y-3 text-sm flex-1">
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>Everything in Pro</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>Admin dashboard</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>Team completion analytics</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>Custom learning paths</li>
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal mt-0.5 shrink-0"></i>SSO + priority support</li>
+        </ul>
+        <a href="#hero-search" class="mt-7 btn-outline inline-flex items-center justify-center h-11 px-5 text-sm font-semibold">Talk to us</a>
+      </div>
+
+    </div>
+
+    <p class="reveal text-center text-sm text-cream/55 mt-10">7-day full-access trial on Pro. Cancel anytime — no sunk-cost guilt.</p>
+  </div>
+</section>
+
+<!-- ============ SECONDARY CTA ============ -->
+<section class="section">
+  <div class="mx-auto max-w-edge px-5 sm:px-8">
+    <div class="reveal relative overflow-hidden rounded-3xl border border-cream-line bg-cream-warm/50 p-10 sm:p-16 text-center">
+      <div class="absolute inset-0 hero-grid opacity-50 pointer-events-none" aria-hidden="true"></div>
+      <div class="absolute inset-0 hero-glow opacity-60 pointer-events-none" aria-hidden="true"></div>
+      <div class="relative">
+        <div class="idx mb-5">[ 07 — THE NEXT MOVE ]</div>
+        <h2 class="display text-3xl sm:text-6xl text-ink max-w-3xl mx-auto display-tight">Stop browsing.<br />Start <span class="em-coral">finishing</span>.</h2>
+        <p class="mt-5 text-base text-ink-soft max-w-lg mx-auto">One diagnostic, one path, one finish line. You could be on Step 02 by tonight.</p>
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a href="#hero-search" class="btn-coral inline-flex items-center gap-2 h-12 px-7 text-base font-semibold">Start learning <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+          <a href="#paths" class="inline-flex items-center gap-2 h-12 px-5 text-sm font-medium text-teal link-ghost">See how a path works</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-teal-deep text-cream">
+  <div class="mx-auto max-w-edge px-5 sm:px-8 py-16">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-10">
+
+      <div class="col-span-2">
+        <a href="#top" class="flex items-center gap-2 mb-4" aria-label="LUMEN home">
+          <span class="display text-cream text-[22px] font-semibold tracking-tightest2">LUMEN</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-cream/70"></span>
+        </a>
+        <p class="text-sm text-cream/75 max-w-xs leading-relaxed">A structured path to a real, project-backed outcome. Taught by people who do the work — for learners who mean to finish.</p>
+
+        <form class="mt-6 flex gap-2 max-w-xs" aria-label="Newsletter signup">
+          <label for="nl" class="sr-only">Email address</label>
+          <input id="nl" type="email" placeholder="you@email.com" class="flex-1 min-w-0 bg-cream/12 border border-cream/20 rounded-xl px-3.5 h-10 text-sm text-cream placeholder:text-cream/60 focus:outline-none focus:border-coral" />
+          <button type="submit" class="bg-coral text-ink font-semibold inline-flex items-center justify-center h-10 px-4 text-sm rounded-xl shrink-0 hover:bg-coral-deep transition-colors">Join</button>
+        </form>
+        <p class="text-xs text-cream/50 mt-2">One path idea, every other week. No spam.</p>
+      </div>
+
+      <div>
+        <div class="font-mono text-[11px] text-cream/60 mb-4">LEARN</div>
+        <ul class="space-y-2.5 text-sm text-cream/90">
+          <li><a href="#courses" class="hover:text-cream transition-colors">Courses</a></li>
+          <li><a href="#paths" class="hover:text-cream transition-colors">Paths</a></li>
+          <li><a href="#categories" class="hover:text-cream transition-colors">Categories</a></li>
+          <li><a href="#instructors" class="hover:text-cream transition-colors">Instructors</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-mono text-[11px] text-cream/60 mb-4">COMPANY</div>
+        <ul class="space-y-2.5 text-sm text-cream/90">
+          <li><a href="#instructors" class="hover:text-cream transition-colors">About</a></li>
+          <li><a href="#instructors" class="hover:text-cream transition-colors">Careers</a></li>
+          <li><a href="#testimonials" class="hover:text-cream transition-colors">Press</a></li>
+          <li><a href="#courses" class="hover:text-cream transition-colors">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-mono text-[11px] text-cream/60 mb-4">SUPPORT</div>
+        <ul class="space-y-2.5 text-sm text-cream/90">
+          <li><a href="#hero-search" class="hover:text-cream transition-colors">Help center</a></li>
+          <li><a href="#pricing" class="hover:text-cream transition-colors">Pricing</a></li>
+          <li><a href="#pricing" class="hover:text-cream transition-colors">For Teams</a></li>
+          <li><a href="#hero-search" class="hover:text-cream transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-mono text-[11px] text-cream/60 mb-4">LEGAL</div>
+        <ul class="space-y-2.5 text-sm text-cream/90">
+          <li><a href="https://lumen.example.com/privacy" rel="noopener" class="hover:text-cream transition-colors">Privacy</a></li>
+          <li><a href="https://lumen.example.com/terms" rel="noopener" class="hover:text-cream transition-colors">Terms</a></li>
+          <li><a href="https://lumen.example.com/accessibility" rel="noopener" class="hover:text-cream transition-colors">Accessibility</a></li>
+          <li><a href="https://lumen.example.com/refunds" rel="noopener" class="hover:text-cream transition-colors">Refunds</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-14 pt-8 border-t border-cream/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+      <p class="display text-lg text-cream">Finish what you <span class="em-coral-bright">started</span>.</p>
+      <div class="flex items-center gap-3">
+        <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="LUMEN on Twitter" class="w-9 h-9 rounded-full bg-cream/10 inline-flex items-center justify-center text-cream/80 hover:bg-teal hover:text-cream transition-colors"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LUMEN on LinkedIn" class="w-9 h-9 rounded-full bg-cream/10 inline-flex items-center justify-center text-cream/80 hover:bg-teal hover:text-cream transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+        <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="LUMEN on YouTube" class="w-9 h-9 rounded-full bg-cream/10 inline-flex items-center justify-center text-cream/80 hover:bg-teal hover:text-cream transition-colors"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+        <a href="https://github.com" target="_blank" rel="noopener" aria-label="LUMEN on GitHub" class="w-9 h-9 rounded-full bg-cream/10 inline-flex items-center justify-center text-cream/80 hover:bg-teal hover:text-cream transition-colors"><i data-lucide="github" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-col sm:flex-row justify-between gap-3 text-xs text-cream/60 font-mono">
+      <span>© 2026 LUMEN Learning. All rights reserved.</span>
+      <span>Made for finishers · Crafted with restraint</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* === Lucide init with retry (defers until the pinned script loads) === */
+  function initIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+      return true;
+    }
+    return false;
+  }
+  if (!initIcons()) {
+    let tries = 0;
+    const iv = setInterval(() => {
+      if (initIcons() || ++tries > 40) clearInterval(iv);
+    }, 100);
+  }
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* === Nav scrolled state === */
+  const nav = document.querySelector('.nav-blur');
+  const onScroll = () => nav && nav.classList.toggle('scrolled', window.scrollY > 12);
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* === Per-grid staggered reveals === */
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          // stagger children inside grids for a cascade
+          const grid = en.target.closest('#catGrid, #courseGrid');
+          if (grid) {
+            const sibs = Array.from(grid.querySelectorAll('.reveal'));
+            const idx = sibs.indexOf(en.target);
+            if (idx >= 0) en.target.style.transitionDelay = Math.min((idx % 9) * 0.06, 0.5) + 's';
+          }
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+
+  /* === Count-up stats === */
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function runCount(el) {
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    if (reduce) {
+      el.textContent = (target >= 1000 ? target.toLocaleString() : target) + suffix;
+      return;
+    }
+    const dur = 1500;
+    const start = performance.now();
+    function frame(now) {
+      const p = Math.min(1, (now - start) / dur);
+      const v = Math.round(target * easeOutCubic(p));
+      el.textContent = (v >= 1000 ? v.toLocaleString() : v) + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  const statEls = document.querySelectorAll('[data-count]');
+  if (statEls.length) {
+    if (reduce) { statEls.forEach(runCount); }
+    else {
+      const sio = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if (en.isIntersecting) {
+            // handle the <span data-count> nested inside completion-rate dd
+            const targets = en.target.matches('[data-count]') ? [en.target] : Array.from(en.target.querySelectorAll('[data-count]'));
+            targets.forEach(runCount);
+            sio.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      // observe each dd containing counts
+      document.querySelectorAll('dd[data-count], dd span[data-count]').forEach(el => {
+        sio.observe(el.closest('dd') || el);
+      });
+    }
+  }
+
+  /* === Signature journey: traveling marker + fill + live % === */
+  const journey = document.getElementById('journey');
+  const fill = document.getElementById('journeyFill');
+  const runner = document.getElementById('journeyRunner');
+  const livePct = document.getElementById('livePct');
+  const mobileFill = document.getElementById('mobileFill');
+  const mobilePct = document.getElementById('mobilePct');
+  const nodes = document.querySelectorAll('[data-node]');
+  const steps = document.querySelectorAll('.journey-step');
+
+  function paintJourney(pct) {
+    if (fill) fill.style.width = (pct * 100) + '%';
+    if (runner) runner.style.left = (pct * 100) + '%';
+    if (mobileFill) mobileFill.style.width = (pct * 100) + '%';
+    const shown = Math.round(pct * 100) + '%';
+    if (livePct) livePct.textContent = shown;
+    if (mobilePct) mobilePct.textContent = shown;
+    // activate nodes — pop the node the instant the runner reaches it
+    steps.forEach((s, i) => {
+      const reach = (i + 1) / steps.length;
+      const nowActive = pct + 0.02 >= reach;
+      const wasActive = s.classList.contains('is-complete');
+      s.classList.toggle('is-complete', nowActive);
+      // fire the 'arrived' pop once, when a node flips to complete
+      const node = nodes[i];
+      if (node) {
+        if (nowActive && !wasActive) {
+          node.classList.remove('is-popping');
+          void node.offsetWidth; // force reflow so the animation re-triggers
+          node.classList.add('is-popping');
+        } else if (!nowActive) {
+          node.classList.remove('is-popping');
+        }
+      }
+    });
+  }
+
+  if (journey) {
+    if (reduce) {
+      paintJourney(1);
+    } else {
+      // One-shot finish-line reveal: animate 0 → 100% over ~1.6s on enter,
+      // then stop. No persistent scroll listener, no per-frame layout reads.
+      const jio = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if (!en.isIntersecting) return;
+          jio.unobserve(journey);
+          paintJourney(0);
+          if (runner) runner.classList.add('is-traveling');
+          const dur = 1600;
+          const start = performance.now();
+          function frame(now) {
+            const p = Math.min(1, (now - start) / dur);
+            // easeOutCubic for a confident settle
+            paintJourney(1 - Math.pow(1 - p, 3));
+            if (p < 1) requestAnimationFrame(frame);
+            else if (runner) runner.classList.remove('is-traveling');
+          }
+          requestAnimationFrame(frame);
+        });
+      }, { threshold: 0.25 });
+      jio.observe(journey);
+    }
+  }
+
+  /* === Pricing toggle === */
+  (function () {
+    const tgl = document.getElementById('priceToggle');
+    if (!tgl) return;
+    const prices = document.querySelectorAll('.price');
+    const periods = document.querySelectorAll('.price-period');
+    const lblM = document.getElementById('lblMonthly');
+    const lblA = document.getElementById('lblAnnual');
+
+    function render(annual) {
+      prices.forEach(el => {
+        const v = annual ? el.dataset.annual : el.dataset.monthly;
+        el.textContent = '$' + v;
+      });
+      periods.forEach(el => el.textContent = annual ? '/ month, billed yearly' : '/ month');
+      tgl.setAttribute('aria-checked', annual ? 'true' : 'false');
+      tgl.dataset.on = annual ? 'true' : 'false';
+      if (lblM) { lblM.classList.toggle('text-cream/60', annual); lblM.classList.toggle('font-semibold', !annual); }
+      if (lblA) { lblA.classList.toggle('text-cream/60', !annual); lblA.classList.toggle('font-semibold', annual); }
+    }
+    tgl.addEventListener('click', () => render(tgl.dataset.on !== 'true'));
+    tgl.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); render(tgl.dataset.on !== 'true'); }
+    });
+  })();
+
+  /* === Nav search → focus hero search === */
+  (function () {
+    const ns = document.getElementById('navSearch');
+    const q = document.getElementById('q');
+    if (ns && q) ns.addEventListener('click', () => {
+      q.focus();
+      q.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (q) { q.focus(); q.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      }
+    });
+  })();
+
+  /* === Category chips toggle === */
+  document.querySelectorAll('#hero-search .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('#hero-search .chip').forEach(x => x.dataset.active = 'false');
+      c.dataset.active = 'true';
+    });
+  });
+
+  /* === Prevent forms from navigating === */
+  document.querySelectorAll('form').forEach(f => f.addEventListener('submit', e => e.preventDefault()));
+</script>
+
+</body>
+</html>

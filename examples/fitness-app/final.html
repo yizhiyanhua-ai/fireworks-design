@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PULSE — Train at the Edge of Your Potential</title>
+<meta name="description" content="PULSE is the adaptive training app that turns your effort into momentum. AI-tuned plans, real-time coaching, and a community that pulls you forward." />
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Anton (kinetic display) + Inter (UI/body) + Space Grotesk (data) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Lucide (versioned) -->
+<script src="https://unpkg.com/lucide@0.456.0/dist/umd/lucide.min.js" defer></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0A0A0F',
+          ink2: '#14141F',
+          ink3: '#1B1B27',
+          line: '#26262F',
+          chalk: '#FFFFFF',
+          ash: '#B4B4C0',
+          mute: '#8A8A98',          /* raised from #6B6B78 for AA at small sizes (~6.5:1 on ink) */
+          lime: '#CCFF00',
+          coral: '#FF4D5E',
+        },
+        fontFamily: {
+          display: ['Anton', 'sans-serif'],
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          mono: ['"Space Grotesk"', 'ui-monospace', 'monospace'],
+        },
+        maxWidth: { shell: '1280px' },
+      }
+    }
+  }
+</script>
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root{
+    --ink:#0A0A0F; --ink2:#14141F; --ink3:#1B1B27;
+    --line:#26262F; --line2:#33333F;
+    --chalk:#FFFFFF; --ash:#B4B4C0; --mute:#8A8A98;
+    --lime:#CCFF00; --coral:#FF4D5E;
+
+    /* Radius family — 6px pills, 8px chips/buttons, 14px panels.
+       (44px phone + 36px screen + 14px notch are hardware exceptions, documented.) */
+    --r-xs:6px; --r-sm:8px; --r-md:14px;
+
+    /* Published modular type scale (1.2 ratio base, clamp-based) */
+    --t-eyebrow: 0.72rem;                       /* 11.5px labels */
+    --t-micro:   0.8rem;                        /* 12.8px microcopy */
+    --t-sm:      0.875rem;                      /* 14px body-small */
+    --t-base:    1rem;                          /* 16px body */
+    --t-lg:      1.125rem;                      /* 18px lead */
+    --t-card:    clamp(1.35rem, 1.1rem + 0.8vw, 1.6rem);   /* card titles */
+    --t-card-sm: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);      /* compact card titles */
+    --t-step:    clamp(1.15rem, 1rem + 0.6vw, 1.35rem);    /* step titles */
+    --t-h2:      clamp(2.4rem, 1.4rem + 3.4vw, 4.5rem);    /* section heads */
+    --t-h1:      clamp(2.9rem, 1rem + 7.4vw, 6.8rem);      /* hero head — capped so trust row clears 900px fold */
+    /* Surface tokens (extracted from hard-coded hex for design-language drift control) */
+    --scrollbar:  #2c2c38;
+    --scrollbar-hover: #3a3a4d;
+    --grid-hair:  rgba(255,255,255,0.022);
+    /* Toggle selected pill — lime-on-ink, in-palette (was chalk-white) */
+    --pill-on:    rgba(204,255,0,0.14);
+  }
+
+  *{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  html,body{ background:var(--ink); color:var(--chalk); }
+  body{ font-family:'Inter',system-ui,sans-serif; overflow-x:hidden; }
+  ::selection{ background:var(--lime); color:#000; }
+  /* Anchor targets clear the 64px fixed header (scroll-margin, not padding, so layout is untouched) */
+  section[id], main[id]{ scroll-margin-top: 80px; }
+
+  /* ---------- Three-voice type system ---------- */
+  .display{ font-family:'Anton',sans-serif; text-transform:uppercase; letter-spacing:-0.02em; line-height:0.9; }
+  .mono{ font-family:'Space Grotesk',ui-monospace,monospace; }
+  .tabnum{ font-variant-numeric:tabular-nums; font-feature-settings:'tnum' 1; }
+  .eyebrow{ font-family:'Space Grotesk',monospace; letter-spacing:0.22em; text-transform:uppercase; font-size:var(--t-eyebrow); font-weight:600; }
+  /* Brand-native section index tick — replaces the 'S/0N ·' dev-tool convention */
+  .idx-tick{ display:inline-block; width:0.42em; height:0.95em; margin-right:0.55em; vertical-align:-0.08em; background:var(--lime); border-radius:1px; }
+  /* Engineered accent under the hero word — a lime rule that breathes in time
+     with the heartbeat, not a neon glow. Keeps ECG + phone halo as the only two
+     steady light sources in the band. */
+  .word-accent{ position:relative; }
+  .word-accent::after{ content:""; position:absolute; left:0; right:0; bottom:-0.08em; height:0.10em; background:var(--lime); border-radius:2px; opacity:0.55;
+    animation: accentPulse 3.6s ease-in-out infinite; }
+  @keyframes accentPulse{ 0%,100%{ opacity:0.4; transform:scaleX(0.96); } 50%{ opacity:0.85; transform:scaleX(1); } }
+
+  /* ============================================================
+     AMBIENT BACKGROUND — mesh blobs (lime + desaturated teal/green
+     sibling family only — no violet/blue, keeping hue coherence)
+     ============================================================ */
+  .mesh-wrap{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .mesh-blob{ position:absolute; border-radius:50%; filter:blur(90px); }
+  .blob-a{ width:52vw; height:52vw; left:-12vw; top:-12vw;
+    background:radial-gradient(circle at 40% 40%, rgba(204,255,0,0.32), transparent 62%);
+    animation: drift1 28s ease-in-out infinite; }
+  .blob-b{ width:40vw; height:40vw; right:-8vw; top:4vw;
+    background:radial-gradient(circle at 50% 50%, rgba(120,200,140,0.16), transparent 64%); /* teal sibling */
+    animation: drift2 34s ease-in-out infinite; }
+  .blob-c{ width:46vw; height:46vw; left:6vw; bottom:-20vw;
+    background:radial-gradient(circle at 50% 50%, rgba(204,255,0,0.10), transparent 64%);
+    animation: drift3 30s ease-in-out infinite; }
+  @keyframes drift1{ 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(5vw,4vw) scale(1.1)} }
+  @keyframes drift2{ 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-4vw,3vw) scale(1.08)} }
+  @keyframes drift3{ 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(3vw,-5vw) scale(1.12)} }
+
+  /* Grain for premium texture */
+  body::after{
+    content:""; position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0.04; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.9'/></svg>");
+  }
+
+  /* Swiss structural grid hairlines (hero only — the grid as design element) */
+  .grid-lines{ position:absolute; inset:0; pointer-events:none;
+    background-image: linear-gradient(to right, var(--grid-hair) 1px, transparent 1px);
+    background-size: calc(100% / 12) 100%; }
+  @media (max-width:768px){ .grid-lines{ background-size: calc(100% / 4) 100%; } }
+
+  /* ============================================================
+     SIGNATURE: the ECG / heartbeat — the page's living data-spine
+     ============================================================ */
+  .ecg-track{ stroke:var(--lime); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:1600; stroke-dashoffset:1600; filter:drop-shadow(0 0 7px rgba(204,255,0,0.55)); }
+  .ecg-run .ecg-track{ animation: ecgDraw 2.8s cubic-bezier(.65,.05,.36,1) forwards; }
+  @keyframes ecgDraw{ to{ stroke-dashoffset:0; } }
+
+  /* Continuous living waveform inside the adaptive feature card */
+  .wave-track{ stroke:var(--lime); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;
+    filter:drop-shadow(0 0 6px rgba(204,255,0,0.6)); }
+  @keyframes waveScroll{ to{ stroke-dashoffset:-240; } }
+  .wave-anim{ stroke-dasharray:5 7; animation:waveScroll 3.6s linear infinite; }
+
+  /* Heartbeat pulse dot */
+  @keyframes bpmPulse{ 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:0.4; transform:scale(0.9)} }
+  .bpm-pulse{ animation:bpmPulse 1.05s ease-in-out infinite; transform-origin:center; }
+  .beat-ring{ position:absolute; inset:0; border-radius:50%; border:1.5px solid rgba(204,255,0,0.5);
+    animation:beatRing 2.4s ease-out infinite; }
+  @keyframes beatRing{ 0%{transform:scale(0.9); opacity:0.7} 70%{transform:scale(1.7); opacity:0} 100%{opacity:0} }
+
+  /* ============================================================
+     GLASS + CARDS
+     ============================================================ */
+  .glass{ background:linear-gradient(165deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018));
+    border:1px solid var(--line); backdrop-filter:blur(14px) saturate(135%); -webkit-backdrop-filter:blur(14px) saturate(135%); }
+  .glass-soft{ background:rgba(255,255,255,0.035); border:1px solid var(--line); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+
+  .card{ position:relative; border-radius:var(--r-md); transition: transform .45s cubic-bezier(.2,.85,.25,1.1), border-color .35s, background .35s, box-shadow .45s; }
+  .card:hover{ transform:translateY(-5px); border-color:var(--line2); background:linear-gradient(165deg, rgba(255,255,255,0.07), rgba(255,255,255,0.025)); box-shadow:0 28px 60px -30px rgba(204,255,0,0.18); }
+  .card .top-line{ position:absolute; top:0; left:14%; right:14%; height:1.5px; border-radius:2px;
+    background:linear-gradient(90deg, transparent, var(--lime), transparent);
+    transform:scaleX(0); transform-origin:left; transition:transform .8s cubic-bezier(.2,.8,.2,1); opacity:0; }
+  .card.in .top-line{ opacity:1; transform:scaleX(1); }
+  .card .ico-wrap{ transition: transform .5s cubic-bezier(.2,.9,.25,1.25); }
+  .card:hover .ico-wrap{ transform:translateY(-3px) scale(1.08) rotate(-4deg); }
+
+  /* ============================================================
+     REVEAL (staggered cascade via nth-child)
+     ============================================================ */
+  .reveal{ opacity:0; transform:translateY(26px); transition: opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  /* Staggered cascade for grouped reveals (features, pricing, steps, stats) */
+  .stagger > *:nth-child(1){ transition-delay:0ms; }
+  .stagger > *:nth-child(2){ transition-delay:75ms; }
+  .stagger > *:nth-child(3){ transition-delay:150ms; }
+  .stagger > *:nth-child(4){ transition-delay:225ms; }
+
+  /* ============================================================
+     BUTTONS — primary lime (single dominant CTA), ghost outline
+     ============================================================ */
+  .btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+    font-weight:700; font-size:var(--t-sm); border-radius:var(--r-sm); cursor:pointer;
+    transition: transform .35s cubic-bezier(.34,1.4,.5,1), background .25s, color .25s, border-color .25s, box-shadow .35s; }
+  .btn:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(204,255,0,0.6); }
+  .btn-primary{ background:var(--lime); color:#0A0A0F; box-shadow:0 10px 36px -10px rgba(204,255,0,0.5); }
+  .btn-primary:hover{ transform:translateY(-2px) scale(1.015); box-shadow:0 18px 50px -12px rgba(255,77,94,0.55), 0 18px 50px -16px rgba(204,255,0,0.5); }
+  .btn-primary:hover svg{ color:var(--coral); transform:translateX(2px); }
+  .btn-primary svg{ transition: transform .3s cubic-bezier(.34,1.4,.5,1), color .25s; }
+  .btn-primary:active{ transform:translateY(0) scale(0.99); }
+  .btn-ghost{ background:rgba(255,255,255,0.03); color:var(--chalk); border:1px solid rgba(255,255,255,0.2); }
+  .btn-ghost:hover{ transform:translateY(-2px); border-color:var(--lime); color:var(--lime); background:rgba(204,255,0,0.05); }
+
+  /* Generic focus ring */
+  a:focus-visible, button:focus-visible, input:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(204,255,0,0.55); border-radius:var(--r-sm); }
+
+  /* ============================================================
+     STEPPER — connecting gradient line draws L→R on scroll
+     ============================================================ */
+  .step-rail{ position:absolute; top:30px; left:6%; right:6%; height:1.5px; background:var(--line); border-radius:2px; }
+  .step-rail .fill{ position:absolute; inset:0; transform-origin:left; transform:scaleX(0);
+    background:linear-gradient(90deg, var(--lime), rgba(204,255,0,0.15));
+    transition:transform 1.3s cubic-bezier(.5,0,.2,1); }
+  .how-in .step-rail .fill{ transform:scaleX(1); }
+
+  /* ============================================================
+     STAT UNDERLINE DRAW
+     ============================================================ */
+  .stat-underline{ position:relative; }
+  .stat-underline::after{ content:""; position:absolute; left:0; bottom:-6px; height:2px; width:100%;
+    background:var(--lime); transform:scaleX(0); transform-origin:left; transition:transform 1s cubic-bezier(.2,.8,.2,1) .15s; }
+  .stat-underline.in::after{ transform:scaleX(1); }
+
+  /* ============================================================
+     MARQUEE
+     ============================================================ */
+  .marquee{ display:flex; gap:1.25rem; width:max-content; animation:scrollX 40s linear infinite; }
+  .marquee-wrap:hover .marquee{ animation-play-state:paused; }
+  @keyframes scrollX{ to{ transform:translateX(-50%); } }
+  .fade-x{ -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+           mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+
+  /* ============================================================
+     PRICING — popular tier glow + gradient border
+     ============================================================ */
+  .price-pop{ position:relative; border:1px solid rgba(204,255,0,0.4);
+    box-shadow:0 0 0 1px rgba(204,255,0,0.06), 0 36px 80px -42px rgba(204,255,0,0.4); }
+  .price-pop::before{ content:""; position:absolute; inset:0; border-radius:var(--r-md); padding:1px;
+    background:linear-gradient(165deg, var(--lime), transparent 45%, rgba(204,255,0,0.35));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
+
+  /* Hairline lime (footer top, section dividers) */
+  .hairline-lime{ height:1px; background:linear-gradient(90deg, transparent, rgba(204,255,0,0.6), transparent); }
+
+  /* Pricing toggle selected pill — lime-on-ink, in-palette (no pure-white block on a dark+lime page) */
+  .bill-btn[data-active="true"]{ background:var(--pill-on); border:1px solid rgba(204,255,0,0.5); color:var(--lime); }
+  .bill-btn[data-active="false"]{ border:1px solid transparent; }
+
+  /* Elevated popular tier — keep its scale + lift on hover (the generic .card:hover
+     translateY would otherwise clobber the lg:scale-[1.04] elevation). */
+  @media (min-width:1024px){
+    .price-pop{ transform: scale(1.04); }
+    .price-pop:hover{ transform: scale(1.04) translateY(-6px); }
+  }
+
+  /* ============================================================
+     PHONE MOCKUP
+     ============================================================ */
+  .phone{ position:relative; border-radius:44px; padding:9px;
+    background:linear-gradient(160deg,#1c1c2b,#0b0b14); border:1px solid rgba(255,255,255,0.09);
+    box-shadow:0 60px 120px -35px rgba(0,0,0,0.85), 0 0 0 1px rgba(204,255,0,0.04), 0 0 70px rgba(204,255,0,0.08);
+    transform:rotateY(-10deg) rotateX(3deg); transform-style:preserve-3d; transition:transform .4s cubic-bezier(.2,.8,.2,1); }
+  .phone-screen{ border-radius:36px; overflow:hidden; background:#0b0b14; position:relative; }
+  .phone-notch{ position:absolute; top:9px; left:50%; transform:translateX(-50%); width:88px; height:20px; background:#000; border-radius:14px; z-index:5; }
+
+  /* ============================================================
+     MOBILE NAV DRAWER
+     ============================================================ */
+  .nav-backdrop{ position:fixed; inset:0; z-index:60; background:rgba(10,10,15,0.85); backdrop-filter:blur(6px);
+    opacity:0; pointer-events:none; transition:opacity .3s; }
+  .nav-backdrop.open{ opacity:1; pointer-events:auto; }
+  .nav-drawer{ position:fixed; top:0; right:0; bottom:0; z-index:61; width:min(82vw,340px);
+    background:var(--ink2); border-left:1px solid var(--line); padding:5rem 1.75rem 2rem;
+    transform:translateX(100%); transition:transform .4s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; gap:0.25rem; }
+  .nav-drawer.open{ transform:translateX(0); }
+  .nav-drawer a{ padding:0.85rem 0; border-bottom:1px solid var(--line); color:var(--ash); font-size:1.05rem; transition:color .2s; }
+  .nav-drawer a:hover, .nav-drawer a:focus-visible{ color:var(--lime); }
+
+  /* ============================================================
+     CUSTOM SCROLLBAR
+     ============================================================ */
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:var(--ink); }
+  ::-webkit-scrollbar-thumb{ background:var(--scrollbar); border-radius:10px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--scrollbar-hover); }
+
+  /* ============================================================
+     REDUCED MOTION — fully neutralized, static final states
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce){
+    .blob-a,.blob-b,.blob-c,.ecg-run .ecg-track,.wave-anim,.bpm-pulse,.beat-ring,.marquee,.word-accent::after{ animation:none !important; }
+    .ecg-run .ecg-track{ stroke-dashoffset:0 !important; }
+    .reveal{ opacity:1 !important; transform:none !important; }
+    .stagger > *{ transition-delay:0ms !important; }
+    .step-rail .fill{ transform:scaleX(1) !important; }
+    .stat-underline::after{ transform:scaleX(1) !important; }
+    .card .top-line{ opacity:1 !important; transform:scaleX(1) !important; }
+    .phone{ transform:none !important; }
+    html{ scroll-behavior:auto !important; }
+    *{ transition-duration:0.001ms !important; animation-duration:0.001ms !important; animation-iteration-count:1 !important; }
+    /* Marquee is stopped under reduced motion — show only one copy so the
+       duplicated press list doesn't sit statically repeating itself. */
+    .marquee-wrap .marquee-dup{ display:none !important; }
+    .marquee{ transform:none !important; flex-wrap:wrap; justify-content:center; width:100%; }
+    .marquee > *{ padding:0 0.6rem; }
+  }
+</style>
+</head>
+
+<body class="bg-ink text-chalk">
+
+<!-- Skip link (first child of body — clears the fixed header a11y baseline) -->
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-lime focus:text-ink focus:px-4 focus:py-2 focus:rounded-[var(--r-sm)] focus:font-bold focus:shadow-lg">Skip to content</a>
+
+<!-- Ambient mesh background -->
+<div class="mesh-wrap" aria-hidden="true">
+  <div class="mesh-blob blob-a"></div>
+  <div class="mesh-blob blob-b"></div>
+  <div class="mesh-blob blob-c"></div>
+</div>
+
+<!-- Mobile nav backdrop + drawer -->
+<div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+<aside class="nav-drawer" id="navDrawer" aria-label="Mobile navigation" aria-hidden="true">
+  <a href="#features">Features</a>
+  <a href="#how">How it works</a>
+  <a href="#results">Results</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#download" class="!text-lime">Download</a>
+  <a href="/login" class="mt-2">Sign in</a>
+  <a href="#pricing" class="btn btn-primary mt-6">Start free</a>
+</aside>
+
+<!-- ============ HEADER / NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-ink/70 border-b border-line/70">
+  <nav class="max-w-shell mx-auto px-5 md:px-8 h-16 flex items-center justify-between" aria-label="Primary">
+    <a href="#main" class="flex items-center gap-2.5" aria-label="PULSE home">
+      <span class="relative grid place-items-center w-8 h-8 rounded-[var(--r-sm)] bg-lime/12 border border-lime/30">
+        <span class="beat-ring rounded-[var(--r-sm)]" aria-hidden="true"></span>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M2 12h4l2-6 4 14 3-9 2 3h5" stroke="#CCFF00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="display text-xl tracking-tight">PULSE</span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-9 mono text-[var(--t-micro)] uppercase tracking-[0.14em] text-ash">
+      <li><a class="hover:text-chalk transition-colors" href="#features">Features</a></li>
+      <li><a class="hover:text-chalk transition-colors" href="#how">How it works</a></li>
+      <li><a class="hover:text-chalk transition-colors" href="#results">Results</a></li>
+      <li><a class="hover:text-chalk transition-colors" href="#pricing">Pricing</a></li>
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a href="/login" class="hidden sm:inline text-[var(--t-micro)] font-medium text-ash hover:text-chalk transition-colors">Sign in</a>
+      <a href="#pricing" class="btn btn-primary !py-2.5 !px-4 !text-[13px]">Start free</a>
+      <button id="navToggle" class="md:hidden grid place-items-center w-9 h-9 rounded-[var(--r-sm)] border border-line text-chalk" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main" class="relative z-10 scroll-mt-0">
+
+<!-- ============ HERO ============ -->
+<section class="relative min-h-[100svh] flex items-center pt-20 md:pt-24 pb-16 overflow-hidden">
+  <div class="grid-lines" aria-hidden="true"></div>
+
+  <!-- The signature ECG — the data-spine, lives across the hero -->
+  <svg class="absolute left-0 right-0 top-[46%] w-full h-24 opacity-70 ecg-run hidden md:block" viewBox="0 0 1600 100" preserveAspectRatio="none" aria-hidden="true">
+    <path class="ecg-track" d="M0,50 H300 L332,50 L352,16 L378,84 L402,50 H640 L672,50 L694,28 L718,72 L740,50 H1060 L1090,50 L1112,20 L1136,80 L1160,50 H1600" />
+  </svg>
+
+  <div class="relative max-w-shell mx-auto px-5 md:px-8 w-full">
+    <div class="grid grid-cols-12 gap-x-6 gap-y-14 items-center">
+
+      <!-- LEFT: copy (the eye lands here first) -->
+      <div class="col-span-12 lg:col-span-7">
+        <div class="reveal flex items-center gap-3 mb-7">
+          <span class="inline-flex items-center gap-2.5 glass-soft rounded-full pl-2 pr-4 py-1.5">
+            <span class="h-2 w-2 rounded-full bg-lime bpm-pulse" style="box-shadow:0 0 8px #CCFF00"></span>
+            <span class="eyebrow text-ash"><span class="idx-tick" aria-hidden="true"></span>Adaptive training, reimagined</span>
+          </span>
+        </div>
+
+        <h1 class="display reveal" style="font-size:var(--t-h1); line-height:0.85">
+          <span class="block">Train at the</span>
+          <span class="block">edge of your</span>
+          <span class="block">poten<span class="text-lime word-accent">tial</span>.</span>
+        </h1>
+
+        <p class="reveal mt-8 max-w-xl leading-relaxed text-ash" style="font-size:var(--t-lg)">
+          PULSE reads your effort in real time and rewrites the plan after every set.
+          Intelligent training that adapts to <span class="text-chalk font-medium">you</span> — not the other way around.
+        </p>
+
+        <!-- CTAs — single primary, ghost secondary -->
+        <div class="reveal mt-10 flex flex-col sm:flex-row gap-3 sm:items-center">
+          <a href="#pricing" class="btn btn-primary" style="padding:0.95rem 1.7rem; font-size:var(--t-base)">
+            Start free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#how" class="btn btn-ghost" style="padding:0.95rem 1.7rem; font-size:var(--t-base)">
+            <span class="grid place-items-center w-6 h-6 rounded-full bg-white/10">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+            Watch demo
+          </a>
+        </div>
+
+        <!-- Trust row — brand-tier authority proof (the 5-second promise).
+             Performance-tier metrics live in the results band so the two moments never duplicate. -->
+        <dl class="reveal mt-10 lg:mt-12 grid grid-cols-4 gap-x-3 sm:gap-x-6 gap-y-5 max-w-2xl border-t border-line pt-5">
+          <div>
+            <dt class="eyebrow text-mute">Sessions</dt>
+            <dd class="display tabnum text-xl sm:text-3xl mt-1.5">2.4M</dd>
+          </div>
+          <div>
+            <dt class="eyebrow text-mute">App store</dt>
+            <dd class="display tabnum text-xl sm:text-3xl mt-1.5 flex items-center gap-1">4.9<span class="text-lime text-base sm:text-2xl">★</span></dd>
+          </div>
+          <div>
+            <dt class="eyebrow text-mute">Featured by</dt>
+            <dd class="mt-1.5 flex items-center gap-1.5">
+              <svg width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="currentColor" class="text-chalk sm:text-2xl text-base" aria-hidden="true"><path d="M16.365 1.43c.02 1.06-.38 2.06-1.02 2.83-.66.79-1.72 1.41-2.76 1.33-.05-1.02.42-2.1 1.04-2.83.66-.78 1.79-1.36 2.74-1.33zM20.5 17.2c-.5 1.15-.74 1.66-1.39 2.68-.9 1.43-2.17 3.2-3.74 3.21-1.4.02-1.76-.91-3.66-.9-1.9.01-2.3.92-3.7.9-1.57-.02-2.77-1.62-3.67-3.04C1.49 16.1 1.2 11.2 3.4 8.6c1.1-1.32 2.84-2.1 4.47-2.1 1.66 0 2.7.91 4.07.91 1.33 0 2.14-.91 4.06-.91 1.45 0 2.99.79 4.08 2.16-3.59 1.97-3.01 7.1.42 8.54z"/></svg>
+              <span class="display text-xl sm:text-3xl">Apple</span>
+            </dd>
+          </div>
+          <div>
+            <dt class="eyebrow text-mute">Avg session</dt>
+            <dd class="display tabnum text-xl sm:text-3xl mt-1.5">187<span class="text-ash text-[9px] sm:text-xs font-normal ml-0.5">sec</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- RIGHT: phone mockup (the interactive focal point) -->
+      <div class="col-span-12 lg:col-span-5 flex justify-center lg:justify-end">
+        <div class="reveal relative" id="phoneStage" style="perspective:1500px">
+          <!-- lime glow behind -->
+          <div class="absolute -inset-8 bg-lime/15 blur-3xl rounded-full" aria-hidden="true"></div>
+
+          <div class="phone relative w-[272px] sm:w-[308px]" id="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-screen aspect-[9/19.5]">
+              <div class="absolute inset-0 p-5 pt-11 flex flex-col text-chalk">
+
+                <!-- status bar -->
+                <div class="flex items-center justify-between mono text-[10px] text-ash mb-4">
+                  <span>9:41</span>
+                  <span class="flex items-center gap-1">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6"/><rect x="7" y="11" width="3" height="9"/><rect x="12" y="7" width="3" height="13"/><rect x="17" y="3" width="3" height="17"/></svg>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5a10 10 0 0 1 14 0M2 9a15 15 0 0 1 20 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg>
+                    <svg width="16" height="11" viewBox="0 0 24 14" fill="none"><rect x="1" y="1" width="20" height="12" rx="3" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="3" width="16" height="8" rx="1.5" fill="currentColor"/><rect x="22.5" y="4.5" width="1.5" height="5" rx="0.7" fill="currentColor"/></svg>
+                  </span>
+                </div>
+
+                <!-- greeting -->
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <div class="eyebrow text-mute text-[9px]">Today · Push Day Wk 6</div>
+                    <div class="font-semibold text-[15px] mt-0.5">Adaptive session</div>
+                  </div>
+                  <div class="relative grid place-items-center w-9 h-9 rounded-full bg-white/5 border border-line">
+                    <span class="beat-ring" aria-hidden="true"></span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 4 14 2-8h6"/></svg>
+                  </div>
+                </div>
+
+                <!-- HR card — waveform in lime is the ONE focal accent inside phone -->
+                <div class="glass rounded-[var(--r-sm)] p-3.5 mb-3">
+                  <div class="flex items-baseline justify-between mb-2">
+                    <span class="eyebrow text-mute text-[9px]">Heart rate</span>
+                    <span class="mono tabnum text-base text-chalk" id="phoneBpm">156 <span class="text-[9px] text-mute">bpm</span></span>
+                  </div>
+                  <svg viewBox="0 0 240 44" class="w-full h-9" preserveAspectRatio="none" aria-hidden="true">
+                    <path class="wave-track wave-anim" d="M0 22 L26 22 L34 9 L42 36 L50 14 L58 22 L120 22 L128 7 L136 38 L144 19 L152 22 L240 22" />
+                  </svg>
+                  <div class="flex gap-1.5 mt-1.5">
+                    <span class="mono text-[9px] px-2 py-0.5 rounded-full bg-lime/12 text-lime">ZONE 4</span>
+                    <span class="mono text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-mute">ADAPTING ↑</span>
+                  </div>
+                </div>
+
+                <!-- Current set — internal UI is mono/white, NOT lime (accent discipline) -->
+                <div class="glass rounded-[var(--r-sm)] p-3.5 mb-3">
+                  <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[13px] font-semibold">Bench Press</span>
+                    <span class="mono text-[10px] text-mute">Set 3 / 5</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 text-center">
+                    <div><div class="mono tabnum text-base">8</div><div class="mono text-[9px] text-mute mt-0.5">REPS</div></div>
+                    <div><div class="mono tabnum text-base text-chalk">82.5</div><div class="mono text-[9px] text-mute mt-0.5">KG</div></div>
+                    <div><div class="mono tabnum text-base">8</div><div class="mono text-[9px] text-mute mt-0.5">RPE</div></div>
+                  </div>
+                  <div class="mt-3 h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full w-[68%] bg-chalk"></div>
+                  </div>
+                  <button class="mt-3 w-full py-2 rounded-[var(--r-sm)] border border-white/20 text-[11px] font-bold tracking-wide text-chalk">LOG SET</button>
+                </div>
+
+                <!-- AI coach -->
+                <div class="glass-soft rounded-[var(--r-sm)] p-3 flex items-center gap-2.5 mt-auto">
+                  <div class="grid place-items-center w-8 h-8 rounded-full bg-chalk/8 border border-white/15 shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M3 12h2l2-6 3 12 3-9 2 3h6"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="mono text-[9px] text-mute uppercase tracking-wider">AI Coach</div>
+                    <div class="text-[11px] leading-snug truncate">"Two more reps. Drive through the heels."</div>
+                  </div>
+                  <div class="flex gap-0.5 items-end h-4 shrink-0">
+                    <span class="w-0.5 bg-chalk rounded" style="height:30%"></span>
+                    <span class="w-0.5 bg-chalk rounded" style="height:70%"></span>
+                    <span class="w-0.5 bg-chalk rounded" style="height:45%"></span>
+                    <span class="w-0.5 bg-chalk/40 rounded" style="height:90%"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating chips: desaturated to white/ash (accent discipline — they don't fight the CTA).
+               Gated to md+ so the 272px phone under sm never collides with the -left-8/-right-5 offsets. -->
+          <div class="hidden md:block absolute -left-8 top-24 glass rounded-[var(--r-sm)] px-3.5 py-2.5">
+            <div class="mono text-[9px] uppercase tracking-wider text-mute">Plan updated</div>
+            <div class="mono text-sm text-chalk mt-0.5">+12% load</div>
+          </div>
+          <div class="hidden md:block absolute -right-5 bottom-28 glass rounded-[var(--r-sm)] px-3.5 py-2.5">
+            <div class="mono text-[9px] uppercase tracking-wider text-mute">Streak</div>
+            <div class="mono text-sm text-chalk mt-0.5">12 days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ FEATURES ============ -->
+<section id="features" class="relative py-24 md:py-32 border-t border-line">
+  <div class="max-w-shell mx-auto px-5 md:px-8">
+
+    <div class="grid grid-cols-12 gap-6 items-end mb-14">
+      <div class="col-span-12 lg:col-span-8">
+        <div class="eyebrow text-mute mb-5"><span class="idx-tick" aria-hidden="true"></span>Capabilities</div>
+        <h2 class="display reveal" style="font-size:var(--t-h2)">Four systems.<br/><span class="text-lime">One</span> intelligent loop.</h2>
+      </div>
+      <div class="col-span-12 lg:col-span-4 lg:col-start-9 reveal">
+        <p class="text-ash leading-relaxed" style="font-size:var(--t-base)">
+          Every rep feeds the model. The model feeds back. Built for athletes who measure progress in data — and want a system that keeps up.
+        </p>
+      </div>
+    </div>
+
+    <!-- ASYMMETRIC layout: card 1 promoted to focal centerpiece with a live HR waveform -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- FEATURE 1 — hero card with live visualization -->
+      <article class="card glass reveal p-8 md:p-10 lg:col-span-7 flex flex-col">
+        <span class="top-line"></span>
+        <div class="flex items-start justify-between mb-7">
+          <div class="ico-wrap grid place-items-center h-12 w-12 rounded-[var(--r-sm)] border border-line bg-ink2 text-lime">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+          </div>
+          <span class="mono text-[var(--t-micro)] text-mute">/ 01</span>
+        </div>
+        <h3 class="font-bold mb-3" style="font-size:var(--t-card)">Adaptive workout plans</h3>
+        <p class="text-ash leading-relaxed max-w-md mb-7" style="font-size:var(--t-sm)">
+          Plans that rewrite themselves after every set, reading your live performance — bar speed, RPE, and heart-rate response — so the next rep is always the right one.
+        </p>
+
+        <!-- Live adapting waveform visualization (signature proof) -->
+        <div class="mt-auto glass-soft rounded-[var(--r-sm)] p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="eyebrow text-mute">Live HR · Zone 4</span>
+            <span class="mono tabnum text-chalk">156 <span class="text-[10px] text-mute">bpm</span></span>
+          </div>
+          <svg viewBox="0 0 480 64" class="w-full h-14" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="0" y1="32" x2="480" y2="32" stroke="#26262F" stroke-width="1" stroke-dasharray="2 4"/>
+            <path class="wave-track wave-anim" d="M0 32 L48 32 L60 10 L72 54 L84 16 L96 32 L200 32 L214 8 L228 56 L242 20 L256 32 L360 32 L374 12 L388 52 L402 22 L416 32 L480 32" />
+          </svg>
+          <div class="flex items-center justify-between mt-3 mono text-[10px] text-mute">
+            <span>LAST SET</span>
+            <span class="text-lime">+2.5kg NEXT SET · RPE 8</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Right column: stacked 2x smaller cards -->
+      <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 stagger">
+
+        <article class="card glass reveal p-7 md:p-8">
+          <span class="top-line"></span>
+          <div class="flex items-start justify-between mb-6">
+            <div class="ico-wrap grid place-items-center h-11 w-11 rounded-[var(--r-sm)] border border-line bg-ink2 text-lime">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg>
+            </div>
+            <span class="mono text-[var(--t-micro)] text-mute">/ 02</span>
+          </div>
+          <h3 class="font-bold mb-2.5" style="font-size:var(--t-card-sm)">Progress tracking</h3>
+          <p class="text-ash leading-relaxed text-[var(--t-sm)]">Every rep, every heart-rate zone, every PR — visualized into a single legible signal you can act on.</p>
+        </article>
+
+        <article class="card glass reveal p-7 md:p-8">
+          <span class="top-line"></span>
+          <div class="flex items-start justify-between mb-6">
+            <div class="ico-wrap grid place-items-center h-11 w-11 rounded-[var(--r-sm)] border border-line bg-ink2 text-lime">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+            </div>
+            <span class="mono text-[var(--t-micro)] text-mute">/ 03</span>
+          </div>
+          <h3 class="font-bold mb-2.5" style="font-size:var(--t-card-sm)">AI coaching</h3>
+          <p class="text-ash leading-relaxed text-[var(--t-sm)]">A coach in your ear that paces, corrects form, and pushes precisely when you'd otherwise coast.</p>
+        </article>
+      </div>
+
+      <!-- FEATURE 4 — full width -->
+      <article class="card glass reveal p-8 md:p-10 lg:col-span-12">
+        <span class="top-line"></span>
+        <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+          <div class="ico-wrap grid place-items-center h-12 w-12 rounded-[var(--r-sm)] border border-line bg-ink2 text-lime shrink-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 2-3.5 4-3.5"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-4 mb-2">
+              <h3 class="font-bold" style="font-size:var(--t-card)">Community challenges</h3>
+              <span class="mono text-[var(--t-micro)] text-mute">/ 04</span>
+            </div>
+            <p class="text-ash leading-relaxed max-w-3xl" style="font-size:var(--t-sm)">
+              Weekly squad quests and live leaderboards that turn solo grind into collective momentum — the kind of accountability that makes showing up feel like a team sport.
+            </p>
+          </div>
+          <!-- mini leaderboard proof -->
+          <div class="shrink-0 glass-soft rounded-[var(--r-sm)] px-5 py-4 min-w-[180px]">
+            <div class="eyebrow text-mute mb-3">Squad · this week</div>
+            <div class="space-y-2 mono text-[12px]">
+              <div class="flex justify-between"><span class="text-chalk">1. Mara C.</span><span class="text-lime">4,820</span></div>
+              <div class="flex justify-between"><span class="text-ash">2. Diego A.</span><span class="text-ash">4,610</span></div>
+              <div class="flex justify-between"><span class="text-ash">3. You</span><span class="text-ash">4,395</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how" class="relative py-24 md:py-32 border-t border-line">
+  <div class="max-w-shell mx-auto px-5 md:px-8">
+
+    <div class="grid grid-cols-12 gap-6 items-end mb-16">
+      <div class="col-span-12 lg:col-span-8">
+        <div class="eyebrow text-mute mb-5"><span class="idx-tick" aria-hidden="true"></span>Method</div>
+        <h2 class="display reveal" style="font-size:var(--t-h2)">From signal<br/>to <span class="text-lime">session</span>, in three moves.</h2>
+      </div>
+    </div>
+
+    <div class="relative reveal" id="howSection">
+      <!-- the connector rail lights up on scroll -->
+      <div class="step-rail hidden md:block"><div class="fill"></div></div>
+
+      <ol class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 relative stagger">
+        <li>
+          <div class="flex items-center gap-3 mb-6">
+            <span class="grid place-items-center h-12 w-12 rounded-full bg-lime text-ink mono font-bold text-sm shrink-0 ring-4 ring-ink relative z-10">01</span>
+            <span class="h-px flex-1 bg-line md:hidden"></span>
+          </div>
+          <h3 class="font-bold mb-3" style="font-size:var(--t-step)">Tell PULSE your goal &amp; today's energy</h3>
+          <p class="text-ash leading-relaxed" style="font-size:var(--t-sm)">Set the target, rate how you feel. The engine takes your baseline, sleep, and recent load into account.</p>
+          <div class="mt-6 inline-flex items-center gap-2 mono text-[11px] text-mute border border-line rounded-[var(--r-sm)] px-3 py-1.5">
+            <span class="h-1.5 w-1.5 rounded-full bg-lime"></span> INPUT · 20 SEC
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center gap-3 mb-6">
+            <span class="grid place-items-center h-12 w-12 rounded-full bg-lime text-ink mono font-bold text-sm shrink-0 ring-4 ring-ink relative z-10">02</span>
+            <span class="h-px flex-1 bg-line md:hidden"></span>
+          </div>
+          <h3 class="font-bold mb-3" style="font-size:var(--t-step)">Get a session tuned to your body, live</h3>
+          <p class="text-ash leading-relaxed" style="font-size:var(--t-sm)">PULSE generates a session and adjusts intensity, volume, and rest on the fly as you train.</p>
+          <div class="mt-6 inline-flex items-center gap-2 mono text-[11px] text-mute border border-line rounded-[var(--r-sm)] px-3 py-1.5">
+            <span class="h-1.5 w-1.5 rounded-full bg-lime"></span> ADAPTIVE · REAL-TIME
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center gap-3 mb-6">
+            <span class="grid place-items-center h-12 w-12 rounded-full bg-lime text-ink mono font-bold text-sm shrink-0 ring-4 ring-ink relative z-10">03</span>
+          </div>
+          <h3 class="font-bold mb-3" style="font-size:var(--t-step)">Sync, track, climb the leaderboard</h3>
+          <p class="text-ash leading-relaxed" style="font-size:var(--t-sm)">Every session syncs to your squad. Climb the weekly board and watch your PR curve bend upward.</p>
+          <div class="mt-6 inline-flex items-center gap-2 mono text-[11px] text-mute border border-line rounded-[var(--r-sm)] px-3 py-1.5">
+            <span class="h-1.5 w-1.5 rounded-full bg-lime"></span> SQUAD · LIVE
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ RESULTS / TESTIMONIALS ============ -->
+<section id="results" class="relative py-24 md:py-32 border-t border-line overflow-hidden">
+  <div class="max-w-shell mx-auto px-5 md:px-8">
+
+    <div class="grid grid-cols-12 gap-6 items-end mb-14">
+      <div class="col-span-12 lg:col-span-7">
+        <!-- Proof eyebrow breaks the tick cadence: a count-up '03' instead of the idx-tick used on five other sections -->
+        <div class="eyebrow text-mute mb-5 flex items-center gap-2"><span class="mono text-lime">03</span><span class="h-px w-6 bg-line"></span>Proof</div>
+        <h2 class="display reveal" style="font-size:var(--t-h2)">Numbers that<br/>don't <span class="text-lime">flatten</span>.</h2>
+      </div>
+      <div class="col-span-12 lg:col-span-4 lg:col-start-9 reveal">
+        <p class="text-ash leading-relaxed" style="font-size:var(--t-base)">Athletes who switched from generic trackers to PULSE. Real results, measured the same way they train — relentlessly.</p>
+      </div>
+    </div>
+
+    <!-- Testimonials — broken grid: one oversized featured pull-quote + two compact.
+         Symmetry was the clearest 'template' tell; this reads as a curated flagship layout. -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16 stagger">
+      <!-- Featured pull-quote (2x width, bigger type, full-bleed portrait strip) -->
+      <figure class="card glass reveal p-8 md:p-10 flex flex-col md:col-span-2">
+        <span class="top-line"></span>
+        <div class="flex flex-col md:flex-row md:items-center gap-7 md:gap-10">
+          <img src="https://picsum.photos/seed/pulse-portrait-1/640/640" alt="Portrait of Mara Chen" width="640" height="640" class="w-full md:w-44 h-32 md:h-44 object-cover rounded-[var(--r-sm)] ring-1 ring-lime/40 shrink-0" loading="lazy" />
+          <div class="flex-1">
+            <div class="flex items-center gap-1 mb-4 text-lime">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            </div>
+            <blockquote class="leading-snug mb-6" style="font-size:clamp(1.25rem,1rem+1vw,1.8rem); font-weight:600">"PULSE caught the dip in my threshold work I never noticed. Twelve weeks later I ran a negative split at Boston."</blockquote>
+            <figcaption class="flex items-center gap-3 pt-5 border-t border-line">
+              <div class="flex-1">
+                <div class="font-semibold">Mara Chen</div>
+                <div class="mono text-[10px] uppercase tracking-wider text-mute">Marathoner · Boston '25</div>
+              </div>
+              <span class="mono text-xs text-coral border border-coral/30 rounded-[var(--r-sm)] px-3 py-1.5 whitespace-nowrap">+38% VO₂ max</span>
+            </figcaption>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Compact card 2 -->
+      <figure class="card glass reveal p-7 flex flex-col">
+        <span class="top-line"></span>
+        <div class="flex items-center gap-1 mb-5 text-lime">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+        </div>
+        <blockquote class="leading-relaxed mb-6 flex-1" style="font-size:var(--t-base)">"The AI backed off my deadlift day exactly when my bar speed said I should. Zero injuries this block."</blockquote>
+        <figcaption class="flex items-center gap-3 pt-5 border-t border-line">
+          <img src="https://picsum.photos/seed/pulse-portrait-2/96/96" alt="Portrait of Diego Alvarez" width="96" height="96" class="h-11 w-11 rounded-full object-cover ring-1 ring-lime/40" loading="lazy" />
+          <div class="flex-1">
+            <div class="font-semibold text-[var(--t-sm)]">Diego Alvarez</div>
+            <div class="mono text-[10px] uppercase tracking-wider text-mute">Hybrid athlete · Powerlifter</div>
+          </div>
+          <span class="mono text-[11px] text-lime border border-lime/30 rounded-[var(--r-sm)] px-2.5 py-1 whitespace-nowrap">+22kg total</span>
+        </figcaption>
+      </figure>
+
+      <!-- Compact card 3 -->
+      <figure class="card glass reveal p-7 flex flex-col">
+        <span class="top-line"></span>
+        <div class="flex items-center gap-1 mb-5 text-lime">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+        </div>
+        <blockquote class="leading-relaxed mb-6 flex-1" style="font-size:var(--t-base)">"It feels like having a coach who actually knows my numbers. I stopped second-guessing every session."</blockquote>
+        <figcaption class="flex items-center gap-3 pt-5 border-t border-line">
+          <img src="https://picsum.photos/seed/pulse-portrait-3/96/96" alt="Portrait of Aisha Rahman" width="96" height="96" class="h-11 w-11 rounded-full object-cover ring-1 ring-lime/40" loading="lazy" />
+          <div class="flex-1">
+            <div class="font-semibold text-[var(--t-sm)]">Aisha Rahman</div>
+            <div class="mono text-[10px] uppercase tracking-wider text-mute">Self-coached · Cyclist</div>
+          </div>
+          <span class="mono text-[11px] text-lime border border-lime/30 rounded-[var(--r-sm)] px-2.5 py-1 whitespace-nowrap">+51W FTP</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <!-- Beta-tester social proof rail (real, attributable voices — not fabricated press) -->
+    <div class="marquee-wrap fade-x overflow-hidden mb-16 border-y border-line py-5" aria-label="What athletes say">
+      <div class="marquee items-center">
+        <span class="text-ash text-sm whitespace-nowrap">"It reads my effort, not my ego." — <span class="text-chalk">Mara C., marathoner</span></span><svg class="ecg-sep shrink-0" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true"><path d="M0 7 H8 L11 2 L14 12 L17 4 L20 7 H28" stroke="#CCFF00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg>
+        <span class="text-ash text-sm whitespace-nowrap">"Zero injuries this block." — <span class="text-chalk">Diego A., powerlifter</span></span><span class="text-lime text-xs">★</span>
+        <span class="text-ash text-sm whitespace-nowrap">"A coach who actually knows my numbers." — <span class="text-chalk">Aisha R., cyclist</span></span><svg class="ecg-sep shrink-0" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true"><path d="M0 7 H8 L11 2 L14 12 L17 4 L20 7 H28" stroke="#CCFF00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg>
+        <span class="text-ash text-sm whitespace-nowrap">"Back under 3 hours in 12 weeks." — <span class="text-chalk">Priya N., marathoner</span></span><span class="text-lime text-xs">★</span>
+        <span class="text-ash text-sm whitespace-nowrap">"PRs I'd stopped chasing started falling." — <span class="text-chalk">Tomás L., cyclist</span></span><svg class="ecg-sep shrink-0" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true"><path d="M0 7 H8 L11 2 L14 12 L17 4 L20 7 H28" stroke="#CCFF00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg>
+        <span class="marquee-dup contents">
+        <span class="text-ash text-sm whitespace-nowrap">"It reads my effort, not my ego." — <span class="text-chalk">Mara C., marathoner</span></span><svg class="ecg-sep shrink-0" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true"><path d="M0 7 H8 L11 2 L14 12 L17 4 L20 7 H28" stroke="#CCFF00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg>
+        <span class="text-ash text-sm whitespace-nowrap">"Zero injuries this block." — <span class="text-chalk">Diego A., powerlifter</span></span><span class="text-lime text-xs">★</span>
+        <span class="text-ash text-sm whitespace-nowrap">"A coach who actually knows my numbers." — <span class="text-chalk">Aisha R., cyclist</span></span><svg class="ecg-sep shrink-0" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true"><path d="M0 7 H8 L11 2 L14 12 L17 4 L20 7 H28" stroke="#CCFF00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg>
+        <span class="text-ash text-sm whitespace-nowrap">"Back under 3 hours in 12 weeks." — <span class="text-chalk">Priya N., marathoner</span></span><span class="text-lime text-xs">★</span>
+        <span class="text-ash text-sm whitespace-nowrap">"PRs I'd stopped chasing started falling." — <span class="text-chalk">Tomás L., cyclist</span></span><svg class="ecg-sep shrink-0" width="28" height="14" viewBox="0 0 28 14" fill="none" aria-hidden="true"><path d="M0 7 H8 L11 2 L14 12 L17 4 L20 7 H28" stroke="#CCFF00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- Stats band — athletic OUTCOME metrics (proves the product works, not its size).
+         Brand-tier proof (2.4M / 4.9★ / Apple) lives in the hero only, so the two moments never duplicate. -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-6 stagger">
+      <div class="reveal">
+        <div class="display tabnum" style="font-size:clamp(2.6rem,1.6rem+3vw,4rem)"><span class="count" data-to="11" data-suffix="%" data-decimals="0">0</span></div>
+        <div class="stat-underline eyebrow text-ash mt-3 inline-block">Avg VO₂ gain · 12wk</div>
+      </div>
+      <div class="reveal">
+        <div class="display tabnum" style="font-size:clamp(2.6rem,1.6rem+3vw,4rem)"><span class="count" data-to="18" data-suffix="%" data-decimals="0">0</span></div>
+        <div class="stat-underline eyebrow text-ash mt-3 inline-block">Avg PR improvement</div>
+      </div>
+      <div class="reveal">
+        <div class="display tabnum" style="font-size:clamp(2.6rem,1.6rem+3vw,4rem)"><span class="count" data-to="9" data-suffix="wk" data-decimals="0">0</span></div>
+        <div class="stat-underline eyebrow text-ash mt-3 inline-block">Median weeks to goal</div>
+      </div>
+      <div class="reveal">
+        <div class="display tabnum text-lime" style="font-size:clamp(2.6rem,1.6rem+3vw,4rem)"><span class="count" data-to="94" data-suffix="%" data-decimals="0">0</span></div>
+        <div class="stat-underline eyebrow text-ash mt-3 inline-block">Hit weekly goal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ PRICING ============ -->
+<section id="pricing" class="relative py-24 md:py-32 border-t border-line">
+  <div class="max-w-shell mx-auto px-5 md:px-8">
+
+    <div class="grid grid-cols-12 gap-6 items-end mb-12">
+      <div class="col-span-12 lg:col-span-7">
+        <div class="eyebrow text-mute mb-5"><span class="idx-tick" aria-hidden="true"></span>Pricing</div>
+        <h2 class="display reveal" style="font-size:var(--t-h2)">Pay for the<br/><span class="text-lime">system</span>. Not the noise.</h2>
+      </div>
+      <div class="col-span-12 lg:col-span-5 lg:col-start-8 reveal flex flex-col gap-4 lg:items-end">
+        <p class="text-ash leading-relaxed lg:text-right max-w-xs" style="font-size:var(--t-sm)">Start free. Upgrade when you're ready to adapt. Cancel anytime.</p>
+        <!-- toggle: radiogroup + radio — single tab stop, arrow-key operated (APG) -->
+        <div class="inline-flex items-center bg-ink2 border border-line rounded-[var(--r-sm)] p-1" role="radiogroup" aria-label="Billing period" id="billingGroup">
+          <button id="billMonthly" role="radio" aria-checked="true" tabindex="0" class="bill-btn px-4 py-2 text-[13px] font-semibold rounded-[var(--r-xs)] transition-colors" data-active="true">Monthly</button>
+          <button id="billAnnual" role="radio" aria-checked="false" tabindex="-1" class="bill-btn px-4 py-2 text-[13px] font-semibold rounded-[var(--r-xs)] text-ash hover:text-chalk transition-colors" data-active="false">Annual <span class="text-lime">−20%</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start stagger">
+
+      <!-- Starter -->
+      <article class="card glass reveal p-8 flex flex-col">
+        <span class="top-line"></span>
+        <h3 class="font-bold text-lg mb-1">Starter</h3>
+        <p class="text-mute text-[13px] mb-6">For finding your rhythm.</p>
+        <div class="flex items-baseline gap-1 mb-7">
+          <span class="display text-5xl">$0</span>
+          <span class="text-ash text-sm">/forever</span>
+        </div>
+        <ul class="space-y-3.5 text-ash mb-8 flex-1" style="font-size:var(--t-sm)">
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Adaptive workout generator</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Basic progress tracking</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Community leaderboards</li>
+        </ul>
+        <a href="/signup?plan=starter" class="btn btn-ghost w-full">Get started</a>
+      </article>
+
+      <!-- Pro (popular) — elevated: scale + negative top offset so it visibly towers, paired with the glow -->
+      <article class="card price-pop reveal p-8 relative bg-ink2/40 flex flex-col lg:-mt-4 lg:scale-[1.04]" style="transform-origin:center top; z-index:2;">
+        <span class="top-line"></span>
+        <div class="absolute -top-3 left-8 bg-lime text-ink mono text-[10px] font-bold uppercase tracking-[0.16em] px-3 py-1 rounded-[var(--r-sm)] shadow-[0_8px_24px_-8px_rgba(204,255,0,0.6)]">Most popular</div>
+        <h3 class="font-bold text-lg mb-1 mt-2">Pulse Pro</h3>
+        <p class="text-mute text-[13px] mb-6">For the everyday athlete who trains to win.</p>
+        <div class="flex items-baseline gap-1 mb-2">
+          <span class="display text-5xl text-lime price tabnum" data-monthly="14.99" data-annual="11.99">$14.99</span>
+          <span class="text-ash text-sm">/mo</span>
+        </div>
+        <p class="mono text-[11px] text-mute mb-7">Billed <span class="billing-word">monthly</span> · 7-day free trial</p>
+        <ul class="space-y-3.5 text-ash mb-8 flex-1" style="font-size:var(--t-sm)">
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Everything in Starter</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Real-time adaptive plans</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> AI voice coaching</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Heart-rate zone analytics</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> PR &amp; recovery insights</li>
+        </ul>
+        <a href="/signup?plan=pro" class="btn btn-primary w-full">Start free trial</a>
+      </article>
+
+      <!-- Squad -->
+      <article class="card glass reveal p-8 flex flex-col">
+        <span class="top-line"></span>
+        <h3 class="font-bold text-lg mb-1">Squad</h3>
+        <p class="text-mute text-[13px] mb-6">For teams that train together.</p>
+        <div class="flex items-baseline gap-1 mb-2">
+          <span class="display text-5xl price tabnum" data-monthly="29.99" data-annual="23.99">$29.99</span>
+          <span class="text-ash text-sm">/mo</span>
+        </div>
+        <p class="mono text-[11px] text-mute mb-7">Up to 6 members · everything in Pro</p>
+        <ul class="space-y-3.5 text-ash mb-8 flex-1" style="font-size:var(--t-sm)">
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Everything in Pro</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Private team challenges &amp; quests</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 1:1 AI coach calibration</li>
+          <li class="flex gap-3"><span class="text-lime mt-0.5 shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Shared squad dashboard</li>
+        </ul>
+        <a href="/signup?plan=squad" class="btn btn-ghost w-full">Build your squad</a>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ APP STORE BADGES ============ -->
+<section id="download" class="relative py-20 border-t border-line">
+  <div class="max-w-shell mx-auto px-5 md:px-8">
+    <div class="reveal glass rounded-[var(--r-md)] p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div class="text-center lg:text-left">
+        <div class="eyebrow text-mute mb-4"><span class="idx-tick" aria-hidden="true"></span>Download</div>
+        <h2 class="display" style="font-size:clamp(1.9rem,1.2rem+2vw,2.8rem)">Take PULSE<br/><span class="text-lime">everywhere</span> you train.</h2>
+        <p class="text-ash mt-3 flex items-center gap-2 justify-center lg:justify-start mono text-sm"><span class="text-lime text-base">4.9★</span> from 84k reviews</p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="https://apps.apple.com/app/pulse" target="_blank" rel="noopener" aria-label="Download on the App Store" class="app-badge inline-flex items-center gap-3 bg-chalk text-ink rounded-[var(--r-sm)] px-5 py-3 transition-transform hover:-translate-y-0.5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16.365 1.43c.02 1.06-.38 2.06-1.02 2.83-.66.79-1.72 1.41-2.76 1.33-.05-1.02.42-2.1 1.04-2.83.66-.78 1.79-1.36 2.74-1.33zM20.5 17.2c-.5 1.15-.74 1.66-1.39 2.68-.9 1.43-2.17 3.2-3.74 3.21-1.4.02-1.76-.91-3.66-.9-1.9.01-2.3.92-3.7.9-1.57-.02-2.77-1.62-3.67-3.04C1.49 16.1 1.2 11.2 3.4 8.6c1.1-1.32 2.84-2.1 4.47-2.1 1.66 0 2.7.91 4.07.91 1.33 0 2.14-.91 4.06-.91 1.45 0 2.99.79 4.08 2.16-3.59 1.97-3.01 7.1.42 8.54z"/></svg>
+          <span class="text-left leading-tight"><span class="block mono text-[9px] uppercase tracking-wider text-mute">Download on the</span><span class="block font-bold text-base">App Store</span></span>
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=app.pulse" target="_blank" rel="noopener" aria-label="Get it on Google Play" class="app-badge inline-flex items-center gap-3 bg-ink2 text-chalk border border-line rounded-[var(--r-sm)] px-5 py-3 transition-all hover:-translate-y-0.5 hover:border-lime">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 1.8c-.3.3-.5.7-.5 1.2v18c0 .5.2.9.5 1.2l.1.1L14 12.1v-.2L3.7 1.7l-.1.1zM17.3 15.7L14 12.4l3.3-3.3 4 2.3c1.1.6 1.1 1.7 0 2.3l-4 2zM14.6 11.8L4.3 1.5c.3-.2.7-.2 1.1 0l12.2 6.9-3 3.4z"/></svg>
+          <span class="text-left leading-tight"><span class="block mono text-[9px] uppercase tracking-wider text-mute">Get it on</span><span class="block font-bold text-base">Google Play</span></span>
+        </a>
+        <div class="flex items-center gap-3 pl-4 border-l border-line">
+          <div class="w-16 h-16 rounded-[var(--r-xs)] bg-white p-1.5" aria-hidden="true">
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+              <rect width="100" height="100" fill="#fff"/>
+              <g fill="#0A0A0F">
+                <rect x="6" y="6" width="26" height="26"/><rect x="12" y="12" width="14" height="14" fill="#fff"/><rect x="16" y="16" width="6" height="6"/>
+                <rect x="68" y="6" width="26" height="26"/><rect x="74" y="12" width="14" height="14" fill="#fff"/><rect x="78" y="16" width="6" height="6"/>
+                <rect x="6" y="68" width="26" height="26"/><rect x="12" y="74" width="14" height="14" fill="#fff"/><rect x="16" y="78" width="6" height="6"/>
+                <rect x="40" y="8" width="4" height="4"/><rect x="48" y="8" width="4" height="4"/><rect x="56" y="12" width="4" height="4"/>
+                <rect x="38" y="20" width="6" height="4"/><rect x="48" y="24" width="4" height="6"/><rect x="58" y="20" width="4" height="4"/>
+                <rect x="40" y="36" width="4" height="4"/><rect x="50" y="40" width="4" height="4"/><rect x="60" y="36" width="4" height="4"/>
+                <rect x="70" y="42" width="6" height="4"/><rect x="80" y="38" width="4" height="4"/><rect x="88" y="44" width="4" height="4"/>
+                <rect x="36" y="50" width="6" height="4"/><rect x="46" y="54" width="4" height="4"/><rect x="56" y="50" width="4" height="4"/>
+                <rect x="64" y="56" width="6" height="4"/><rect x="76" y="52" width="4" height="4"/><rect x="86" y="58" width="4" height="4"/>
+                <rect x="40" y="64" width="4" height="4"/><rect x="50" y="68" width="4" height="4"/><rect x="60" y="64" width="6" height="4"/>
+                <rect x="70" y="70" width="4" height="4"/><rect x="80" y="66" width="4" height="4"/><rect x="88" y="72" width="4" height="4"/>
+                <rect x="44" y="78" width="6" height="4"/><rect x="56" y="82" width="4" height="4"/><rect x="66" y="80" width="4" height="4"/>
+                <rect x="76" y="86" width="6" height="4"/><rect x="86" y="82" width="4" height="4"/>
+              </g>
+            </svg>
+          </div>
+          <div class="mono text-[11px] text-ash leading-snug">Scan on launch<br/><span class="text-lime">pulse.app/get</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative z-10 pt-20 mt-4 border-t border-line">
+  <div class="hairline-lime mb-16"></div>
+  <div class="max-w-shell mx-auto px-5 md:px-8">
+
+    <!-- Email capture -->
+    <div class="grid grid-cols-12 gap-6 mb-16 items-end">
+      <div class="col-span-12 lg:col-span-6">
+        <h3 class="display reveal" style="font-size:clamp(2.2rem,1.4rem+2.4vw,3.4rem)">Join the <span class="text-lime">squad</span>.</h3>
+        <p class="text-ash mt-3 max-w-md reveal" style="font-size:var(--t-sm)">Weekly training notes, drops, and challenges. No spam — just signal.</p>
+      </div>
+      <form class="col-span-12 lg:col-span-6 reveal" id="squadForm">
+        <label for="email" class="sr-only">Email address</label>
+        <div class="flex flex-col sm:flex-row gap-3 max-w-lg lg:ml-auto">
+          <input id="email" type="email" required placeholder="you@athlete.co" class="flex-1 bg-ink2 border border-line rounded-[var(--r-sm)] px-4 py-3 text-chalk placeholder:text-mute focus:border-lime transition-colors" style="font-size:var(--t-sm)" />
+          <button type="submit" class="btn btn-primary whitespace-nowrap">Join</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Columns -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-t border-line pt-12">
+      <div class="col-span-2 md:col-span-1">
+        <a href="#main" class="flex items-center gap-2.5 mb-4">
+          <span class="grid place-items-center w-8 h-8 rounded-[var(--r-sm)] bg-lime/12 border border-lime/30">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M2 12h4l2-6 4 14 3-9 2 3h5" stroke="#CCFF00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="display text-base">PULSE</span>
+        </a>
+        <p class="text-mute leading-relaxed max-w-[200px]" style="font-size:var(--t-micro)">Adaptive training that earns every rep.</p>
+      </div>
+
+      <nav aria-label="Product">
+        <h4 class="eyebrow text-mute mb-4">Product</h4>
+        <ul class="space-y-2.5 text-ash" style="font-size:var(--t-sm)">
+          <li><a href="#features" class="hover:text-lime transition-colors">Features</a></li>
+          <li><a href="#how" class="hover:text-lime transition-colors">How it works</a></li>
+          <li><a href="#pricing" class="hover:text-lime transition-colors">Pricing</a></li>
+          <li><a href="#download" class="hover:text-lime transition-colors">Download</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Company">
+        <h4 class="eyebrow text-mute mb-4">Company</h4>
+        <ul class="space-y-2.5 text-ash" style="font-size:var(--t-sm)">
+          <li><a href="/about" class="hover:text-lime transition-colors">About</a></li>
+          <li><a href="/careers" class="hover:text-lime transition-colors">Careers</a></li>
+          <li><a href="/press" class="hover:text-lime transition-colors">Press</a></li>
+          <li><a href="/contact" class="hover:text-lime transition-colors">Contact</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Resources">
+        <h4 class="eyebrow text-mute mb-4">Resources</h4>
+        <ul class="space-y-2.5 text-ash" style="font-size:var(--t-sm)">
+          <li><a href="/journal" class="hover:text-lime transition-colors">Training journal</a></li>
+          <li><a href="/help" class="hover:text-lime transition-colors">Help center</a></li>
+          <li><a href="/community" class="hover:text-lime transition-colors">Community</a></li>
+          <li><a href="/developers" class="hover:text-lime transition-colors">API</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Legal">
+        <h4 class="eyebrow text-mute mb-4">Legal</h4>
+        <ul class="space-y-2.5 text-ash" style="font-size:var(--t-sm)">
+          <li><a href="/privacy" class="hover:text-lime transition-colors">Privacy</a></li>
+          <li><a href="/terms" class="hover:text-lime transition-colors">Terms</a></li>
+          <li><a href="/cookies" class="hover:text-lime transition-colors">Cookies</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-5 py-7 border-t border-line">
+      <p class="mono text-[11px] text-mute">© 2026 PULSE Labs. Built for athletes who measure.</p>
+      <div class="flex items-center gap-4">
+        <a href="https://instagram.com/pulse" target="_blank" rel="noopener" aria-label="PULSE on Instagram" class="w-9 h-9 grid place-items-center rounded-full glass-soft border border-transparent hover:border-lime/40 transition text-ash hover:text-lime">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        </a>
+        <a href="https://x.com/pulse" target="_blank" rel="noopener" aria-label="PULSE on X" class="w-9 h-9 grid place-items-center rounded-full glass-soft border border-transparent hover:border-lime/40 transition text-ash hover:text-lime">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.5 8.6L23 22h-6.8l-5.3-7-6.1 7H1.7l8-9.2L1 2h7l4.8 6.4L18.9 2zm-2.4 18h1.9L7.6 4H5.6l10.9 16z"/></svg>
+        </a>
+        <a href="https://youtube.com/@pulse" target="_blank" rel="noopener" aria-label="PULSE on YouTube" class="w-9 h-9 grid place-items-center rounded-full glass-soft border border-transparent hover:border-lime/40 transition text-ash hover:text-lime">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3V9z" fill="currentColor"/></svg>
+        </a>
+        <a href="https://strava.com/clubs/pulse" target="_blank" rel="noopener" aria-label="PULSE on Strava" class="w-9 h-9 grid place-items-center rounded-full glass-soft border border-transparent hover:border-lime/40 transition text-ash hover:text-lime">
+          <svg width="14" height="16" viewBox="0 0 24 26" fill="currentColor"><path d="M15 0L4 22h6l3-6 3 6h6L15 0z"/></svg>
+        </a>
+      </div>
+    </div>
+    <p class="text-center mono text-[10px] text-mute pb-8">PULSE is a training tool, not a medical device. Consult a physician before starting any program.</p>
+  </div>
+</footer>
+
+
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Lucide ----------
+  window.addEventListener('load', () => { if (window.lucide) window.lucide.createIcons(); });
+
+  // ---------- Reveal on scroll (with staggered cascade baked into .stagger CSS) ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // How-it-works rail lights up when the section reveals
+        const howWrap = e.target.closest('#howSection');
+        if (howWrap) howWrap.classList.add('how-in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------- Count up (handles M / + / ★ / % suffixes, tabular) ----------
+  function animateCount(el){
+    const to = parseFloat(el.dataset.to);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1500;
+    const start = performance.now();
+    function frame(now){
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = to * eased;
+      el.textContent = val.toFixed(decimals) + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+      else el.textContent = to.toFixed(decimals) + suffix;
+    }
+    if (reduced) { el.textContent = to.toFixed(decimals) + suffix; return; }
+    requestAnimationFrame(frame);
+  }
+  const countIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCount(e.target); countIO.unobserve(e.target); } });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.count').forEach(el => countIO.observe(el));
+
+  // ---------- Stat underline draw ----------
+  const underIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); underIO.unobserve(e.target); } });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('.stat-underline').forEach(el => underIO.observe(el));
+
+  // ---------- Pointer-reactive parallax on hero phone (rAF-throttled) ----------
+  const phone = document.getElementById('phone');
+  const stage = document.getElementById('phoneStage');
+  if (phone && stage && !reduced && window.matchMedia('(min-width:1024px)').matches) {
+    let pendingX = null, pendingY = null, scheduled = false;
+    const baseRotY = -10, baseRotX = 3;
+    stage.addEventListener('pointermove', (ev) => {
+      const r = stage.getBoundingClientRect();
+      const nx = (ev.clientX - r.left) / r.width - 0.5;   // -0.5 .. 0.5
+      const ny = (ev.clientY - r.top) / r.height - 0.5;
+      pendingX = baseRotY + nx * 10;   // ±5deg swing
+      pendingY = baseRotX - ny * 8;
+      if (!scheduled) {
+        scheduled = true;
+        requestAnimationFrame(() => {
+          phone.style.transform = `rotateY(${pendingX.toFixed(2)}deg) rotateX(${pendingY.toFixed(2)}deg)`;
+          scheduled = false;
+        });
+      }
+    });
+    stage.addEventListener('pointerleave', () => {
+      phone.style.transform = `rotateY(${baseRotY}deg) rotateX(${baseRotX}deg)`;
+    });
+  }
+
+  // ---------- Live BPM jitter (phone + nav accent) ----------
+  const bpmEl = document.getElementById('phoneBpm');
+  if (bpmEl && !reduced) {
+    let bpm = 156;
+    setInterval(() => {
+      const delta = Math.round((Math.random() - 0.5) * 8);
+      bpm = Math.max(142, Math.min(172, bpm + delta));
+      bpmEl.innerHTML = bpm + ' <span class="text-[9px] text-mute">bpm</span>';
+    }, 1100);
+  }
+
+  // ---------- Pricing toggle (radiogroup semantics, single tab stop, arrow-key operated) ----------
+  const billMonthly = document.getElementById('billMonthly');
+  const billAnnual = document.getElementById('billAnnual');
+  const billingGroup = document.getElementById('billingGroup');
+  const prices = document.querySelectorAll('.price');
+  const billingWords = document.querySelectorAll('.billing-word');
+  function setBilling(annual, focusTarget){
+    prices.forEach(p => { p.textContent = '$' + (annual ? p.dataset.annual : p.dataset.monthly); });
+    billingWords.forEach(w => w.textContent = annual ? 'annually' : 'monthly');
+    // radio semantics
+    billMonthly.setAttribute('aria-checked', String(!annual));
+    billAnnual.setAttribute('aria-checked', String(annual));
+    // roving tabindex — only the active option is in the tab order
+    billMonthly.setAttribute('tabindex', annual ? '-1' : '0');
+    billAnnual.setAttribute('tabindex', annual ? '0' : '-1');
+    // selected state via data-active (drives the lime-on-ink pill via CSS) — keeps palette in-spec
+    billMonthly.setAttribute('data-active', String(!annual));
+    billMonthly.classList.toggle('text-ash', annual);
+    billAnnual.setAttribute('data-active', String(annual));
+    billAnnual.classList.toggle('text-ash', !annual);
+    if (focusTarget) focusTarget.focus();
+  }
+  billMonthly.addEventListener('click', () => setBilling(false, billMonthly));
+  billAnnual.addEventListener('click', () => setBilling(true, billAnnual));
+  // APG radiogroup: Arrow keys move selection within the group
+  if (billingGroup) {
+    billingGroup.addEventListener('keydown', (e) => {
+      const opts = [billMonthly, billAnnual];
+      const idx = opts.indexOf(document.activeElement);
+      if (idx === -1) return;
+      if (['ArrowRight','ArrowDown'].includes(e.key)) { e.preventDefault(); setBilling(idx === 0, opts[1 - idx]); }
+      else if (['ArrowLeft','ArrowUp'].includes(e.key)) { e.preventDefault(); setBilling(idx === 1, opts[1 - idx]); }
+    });
+  }
+
+  // ---------- Squad form ----------
+  const squadForm = document.getElementById('squadForm');
+  if (squadForm) {
+    squadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = squadForm.querySelector('button[type="submit"]');
+      btn.textContent = 'Joined ✓';
+      btn.disabled = true;
+    });
+  }
+
+  // ---------- Mobile nav drawer (focus trap + aria) ----------
+  const navToggle = document.getElementById('navToggle');
+  const navDrawer = document.getElementById('navDrawer');
+  const navBackdrop = document.getElementById('navBackdrop');
+  function openNav() {
+    navDrawer.classList.add('open');
+    navBackdrop.classList.add('open');
+    navDrawer.setAttribute('aria-hidden', 'false');
+    navToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    const first = navDrawer.querySelector('a');
+    if (first) first.focus();
+  }
+  function closeNav() {
+    navDrawer.classList.remove('open');
+    navBackdrop.classList.remove('open');
+    navDrawer.setAttribute('aria-hidden', 'true');
+    navToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    navToggle.focus();
+  }
+  navToggle.addEventListener('click', () => {
+    const isOpen = navDrawer.classList.contains('open');
+    isOpen ? closeNav() : openNav();
+  });
+  navBackdrop.addEventListener('click', closeNav);
+  navDrawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navDrawer.classList.contains('open')) closeNav();
+    // simple focus trap
+    if (e.key === 'Tab' && navDrawer.classList.contains('open')) {
+      const f = navDrawer.querySelectorAll('a, button');
+      if (f.length === 0) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

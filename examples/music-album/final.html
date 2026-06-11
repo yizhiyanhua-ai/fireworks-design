@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NOVA — AURORA · The sound of 3 a.m.</title>
+<meta name="description" content="AURORA — the new album from NOVA. Violet light on skin, the static between two heartbeats. Press play, fall into the indigo." />
+
+<!-- Tailwind (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Playfair Display (display), Cormorant Garamond (sensual), Inter (UI), Space Grotesk (mono) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    '#070612',
+          ink2:   '#0c0a1f',
+          violet: { DEFAULT:'#6D28D9', deep:'#4C1D95', light:'#8b5cf6', pale:'#a78bfa' },
+          indigo2:'#1E1B4B',
+          teal:   { DEFAULT:'#2DD4BF', deep:'#0F766E' },
+          paper:  '#F5F3FF',          // near-white w/ violet cast
+          // Raised for AA on glass surfaces (composite ~#0c0a1f at ~42% over ambient):
+          // muted now ~6.2:1 on glass, ~7.6:1 on base ink — safe for normal text incl. small mono labels.
+          muted:  '#b8add0',
+          dim:    '#c4b9da',          // raised — used for small mono labels (durations/timestamps) where AA is tightest
+          faint:  '#9a93b8',          // decorative flourishes / hairlines only — never adjacent to text
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'serif'],
+          sensual: ['"Cormorant Garamond"', 'serif'],
+          sans:    ['Inter', 'system-ui', 'sans-serif'],
+          mono:    ['"Space Grotesk"', 'monospace'],
+        },
+        letterSpacing: {
+          tightest2: '-0.035em',
+          tight2:    '-0.02em',
+          ultra2:    '0.32em',
+        },
+        boxShadow: {
+          'glow-violet': '0 0 70px -8px rgba(139,92,246,.55), 0 0 130px -20px rgba(76,29,149,.4)',
+          'panel':       '0 30px 80px -30px rgba(0,0,0,.75), inset 0 1px 0 rgba(245,243,255,.06)',
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{ --ease: cubic-bezier(.22,1,.36,1); }
+  html, body { background:#070612; }
+  body{
+    font-family:'Inter', system-ui, sans-serif; color:#F5F3FF;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  /* tabular numerals everywhere a number aligns */
+  .tnum{ font-variant-numeric: tabular-nums; -moz-font-feature-settings:"tnum"; font-feature-settings:"tnum"; }
+
+  /* ==================== AMBIENT LAYER ==================== */
+  .ambient{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
+    background:
+      radial-gradient(120% 90% at 50% -10%, #1E1B4B 0%, rgba(30,27,75,0) 55%),
+      radial-gradient(80% 60% at 100% 110%, #0b2a2a 0%, rgba(11,42,42,0) 60%),
+      #070612;
+  }
+  .blob{ position:absolute; border-radius:50%; filter:blur(85px); mix-blend-mode:screen; will-change:transform; }
+  .blob-1{ width:58vw; height:58vw; max-width:720px; max-height:720px; left:-10vw; top:-8vh;
+    background:radial-gradient(circle at 35% 35%, #6D28D9 0%, rgba(109,40,217,0) 68%); opacity:.55;
+    animation: drift1 26s var(--ease) infinite; }
+  .blob-2{ width:54vw; height:54vw; max-width:680px; max-height:680px; right:-12vw; top:14vh;
+    background:radial-gradient(circle at 60% 40%, #0F766E 0%, rgba(15,118,110,0) 66%); opacity:.42;
+    animation: drift2 32s var(--ease) infinite; }
+  .blob-3{ width:46vw; height:46vw; max-width:560px; max-height:560px; left:24vw; bottom:-14vh;
+    background:radial-gradient(circle at 50% 50%, #4C1D95 0%, rgba(76,29,149,0) 64%); opacity:.5;
+    animation: drift3 38s var(--ease) infinite; }
+  @keyframes drift1{ 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(7vw,5vh) scale(1.12) } }
+  @keyframes drift2{ 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(-6vw,-4vh) scale(1.1) } }
+  @keyframes drift3{ 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(-4vw,7vh) scale(.9) } }
+
+  .grain{ position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.055; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .vignette{ position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse at center, transparent 48%, rgba(3,2,10,.72) 100%); }
+
+  main, header, footer { position:relative; z-index:2; }
+
+  /* ==================== GLASS ==================== */
+  .glass{ background:linear-gradient(160deg, rgba(30,27,75,.42), rgba(12,10,29,.5));
+    backdrop-filter:blur(22px) saturate(140%); -webkit-backdrop-filter:blur(22px) saturate(140%);
+    border:1px solid rgba(167,139,250,.18);
+    box-shadow: inset 0 1px 0 rgba(245,243,255,.07), 0 30px 80px -30px rgba(0,0,0,.75); }
+  .glass-soft{ background:rgba(255,255,255,.035);
+    backdrop-filter:blur(14px) saturate(130%); -webkit-backdrop-filter:blur(14px) saturate(130%);
+    border:1px solid rgba(167,139,250,.12); }
+
+  /* ==================== TYPE ROLES ==================== */
+  /* Title gradient: bottom stop pulled UP to #E9E4FF so the lower edge stays crisp
+     against the cover's violet halo. A 1px lower-half shadow separates wordmark from backdrop. */
+  .display-aurora{
+    font-family:'Playfair Display', serif; font-weight:800;
+    line-height:.86; letter-spacing:-0.035em;
+    background:linear-gradient(180deg,#FFFFFF 0%,#F5F1FF 50%,#EDE7FF 78%,#E9E4FF 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 70px rgba(139,92,246,.28), 0 1px 0 rgba(245,243,255,.15),
+                0 2px 1px rgba(7,6,18,.5), 0 4px 6px rgba(7,6,18,.35);
+  }
+  .eyebrow{ font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500; letter-spacing:.18em; }
+  .label-mono{ font-family:'Space Grotesk', monospace; font-weight:500; letter-spacing:.14em;
+    text-transform:uppercase; font-size:.75rem; }
+
+  /* ==================== COVER (bespoke generative SVG) ==================== */
+  .cover-wrap{ perspective:1200px; will-change:transform; transition:transform .6s var(--ease); }
+  .cover-glow{ position:absolute; inset:-16%; z-index:-1;
+    background:radial-gradient(circle at 50% 45%, rgba(124,58,237,.55), rgba(76,29,149,.22) 38%, transparent 68%);
+    filter:blur(46px); }
+  .cover-frame{ border-radius:18px; overflow:hidden; position:relative;
+    box-shadow: 0 50px 110px -28px rgba(76,29,149,.85), 0 0 0 1px rgba(167,139,250,.22),
+                inset 0 0 0 1px rgba(255,255,255,.05); }
+  .cover-frame .sheen{ position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(115deg, transparent 38%, rgba(255,255,255,.10) 48%, transparent 58%); }
+
+  /* ==================== PLAY (the single magnetic primary CTA) ==================== */
+  /* The magnetic, larger-than-life primary. ~88px on desktop, ~76px mobile.
+     Pulse rings radiate from the orb's center so it reads as the focal point. */
+  .play-orb{ position:relative; width:88px; height:88px; border-radius:50%; display:grid; place-items:center;
+    background:radial-gradient(120% 120% at 30% 25%, #a855f7 0%, #6D28D9 55%, #4C1D95 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,.22), 0 22px 60px -10px rgba(109,40,217,.95),
+               inset 0 1px 0 rgba(255,255,255,.45), inset 0 -12px 26px rgba(76,29,149,.6);
+    transition:transform .45s var(--ease), box-shadow .45s var(--ease); cursor:pointer; }
+  .play-orb:hover{ transform:scale(1.05);
+    box-shadow:0 0 0 1px rgba(255,255,255,.34), 0 28px 72px -8px rgba(109,40,217,1),
+               inset 0 1px 0 rgba(255,255,255,.55), inset 0 -12px 26px rgba(76,29,149,.65); }
+  .play-orb:active{ transform:scale(.97); }
+  .play-orb::before, .play-orb::after{ content:''; position:absolute; inset:0; border-radius:50%;
+    border:1px solid rgba(167,139,250,.55); animation: ringPulse 2.8s var(--ease) infinite; }
+  .play-orb::after{ animation-delay:1.4s; }
+  @keyframes ringPulse{ 0%{ transform:scale(1); opacity:.6 } 70%{ transform:scale(1.65); opacity:0 } 100%{ opacity:0 } }
+
+  /* When playing, swap glyph + gently intensify rings */
+  body.playing .play-orb::before, body.playing .play-orb::after{ border-color:rgba(45,212,191,.6); }
+  /* focus-visible on the hero orb also stirs the rings so keyboard users get feedback */
+  .play-orb:focus-visible::before{ animation-duration:1.6s; }
+  /* base blur lives in CSS so the playing state can compose saturate on top */
+  #conicAura{ filter:blur(54px); transition: filter 1.2s var(--ease); }
+  /* whole-room feedback when playing: the conic aurora blooms a touch warmer.
+     Paused by reduced-motion (the @media reduce block zeroes transitions). */
+  body.playing #conicAura{ filter: blur(54px) saturate(1.3) brightness(1.06); }
+
+  /* the one-word action cue beside the orb */
+  .play-cue{ font-family:'Cormorant Garamond', serif; font-style:italic; letter-spacing:.04em; }
+
+  /* secondary CTA family — Pre-save everywhere (nav, hero, streaming, sticky).
+     Slim ghost text-link / pill so Play stays the unambiguous primary. */
+  .btn-ghost{ background:rgba(30,27,75,.4); border:1px solid rgba(167,139,250,.3); backdrop-filter:blur(12px);
+    transition:all .35s var(--ease); }
+  .btn-ghost:hover{ background:rgba(30,27,75,.6); border-color:rgba(167,139,250,.55); transform:translateY(-2px); }
+  .btn-ghost-slim{ background:transparent; border:1px solid rgba(167,139,250,.28); transition:all .35s var(--ease); }
+  .btn-ghost-slim:hover{ background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.5); transform:translateY(-1px); }
+
+  /* subtle pulse used on ONE secondary Pre-save (nav only) — desynced, low amplitude */
+  @keyframes navPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(45,212,191,0) } 50%{ box-shadow:0 0 0 4px rgba(45,212,191,.18) } }
+  .nav-pulse{ animation: navPulse 3.6s var(--ease) infinite; }
+
+  /* ==================== VISUALIZER (state-aware) ==================== */
+  /* On first load (idle) the viz is clearly ALIVE — moderate amplitude — so the
+     signature wow-moment is visible without interaction, then intensifies on Play. */
+  .viz{ display:flex; align-items:flex-end; justify-content:center; gap:3px; height:52px; }
+  .vbar{ width:3px; border-radius:2px;
+    background:linear-gradient(to top, #6D28D9, #2DD4BF);
+    opacity:.8; transform-origin:bottom; will-change:transform;
+    animation: bar 1.1s var(--ease) infinite; }
+  @keyframes bar{ 0%,100%{ transform:scaleY(.32) } 50%{ transform:scaleY(1) } }
+  /* idle: clearly-alive, ~0.55 opacity, 0.4-0.7 scaleY, ~1.3s — visible without interaction */
+  body:not(.playing) .vbar{ animation-duration:1.3s; opacity:.55; }
+  body:not(.playing) .vbar:nth-child(2n){ animation-duration:1.55s; opacity:.48; }
+  body:not(.playing) .vbar:nth-child(3n){ animation-duration:1.75s; opacity:.5; }
+  /* playing: full, bright */
+  body.playing .vbar{ opacity:.85; }
+  /* paused when hero is off-screen (motion gating) */
+  .viz.paused .vbar{ animation-play-state:paused; }
+
+  /* equalizer trio for now-playing — also state-aware */
+  .eq{ display:inline-flex; align-items:flex-end; gap:2px; height:14px; }
+  .eq i{ width:3px; border-radius:2px; background:#c4b5fd; display:block; animation: bar .9s var(--ease) infinite; }
+  .eq i:nth-child(2){ animation-delay:.2s } .eq i:nth-child(3){ animation-delay:.4s }
+  body:not(.playing) .eq i{ animation-duration:1.6s; opacity:.7; }
+
+  /* ==================== SCROLL REVEAL ==================== */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* ==================== TRACKLIST ==================== */
+  .track{ position:relative; transition:background .35s var(--ease); }
+  .track:hover{ background:linear-gradient(90deg, rgba(109,40,217,.14), rgba(45,212,191,.04) 70%, transparent); }
+  .track .play-mini{ opacity:0; transform:translateX(-6px) scale(.8); transition:all .3s var(--ease); }
+  .track:hover .play-mini, .track:focus-within .play-mini{ opacity:1; transform:none; }
+  .track .idx{ transition:opacity .3s var(--ease); }
+  .track:hover .idx{ opacity:0; }
+  .track:hover .t-title{ color:#EDE9FE; }
+  .track:hover .t-title.now-title{ color:#fff; }
+  .track.now{ background:linear-gradient(90deg, rgba(109,40,217,.24), rgba(45,212,191,.05) 60%, transparent);
+    box-shadow: inset 3px 0 0 #a78bfa; }
+  .track.now .t-title{ color:#fff; text-shadow:0 0 22px rgba(139,92,246,.55); }
+  .sliver{ position:absolute; left:0; bottom:0; height:1px; background:linear-gradient(90deg,#2DD4BF,#a78bfa);
+    box-shadow:0 0 10px rgba(45,212,191,.6); }
+
+  /* ==================== TOUR ==================== */
+  .tour-row{ transition:transform .45s var(--ease), border-color .45s var(--ease); }
+  .tour-row:hover{ transform:translateY(-3px); }
+  .tour-row:hover .city{ color:#2DD4BF; }
+  .venue-thumb{ transition:all .5s var(--ease); overflow:hidden; }
+  .tour-row:hover .venue-thumb svg{ transform:scale(1.08); }
+  .city{ transition:color .35s var(--ease); }
+  .ticket-pill{ transition: background .35s var(--ease), color .35s var(--ease), padding .35s var(--ease),
+                        box-shadow .35s var(--ease); }
+  .tour-row:hover .ticket-pill{ background:rgba(45,212,191,.16); color:#5EEAD4;
+    box-shadow:0 0 0 1px rgba(45,212,191,.4), 0 0 22px -6px rgba(45,212,191,.5); }
+
+  /* ==================== PLAYER ==================== */
+  .scrubber{ position:relative; height:4px; border-radius:4px; background:rgba(167,139,250,.16); overflow:visible; cursor:pointer; }
+  .scrub-fill{ position:absolute; left:0; top:0; height:100%; width:36%; border-radius:4px;
+    background:linear-gradient(90deg,#a78bfa,#2DD4BF); box-shadow:0 0 10px rgba(139,92,246,.55); transition:width .15s linear; }
+  .scrub-knob{ position:absolute; top:50%; left:36%; width:12px; height:12px; border-radius:50%; background:#F5F3FF;
+    transform:translate(-50%,-50%) scale(1); box-shadow:0 0 0 4px rgba(139,92,246,.3), 0 0 12px rgba(245,243,255,.5);
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease); }
+  .scrubber:hover .scrub-knob, .scrubber:focus-visible .scrub-knob{ transform:translate(-50%,-50%) scale(1.25);
+    box-shadow:0 0 0 5px rgba(45,212,191,.35), 0 0 16px rgba(45,212,191,.6); }
+  .vol-track{ position:relative; height:3px; border-radius:3px; background:rgba(167,139,250,.16); cursor:pointer; }
+  .vol-fill{ position:absolute; left:0; top:0; height:100%; width:65%; border-radius:3px; background:#c4b5fd; }
+  .wave-strip{ display:flex; align-items:center; gap:2px; height:100%; }
+  .wave-strip i{ flex:1; border-radius:2px; background:rgba(167,139,250,.25); transform-origin:center; transition:background .4s var(--ease); }
+
+  .badge{ transition:transform .35s var(--ease), border-color .35s var(--ease); }
+  .badge:hover{ transform:translateY(-3px) scale(1.03); border-color:rgba(45,212,191,.4); }
+
+  /* nav link underline */
+  .nav-link{ position:relative; }
+  .nav-link::after{ content:""; position:absolute; left:0; bottom:-6px; height:1px; width:0; background:#2DD4BF; transition:width .35s var(--ease); }
+  .nav-link:hover::after, .nav-link:focus-visible::after{ width:100%; }
+
+  /* focus visible */
+  a:focus-visible, button:focus-visible{ outline:2px solid #2DD4BF; outline-offset:3px; border-radius:8px; }
+
+  /* custom range fallback (used if JS slider not active) */
+  input[type=range]{ -webkit-appearance:none; appearance:none; background:transparent; cursor:pointer; }
+  input[type=range]::-webkit-slider-runnable-track{ height:4px; border-radius:4px; background:linear-gradient(90deg,#6D28D9 36%, rgba(167,139,250,.2) 36%); }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:13px; height:13px; border-radius:50%; background:#F5F3FF; margin-top:-4.5px; box-shadow:0 0 0 4px rgba(139,92,246,.3); }
+  input[type=range]::-moz-range-track{ height:4px; border-radius:4px; background:linear-gradient(90deg,#6D28D9 36%, rgba(167,139,250,.2) 36%); }
+  input[type=range]::-moz-range-thumb{ width:13px; height:13px; border:0; border-radius:50%; background:#F5F3FF; box-shadow:0 0 0 4px rgba(139,92,246,.3); }
+
+  /* signature: per-character glow stirred by mouse on AURORA wordmark */
+  .aurora-char{ display:inline-block; transition:text-shadow .5s var(--ease), transform .5s var(--ease); will-change:text-shadow; }
+  /* coarse-pointer fallback: autonomous slow phase-shift breathe loop */
+  .aurora-breathe .aurora-char{ animation: auroraBreathe 5.4s var(--ease) infinite; }
+  .aurora-breathe .aurora-char:nth-child(2){ animation-delay:.4s }
+  .aurora-breathe .aurora-char:nth-child(3){ animation-delay:.8s }
+  .aurora-breathe .aurora-char:nth-child(4){ animation-delay:1.2s }
+  .aurora-breathe .aurora-char:nth-child(5){ animation-delay:1.6s }
+  .aurora-breathe .aurora-char:nth-child(6){ animation-delay:2.0s }
+  @keyframes auroraBreathe{
+    0%,100%{ text-shadow:0 0 14px rgba(139,92,246,.28), 0 0 34px rgba(45,212,191,.14); transform:translateY(0); }
+    50%{ text-shadow:0 0 26px rgba(45,212,191,.42), 0 0 60px rgba(139,92,246,.34); transform:translateY(-2px); }
+  }
+
+  /* sticky player slide-in + exit */
+  .sticky-player{ transform:translateY(140%); transition:transform .55s var(--ease), opacity .35s var(--ease); opacity:0; }
+  .sticky-player.show{ transform:translateY(0); opacity:1; }
+
+  /* volume popover on mobile */
+  .vol-pop{ transform:translateY(8px) scale(.96); opacity:0; pointer-events:none; transition:all .25s var(--ease); }
+  .vol-pop.open{ transform:translateY(0) scale(1); opacity:1; pointer-events:auto; }
+
+  /* footer giant faded wordmark flourish */
+  .footer-wordmark{
+    font-family:'Playfair Display', serif; font-weight:900; letter-spacing:-0.04em; line-height:.8;
+    background:linear-gradient(180deg, rgba(167,139,250,.16) 0%, rgba(45,212,191,.05) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    user-select:none; pointer-events:none;
+  }
+
+  ::selection{ background:rgba(45,212,191,.32); color:#fff; }
+
+  /* ==================== REDUCED MOTION ==================== */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+    .reveal{ opacity:1; transform:none; }
+    .blob{ animation:none; opacity:.3; }
+    .play-orb::before, .play-orb::after{ display:none; }
+    .aurora-breathe .aurora-char{ animation:none; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+
+<body class="antialiased">
+
+<!-- ============ AMBIENT LAYER ============ -->
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <nav class="mx-auto mt-3 flex max-w-6xl items-center justify-between gap-4 rounded-2xl px-4 py-3 glass-soft sm:px-6 md:mt-5" aria-label="Primary">
+    <a href="#top" class="group flex items-center gap-2 font-display text-xl font-bold tracking-tight2 text-paper select-none">
+      NOVA <span class="text-teal transition-transform duration-500 group-hover:rotate-90" aria-hidden="true">✦</span>
+    </a>
+
+    <div class="hidden items-center gap-8 label-mono text-muted md:flex">
+      <a href="#album"  class="nav-link hover:text-paper">Album</a>
+      <a href="#tracks" class="nav-link hover:text-paper">Tracks</a>
+      <a href="#player" class="nav-link hover:text-paper">Player</a>
+      <a href="#tour"   class="nav-link hover:text-paper">Tour</a>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- mobile menu toggle -->
+      <button id="navToggle" class="btn-ghost flex h-9 w-9 items-center justify-center rounded-full md:hidden"
+              aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <!-- single secondary Pre-save -->
+      <a href="#presave" class="btn-ghost nav-pulse hidden items-center gap-2 rounded-full px-4 py-2 label-mono text-paper sm:inline-flex">
+        <span class="h-1.5 w-1.5 rounded-full bg-teal"></span> Pre-save
+      </a>
+    </div>
+  </nav>
+
+  <!-- mobile dropdown -->
+  <div id="mobileMenu" class="mx-auto mt-2 hidden max-w-6xl px-4 md:hidden" aria-hidden="true">
+    <div class="glass rounded-2xl p-3">
+      <a href="#album"  class="block rounded-xl px-4 py-3 label-mono text-muted hover:bg-white/5 hover:text-paper">Album</a>
+      <a href="#tracks" class="block rounded-xl px-4 py-3 label-mono text-muted hover:bg-white/5 hover:text-paper">Tracks</a>
+      <a href="#player" class="block rounded-xl px-4 py-3 label-mono text-muted hover:bg-white/5 hover:text-paper">Player</a>
+      <a href="#tour"   class="block rounded-xl px-4 py-3 label-mono text-muted hover:bg-white/5 hover:text-paper">Tour</a>
+      <a href="#presave" class="block rounded-xl px-4 py-3 mt-1 text-center btn-ghost label-mono text-paper">Pre-save</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <!-- justify-start with controlled gaps so the whole stack fits a single viewport on phones/laptops -->
+  <section id="album" class="relative flex min-h-[100svh] flex-col items-center justify-start overflow-hidden px-6 pt-28 pb-20 sm:pb-16">
+    <!-- slow-rotating conic aurora behind cover (faster, less blur so the gradient visibly drifts) -->
+    <div class="pointer-events-none absolute left-1/2 top-[40%] -z-0 h-[min(112vw,760px)] w-[min(112vw,760px)] -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
+      <div id="conicAura" style="position:absolute; inset:-26%; border-radius:50%; opacity:.55;
+        background:conic-gradient(from 0deg, #6D28D9, #2DD4BF, #4C1D95, #0F766E, #8b5cf6, #6D28D9);"></div>
+    </div>
+
+    <!-- NOVA eyebrow -->
+    <p class="reveal eyebrow mb-2 text-center text-sm tracking-[0.5em] text-teal sm:text-base" style="text-transform:uppercase;">NOVA</p>
+
+    <!-- Cover (bespoke generative SVG, parallax + tilt). Mobile cover tightened to leave room for stack. -->
+    <div id="coverWrap" class="cover-wrap reveal relative mb-1">
+      <div class="cover-glow" aria-hidden="true"></div>
+      <div class="cover-frame mx-auto" style="width:min(52vw,360px); aspect-ratio:1/1;">
+        <!-- generative aurora cover: violet dissolving into teal static over indigo -->
+        <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" role="img"
+             aria-label="AURORA album cover — violet aurora dissolving into teal static over a midnight indigo field"
+             style="display:block; width:100%; height:100%;">
+          <defs>
+            <radialGradient id="bgG" cx="50%" cy="42%" r="75%">
+              <stop offset="0%" stop-color="#1E1B4B"/>
+              <stop offset="55%" stop-color="#0c0a1f"/>
+              <stop offset="100%" stop-color="#050410"/>
+            </radialGradient>
+            <radialGradient id="violetG" cx="40%" cy="38%" r="55%">
+              <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.95"/>
+              <stop offset="55%" stop-color="#6D28D9" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#4C1D95" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="tealG" cx="66%" cy="70%" r="50%">
+              <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0.85"/>
+              <stop offset="55%" stop-color="#0F766E" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#0F766E" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="veilG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#070612" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#070612" stop-opacity="0.55"/>
+            </linearGradient>
+            <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14"/></filter>
+            <filter id="grainF"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0.96  0 0 0 0 0.95  0 0 0 0 1  0 0 0 0.18 0"/></filter>
+          </defs>
+          <rect width="600" height="600" fill="url(#bgG)"/>
+          <!-- drifting aurora ribbons -->
+          <g filter="url(#soft)">
+            <path d="M -40 200 Q 180 80 360 220 T 680 260 L 680 0 L -40 0 Z" fill="url(#violetG)" opacity="0.9"/>
+            <path d="M -40 360 Q 200 300 380 400 T 700 420 L 700 600 L -40 600 Z" fill="url(#tealG)" opacity="0.85"/>
+            <path d="M 120 120 Q 300 60 460 180 T 620 220" stroke="#a78bfa" stroke-width="60" fill="none" opacity="0.35" stroke-linecap="round"/>
+            <path d="M 80 460 Q 260 420 420 500 T 640 520" stroke="#2DD4BF" stroke-width="44" fill="none" opacity="0.28" stroke-linecap="round"/>
+          </g>
+          <!-- a soft vertical veil to settle the bottom -->
+          <rect width="600" height="600" fill="url(#veilG)"/>
+          <!-- static grain layer -->
+          <rect width="600" height="600" filter="url(#grainF)" opacity="0.6"/>
+          <!-- wordmark embossed faint -->
+          <text x="300" y="338" text-anchor="middle" font-family="'Playfair Display', serif"
+                font-size="64" font-weight="800" letter-spacing="6" fill="#F5F3FF" opacity="0.10">AURORA</text>
+          <text x="300" y="382" text-anchor="middle" font-family="'Cormorant Garamond', serif"
+                font-style="italic" font-size="20" letter-spacing="8" fill="#2DD4BF" opacity="0.55">nova</text>
+        </svg>
+        <div class="sheen" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <!-- Title: overlaps the cover slightly (negative margin) for a cinematic feel.
+         Tighter clamp keeps the wordmark inside the viewport on phones. -->
+    <h1 class="reveal display-aurora -mt-6 sm:-mt-10 text-center text-[clamp(3rem,15vw,11rem)] sm:text-[clamp(4.5rem,17vw,12rem)]" id="auroraTitle" data-text="AURORA">AURORA</h1>
+
+    <!-- meta line -->
+    <div class="reveal mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 label-mono text-muted">
+      <span>The New Album</span>
+      <span class="h-1 w-1 rounded-full bg-violet-pale" aria-hidden="true"></span>
+      <span>Out June 21, 2026</span>
+      <span class="h-1 w-1 rounded-full bg-violet-pale" aria-hidden="true"></span>
+      <!-- Explicit badge: raised to text-paper/95 + darker border for AA against glass -->
+      <span class="rounded-sm border border-paper/35 px-2 py-0.5 text-[0.65rem] tracking-[0.2em] text-paper/95">Explicit</span>
+    </div>
+
+    <!-- CTAs: Play is the unambiguous magnetic primary (its own centered row),
+         Pre-save sits as a slim ghost pill on a SEPARATE line beneath it. -->
+    <div class="reveal mt-7 flex flex-col items-center gap-4">
+      <div class="flex items-center justify-center gap-4">
+        <button id="playBtn" class="play-orb" aria-label="Play AURORA" aria-pressed="false">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" class="ml-1"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg>
+        </button>
+        <span id="playCue" class="play-cue text-lg text-paper/90 sm:text-xl">Listen</span>
+      </div>
+      <a href="#presave" class="btn-ghost-slim flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-paper/90">
+        Pre-save the album
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- live audio-visualizer. Clearly alive on arrival; intensifies on Play. -->
+    <div class="pointer-events-none flex flex-col items-center gap-2 mt-8 w-full px-4
+                sm:absolute sm:inset-x-0 sm:bottom-5 sm:mt-0 sm:w-auto sm:px-0" aria-hidden="true">
+      <div class="viz" id="heroViz"></div>
+      <p class="label-mono text-dim hidden sm:block" id="vizLabel">Violet light, breathing with the room</p>
+    </div>
+  </section>
+
+  <!-- ============ TRACKLIST ============ -->
+  <section id="tracks" class="relative mx-auto max-w-5xl px-6 py-24 sm:py-32">
+    <div class="reveal mb-12 flex items-end justify-between gap-6 border-b border-violet-pale/15 pb-6">
+      <div>
+        <p class="eyebrow mb-3 text-base text-teal">— Side A / Side B</p>
+        <!-- The Nine: the dominant, largest section head -->
+        <h2 class="font-display text-5xl font-bold tracking-tight2 sm:text-6xl">The Nine</h2>
+      </div>
+      <p class="hidden max-w-xs text-right text-sm leading-relaxed text-muted sm:block">
+        Nine movements through violet light. Best heard alone, after dark, in one breath.
+      </p>
+    </div>
+
+    <ol class="glass reveal overflow-hidden rounded-2xl" aria-label="Track list">
+
+      <li class="track group relative flex items-center gap-4 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">01</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="AURORA" aria-label="Play AURORA">AURORA</button>
+        <span class="font-mono text-sm tnum text-dim">3:42</span>
+      </li>
+
+      <li class="track group relative flex items-center gap-4 border-t border-white/5 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">02</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="Ultraviolet" aria-label="Play Ultraviolet">Ultraviolet</button>
+        <span class="font-mono text-sm tnum text-dim">4:15</span>
+      </li>
+
+      <!-- NOW PLAYING — still clickable (whole title is a button resuming playback) -->
+      <li class="track now group relative flex items-center gap-4 border-t border-white/5 px-5 py-5 sm:px-8 sm:py-6 overflow-hidden"
+          aria-current="true" data-track="3" data-title="Midnight Indigo">
+        <span class="label-mono text-violet-pale w-6"><span class="eq" role="img" aria-label="now playing equalizer"><i style="height:60%"></i><i style="height:100%"></i><i style="height:42%"></i></span></span>
+        <button class="t-title now-title track-btn flex-1 text-left font-display text-xl font-bold tracking-tight2 sm:text-2xl" data-resume aria-label="Play Midnight Indigo (now playing)" aria-pressed="true">Midnight Indigo</button>
+        <span class="hidden items-center gap-2 label-mono text-teal sm:flex">◀ now playing</span>
+        <span class="font-mono text-sm tnum text-paper">3:58</span>
+        <span class="sliver" style="width:42%"></span>
+      </li>
+
+      <li class="track group relative flex items-center gap-4 border-t border-white/5 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">04</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="Halo" aria-label="Play Halo">Halo</button>
+        <span class="font-mono text-sm tnum text-dim">4:31</span>
+      </li>
+      <li class="track group relative flex items-center gap-4 border-t border-white/5 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">05</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="Velvet Static" aria-label="Play Velvet Static">Velvet Static</button>
+        <span class="font-mono text-sm tnum text-dim">3:20</span>
+      </li>
+      <li class="track group relative flex items-center gap-4 border-t border-white/5 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">06</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="Glass Wing" aria-label="Play Glass Wing">Glass Wing</button>
+        <span class="font-mono text-sm tnum text-dim">5:02</span>
+      </li>
+      <li class="track group relative flex items-center gap-4 border-t border-white/5 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">07</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="Slow Burn" aria-label="Play Slow Burn">Slow Burn</button>
+        <span class="font-mono text-sm tnum text-dim">4:48</span>
+      </li>
+      <li class="track group relative flex items-center gap-4 border-t border-white/5 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">08</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="Tidal" aria-label="Play Tidal">Tidal</button>
+        <span class="font-mono text-sm tnum text-dim">3:35</span>
+      </li>
+      <li class="track group relative flex items-center gap-4 border-t border-white/5 px-5 py-4 sm:px-8 sm:py-5">
+        <span class="idx label-mono text-dim w-6 tnum">09</span>
+        <span class="play-mini -ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <button class="t-title track-btn flex-1 text-left font-sans text-lg font-medium tracking-tight2 text-paper transition-colors sm:text-xl" data-title="Dawn" aria-label="Play Dawn (Reprise)">Dawn <span class="font-sensual italic font-normal text-muted">(Reprise)</span></button>
+        <span class="font-mono text-sm tnum text-dim">2:55</span>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="relative mx-auto max-w-6xl px-6 py-24 sm:py-28">
+    <div class="reveal grid gap-12 md:grid-cols-12 md:gap-16">
+      <!-- left: editorial -->
+      <div class="md:col-span-7">
+        <p class="eyebrow mb-4 text-sm text-teal">— Liner notes</p>
+        <h2 class="font-display text-3xl font-bold leading-[1.06] tracking-tight2 sm:text-4xl">
+          The sound of 3 a.m.,<br/>held in violet light.
+        </h2>
+        <p class="mt-6 max-w-prose text-base leading-relaxed text-paper/85 sm:text-lg">
+          AURORA is the sound of 3 a.m. — violet light on skin, the static between two heartbeats, the
+          slow bloom of a feeling you can't name until the chorus hits. NOVA trades the dance floor for
+          the after-party, the after-party for the drive home, the drive home for the long moment
+          before sleep. Press play and the room goes indigo.
+        </p>
+
+        <blockquote class="mt-8 border-l-2 border-teal/60 pl-5">
+          <p class="font-display text-2xl font-medium italic leading-snug text-paper sm:text-3xl" style="letter-spacing:-0.01em;">
+            "I wanted to make an album that feels like the inside of a slow exhale."
+          </p>
+          <cite class="mt-3 block label-mono not-italic text-muted">— NOVA, on AURORA</cite>
+        </blockquote>
+      </div>
+
+      <!-- right: metadata stack — editorial key/value with teal accent keys -->
+      <aside class="md:col-span-5 md:pl-8 md:border-l md:border-violet-pale/15">
+        <p class="eyebrow mb-6 text-sm text-teal">— Credits</p>
+        <dl class="space-y-4">
+          <div class="flex items-baseline justify-between gap-4 pb-3 border-b border-teal/15">
+            <dt class="label-mono text-teal/85">Producer</dt>
+            <dd class="text-right font-medium text-paper">NOVA &amp; Ivo Marais</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-4 pb-3 border-b border-teal/15">
+            <dt class="label-mono text-teal/85">Recorded in</dt>
+            <dd class="text-right font-medium text-paper">Reykjavík &amp; Lisbon, 2025</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-4 pb-3 border-b border-teal/15">
+            <dt class="label-mono text-teal/85">Genre</dt>
+            <dd class="text-right font-medium text-paper">Alt-R&amp;B · Dream Pop</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-4 pb-3 border-b border-teal/15">
+            <dt class="label-mono text-teal/85">Format</dt>
+            <dd class="text-right font-medium text-paper">LP · CD · Dolby Atmos</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-4 pb-3 border-b border-teal/15">
+            <dt class="label-mono text-teal/85">Total runtime</dt>
+            <dd class="text-right font-mono tnum text-paper">35:06</dd>
+          </div>
+          <!-- one poetic line carried through the liner-note voice -->
+          <p class="pt-2 font-sensual italic text-base leading-relaxed text-muted">
+            Recorded mostly by candlelight, between rain and the sea — every vocal kept in one take,
+            every silence left in on purpose.
+          </p>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ PLAYER MOCKUP ============ -->
+  <section id="player" class="relative mx-auto max-w-5xl px-6 py-20 sm:py-24">
+    <!-- The Player: a smaller, integrated label (not a fifth display head) -->
+    <div class="reveal mb-8 flex items-end justify-between gap-6 border-b border-violet-pale/15 pb-5">
+      <div>
+        <p class="eyebrow mb-2 text-sm text-teal">— Now playing</p>
+        <h2 class="font-display text-2xl font-semibold tracking-tight2 sm:text-3xl">The Player</h2>
+      </div>
+      <p class="hidden max-w-xs text-right text-sm leading-relaxed text-muted sm:block">
+        Frosted glass over the indigo. Scrub, seek, and feel the room change colour.
+      </p>
+    </div>
+
+    <!-- player card -->
+    <div class="reveal glass relative overflow-hidden rounded-3xl p-5 sm:p-7"
+         style="box-shadow: inset 0 0 0 1px rgba(167,139,250,.2), 0 40px 100px -30px rgba(0,0,0,.85);">
+      <!-- waveform strip behind progress -->
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-24 opacity-25" aria-hidden="true">
+        <div class="wave-strip h-full w-full" id="playerWave"></div>
+      </div>
+
+      <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center">
+        <!-- thumb -->
+        <div class="flex items-center gap-4 sm:w-1/3">
+          <div class="cover-frame h-16 w-16 flex-none sm:h-[72px] sm:w-[72px]">
+            <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block; width:100%; height:100%;">
+              <rect width="600" height="600" fill="#0c0a1f"/>
+              <ellipse cx="240" cy="220" rx="220" ry="150" fill="#6D28D9" opacity=".8"/>
+              <ellipse cx="380" cy="400" rx="200" ry="140" fill="#0F766E" opacity=".7"/>
+              <rect width="600" height="600" fill="#070612" opacity=".4"/>
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="truncate font-display text-base font-semibold tracking-tight2 sm:text-lg">Midnight Indigo</p>
+            <p class="label-mono text-dim">NOVA · AURORA</p>
+          </div>
+        </div>
+
+        <!-- center: controls + scrubber. Mobile drops shuffle/repeat, centers prev/play/next. -->
+        <div class="flex-1">
+          <div class="flex items-center justify-center gap-5 text-paper/85 sm:gap-7">
+            <button aria-label="Shuffle" class="transition-colors hover:text-teal hidden sm:block">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg>
+            </button>
+            <button aria-label="Previous track" class="transition-colors hover:text-paper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+            </button>
+            <button id="playerPlay" aria-label="Play or pause" aria-pressed="false" class="play-orb" style="width:52px;height:52px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+            </button>
+            <button aria-label="Next track" class="transition-colors hover:text-paper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+            </button>
+            <button aria-label="Repeat" class="transition-colors hover:text-teal hidden sm:block">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+            </button>
+          </div>
+
+          <!-- scrubber (real ARIA slider + keyboard) -->
+          <div class="mt-5">
+            <div id="scrubber" class="scrubber" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="36" aria-valuetext="1:25 of 3:58" tabindex="0">
+              <div class="scrub-fill"></div>
+              <div class="scrub-knob"></div>
+            </div>
+            <div class="mt-2 flex justify-between font-mono tnum text-xs text-dim">
+              <span id="curTime">1:25</span><span>3:58</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- volume. Desktop: inline slider row. Mobile: icon-only popover. -->
+        <div class="flex items-center justify-end gap-3 sm:w-1/4">
+          <!-- desktop inline volume -->
+          <div id="volInline" class="hidden items-center gap-3 sm:flex">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <div id="volSlider" class="vol-track w-24" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65" aria-valuetext="65 percent" tabindex="0">
+              <div class="vol-fill"></div>
+            </div>
+          </div>
+          <!-- mobile icon-only popover -->
+          <div id="volMobile" class="relative sm:hidden">
+            <button id="volToggle" aria-label="Open volume" aria-expanded="false" class="flex h-9 w-9 items-center justify-center rounded-full glass-soft text-muted">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </button>
+            <div id="volPop" class="vol-pop absolute bottom-12 right-0 w-36 glass rounded-2xl p-3">
+              <div class="flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted flex-none"><path d="M11 5 6 9H2v6h4l5 4z"/></svg>
+                <div id="volSliderMobile" class="vol-track flex-1" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65" aria-valuetext="65 percent" tabindex="0">
+                  <div class="vol-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TOUR ============ -->
+  <section id="tour" class="relative mx-auto max-w-5xl px-6 py-24 sm:py-28">
+    <div class="reveal mb-10 flex items-end justify-between gap-6 border-b border-violet-pale/15 pb-6">
+      <div>
+        <p class="eyebrow mb-3 text-base text-teal">— On the road</p>
+        <!-- The AURORA Tour: two-line treatment for editorial rhythm -->
+        <h2 class="font-display text-4xl font-bold tracking-tight2 leading-[0.95] sm:text-5xl">
+          The AURORA Tour<br/><span class="font-sensual italic font-medium text-2xl text-muted sm:text-3xl">five nights, one violet light</span>
+        </h2>
+      </div>
+      <p class="hidden text-right text-sm text-muted sm:block">Tickets limited · doors at 8 p.m.</p>
+    </div>
+
+    <ul class="space-y-3">
+      <!-- Each venue thumbnail is a generative aurora-ribbon SVG tinted per city (no network, on-brand). -->
+      <li class="reveal">
+        <a href="#tour" class="tour-row glass-soft group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 sm:px-6">
+          <span class="venue-thumb venue-london relative flex h-12 w-12 flex-none overflow-hidden rounded-lg opacity-80 blur-[0.5px]" aria-hidden="true"></span>
+          <div class="flex w-16 flex-none flex-col items-center font-mono leading-none">
+            <span class="text-xl font-semibold tnum text-paper">14</span>
+            <span class="label-mono text-dim mt-1">Sep</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="city font-display text-lg font-semibold tracking-tight2">London</p>
+            <p class="text-sm text-muted">O2 Academy Brixton</p>
+          </div>
+          <span class="ticket-pill label-mono text-teal rounded-full px-3 py-1.5">Tickets →</span>
+        </a>
+      </li>
+      <li class="reveal">
+        <a href="#tour" class="tour-row glass-soft group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 sm:px-6">
+          <span class="venue-thumb venue-paris relative flex h-12 w-12 flex-none overflow-hidden rounded-lg opacity-80 blur-[0.5px]" aria-hidden="true"></span>
+          <div class="flex w-16 flex-none flex-col items-center font-mono leading-none">
+            <span class="text-xl font-semibold tnum text-paper">19</span>
+            <span class="label-mono text-dim mt-1">Sep</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="city font-display text-lg font-semibold tracking-tight2">Paris</p>
+            <p class="text-sm text-muted">Le Trianon</p>
+          </div>
+          <span class="ticket-pill label-mono text-teal rounded-full px-3 py-1.5">Tickets →</span>
+        </a>
+      </li>
+      <li class="reveal">
+        <a href="#tour" class="tour-row glass-soft group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 sm:px-6">
+          <span class="venue-thumb venue-berlin relative flex h-12 w-12 flex-none overflow-hidden rounded-lg opacity-80 blur-[0.5px]" aria-hidden="true"></span>
+          <div class="flex w-16 flex-none flex-col items-center font-mono leading-none">
+            <span class="text-xl font-semibold tnum text-paper">24</span>
+            <span class="label-mono text-dim mt-1">Sep</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="city font-display text-lg font-semibold tracking-tight2">Berlin</p>
+            <p class="text-sm text-muted">Astra Kulturhaus</p>
+          </div>
+          <span class="ticket-pill label-mono text-teal rounded-full px-3 py-1.5">Tickets →</span>
+        </a>
+      </li>
+      <li class="reveal">
+        <a href="#tour" class="tour-row glass-soft group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 sm:px-6">
+          <span class="venue-thumb venue-brooklyn relative flex h-12 w-12 flex-none overflow-hidden rounded-lg opacity-80 blur-[0.5px]" aria-hidden="true"></span>
+          <div class="flex w-16 flex-none flex-col items-center font-mono leading-none">
+            <span class="text-xl font-semibold tnum text-paper">02</span>
+            <span class="label-mono text-dim mt-1">Oct</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="city font-display text-lg font-semibold tracking-tight2">Brooklyn</p>
+            <p class="text-sm text-muted">Knockdown Center</p>
+          </div>
+          <span class="ticket-pill label-mono text-teal rounded-full px-3 py-1.5">Tickets →</span>
+        </a>
+      </li>
+      <li class="reveal">
+        <a href="#tour" class="tour-row glass-soft group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 sm:px-6">
+          <span class="venue-thumb venue-la relative flex h-12 w-12 flex-none overflow-hidden rounded-lg opacity-80 blur-[0.5px]" aria-hidden="true"></span>
+          <div class="flex w-16 flex-none flex-col items-center font-mono leading-none">
+            <span class="text-xl font-semibold tnum text-paper">11</span>
+            <span class="label-mono text-dim mt-1">Oct</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="city font-display text-lg font-semibold tracking-tight2">Los Angeles</p>
+            <p class="text-sm text-muted">The Wiltern</p>
+          </div>
+          <span class="ticket-pill label-mono text-teal rounded-full px-3 py-1.5">Tickets →</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============ STREAMING BADGES / SECONDARY CTA ============ -->
+  <section id="presave" class="relative mx-auto max-w-5xl px-6 py-20 sm:py-24">
+    <div class="reveal text-center">
+      <p class="eyebrow mb-3 text-sm text-teal">— One link, every platform</p>
+      <h2 class="font-display text-3xl font-bold tracking-tight2 sm:text-4xl">Pre-save. Be first into the violet.</h2>
+      <p class="mx-auto mt-4 max-w-md text-sm text-muted">
+        Lock in AURORA the second it drops. Pre-saving adds the full album to your library automatically at midnight.
+      </p>
+    </div>
+
+    <div class="reveal mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+      <!-- secondary treatments only; primary (Play) lives in hero. All point to #presave (placeholder) -->
+      <a href="#presave" class="badge glass flex items-center gap-3 rounded-full px-5 py-3 text-sm font-semibold text-paper">
+        <span class="flex h-7 w-7 items-center justify-center rounded-full" style="background:#1DB954">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.52 17.34c-.24.36-.66.48-1.02.24-2.82-1.74-6.36-2.1-10.56-1.14-.42.12-.78-.18-.9-.54-.12-.42.18-.78.54-.9 4.56-1.02 8.52-.6 11.64 1.32.42.18.48.66.3 1.02zm1.44-3.3c-.3.42-.84.6-1.26.3-3.24-1.98-8.16-2.58-11.94-1.38-.48.12-1.02-.12-1.14-.6-.12-.48.12-1.02.6-1.14 4.38-1.32 9.78-.66 13.5 1.62.36.18.54.78.24 1.2z"/></svg>
+        </span>
+        Spotify
+      </a>
+      <a href="#presave" class="badge glass flex items-center gap-3 rounded-full px-5 py-3 text-sm font-semibold text-paper">
+        <!-- Apple Music: correct beamed-eighth-note mark on the brand red -->
+        <span class="flex h-7 w-7 items-center justify-center rounded-full" style="background:#FA243A">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
+            <path d="M9 17.5a2.5 2.5 0 1 1-2.5-2.5A2.5 2.5 0 0 1 9 17.5Z"/>
+            <path d="M9 15.2V5.4a.6.6 0 0 1 .5-.6l8.7-1.8a.6.6 0 0 1 .7.6v1.9a.6.6 0 0 1-.5.6L11 8.2v8.6"/>
+            <path d="M17.9 13.4a2.5 2.5 0 1 1-2.5-2.5 2.5 2.5 0 0 1 2.5 2.5Z"/>
+          </svg>
+        </span>
+        Apple Music
+      </a>
+      <!-- secondary Pre-save (NOT primary; glass, not play-core) -->
+      <a href="#presave" class="badge btn-ghost flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-paper">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+        Pre-save on all platforms
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ STICKY MINI PLAYER (appears on scroll) ============ -->
+<!-- inert toggled via JS so hidden buttons aren't keyboard-focusable -->
+<div id="stickyPlayer" class="sticky-player fixed bottom-4 inset-x-0 z-40 px-4" aria-hidden="true" inert>
+  <div class="glass mx-auto flex max-w-5xl items-center gap-3 rounded-2xl px-4 py-3 sm:gap-4">
+    <button id="stickyPlay" aria-label="Play or pause" aria-pressed="false" class="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-violet text-paper transition hover:bg-violet-light">
+      <svg id="stickyIcon" width="14" height="14" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+    </button>
+    <div class="cover-frame h-9 w-9 flex-none">
+      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block; width:100%; height:100%;">
+        <rect width="600" height="600" fill="#0c0a1f"/>
+        <ellipse cx="240" cy="220" rx="220" ry="150" fill="#6D28D9" opacity=".8"/>
+        <ellipse cx="380" cy="400" rx="200" ry="140" fill="#0F766E" opacity=".7"/>
+      </svg>
+    </div>
+    <div class="min-w-0 flex-1">
+      <p class="truncate font-display text-sm font-semibold">Midnight Indigo</p>
+      <div class="mt-1 flex items-center gap-2">
+        <!-- condensed times now visible on mobile too (was sm-only) -->
+        <span class="font-mono tnum text-[0.65rem] text-dim">1:25</span>
+        <div class="h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+          <div class="h-full rounded-full" style="width:36%; background:linear-gradient(90deg,#a78bfa,#2DD4BF)"></div>
+        </div>
+        <span class="font-mono tnum text-[0.65rem] text-dim">3:58</span>
+      </div>
+    </div>
+    <span class="eq hidden flex-none sm:inline-flex" aria-hidden="true"><i style="height:55%"></i><i style="height:100%"></i><i style="height:40%"></i></span>
+    <button aria-label="Close player" id="closeSticky" class="flex-none text-muted transition hover:text-paper">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer id="siteFooter" class="relative z-10 mt-10 overflow-hidden border-t border-violet-pale/12 pb-28 pt-14">
+  <!-- faded AURORA wordmark flourish behind the footer -->
+  <div class="footer-wordmark absolute inset-x-0 -bottom-6 sm:-bottom-10 text-center text-[28vw] sm:text-[20vw] leading-none" aria-hidden="true">AURORA</div>
+  <div class="relative mx-auto max-w-6xl px-6">
+    <div class="flex flex-col items-start justify-between gap-10 md:flex-row">
+      <div>
+        <a href="#top" class="font-display text-3xl font-bold tracking-tight2 text-paper">NOVA <span class="text-teal">✦</span></a>
+        <p class="mt-3 max-w-xs text-sm leading-relaxed text-muted">
+          A fictional artist · designed as a showcase. AURORA arrives June 21, 2026.
+        </p>
+      </div>
+
+      <nav class="grid grid-cols-2 gap-x-12 gap-y-2 text-sm text-muted sm:grid-cols-3" aria-label="Footer">
+        <a href="#album"  class="transition-colors hover:text-paper">Album</a>
+        <a href="#tracks" class="transition-colors hover:text-paper">Tracks</a>
+        <a href="#player" class="transition-colors hover:text-paper">Player</a>
+        <a href="#tour"   class="transition-colors hover:text-paper">Tour</a>
+        <a href="#presave" class="transition-colors hover:text-paper">Pre-save</a>
+        <a href="#top" class="transition-colors hover:text-teal">Back to top ↑</a>
+      </nav>
+
+      <!-- social icons in glass pills matching the badges -->
+      <div class="flex gap-2 text-muted">
+        <a href="#" aria-label="Instagram" class="flex h-10 w-10 items-center justify-center rounded-full glass-soft transition-colors hover:text-teal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+        </a>
+        <a href="#" aria-label="X / Twitter" class="flex h-10 w-10 items-center justify-center rounded-full glass-soft transition-colors hover:text-teal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" aria-label="YouTube" class="flex h-10 w-10 items-center justify-center rounded-full glass-soft transition-colors hover:text-teal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 17a24 24 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49 49 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24 24 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49 49 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+        </a>
+        <a href="#" aria-label="Spotify" class="flex h-10 w-10 items-center justify-center rounded-full glass-soft transition-colors hover:text-teal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#1DB954" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.52 17.34c-.24.36-.66.48-1.02.24-2.82-1.74-6.36-2.1-10.56-1.14-.42.12-.78-.18-.9-.54-.12-.42.18-.78.54-.9 4.56-1.02 8.52-.6 11.64 1.32.42.18.48.66.3 1.02zm1.44-3.3c-.3.42-.84.6-1.26.3-3.24-1.98-8.16-2.58-11.94-1.38-.48.12-1.02-.12-1.14-.6-.12-.48.12-1.02.6-1.14 4.38-1.32 9.78-.66 13.5 1.62.36.18.54.78.24 1.2z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="relative mt-10 flex flex-col gap-2 border-t border-white/6 pt-6 label-mono text-dim sm:flex-row sm:items-center sm:justify-between">
+      <p>© 2026 NOVA. AURORA.</p>
+      <p>A fictional artist · designed as a showcase · crafted in the dark ✦</p>
+    </div>
+  </div>
+</footer>
+
+<!-- visually-hidden aria-live region for play-state announcements -->
+<p id="playStatus" role="status" aria-live="polite" class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"></p>
+
+<script>
+(function(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+
+  /* ---------- Hero audio visualizer (32 bars) ---------- */
+  const viz = document.getElementById('heroViz');
+  if(viz){
+    for(let i=0;i<32;i++){
+      const s = document.createElement('span');
+      s.className = 'vbar';
+      const base = 0.28 + 0.72*Math.abs(Math.sin(i*0.5));
+      s.style.height = (10 + base*42) + 'px';
+      s.style.animationDuration = (0.7 + Math.random()*0.9).toFixed(2)+'s';
+      s.style.animationDelay = (Math.random()*1.2).toFixed(2)+'s';
+      if(reduce){ s.style.animation='none'; s.style.transform='scaleY(.5)'; }
+      viz.appendChild(s);
+    }
+  }
+
+  /* ---------- Player waveform strip (90 bars) ---------- */
+  (function(){
+    const w = document.getElementById('playerWave');
+    if(!w) return;
+    const N = 90, played = 0.36;
+    for(let i=0;i<N;i++){
+      const b = document.createElement('i');
+      const h = 18 + Math.abs(Math.sin(i*0.35))*55 + Math.random()*14;
+      b.style.height = h + '%';
+      if(i/N < played){ b.style.background = '#2DD4BF'; b.style.opacity='.85'; }
+      w.appendChild(b);
+    }
+  })();
+
+  /* ---------- Slow conic aurora rotation (hero) — paused when hero off-screen ----------
+     Faster drift (~0.12deg/frame) + reduced blur so the gradient is visibly rotating, not static. */
+  let conicRAF = null;
+  let conicRunning = false;
+  (function(){
+    const aura = document.getElementById('conicAura');
+    if(!aura || reduce) return;
+    let a = 0;
+    function tick(){ a = (a + 0.12) % 360; aura.style.transform = 'rotate('+a+'deg)'; if(conicRunning) conicRAF = requestAnimationFrame(tick); }
+    window.__startConic = function(){ if(!conicRunning){ conicRunning = true; conicRAF = requestAnimationFrame(tick); } };
+    window.__stopConic  = function(){ conicRunning = false; if(conicRAF){ cancelAnimationFrame(conicRAF); conicRAF = null; } };
+  })();
+
+  /* ---------- Hero visibility gate: pause conic rotation + viz + parallax + mouse-glow off-screen ---------- */
+  let heroVisible = true;
+  (function(){
+    const hero = document.getElementById('album');
+    if(!hero || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        const on = en.isIntersecting;
+        heroVisible = on;
+        if(window.__stopConic && !on) window.__stopConic();
+        if(window.__startConic && on && !reduce) window.__startConic();
+        if(viz){ viz.classList.toggle('paused', !on); }
+        if(window.__setParallaxActive) window.__setParallaxActive(on);
+        if(window.__setGlowActive) window.__setGlowActive(on);
+      });
+    }, { threshold:0.02 });
+    io.observe(hero);
+  })();
+
+  /* ---------- Signature: per-character glow on AURORA ----------
+     Desktop (fine pointer): mouse-stirred, RAF-coalesced (one read per frame, all chars updated once).
+     Touch (coarse pointer): autonomous slow phase-shift breathe loop so the title breathes on its own.
+     Gated behind hero visibility (setGlowActive) so the RAF stops when the hero scrolls off. */
+  (function(){
+    const h = document.getElementById('auroraTitle');
+    if(!h) return;
+    const text = h.getAttribute('data-text') || h.textContent;
+    h.innerHTML = text.split('').map(c => c===' '
+      ? '<span class="aurora-char">&nbsp;</span>'
+      : '<span class="aurora-char">'+c+'</span>').join('');
+    const chars = h.querySelectorAll('.aurora-char');
+    if(reduce) return;
+    const els = Array.from(chars);
+
+    if(coarse){
+      h.classList.add('aurora-breathe');
+      return;
+    }
+
+    // desktop: coalesced mousemove, gated by hero visibility
+    let mx = -9999, my = -9999, pending = false, glowActive = true;
+    window.__setGlowActive = function(on){ glowActive = on; if(!on){ pending = false; } };
+    window.addEventListener('mousemove', (e)=>{
+      if(!glowActive) return;
+      mx = e.clientX; my = e.clientY;
+      if(pending) return;
+      pending = true;
+      requestAnimationFrame(()=>{
+        pending = false;
+        if(!glowActive) return;
+        const cx = mx, cy = my;
+        for(let i=0;i<els.length;i++){
+          const el = els[i];
+          const r = el.getBoundingClientRect();
+          const dx = (r.left + r.width/2) - cx;
+          const dy = (r.top + r.height/2) - cy;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          const glow = Math.max(0, 1 - d/260);
+          el.style.textShadow = glow > 0.01
+            ? '0 0 ' + (8 + glow*42).toFixed(1) + 'px rgba(45,212,191,'+(glow*0.7).toFixed(2)+'), 0 0 ' + (glow*90).toFixed(0) + 'px rgba(139,92,246,'+(glow*0.5).toFixed(2)+')'
+            : '';
+          el.style.transform = 'translateY(' + (-glow*3).toFixed(1) + 'px)';
+        }
+      });
+    }, { passive:true });
+  })();
+
+  /* ---------- Cover parallax + 3D tilt (mouse + scroll), ~12px drift ----------
+     Gated by hero visibility so the RAF stops when the hero scrolls off. */
+  (function(){
+    const wrap = document.getElementById('coverWrap');
+    if(!wrap || reduce || coarse) return;
+    const MAX = 12;
+    let tx=0, ty=0, cx=0, cy=0, parallaxActive = true, rafId = null;
+    window.__setParallaxActive = function(on){
+      parallaxActive = on;
+      if(on && !rafId){ rafId = requestAnimationFrame(raf); }
+      if(!on && rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    };
+    window.addEventListener('mousemove', (e)=>{
+      tx = (e.clientX/window.innerWidth - .5) * MAX * 2;
+      ty = (e.clientY/window.innerHeight - .5) * MAX * 2;
+    }, {passive:true});
+    window.addEventListener('scroll', ()=>{
+      const sy = window.scrollY;
+      if(sy < window.innerHeight) ty = Math.min(MAX, sy*0.03);
+    }, {passive:true});
+    function raf(){
+      cx += (tx-cx)*0.08; cy += (ty-cy)*0.08;
+      wrap.style.transform =
+        'translate3d('+(cx*0.5).toFixed(2)+'px,'+(cy*0.5).toFixed(2)+'px,0)' +
+        ' rotateX('+((-cy*0.28).toFixed(2))+'deg) rotateY('+((cx*0.28).toFixed(2))+'deg)';
+      if(parallaxActive){ rafId = requestAnimationFrame(raf); } else { rafId = null; }
+    }
+    rafId = requestAnimationFrame(raf);
+  })();
+
+  /* ---------- Generative per-city venue thumbnails (replace stock photos) ----------
+     Each reuses the aurora-ribbon motif, tinted to its city. No network dependency. */
+  (function(){
+    const palettes = {
+      london:   { a:'#7c3aed', b:'#2DD4BF', c:'#4C1D95' },
+      paris:    { a:'#a855f7', b:'#f472b6', c:'#1E1B4B' },
+      berlin:   { a:'#0F766E', b:'#6D28D9', c:'#0b2a2a' },
+      brooklyn: { a:'#8b5cf6', b:'#2DD4BF', c:'#0c0a1f' },
+      la:       { a:'#f97316', b:'#a855f7', c:'#1E1B4B' } // LA: amber dusk into violet
+    };
+    function ribbonSvg(p){
+      return ''
+        + '<svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid slice" style="display:block;width:100%;height:100%;transition:transform .5s cubic-bezier(.22,1,.36,1);">'
+        + '<defs>'
+        +   '<radialGradient id="vtbg'+p.a.slice(1)+'" cx="50%" cy="42%" r="75%"><stop offset="0%" stop-color="'+p.c+'"/><stop offset="100%" stop-color="#050410"/></radialGradient>'
+        +   '<filter id="vtsoft'+p.a.slice(1)+'"><feGaussianBlur stdDeviation="1.4"/></filter>'
+        + '</defs>'
+        + '<rect width="48" height="48" fill="url(#vtbg'+p.a.slice(1)+')"/>'
+        + '<g filter="url(#vtsoft'+p.a.slice(1)+')">'
+        +   '<path d="M -4 18 Q 14 8 28 18 T 54 22 L 54 0 L -4 0 Z" fill="'+p.a+'" opacity=".82"/>'
+        +   '<path d="M -4 34 Q 16 28 30 36 T 56 38 L 56 48 L -4 48 Z" fill="'+p.b+'" opacity=".72"/>'
+        +   '<path d="M 8 10 Q 22 5 34 14 T 50 16" stroke="'+p.b+'" stroke-width="4" fill="none" opacity=".5" stroke-linecap="round"/>'
+        + '</g>'
+        + '<rect width="48" height="48" fill="#070612" opacity=".32"/>'
+        + '</svg>';
+    }
+    Object.keys(palettes).forEach(city=>{
+      const el = document.querySelector('.venue-'+city);
+      if(el) el.innerHTML = ribbonSvg(palettes[city]);
+    });
+  })();
+
+  /* ---------- IntersectionObserver reveal ---------- */
+  (function(){
+    const els = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window) || reduce){
+      els.forEach(e=>e.classList.add('in')); return;
+    }
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+    els.forEach(e=>io.observe(e));
+  })();
+
+  /* ---------- Mobile nav toggle ---------- */
+  (function(){
+    const btn = document.getElementById('navToggle');
+    const menu = document.getElementById('mobileMenu');
+    if(!btn || !menu) return;
+    function setOpen(open){
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+      menu.classList.toggle('hidden', !open);
+    }
+    btn.addEventListener('click', ()=> setOpen(menu.classList.contains('hidden')));
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=> setOpen(false)));
+  })();
+
+  /* ---------- Mobile volume popover ---------- */
+  (function(){
+    const toggle = document.getElementById('volToggle');
+    const pop = document.getElementById('volPop');
+    if(!toggle || !pop) return;
+    function setOpen(open){
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      pop.classList.toggle('open', open);
+    }
+    toggle.addEventListener('click', (e)=>{ e.stopPropagation(); setOpen(!pop.classList.contains('open')); });
+    document.addEventListener('click', (e)=>{ if(!pop.contains(e.target) && e.target !== toggle) setOpen(false); });
+  })();
+
+  /* ---------- Play state (hero, player, sticky, every track all share one state) ---------- */
+  const playIcon  = '<svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" class="ml-1"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg>';
+  const pauseIcon = '<svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
+  const playIconSm  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  const pauseIconSm = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
+  let playing = false;
+  const playBtn   = document.getElementById('playBtn');
+  const playerPlay= document.getElementById('playerPlay');
+  const stickyPlay= document.getElementById('stickyPlay');
+  const vizLabel  = document.getElementById('vizLabel');
+  const playCue   = document.getElementById('playCue');
+  const playStatus= document.getElementById('playStatus');
+
+  function announce(msg){ if(playStatus){ playStatus.textContent = msg; } }
+
+  function setPlaying(v){
+    playing = v;
+    document.body.classList.toggle('playing', playing);
+    if(playBtn){ playBtn.innerHTML = playing ? pauseIcon : playIcon; playBtn.setAttribute('aria-pressed', playing ? 'true':'false'); playBtn.setAttribute('aria-label', playing ? 'Pause AURORA' : 'Play AURORA'); }
+    if(playerPlay){ playerPlay.innerHTML = playing ? pauseIcon : playIcon; playerPlay.setAttribute('aria-pressed', playing ? 'true':'false'); playerPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play'); }
+    if(stickyPlay){ stickyPlay.setAttribute('aria-pressed', playing ? 'true':'false'); stickyPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play'); }
+    const si = document.getElementById('stickyIcon');
+    if(si){ si.outerHTML = (playing ? pauseIconSm : playIconSm).replace('<svg ','<svg id="stickyIcon" '); }
+    if(vizLabel){ vizLabel.textContent = playing ? 'Now playing — Midnight Indigo' : 'Violet light, breathing with the room'; }
+    if(playCue){ playCue.textContent = playing ? 'Pause' : 'Listen'; }
+    announce(playing ? 'Playing Midnight Indigo' : 'Paused');
+  }
+  if(playBtn)    playBtn.addEventListener('click', ()=>{ setPlaying(!playing); });
+  if(playerPlay) playerPlay.addEventListener('click', ()=>{ setPlaying(!playing); });
+  if(stickyPlay) stickyPlay.addEventListener('click', ()=>{ setPlaying(!playing); });
+  // EVERY track title button now plays (not just the now-playing row) — fixes dead buttons + a11y
+  const trackBtns = document.querySelectorAll('.track-btn');
+  trackBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{ setPlaying(true); });
+  });
+  // initial idle (visualizer clearly alive on arrival; intensifies on play)
+  setPlaying(false);
+
+  /* ---------- Scrubber: pointer + ARIA slider keyboard (with aria-valuetext) ---------- */
+  (function(){
+    const s = document.getElementById('scrubber');
+    const fill = s ? s.querySelector('.scrub-fill') : null;
+    const knob = s ? s.querySelector('.scrub-knob') : null;
+    const cur  = document.getElementById('curTime');
+    const TOTAL = 238; // 3:58 in seconds
+    if(!s) return;
+    function fmt(sec){ const m=Math.floor(sec/60), ss=Math.floor(sec%60); return m+':'+String(ss).padStart(2,'0'); }
+    function setPct(p){
+      p = Math.max(0, Math.min(100, p));
+      if(fill) fill.style.width = p+'%';
+      if(knob) knob.style.left = p+'%';
+      const now = Math.round(p);
+      s.setAttribute('aria-valuenow', now);
+      s.setAttribute('aria-valuetext', fmt(p/100*TOTAL) + ' of ' + fmt(TOTAL));
+      if(cur) cur.textContent = fmt(p/100*TOTAL);
+    }
+    function fromEvt(e){
+      const r = s.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+      return (x / r.width) * 100;
+    }
+    let dragging = false;
+    s.addEventListener('pointerdown', (e)=>{ dragging=true; setPct(fromEvt(e)); s.setPointerCapture(e.pointerId); });
+    s.addEventListener('pointermove', (e)=>{ if(dragging) setPct(fromEvt(e)); });
+    s.addEventListener('pointerup',   ()=>{ dragging=false; });
+    s.addEventListener('keydown', (e)=>{
+      const cur2 = parseFloat(s.getAttribute('aria-valuenow')||'36');
+      let step = 5;
+      if(e.key==='ArrowRight'||e.key==='ArrowUp'){ setPct(cur2+step); e.preventDefault(); }
+      else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ setPct(cur2-step); e.preventDefault(); }
+      else if(e.key==='Home'){ setPct(0); e.preventDefault(); }
+      else if(e.key==='End'){ setPct(100); e.preventDefault(); }
+      else if(e.key==='PageUp'){ setPct(cur2+15); e.preventDefault(); }
+      else if(e.key==='PageDown'){ setPct(cur2-15); e.preventDefault(); }
+    });
+    setPct(36);
+  })();
+
+  /* ---------- Volume sliders (desktop inline + mobile popover): click/drag + ARIA keyboard ---------- */
+  function wireVolume(v){
+    if(!v) return;
+    const fill = v.querySelector('.vol-fill');
+    function setPct(p){
+      p = Math.max(0, Math.min(100, p));
+      if(fill) fill.style.width = p+'%';
+      const now = Math.round(p);
+      v.setAttribute('aria-valuenow', now);
+      v.setAttribute('aria-valuetext', now + ' percent');
+    }
+    function fromEvt(e){ const r=v.getBoundingClientRect(); const x=(e.clientX-r.left); return (x/r.width)*100; }
+    let dragging=false;
+    v.addEventListener('pointerdown',(e)=>{ dragging=true; setPct(fromEvt(e)); v.setPointerCapture(e.pointerId); });
+    v.addEventListener('pointermove',(e)=>{ if(dragging) setPct(fromEvt(e)); });
+    v.addEventListener('pointerup',()=>{ dragging=false; });
+    v.addEventListener('keydown',(e)=>{
+      const cur=parseFloat(v.getAttribute('aria-valuenow')||'65');
+      if(e.key==='ArrowRight'||e.key==='ArrowUp'){ setPct(cur+5); e.preventDefault(); }
+      else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ setPct(cur-5); e.preventDefault(); }
+      else if(e.key==='Home'){ setPct(0); e.preventDefault(); }
+      else if(e.key==='End'){ setPct(100); e.preventDefault(); }
+    });
+    setPct(65);
+  }
+  wireVolume(document.getElementById('volSlider'));
+  wireVolume(document.getElementById('volSliderMobile'));
+
+  /* ---------- Sticky player: appear after hero, auto-hide over footer & near bottom ----------
+     Toggles `inert` (with tabindex/disabled fallback) so hidden buttons aren't focusable. */
+  (function(){
+    const sp = document.getElementById('stickyPlayer');
+    const hero = document.getElementById('album');
+    const footer = document.getElementById('siteFooter');
+    const close = document.getElementById('closeSticky');
+    if(!sp || !hero) return;
+    let dismissed = false;
+    let heroVisible = true, footerVisible = false;
+    const supportsInert = 'inert' in HTMLElement.prototype;
+
+    function setFocusable(enabled){
+      if(supportsInert){
+        if(enabled) sp.removeAttribute('inert'); else sp.setAttribute('inert','');
+      } else {
+        // legacy fallback: toggle tabindex so hidden controls aren't focusable
+        sp.querySelectorAll('button, a[href], [tabindex]').forEach(el=>{
+          if(enabled){ const t=el.getAttribute('data-prev-tabindex'); if(t===null) el.removeAttribute('tabindex'); else el.setAttribute('tabindex',t); el.removeAttribute('data-prev-tabindex'); }
+          else { const cur=el.getAttribute('tabindex'); if(cur!==null) el.setAttribute('data-prev-tabindex',cur); el.setAttribute('tabindex','-1'); }
+        });
+      }
+    }
+
+    function sync(){
+      const show = (!heroVisible && !footerVisible && !dismissed);
+      sp.classList.toggle('show', show);
+      sp.setAttribute('aria-hidden', show ? 'false' : 'true');
+      setFocusable(show);
+    }
+
+    const ioHero = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{ heroVisible = en.isIntersecting; sync(); });
+    }, { threshold:0.05 });
+    ioHero.observe(hero);
+
+    if(footer && 'IntersectionObserver' in window){
+      const ioFooter = new IntersectionObserver((entries)=>{
+        entries.forEach(en=>{ footerVisible = en.isIntersecting; sync(); });
+      }, { threshold:0.04, rootMargin:'0px 0px 12% 0px' });
+      ioFooter.observe(footer);
+    }
+
+    if(close) close.addEventListener('click', ()=>{ dismissed=true; sync(); });
+    sync();
+  })();
+
+  /* ---------- Smooth-scroll polyfill for anchor jump on reduced motion ---------- */
+  if(reduce){ document.documentElement.classList.remove('scroll-smooth'); }
+})();
+</script>
+</body>
+</html>

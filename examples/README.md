@@ -1,60 +1,76 @@
 # Examples
 
-Real output from `fireworks-design` — each page below was produced by an **actual workflow run**: parallel direction exploration → panel judging → synthesis → adversarial refine → polish.
+Real output from `fireworks-design` — every page below was produced by an **actual workflow run**: parallel direction exploration → panel judging → synthesis → adversarial refine → polish. No hand-editing after the pipeline (except `designer-portfolio`, which got a documented enrichment pass).
 
-> The `draft-*.html` files each run also generates (the explored directions) are intentionally **not** committed — they're intermediate artifacts. Only the final synthesized page is kept here, so the repo stays lean. Run the workflow locally to see all directions.
+> The `draft-*.html` files each run also generates are intentionally **not** committed — only the final synthesized page is kept, so the repo stays lean. Run the workflow locally to see all directions.
 
-## Showcase
+## All 14 examples
 
-| Example | Brief | Variants | Winner (aesthetic) | Agents | Tokens | View |
-|---------|-------|:--------:|--------------------|:------:|:------:|------|
-| 🎬 **Movie platform** — `movie-rating-platform` | *LUMIÈRE*: cinematic movie rating/discovery — full-bleed hero w/ 9.2 score, Trending Now row, Top Rated chart, genre filters, critic quote | 6 | Dark Premium (tie @ 7.33) | 49 | ~1.58M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html) · [src](./movie-rating-platform/final.html) |
-| **SaaS landing** — `saas-vector-db` | Vector DB for AI workloads: hero, benchmark stat strip, Python snippet, features, 3-tier pricing | 6 | Bold Editorial (tie @ 7.17) | 49 | ~1.7M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html) · [src](./saas-vector-db/final.html) |
-| **OSS homepage** — `oss-cli-homepage` | `tideline` CLI: install command + copy button, feature cards, terminal demo | 4 | Bold Editorial (7.17) | 35 | ~1.07M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html) · [src](./oss-cli-homepage/final.html) |
-| **Portfolio** — `designer-portfolio` | Designer portfolio: stat hero, 6-project grid, capabilities, clients, process, testimonials, recognition, footer | 4 | Bold Editorial (7.67) | 35 | ~0.85M | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html) · [src](./designer-portfolio/final.html) |
+| # | Example | Type | Var | Winner (aesthetic) | Agents | View |
+|:-:|---------|------|:---:|--------------------|:------:|------|
+| 1 | 🎬 `movie-rating-platform` | Movie rating/discovery | 6 | Dark Premium (7.33) | 49 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html) · [src](./movie-rating-platform/final.html) |
+| 2 | 🍽️ `restaurant-fine-dining` | Fine dining | 4 | Dark Premium (7.50) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/restaurant-fine-dining/final.html) · [src](./restaurant-fine-dining/final.html) |
+| 3 | 🎨 `creative-agency` | Design studio | 4 | Bold Editorial (7.67) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html) · [src](./creative-agency/final.html) |
+| 4 | 🎵 `music-album` | Album release | 4 | Bold Editorial (7.17) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html) · [src](./music-album/final.html) |
+| 5 | 💪 `fitness-app` | Fitness SaaS | 4 | Swiss Minimal (7.50) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/fitness-app/final.html) · [src](./fitness-app/final.html) |
+| 6 | ✈️ `travel-destination` | Travel guide | 4 | Bold Editorial (7.33) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html) · [src](./travel-destination/final.html) |
+| 7 | 📚 `edtech-course` | Online courses | 4 | Swiss Minimal (7.50) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/edtech-course/final.html) · [src](./edtech-course/final.html) |
+| 8 | 🎮 `game-launch` | AAA game promo | 4 | Bold Editorial (7.17) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/game-launch/final.html) · [src](./game-launch/final.html) |
+| 9 | 🤝 `nonprofit-cause` | Charity | 4 | Editorial (7.00) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/nonprofit-cause/final.html) · [src](./nonprofit-cause/final.html) |
+| 10 | 🛒 `ecommerce-product` | Product page | 4 | Dark Premium (7.50) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/ecommerce-product/final.html) · [src](./ecommerce-product/final.html) |
+| 11 | 🎤 `tech-conference` | Dev conference | 4 | Bold Editorial (7.00) | 29 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/tech-conference/final.html) · [src](./tech-conference/final.html) |
+| 12 | 🗄️ `saas-vector-db` | SaaS landing | 6 | Bold Editorial (7.17) | 49 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html) · [src](./saas-vector-db/final.html) |
+| 13 | ⌨️ `oss-cli-homepage` | OSS homepage | 4 | Bold Editorial (7.17) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html) · [src](./oss-cli-homepage/final.html) |
+| 14 | 🖼️ `designer-portfolio` | Portfolio | 4 | Bold Editorial (7.67) | 35 | [🌐 live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html) · [src](./designer-portfolio/final.html) |
 
-> **Note on "Bold Editorial" winning 3× then Dark Premium taking the movie brief** — not a bug. Each run explores genuinely distinct aesthetics; the winning lens is whichever scored highest *for that brief*. Developer/tool/design-savvy audiences rewarded editorial hierarchy; the cinematic movie brief rewarded theatrical dark restraint. Different briefs crown different winners — that's the whole point of judging instead of picking once.
+**Winner distribution across 14 briefs:** Bold Editorial ×8 · Dark Premium ×3 (movie, restaurant, ecommerce) · Swiss Minimal ×2 (fitness, edtech) · Editorial ×1 (nonprofit). Different briefs crown different winners — that's the point of judging instead of generating once.
 
-> 📝 **`designer-portfolio`** was subsequently enriched in a targeted pass (704 → 1,249 lines): sticky nav + scroll progress, a stat-led hero, the work grid upgraded to 6 projects with year/role/impact-on-hover, plus capabilities, clients, process, testimonials, and recognition sections — preserving the original editorial aesthetic.
+---
+
+## ✨ Featured — 效果解读 (effect deep-dives)
+
+Four runs picked for range, each unpacked: the winning aesthetic and *why it fit*, the signature moment, and a real defect the refine/polish pass caught.
+
+### 🎬 `movie-rating-platform` — *LUMIÈRE* → [live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html)
+- **Won with: Dark Premium.** The brief demanded theatrical immersion; the "70mm screening room the instant the lights drop" lens beat editorial here. Near-black canvas, antique gold `#d4a24a` rationed as a **strict prestige currency** — only ratings, the active genre, the primary CTA, and the top-2 rank numerals ever earn it.
+- **Signature moment:** a one-shot gold **projector-beam light-sweep** (`mix-blend-mode: screen`) crosses the hero **9.2** score on first reveal — it only ever *adds light*, so the score keeps its "single brightest element" status. Disabled under reduced motion.
+- **What refine caught:** a **critical JS bug** — the mobile menu hamburger never became an ✕ because Lucide re-renders detached the saved icon node; replaced with a `setToggleIcon()` rebuild. Plus dynamic `aria-label` ("Open/Close…").
+- **Why it works:** the gold-rationing discipline is the whole design thesis — restraint is what reads as "premium cinema" instead of "streaming app."
+
+### 🎵 `music-album` — *NOVA · AURORA* → [live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html)
+- **Won with: Bold Editorial** — oversized Didone 'AURORA' wordmark as the single dominant element, asymmetric 7/5 grid, midnight-violet-teal palette at strict 60/30/10.
+- **Signature moment:** the most technically rich page in the set — a **generative album cover**, **mouse-stirred per-character title glow** (with a coarse-pointer "breathe" fallback), a **32-bar state-aware visualizer**, and 3D parallax cover. When playing, the whole hero's conic aura blooms warmer.
+- **What refine caught:** **5 dead anchor links** (tour rows pointed to non-existent `#tickets-{city}` targets) repointed to the real `#tour`; a no-op `inert` fallback rewritten to actually save/restore tabindex on legacy browsers.
+- **Why it works:** the play state changes the *whole room*, not just a button — keyboard/mobile users get the same "music is on" cue as mouse users.
+
+### 🎨 `creative-agency` — *OBJECT & ECHO* → [live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html)
+- **Won with: Bold Editorial** — gallery-catalog-meets-zine. Ink-black stage, surgical acid-green signal, oversized kinetic grotesque (Archivo) as the "object" colliding with ghosted humanist italic serif (Fraunces) as the "echo."
+- **Signature moment:** the hero **afterimage** — rebuilt as a genuine *spatial echo* (vertically-displaced acid-stroked ghost behind the wordmark) so the object/echo duality is felt in one glance; pure vertical transform so it can never cause horizontal scroll.
+- **What refine caught:** **43px mobile horizontal scroll** from the footer email CTA overflowing 375px (rewrote with `clamp` + `break-all`); screen readers reading client names twice (duplicate marquee tracks lacked `aria-hidden` → fixed + added an sr-only roster).
+- **Why it works:** Awwwards-site-of-the-day energy from real art direction (type collision, voids, one acid signal), not decoration.
+
+### ✈️ `travel-destination` — *AZORES* → [live](https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html)
+- **Won with: Bold Editorial** — photography-as-product, oversized Playfair, asymmetric grid, "National Geographic meets Cereal" gravitas.
+- **Signature moment:** an **interactive islands map** — selecting an island triggers a slow **breathing gold halo** on its dot + a **cross-fade transition** (6px rise → settle) on the detail panel, so each selection animates in instead of snapping. All nullified under reduced motion.
+- **What refine caught:** **invalid Tailwind classes** `w-4.5 h-4.5` (4.5 isn't in the default scale) silently rendering icons at 24px instead of 18px → fixed with arbitrary `w-[18px]`; dead `href="#"` footer links pointed to real sections.
+- **Why it works:** the map turns a static destination page into an explore-able object — the signature interaction earns the "premium guide" claim.
+
+---
 
 ## How to view
 
-**Live (rendered) on GitHub Pages:**
-- 🎬 Movie platform — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html>
-- 🌐 SaaS landing — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html>
-- 🌐 OSS homepage — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html>
-- 🌐 Portfolio — <https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html>
-- 🌐 Landing + all links — <https://yizhiyanhua-ai.github.io/fireworks-design/>
+**Live (rendered) on GitHub Pages:** <https://yizhiyanhua-ai.github.io/fireworks-design/> — landing page links to all 14. Or open any file directly, e.g. `…/examples/movie-rating-platform/final.html`.
 
-These are standalone HTML files (single file, no build). Locally:
-
+Locally:
 ```bash
-# open directly
-open examples/saas-vector-db/final.html
-
-# or serve locally
-python3 -m http.server 8000   # then visit localhost:8000/examples/...
+open examples/movie-rating-platform/final.html
+# or serve the whole set
+python3 -m http.server 8000   # → localhost:8000/examples/...
 ```
 
-## What each pipeline stage actually contributed
+## What the pipeline contributed (condensed)
 
-### `movie-rating-platform` (6 directions — Dark Premium winner)
-- **Diverge** produced 6 distinct readings of a cinematic brief: Bold Editorial, Swiss Minimal, Vibrant Gradient (reconciled as ambient aurora glow), Dark Premium, Soft Organic, Neo-Brutalist.
-- **Synthesize** built on the Dark Premium "70mm screening room" base — near-black canvas, antique-gold `#d4a24a` rationed exclusively to ratings, the active genre, the primary CTA, and the top-2 rank numerals.
-- **Refine × 2** + **Polish** fixed a **critical JS bug**: the mobile menu hamburger never became an X because Lucide detached the saved icon node on first render — replaced with a `setToggleIcon()` rebuild. Added a dynamic `aria-label`, then elevated the signature moment with a one-shot gold projector-beam light-sweep across the hero 9.2 score (disabled under reduced motion).
-
-### `saas-vector-db` (6 directions)
-- **Diverge** produced 6 distinct pages: Bold Editorial, Swiss Minimal, Vibrant Gradient, Dark Premium, Soft Organic, Neo-Brutalist.
-- **Synthesize** grafted the editorial skeleton with the gradient's ambient motion and the dark-premium restraint.
-- **Refine × 2** + **Polish** fixed: a mobile menu that never closed on navigation, double-painted neighbor nodes on the hero vector-space canvas, and stripped **all 11 placeholder `href="#"`** links. Verified in headless Chrome at 375/768/1280 — zero horizontal scroll.
-
-### `oss-cli-homepage` (4 directions)
-- **Polish** caught a **WCAG AA contrast failure**: a "decorative-only" dim color was actually applied to readable text in five places — lifted all of them to passing tokens.
-- Added a keyboard-accessible skip link, OG/Twitter card meta, an inline-SVG favicon, and a signature "tide-frame" high-water glow with a mobile-only horizontal-scroll cue.
-
-### `designer-portfolio` (4 directions)
-- **Polish** found a **ship-blocking a11y bug**: the "Slow Press" card caption rendered light text on the paper background (near-invisible) — reflowed it and baked the dark editorial identity into the thumbnail itself.
-- Fixed a **desktop layout collision**: two right-column work cards overlapped by 16px at 1440px+ (asymmetric negative margin exceeded the row gap). Verified zero overlap at 8 breakpoints.
+The **polish** phase consistently caught high-value defects no single-pass generator would: WCAG AA contrast failures (oss, edtech, ecommerce, tech-conference), broken `href="#"` / dead anchor targets (saas, music, travel, edtech), invalid utility classes that silently failed (travel), and real JS bugs (movie menu icon, music `inert` fallback). The **refine** loops elevated each page's signature moment. Every page ships verified responsive (375/768/1280+), `prefers-reduced-motion`-safe, and AA-contrast — checked in headless Chromium by the polish agent.
 
 ## Reproduce
 
@@ -64,10 +80,10 @@ Workflow({
   args: {
     prompt: "<one of the briefs above, or your own>",
     outputDir: "<absolute path>",
-    variants: 6,        // 4–6 is a good range
+    variants: 4,        // 4–6 is the sweet spot; flagship runs used 6
     refineRounds: 2
   }
 })
 ```
 
-> **Rate-limit note:** these runs were executed **sequentially, not concurrently.** Running multiple `fireworks-design` workflows in parallel can trip provider rate limits (each run spawns 35–50 agents). The workflow now retries rate-limited agents automatically, but serializing heavy runs is the safe default.
+> **Rate-limit note:** all runs were executed **sequentially / 2-at-a-time, never 3+ concurrent.** Running multiple `fireworks-design` workflows in parallel can trip provider rate limits (each run spawns ~30–50 agents). The workflow now retries rate-limited agents automatically, but serializing heavy runs is the safe default.

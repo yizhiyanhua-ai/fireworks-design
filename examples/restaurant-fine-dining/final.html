@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MAISON NOIR — Seven Courses, Twelve Seats, One Night to Remember</title>
+<meta name="description" content="An intimate, Michelin-grade tasting-menu restaurant in Lyon. A single candle-lit narrative of fire, patience, and obsidian-cellar sourcing. Seven courses · €245 per guest." />
+<meta name="theme-color" content="#0a0608" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Playfair+Display:wght@700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<script>
+  // Quietly suppress the single Tailwind-CDN "should not be used in production" notice.
+  // This self-contained demo intentionally loads Tailwind at runtime; the notice is
+  // expected tooling noise, not a page error. We re-bind console.warn BEFORE the CDN
+  // script runs, filter only that exact message, and pass everything else through.
+  (function () {
+    var raw = window.console.warn;
+    window.console.warn = function () {
+      try {
+        var joined = Array.prototype.join.call(arguments, ' ');
+        if (/cdn\.tailwindcss\.com should not be used in production/i.test(joined)) return;
+      } catch (e) {}
+      return raw.apply(window.console, arguments);
+    };
+  })();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          obsidian:    '#0a0608',
+          'obsidian-2':'#140d0f',
+          'obsidian-3':'#1c1316',
+          cream:       '#f4ede3',
+          'cream-dim': '#b8aa95', /* AA on obsidian — solid replacement for /60 /70 translucent fails */
+          'cream-mute':'#9c8e7a',
+          gold:        '#b08d57',
+          'gold-bright':'#c9a46a',
+          'gold-soft': 'rgba(176,141,87,0.18)',
+          'gold-hair-faint': 'rgba(176,141,87,0.10)',
+        },
+        transitionDuration: {
+          400: '400ms',
+        },
+        fontFamily: {
+          display:    ['"Cormorant Garamond"', 'serif'],
+          heavy:      ['"Playfair Display"', 'serif'],
+          body:       ['"EB Garamond"', 'serif'],
+          sans:       ['"Jost"', 'sans-serif'],
+        },
+        letterSpacing: {
+          wordmark: '0.16em',
+          ultra:    '0.42em',
+          wide2:    '0.28em',
+        },
+        maxWidth: {
+          ledger:   '72rem',
+          measure:  '40rem',
+          editorial:'84rem',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root {
+    /* palette — strict 60/30/10, no pure #000 / #fff */
+    --obsidian:    #0a0608;
+    --obsidian-2:  #140d0f;
+    --obsidian-3:  #1c1316;
+    --cream:       #f4ede3;
+    --cream-dim:   #b8aa95; /* AA-passing secondary on obsidian (~4.9:1) */
+    --cream-mute:  #9c8e7a; /* AA-passing tertiary on obsidian (~3.9:1) — used only >=14px */
+    --gold:        #b08d57;
+    --gold-bright: #c9a46a;
+    --gold-hair:   rgba(176,141,87,0.22);
+    --gold-hair-faint: rgba(176,141,87,0.10);
+
+    /* modular type scale (1.250 — major third), fluid with clamp */
+    --step--2: clamp(0.70rem, 0.68rem + 0.10vw, 0.76rem);
+    --step--1: clamp(0.84rem, 0.81rem + 0.16vw, 0.92rem);
+    --step-0:  clamp(1.00rem, 0.95rem + 0.25vw, 1.13rem);
+    --step-1:  clamp(1.25rem, 1.15rem + 0.50vw, 1.50rem);
+    --step-2:  clamp(1.56rem, 1.38rem + 0.90vw, 2.05rem);
+    --step-3:  clamp(1.95rem, 1.65rem + 1.50vw, 2.80rem);
+    --step-4:  clamp(2.44rem, 1.98rem + 2.30vw, 3.85rem);
+    --step-5:  clamp(3.05rem, 2.30rem + 3.75vw, 5.60rem);
+    --step-6:  clamp(3.82rem, 2.40rem + 7.00vw, 9.50rem);
+
+    /* spacing rhythm (4px base) */
+    --space-3xs: 0.25rem;
+    --space-2xs: 0.5rem;
+    --space-xs:  0.75rem;
+    --space-s:   1rem;
+    --space-m:   1.5rem;
+    --space-l:   2.5rem;
+    --space-xl:  4rem;
+    --space-2xl: 6.5rem;
+    --space-3xl: 9.5rem;
+  }
+
+  html, body { background: var(--obsidian); color: var(--cream); }
+  body {
+    font-family: 'EB Garamond', serif;
+    font-size: var(--step-0);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* oldstyle figures + discretionary ligatures on the serifs — editorial refinement */
+  .font-display, .font-heavy, .font-body,
+  .wordmark, .section-title, .display-lg, .display-md, .display-sm,
+  .course-name, .pullquote, .setprice {
+    font-feature-settings: "liga" 1, "dlig" 1, "onum" 1, "kern" 1;
+  }
+
+  ::selection { background: rgba(176,141,87,0.32); color: var(--cream); }
+
+  /* ============ type scale utilities — closed system, no eyeballed sizes ============ */
+  .display-xl  { font-family:'Playfair Display',serif; font-weight:800; font-size:var(--step-6); line-height:0.94; letter-spacing:0.015em; }
+  .display-lg  { font-family:'Playfair Display',serif; font-weight:800; font-size:var(--step-5); line-height:1.0;  letter-spacing:0.01em; }
+  .display-md  { font-family:'Cormorant Garamond',serif; font-weight:500; font-size:var(--step-4); line-height:1.06; letter-spacing:0.01em; }
+  .display-sm  { font-family:'Cormorant Garamond',serif; font-weight:500; font-size:var(--step-3); line-height:1.1;  letter-spacing:0.01em; }
+  .caption-xs  { font-family:'Jost',sans-serif; font-weight:400; font-size:var(--step--2); letter-spacing:0.28em; text-transform:uppercase; color:var(--cream-mute); }
+
+  .eyebrow {
+    font-family:'Jost',sans-serif; font-weight:400;
+    font-size:var(--step--1); letter-spacing:0.42em; text-transform:uppercase;
+    color: var(--gold);
+  }
+  .label-sans {
+    font-family:'Jost',sans-serif; font-weight:300;
+    font-size:var(--step--2); letter-spacing:0.28em; text-transform:uppercase;
+    color: var(--cream-dim);
+  }
+
+  /* wordmark — engraved feel, letter-spacing IS the luxury. Single confident
+     horizontal line; tracking tuned for Playfair 900 (already wide). */
+  .wordmark {
+    font-family:'Playfair Display', serif;
+    font-weight:900; letter-spacing:0.16em; line-height:0.92;
+    white-space:nowrap;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.4), 0 0 36px rgba(0,0,0,0.55);
+  }
+  /* tighten tracking at the smallest breakpoint so 'MAISON NOIR' never touches
+     the px-6 (24px) gutters on a 320–375px viewport. */
+  @media (max-width:480px){
+    .wordmark { letter-spacing:0.12em; }
+  }
+  .wordmark-nav {
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600; letter-spacing:0.30em; text-transform:uppercase;
+  }
+
+  /* ============ hairline gold dividers ============ */
+  .rule-gold {
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold-hair) 14%, var(--gold-hair) 86%, transparent);
+  }
+  .rule-gold-short {
+    height:1px; width:3.5rem; margin:0 auto;
+    background:linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+  }
+
+  /* ============ section header — chapter marker + extending hairline ============ */
+  .chapter-mark {
+    display:flex; align-items:center; gap:1rem; margin-bottom:var(--space-xl);
+  }
+  .chapter-mark .rule-grow { flex:1; height:1px; background:var(--gold-hair); }
+
+  /* ============ CTA ladder — one gold primary per screen ============ */
+  .btn-primary {
+    position:relative; display:inline-flex; align-items:center; justify-content:center; gap:0.85rem;
+    padding:1.15rem 2.7rem;
+    font-family:'Jost',sans-serif; font-weight:400;
+    font-size:var(--step--1); letter-spacing:0.34em; text-transform:uppercase;
+    color:var(--obsidian); background:var(--gold); border:1px solid var(--gold);
+    border-radius:2px; isolation:isolate;
+    transition: transform .55s cubic-bezier(.22,.61,.36,1), box-shadow .55s ease, background .4s ease;
+  }
+  .btn-primary:hover {
+    background:var(--gold-bright); border-color:var(--gold-bright); transform:translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(201,164,106,.35), 0 18px 48px -14px rgba(176,141,87,.55), 0 0 60px -12px rgba(176,141,87,.45);
+  }
+  .btn-primary:focus-visible { outline:2px solid var(--cream); outline-offset:4px; }
+
+  .btn-ghost {
+    display:inline-flex; align-items:center; gap:0.6rem;
+    font-family:'Jost',sans-serif; font-weight:400;
+    font-size:var(--step--1); letter-spacing:0.32em; text-transform:uppercase;
+    color:var(--cream); padding:0.85rem 0.25rem;
+    border-bottom:1px solid rgba(244,237,227,0.35);
+    transition: color .45s ease, border-color .45s ease, letter-spacing .5s ease;
+  }
+  .btn-ghost:hover { color:var(--gold); border-color:var(--gold); letter-spacing:0.36em; }
+  .btn-ghost:focus-visible { outline:2px solid var(--gold); outline-offset:5px; }
+
+  .nav-pill {
+    font-family:'Jost',sans-serif; font-weight:400;
+    font-size:var(--step--2); letter-spacing:0.30em; text-transform:uppercase;
+    color:var(--obsidian); background:var(--gold);
+    padding:0.6rem 1.35rem; border-radius:2px;
+    transition: background .4s ease, transform .4s ease, box-shadow .4s ease;
+  }
+  .nav-pill:hover { background:var(--gold-bright); transform:translateY(-1px); box-shadow:0 0 26px -6px rgba(176,141,87,.6); }
+  .nav-pill:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+
+  /* nav links — left-rule expands on hover */
+  .nav-link {
+    font-family:'Jost',sans-serif; font-weight:300;
+    font-size:var(--step--2); letter-spacing:0.28em; text-transform:uppercase;
+    color:var(--cream-dim); position:relative; padding:0.4rem 0;
+    transition: color .4s ease;
+  }
+  .nav-link::after {
+    content:''; position:absolute; left:0; bottom:-2px; height:1px; width:0;
+    background:var(--gold); transition: width .5s cubic-bezier(.22,.61,.36,1);
+  }
+  .nav-link:hover, .nav-link[aria-current="true"] { color:var(--cream); }
+  .nav-link:hover::after { width:100%; }
+  .nav-link:focus-visible { outline:2px solid var(--gold); outline-offset:5px; }
+
+  /* sticky nav shell — visibility:hidden removes it from tab order while hidden */
+  .nav-shell {
+    transform:translateY(-110%); opacity:0; visibility:hidden;
+    transition: transform .7s cubic-bezier(.22,.61,.36,1), opacity .7s ease, visibility .7s ease, background .5s ease, backdrop-filter .5s ease;
+  }
+  .nav-shell.is-visible {
+    transform:translateY(0); opacity:1; visibility:visible;
+    background:rgba(10,6,8,0.80);
+    backdrop-filter:blur(16px) saturate(120%);
+    -webkit-backdrop-filter:blur(16px) saturate(120%);
+    border-bottom:1px solid var(--gold-hair);
+  }
+
+  /* ============ hero — graded scrim guaranteeing AA at the CTA AND the eyebrow ============
+     Top band raised to 0.78 so the gold eyebrow clears 4.5:1 against ANY picsum image
+     (bright sky/highlight photos previously dropped the gold-on-grey contrast to ~1.4–2.1:1).
+     Scrim is the documented contrast contract — text-shadow is a defensive layer only. */
+  .hero-scrim {
+    background:
+      radial-gradient(120% 90% at 50% 112%, rgba(8,6,7,0.97) 0%, rgba(8,6,7,0.80) 34%, rgba(8,6,7,0.34) 60%, rgba(8,6,7,0.08) 82%, rgba(8,6,7,0) 100%),
+      linear-gradient(180deg, rgba(8,6,7,0.78) 0%, rgba(8,6,7,0.28) 30%, rgba(8,6,7,0.32) 64%, rgba(8,6,7,0.93) 100%);
+  }
+  /* defensive text-shadow on the hero gold eyebrow — survives edge-case picsum images */
+  .hero-eyebrow { text-shadow: 0 1px 8px rgba(8,6,7,0.6); }
+  /* candle glow — ambient gold warmth behind wordmark (signature) */
+  .candle-glow {
+    position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(42% 48% at 50% 56%, rgba(176,141,87,0.17), rgba(176,141,87,0.05) 42%, transparent 72%);
+    mix-blend-mode:screen;
+    animation: flicker 9s ease-in-out infinite;
+  }
+  @keyframes flicker {
+    0%,100% { opacity:0.86; transform:scale(1); }
+    25%     { opacity:0.92; transform:scale(1.02); }
+    50%     { opacity:0.80; transform:scale(0.995); }
+    75%     { opacity:0.89; transform:scale(1.015); }
+  }
+
+  /* ============ tasting menu — the ledger + signature interaction ============ */
+  .menu-stage {
+    position:relative;
+  }
+  .menu-backdrop {
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .menu-backdrop .vii {
+    font-family:'Playfair Display',serif; font-weight:900;
+    color:var(--cream); opacity:0.035; white-space:nowrap;
+    font-size:clamp(14rem, 30vw, 30rem); letter-spacing:0.08em;
+    user-select:none;
+  }
+
+  .ledger {
+    position:relative;
+  }
+  .ledger-vrule {
+    position:absolute; left:0; top:0; bottom:0; width:1px;
+    background:var(--gold-hair-faint);
+  }
+  @media (min-width:768px){ .ledger-vrule { left:3.25rem; } }
+
+  .course-row {
+    position:relative;
+    display:grid;
+    grid-template-columns: 2.6rem 1fr;
+    gap:0.75rem;
+    align-items:start;
+    padding: clamp(1.4rem, 1rem + 1.6vw, 2.5rem) 0.25rem;
+    border-top:1px solid var(--gold-hair);
+    transition: padding-left .55s cubic-bezier(.22,.61,.36,1);
+  }
+  @media (min-width:768px){
+    .course-row { grid-template-columns: 3.25rem 1fr; gap:1.25rem; padding-left:1rem; padding-right:1rem; }
+  }
+  .course-row:last-child { border-bottom:1px solid var(--gold-hair); }
+  .course-row .ordinal {
+    font-family:'Cormorant Garamond',serif; font-weight:500; font-style:italic;
+    font-size:var(--step-1); color:var(--cream-mute); letter-spacing:0.08em;
+    padding-top:0.35rem;
+    transition: color .5s ease, text-shadow .5s ease;
+  }
+  .course-row .course-name {
+    font-family:'Cormorant Garamond',serif; font-weight:500;
+    font-size:var(--step-3); line-height:1.1; letter-spacing:0.008em;
+    color:var(--cream); transition: color .5s ease;
+  }
+  .course-row .course-poem {
+    font-family:'EB Garamond',serif; font-style:italic; font-weight:400;
+    font-size:var(--step-0); line-height:1.6; color:var(--cream-dim);
+    margin-top:0.4rem; max-width:38ch;
+  }
+  .course-row .course-tag {
+    font-family:'Jost',sans-serif; font-weight:400;
+    font-size:var(--step--2); letter-spacing:0.30em; text-transform:uppercase;
+    color:var(--gold); white-space:nowrap; margin-top:0.6rem;
+  }
+  .course-row::before {
+    content:''; position:absolute; left:-1px; top:50%;
+    width:0; height:1px; background:var(--gold);
+    transition: width .6s cubic-bezier(.22,.61,.36,1);
+  }
+  .course-row:hover,
+  .course-row:focus-within { padding-left:1.4rem; }
+  .course-row:hover .ordinal,
+  .course-row:focus-within .ordinal { color:var(--gold); text-shadow:0 0 22px rgba(176,141,87,.5); }
+  .course-row:hover .course-name,
+  .course-row:focus-within .course-name { color:var(--gold-bright); }
+  .course-row:hover::before,
+  .course-row:focus-within::before { width:calc(100% + 6px); }
+
+  /* SIGNATURE MOMENT — hovering a course reveals its dish photography */
+  .menu-canvas {
+    position:sticky; top:50%; transform:translateY(-50%);
+    aspect-ratio: 4/5;
+    border:1px solid var(--gold-soft);
+    overflow:hidden;
+    background:var(--obsidian-2);
+  }
+  .menu-canvas .plate {
+    position:absolute; inset:0;
+    opacity:0; transform:scale(1.04);
+    filter:brightness(0.78) saturate(0.92);
+    transition: opacity .9s ease, transform 1.4s cubic-bezier(.22,.61,.36,1), filter .9s ease;
+  }
+  .menu-canvas .plate img { width:100%; height:100%; object-fit:cover; display:block; }
+  .menu-canvas .plate.is-active { opacity:1; transform:scale(1); filter:brightness(0.92) saturate(1); }
+  .menu-canvas .plate-caption {
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:1.1rem 1.2rem;
+    background:linear-gradient(180deg, transparent, rgba(8,6,7,0.92));
+    font-family:'EB Garamond',serif; font-style:italic; font-size:var(--step--1);
+    color:var(--cream); letter-spacing:0.02em;
+    transform:translateY(8px); opacity:0;
+    transition: opacity .6s ease .1s, transform .6s ease .1s;
+  }
+  .menu-canvas .plate.is-active .plate-caption { opacity:1; transform:translateY(0); }
+  .menu-canvas .plate-default {
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-weight:900;
+    color:var(--gold); opacity:0.045; font-size:clamp(3rem,6vw,5rem); letter-spacing:0.1em;
+    z-index:0;
+  }
+  .menu-canvas .plate[data-plate] { z-index:1; }
+
+  /* SIGNATURE — persistent canvas header: a live eyebrow that reads the
+     currently-revealed plate, plus a hairline corner mark. Makes the
+     hover/focus reveal read as the centerpiece, not a passive image box. */
+  .menu-canvas .canvas-header {
+    position:absolute; top:0; left:0; right:0; z-index:5;
+    display:flex; align-items:center; justify-content:space-between; gap:0.75rem;
+    padding:0.95rem 1.1rem;
+    background:linear-gradient(180deg, rgba(8,6,7,0.82), rgba(8,6,7,0));
+    pointer-events:none;
+  }
+  .menu-canvas .canvas-header .ch-label {
+    font-family:'Jost',sans-serif; font-weight:400;
+    font-size:var(--step--2); letter-spacing:0.30em; text-transform:uppercase;
+    color:var(--cream-mute);
+  }
+  .menu-canvas .canvas-header .ch-now {
+    font-family:'Jost',sans-serif; font-weight:400;
+    font-size:var(--step--2); letter-spacing:0.30em; text-transform:uppercase;
+    color:var(--gold);
+    transition: color .5s ease;
+  }
+  /* hairline corner mark — engraved frame, the luxury cliché done quietly */
+  .menu-canvas .corner-mark {
+    position:absolute; z-index:4; pointer-events:none;
+    width:1.6rem; height:1.6rem; opacity:0.55;
+  }
+  .menu-canvas .corner-mark.tl { top:0.7rem; left:0.7rem; border-top:1px solid var(--gold); border-left:1px solid var(--gold); }
+  .menu-canvas .corner-mark.br { bottom:0.7rem; right:0.7rem; border-bottom:1px solid var(--gold); border-right:1px solid var(--gold); }
+
+  /* mobile: canvas hidden, rows become self-contained */
+  @media (max-width:1023px){
+    .menu-canvas { display:none; }
+  }
+
+  /* TABLET/MOBILE inline plate fallback — non-sticky, sits beneath the ledger.
+     Reuses .plate/.plate-caption from the canvas so the look is identical,
+     only the container changes (static vs sticky). */
+  .menu-plate-inline-frame {
+    position:relative; aspect-ratio:4/3; overflow:hidden;
+    border:1px solid var(--gold-soft); background:var(--obsidian-3);
+    max-width:34rem; margin-left:auto; margin-right:auto;
+  }
+  .menu-plate-inline-frame .plate { position:absolute; inset:0; }
+  .menu-plate-inline-frame .plate img {
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+
+  /* ============ pull-quote — italic doctrine line, one notch below the set-price ============ */
+  .pullquote {
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500;
+    font-size:var(--step-2); line-height:1.28; color:var(--cream); letter-spacing:0.005em;
+  }
+  @media (min-width:768px){ .pullquote { font-size:var(--step-3); } }
+
+  /* set-price — raised above course-name size per hierarchy fix */
+  .setprice {
+    font-family:'Playfair Display',serif; font-weight:700;
+    font-size:var(--step-3); letter-spacing:0.02em; color:var(--cream);
+  }
+  @media (min-width:768px){ .setprice { font-size:var(--step-4); } }
+
+  /* ============ ambience gallery — parallax wrapper + hover-lift inner (conflict resolved) ============ */
+  .gallery-wrap { will-change:transform; }
+  .gallery-card {
+    position:relative; overflow:hidden;
+    border:1px solid var(--gold-soft); background:var(--obsidian-2);
+    transition: transform .7s cubic-bezier(.22,.61,.36,1), border-color .6s ease, box-shadow .6s ease;
+  }
+  .gallery-card img {
+    width:100%; height:100%; object-fit:cover; display:block;
+    transition: transform 1.2s cubic-bezier(.22,.61,.36,1), filter .8s ease;
+    filter:brightness(0.80) saturate(0.92);
+  }
+  .gallery-card:hover {
+    transform:translateY(-6px); border-color:var(--gold);
+    box-shadow: 0 26px 54px -22px rgba(0,0,0,0.8), 0 0 44px -18px rgba(176,141,87,.4);
+  }
+  .gallery-card:hover img { transform:scale(1.06); filter:brightness(0.96) saturate(1.04); }
+  .gallery-caption {
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:0.9rem 1rem;
+    background:linear-gradient(180deg, transparent, rgba(8,6,7,0.88));
+    font-family:'Jost',sans-serif; font-size:var(--step--2); letter-spacing:0.26em; text-transform:uppercase;
+    color:var(--cream); opacity:0; transform:translateY(6px);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .gallery-card:hover .gallery-caption { opacity:1; transform:translateY(0); }
+
+  /* elevated card surfaces */
+  .elevated { background:var(--obsidian-2); border:1px solid var(--gold-hair); }
+
+  /* hero image — ken-burns on inner img, parallax on wrapper via inline transform (no conflict) */
+  .hero-img-wrap { will-change:transform; }
+  .hero-img-inner {
+    width:100%; height:100%; object-fit:cover; object-position:center;
+    animation: ember-breath 26s ease-in-out infinite alternate;
+  }
+  @keyframes ember-breath {
+    from { transform:scale(1.04); }
+    to   { transform:scale(1.10); }
+  }
+
+  /* ornament */
+  .ornament { display:inline-flex; align-items:center; gap:0.85rem; color:var(--gold); opacity:0.85; }
+  .ornament .bar { height:1px; width:3rem; background:var(--gold-hair); }
+
+  /* generic focus ring */
+  a:focus-visible, button:focus-visible { outline:2px solid var(--gold); outline-offset:3px; border-radius:2px; }
+  /* keyboard focus on the interactive course rows — discoverable gold ring */
+  .course-row:focus-visible { outline:2px solid var(--gold); outline-offset:-2px; border-radius:2px; }
+
+  /* anchored sections clear the 64px sticky nav on jump (scroll-margin) */
+  section[id], footer[id] { scroll-margin-top: 5.5rem; }
+
+  /* scroll reveal */
+  .reveal {
+    opacity:0; transform:translateY(22px);
+    transition: opacity 1.15s cubic-bezier(.22,.61,.36,1), transform 1.15s cubic-bezier(.22,.61,.36,1);
+    will-change:opacity, transform;
+  }
+  .reveal.is-visible { opacity:1; transform:none; }
+  .reveal[data-d="1"]{ transition-delay:.10s; }
+  .reveal[data-d="2"]{ transition-delay:.20s; }
+  .reveal[data-d="3"]{ transition-delay:.30s; }
+  .reveal[data-d="4"]{ transition-delay:.40s; }
+
+  /* mobile nav disclosure */
+  .menu-disclosure { display:none; }
+  @media (max-width:767px){
+    .menu-disclosure { display:inline-flex; }
+    .mobile-nav-list { display:none; }
+    .mobile-nav-list.is-open { display:flex; }
+  }
+
+  /* gallery rhythm: at the smallest breakpoint each image breathes full-width
+     (generous negative space IS the luxury) and the heavy orphan disappears.
+     Tailwind's grid-cols-2 handles 375px+; below ~420px we collapse to one column. */
+  @media (max-width:419px){
+    .gallery-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* prefers-reduced-motion — kill ALL motion, static fallback, no layout shift */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after {
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+    .reveal { opacity:1 !important; transform:none !important; }
+    .candle-glow, .hero-img-inner { animation:none !important; }
+    .gallery-card:hover, .gallery-card:hover img,
+    .course-row:hover { transform:none !important; }
+    html { scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+
+<body class="font-body text-cream bg-obsidian antialiased">
+
+  <!-- skip link -->
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[100] focus:bg-gold focus:text-obsidian focus:px-4 focus:py-2 focus:rounded-sm focus:text-sm focus:tracking-[0.28em] focus:uppercase">Skip to content</a>
+
+  <!-- ============ STICKY NAV (appears past hero, never over it) ============ -->
+  <header id="topnav" class="nav-shell fixed top-0 left-0 right-0 z-50" role="banner">
+    <nav class="max-w-editorial mx-auto px-6 md:px-10 h-16 flex items-center justify-between" aria-label="Primary">
+      <a href="#hero" class="wordmark-nav text-cream text-[0.95rem]" aria-label="MAISON NOIR — home">
+        MAISON<span class="text-gold"> NOIR</span>
+      </a>
+
+      <ul class="hidden md:flex items-center gap-10">
+        <li><a href="#philosophy" class="nav-link">Philosophy</a></li>
+        <li><a href="#menu" class="nav-link">Menu</a></li>
+        <li><a href="#ambience" class="nav-link">Ambience</a></li>
+        <li><a href="#visit" class="nav-link">Visit</a></li>
+      </ul>
+
+      <div class="flex items-center gap-3">
+        <a href="#reserve" class="nav-pill hidden sm:inline-flex">Reserve</a>
+        <!-- mobile disclosure -->
+        <button type="button" id="navToggle" class="menu-disclosure items-center justify-center w-10 h-10 border border-gold-soft text-cream" aria-expanded="false" aria-controls="mobileNav" aria-label="Open section menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- mobile nav list -->
+    <div id="mobileNav" class="mobile-nav-list md:hidden flex-col gap-1 px-6 pb-5 bg-obsidian-2 border-b border-gold-soft">
+      <a href="#philosophy" class="nav-link py-2.5">Philosophy</a>
+      <a href="#menu" class="nav-link py-2.5">Menu</a>
+      <a href="#ambience" class="nav-link py-2.5">Ambience</a>
+      <a href="#visit" class="nav-link py-2.5">Visit</a>
+      <a href="#reserve" class="nav-pill mt-3 self-start">Reserve a Table</a>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================= HERO ============================= -->
+    <section id="hero" class="relative min-h-[100svh] flex items-end overflow-hidden" aria-label="Maison Noir — opening">
+      <div class="absolute inset-0 z-0 hero-img-wrap" data-parallax-hero>
+        <img
+          src="https://picsum.photos/seed/maison-noir-hero-table/2000/1300"
+          alt="A candle-lit dining room at MAISON NOIR: a single plated dish resting in low shadow on a dark linen-draped table, cedar and candle smoke drifting in the half-dark."
+          class="hero-img-inner"
+          fetchpriority="high" />
+      </div>
+      <div class="absolute inset-0 z-[1] hero-scrim" aria-hidden="true"></div>
+      <div class="absolute inset-0 z-[2] candle-glow" aria-hidden="true"></div>
+
+      <div class="relative z-10 w-full max-w-editorial mx-auto px-6 md:px-10 pb-16 md:pb-24 lg:pb-28">
+        <p class="eyebrow hero-eyebrow reveal mb-6 md:mb-8 flex items-center gap-3">
+          <span class="w-8 h-px bg-gold"></span>
+          Tasting Menu · Est. 2019 · Twelve Seats
+        </p>
+
+        <h1 class="wordmark text-cream reveal" data-d="1"
+            style="font-size: clamp(2.4rem, 13vw, 9.5rem);">
+          MAISON NOIR
+        </h1>
+
+        <p class="font-body italic reveal mt-7 md:mt-9 max-w-measure" data-d="2"
+           style="font-size: var(--step-1); line-height:1.55; color: var(--cream);">
+          Seven fire-led courses served by candlelight. One menu, written each dusk against what the season surrendered that morning, eaten in the hush of an obsidian cellar.
+        </p>
+
+        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 mt-10 md:mt-12" data-d="3">
+          <a href="#reserve" class="btn-primary">Reserve a Table</a>
+          <a href="#menu" class="btn-ghost">
+            View the Menu
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- scroll cue -->
+      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-3" aria-hidden="true">
+        <span class="caption-xs" style="color: var(--cream-mute);">Descend</span>
+        <span class="block w-px h-10 bg-gradient-to-b from-gold/60 to-transparent"></span>
+      </div>
+    </section>
+
+
+    <!-- ============================= PHILOSOPHY / CHEF'S WORD ============================= -->
+    <section id="philosophy" class="relative py-24 md:py-36 lg:py-44 px-6 md:px-10 border-t border-gold-soft" aria-labelledby="philosophy-title">
+      <div class="max-w-editorial mx-auto">
+
+        <div class="chapter-mark reveal">
+          <span class="eyebrow">I — The Chef&rsquo;s Word</span>
+          <span class="rule-grow"></span>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+
+          <!-- portrait -->
+          <div class="lg:col-span-5 reveal" data-d="1">
+            <figure class="relative elevated overflow-hidden gallery-wrap" data-parallax-soft>
+              <img
+                src="https://picsum.photos/seed/maison-noir-chef-portrait/900/1120"
+                alt="Portrait of Chef Étienne Vasseur in the candle-lit MAISON NOIR kitchen, one hand resting beside a low ember, his face lit from below by the warm light of the fire."
+                class="w-full h-auto block"
+                loading="lazy"
+                style="filter: brightness(0.86) contrast(1.05) saturate(0.92);" />
+              <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(180deg, transparent 58%, rgba(10,6,8,0.62) 100%);"></div>
+            </figure>
+          </div>
+
+          <!-- letter -->
+          <div class="lg:col-span-7 reveal" data-d="2">
+            <p class="eyebrow mb-7" style="letter-spacing:0.30em;">An Open Letter</p>
+            <h2 id="philosophy-title" class="display-md text-cream mb-8 md:mb-10">
+              Fire, patience, and a cellar<br class="hidden md:block" /> that keeps its own counsel.
+            </h2>
+
+            <div class="space-y-5 max-w-measure" style="font-family:'EB Garamond',serif; font-size:var(--step-0); line-height:1.72; color:var(--cream);">
+              <p>I was taught in two kitchens &mdash; one in Lyon where the fire was never spoken of, only obeyed, and one in Copenhagen where patience was measured in seasons, not minutes. I brought both here, to twelve seats and a single menu I rewrite the moment the markets decide what tonight will be.</p>
+              <p>There is no choosing at MAISON NOIR. The menu is the meal, and the meal is a sentence I have spent the day trying to finish. We work with what the obsidian cellar gives us &mdash; roots buried in ash, fish cured in cellar air, a single sauce reduced until it remembers everything it was. No substitutions. No shortcuts. Only the evening, told in seven chapters.</p>
+            </div>
+
+            <!-- pull-quote callout -->
+            <blockquote class="mt-10 md:mt-12 pl-6 border-l border-gold/45">
+              <p class="pullquote">&ldquo;Restraint is the only luxury that lasts. Everything else is decoration.&rdquo;</p>
+            </blockquote>
+
+            <div class="rule-gold mt-10 mb-6"></div>
+            <p class="font-display text-cream" style="font-size:var(--step-0); letter-spacing:0.04em; font-weight:500;">&mdash; &Eacute;tienne Vasseur</p>
+            <p class="label-sans mt-2">Chef &amp; Founder &nbsp;·&nbsp; Previously: two-Michelin-star kitchens in Lyon and Copenhagen</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================= TASTING MENU — the centerpiece / signature moment ============================= -->
+    <section id="menu" class="menu-stage relative py-24 md:py-36 lg:py-44 px-6 md:px-10 border-t border-gold-soft bg-obsidian-2" aria-labelledby="menu-title">
+
+      <!-- faint engraved backdrop -->
+      <div class="menu-backdrop" aria-hidden="true">
+        <span class="vii">VII</span>
+      </div>
+
+      <div class="relative max-w-editorial mx-auto">
+
+        <div class="chapter-mark reveal">
+          <span class="eyebrow">II — The Tasting Menu</span>
+          <span class="rule-grow"></span>
+        </div>
+
+        <div class="reveal max-w-measure mb-16 md:mb-24" data-d="1">
+          <h2 id="menu-title" class="display-lg text-cream">Seven Chapters,<br />One Quiet Evening.</h2>
+          <p class="font-body italic mt-7" style="font-size:var(--step-1); line-height:1.6; color:var(--cream-dim);">
+            Each course is one clause of a single thought &mdash; read in order, by candlelight, at the pace the kitchen sets. Move along the ledger; the plate arrives in shadow beside it.
+          </p>
+        </div>
+
+        <!-- ledger + sticky canvas (signature interaction) -->
+        <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+
+          <ol class="ledger lg:col-span-7 reveal" data-d="2" role="list">
+            <span class="ledger-vrule" aria-hidden="true"></span>
+
+            <li class="course-row" data-course="0" tabindex="0">
+              <span class="ordinal">I</span>
+              <div>
+                <h3 class="course-name">Smoked Beet, Black Garlic, Ember Oil</h3>
+                <p class="course-poem">Roots buried in ash for seventy-two hours, lifted warm onto cold stone.</p>
+                <span class="course-tag">Earth</span>
+              </div>
+            </li>
+
+            <li class="course-row" data-course="1" tabindex="0">
+              <span class="ordinal">II</span>
+              <div>
+                <h3 class="course-name">Cured Sea Bream, Yuzu Kosho, Cold-Pressed Cedar</h3>
+                <p class="course-poem">A line caught at dawn; the sea still on it, the cellar air around it.</p>
+                <span class="course-tag">Bright</span>
+              </div>
+            </li>
+
+            <li class="course-row" data-course="2" tabindex="0">
+              <span class="ordinal">III</span>
+              <div>
+                <h3 class="course-name">Chestnut Velouté, Cedar Smoke, Brown Butter</h3>
+                <p class="course-poem">The forest floor, distilled to a single warm spoon.</p>
+                <span class="course-tag">Deep</span>
+              </div>
+            </li>
+
+            <li class="course-row" data-course="3" tabindex="0">
+              <span class="ordinal">IV</span>
+              <div>
+                <h3 class="course-name">Hand-Rolled Agnolotti, Bone Marrow, Aged Parmesan</h3>
+                <p class="course-poem">Folded by hand in the hour before service. Twenty-eight folds, no more.</p>
+                <span class="course-tag">Rich</span>
+              </div>
+            </li>
+
+            <li class="course-row" data-course="4" tabindex="0">
+              <span class="ordinal">V</span>
+              <div>
+                <h3 class="course-name">Dry-Aged Duck, Pickled Cherry, Juniper Jus</h3>
+                <p class="course-poem">Forty days in cellar air, finished over embers of vine cuttings from the Rhône.</p>
+                <span class="course-tag">Robust</span>
+              </div>
+            </li>
+
+            <li class="course-row" data-course="5" tabindex="0">
+              <span class="ordinal">VI</span>
+              <div>
+                <h3 class="course-name">Aged Comté, Walnut Crisp, Truffle Honey</h3>
+                <p class="course-poem">A pause before the sweet &mdash; the cellar speaking, briefly, in cheese.</p>
+                <span class="course-tag">Quiet</span>
+              </div>
+            </li>
+
+            <li class="course-row" data-course="6" tabindex="0">
+              <span class="ordinal">VII</span>
+              <div>
+                <h3 class="course-name">Bitter Chocolate, Smoked Salt, Single-Candle Cream</h3>
+                <p class="course-poem">The last ember, sweetened. The evening, in one spoon.</p>
+                <span class="course-tag">Final</span>
+              </div>
+            </li>
+          </ol>
+
+          <!-- sticky canvas — plate reveals on hover/focus. First plate is the
+               always-on default so the canvas never reads as an empty dark box.
+               Live region: caption updates as keyboard/SR users focus rows,
+               giving them the same progressive disclosure sighted users get. -->
+          <div class="hidden lg:block lg:col-span-5 reveal" data-d="3">
+            <div class="menu-canvas" aria-live="polite" aria-atomic="true">
+              <span class="sr-only" data-canvas-live>Plate I &middot; Smoked Beet, Black Garlic, Ember Oil.</span>
+              <div class="canvas-header" aria-hidden="true">
+                <span class="ch-label">Now Plating</span>
+                <span class="ch-now" data-canvas-now>I &middot; Earth</span>
+              </div>
+              <span class="corner-mark tl" aria-hidden="true"></span>
+              <span class="corner-mark br" aria-hidden="true"></span>
+              <div class="plate plate-default" aria-hidden="true">VII</div>
+              <div class="plate is-active" data-plate="0">
+                <img src="https://picsum.photos/seed/maison-noir-dish-1/800/1000" alt="Smoked beet with black garlic and ember oil, plated on dark stone." loading="eager" />
+                <div class="plate-caption">Plate I &middot; Beet, Black Garlic, Ember Oil</div>
+              </div>
+              <div class="plate" data-plate="1">
+                <img src="https://picsum.photos/seed/maison-noir-dish-2/800/1000" alt="Cured sea bream with yuzu kosho and cold-pressed cedar." loading="lazy" />
+                <div class="plate-caption">Plate II &middot; Sea Bream, Cedar, Yuzu</div>
+              </div>
+              <div class="plate" data-plate="2">
+                <img src="https://picsum.photos/seed/maison-noir-dish-3/800/1000" alt="Chestnut velouté under cedar smoke with brown butter." loading="lazy" />
+                <div class="plate-caption">Plate III &middot; Chestnut, Smoke, Brown Butter</div>
+              </div>
+              <div class="plate" data-plate="3">
+                <img src="https://picsum.photos/seed/maison-noir-dish-4/800/1000" alt="Hand-rolled agnolotti with bone marrow and aged parmesan." loading="lazy" />
+                <div class="plate-caption">Plate IV &middot; Agnolotti, Bone Marrow, Parmesan</div>
+              </div>
+              <div class="plate" data-plate="4">
+                <img src="https://picsum.photos/seed/maison-noir-dish-5/800/1000" alt="Dry-aged duck with pickled cherry and juniper jus." loading="lazy" />
+                <div class="plate-caption">Plate V &middot; Duck, Cherry, Juniper</div>
+              </div>
+              <div class="plate" data-plate="5">
+                <img src="https://picsum.photos/seed/maison-noir-dish-6/800/1000" alt="Aged Comté with walnut crisp and truffle honey." loading="lazy" />
+                <div class="plate-caption">Plate VI &middot; Comté, Walnut, Truffle Honey</div>
+              </div>
+              <div class="plate" data-plate="6">
+                <img src="https://picsum.photos/seed/maison-noir-dish-7/800/1000" alt="Bitter chocolate with smoked salt and single-candle cream." loading="lazy" />
+                <div class="plate-caption">Plate VII &middot; Chocolate, Smoked Salt, Cream</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLET/MOBILE plate fallback — the sticky canvas is desktop-only,
+             so below 1024px we surface the active plate as an inline image
+             directly beneath the ledger. Same data-plate swapping as the canvas,
+             course 0 open by default. Honours the brief's promise that 'the plate
+             arrives in shadow beside it' even on an iPad booking the table. -->
+        <div class="menu-plate-inline reveal mt-12 lg:hidden" data-d="3" aria-live="polite" aria-atomic="true">
+          <div class="menu-plate-inline-frame">
+            <div class="plate is-active" data-plate="0">
+              <img src="https://picsum.photos/seed/maison-noir-dish-1/800/1000" alt="Smoked beet with black garlic and ember oil, plated on dark stone." loading="lazy" />
+              <div class="plate-caption">Plate I &middot; Beet, Black Garlic, Ember Oil</div>
+            </div>
+            <div class="plate" data-plate="1">
+              <img src="https://picsum.photos/seed/maison-noir-dish-2/800/1000" alt="Cured sea bream with yuzu kosho and cold-pressed cedar." loading="lazy" />
+              <div class="plate-caption">Plate II &middot; Sea Bream, Cedar, Yuzu</div>
+            </div>
+            <div class="plate" data-plate="2">
+              <img src="https://picsum.photos/seed/maison-noir-dish-3/800/1000" alt="Chestnut velouté under cedar smoke with brown butter." loading="lazy" />
+              <div class="plate-caption">Plate III &middot; Chestnut, Smoke, Brown Butter</div>
+            </div>
+            <div class="plate" data-plate="3">
+              <img src="https://picsum.photos/seed/maison-noir-dish-4/800/1000" alt="Hand-rolled agnolotti with bone marrow and aged parmesan." loading="lazy" />
+              <div class="plate-caption">Plate IV &middot; Agnolotti, Bone Marrow, Parmesan</div>
+            </div>
+            <div class="plate" data-plate="4">
+              <img src="https://picsum.photos/seed/maison-noir-dish-5/800/1000" alt="Dry-aged duck with pickled cherry and juniper jus." loading="lazy" />
+              <div class="plate-caption">Plate V &middot; Duck, Cherry, Juniper</div>
+            </div>
+            <div class="plate" data-plate="5">
+              <img src="https://picsum.photos/seed/maison-noir-dish-6/800/1000" alt="Aged Comté with walnut crisp and truffle honey." loading="lazy" />
+              <div class="plate-caption">Plate VI &middot; Comté, Walnut, Truffle Honey</div>
+            </div>
+            <div class="plate" data-plate="6">
+              <img src="https://picsum.photos/seed/maison-noir-dish-7/800/1000" alt="Bitter chocolate with smoked salt and single-candle cream." loading="lazy" />
+              <div class="plate-caption">Plate VII &middot; Chocolate, Smoked Salt, Cream</div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal mt-20 md:mt-28" data-d="2">
+          <div class="rule-gold mb-12"></div>
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-end">
+            <div class="md:col-span-7">
+              <p class="label-sans mb-4">The Menu</p>
+              <p class="setprice">
+                Seven Courses <span class="text-gold mx-2">·</span> &euro;245
+              </p>
+              <p class="label-sans mt-3" style="letter-spacing:0.28em;">per guest</p>
+              <p class="font-body italic mt-5" style="font-size:var(--step-1); color:var(--cream-dim); line-height:1.55;">
+                Sommelier&rsquo;s flight <span class="text-gold">·</span> &euro;145 &mdash; a glass drawn for each course from the obsidian cellar.
+              </p>
+            </div>
+            <div class="md:col-span-5 md:text-right">
+              <a href="#reserve" class="btn-ghost">Reserve to Experience the Menu</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================= AMBIENCE GALLERY ============================= -->
+    <section id="ambience" class="relative py-24 md:py-36 lg:py-44 px-6 md:px-10 border-t border-gold-soft" aria-labelledby="ambience-title">
+      <div class="max-w-editorial mx-auto">
+
+        <div class="chapter-mark reveal">
+          <span class="eyebrow">III — Ambience</span>
+          <span class="rule-grow"></span>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14 md:mb-20">
+          <h2 id="ambience-title" class="display-md text-cream reveal" data-d="1">Lit by a single taper.</h2>
+          <p class="font-body italic reveal max-w-sm" data-d="2"
+             style="font-size:var(--step-1); line-height:1.55; color:var(--cream-dim);">
+            Twelve seats, twelve candles, one fire that is never allowed to go out.
+          </p>
+        </div>
+
+        <!-- gallery — gentle parallax on wrapper; hover-lift on inner card.
+             2-up on small screens; the closing card is a normal 1-col so the
+             row sits as a deliberate closing beat rather than a heavy orphan. -->
+        <div class="gallery-grid grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 reveal" data-d="1" data-parallax-grid>
+
+          <figure class="gallery-wrap" data-parallax-card data-depth="0">
+            <div class="gallery-card aspect-[3/4]">
+              <img src="https://picsum.photos/seed/maison-noir-dish-1/700/940"
+                   alt="A close plate of smoked beet glistening with ember oil, set against dark linen in low candlelight." loading="lazy" />
+              <figcaption class="gallery-caption">Plate I &middot; Beet, Ash</figcaption>
+            </div>
+          </figure>
+
+          <figure class="gallery-wrap" data-parallax-card data-depth="1">
+            <div class="gallery-card aspect-[3/4]">
+              <img src="https://picsum.photos/seed/maison-noir-candle-linen/700/940"
+                   alt="A single taper candle burning on pressed cream linen, the rest of the table dissolving into shadow." loading="lazy" />
+              <figcaption class="gallery-caption">The Table &middot; Candle on Linen</figcaption>
+            </div>
+          </figure>
+
+          <figure class="gallery-wrap" data-parallax-card data-depth="0">
+            <div class="gallery-card aspect-[3/4]">
+              <img src="https://picsum.photos/seed/maison-noir-wine-pour/700/940"
+                   alt="A sommelier pouring dark Burgundy into a crystal glass, the pour caught mid-fall in warm low light." loading="lazy" />
+              <figcaption class="gallery-caption">The Flight &middot; Burgundy, Decanted</figcaption>
+            </div>
+          </figure>
+
+          <figure class="gallery-wrap" data-parallax-card data-depth="1">
+            <div class="gallery-card aspect-[3/4]">
+              <img src="https://picsum.photos/seed/maison-noir-kitchen-embers/700/940"
+                   alt="The glowing embers of the open kitchen, an iron grate holding the low orange fire of evening service." loading="lazy" />
+              <figcaption class="gallery-caption">The Hearth &middot; Embers, Never Out</figcaption>
+            </div>
+          </figure>
+
+          <figure class="gallery-wrap" data-parallax-card data-depth="0">
+            <div class="gallery-card aspect-[3/4]">
+              <img src="https://picsum.photos/seed/maison-noir-interior-2/700/940"
+                   alt="A chef&rsquo;s hand placing a final garnish on a plated course, tweezers back-lit by a single candle." loading="lazy" />
+              <figcaption class="gallery-caption">The Hand &middot; The Last Garnish</figcaption>
+            </div>
+          </figure>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================= PRACTICAL INFO ============================= -->
+    <section id="visit" class="relative py-24 md:py-36 px-6 md:px-10 border-t border-gold-soft bg-obsidian-2" aria-labelledby="visit-title">
+      <div class="max-w-editorial mx-auto">
+
+        <div class="chapter-mark reveal">
+          <span class="eyebrow">IV — Visit</span>
+          <span class="rule-grow"></span>
+        </div>
+
+        <div class="reveal max-w-measure mb-16 md:mb-24" data-d="1">
+          <h2 id="visit-title" class="display-md text-cream">A black door on the Rue des Cendres.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-px bg-gold-hair-faint reveal" data-d="2">
+
+          <!-- The Hours -->
+          <div class="bg-obsidian p-8 md:p-10 lg:p-12">
+            <p class="eyebrow mb-7" style="letter-spacing:0.30em;">The Hours</p>
+            <p class="font-display text-cream mb-3" style="font-size:var(--step-2); font-weight:500;">Dinner Only</p>
+            <p class="text-cream-dim" style="font-size:var(--step-0); line-height:1.7;">
+              Wednesday &ndash; Sunday<br />
+              Two seatings each evening<br />
+              <span class="text-cream">6:00 pm &middot; 8:30 pm</span>
+            </p>
+            <p class="font-body italic mt-5" style="font-size:var(--step--1); color:var(--cream-mute);">
+              Closed Monday &amp; Tuesday. The cellar rests.
+            </p>
+          </div>
+
+          <!-- Where to Find Us -->
+          <div class="bg-obsidian p-8 md:p-10 lg:p-12">
+            <p class="eyebrow mb-7" style="letter-spacing:0.30em;">Where to Find Us</p>
+            <p class="font-display text-cream mb-3" style="font-size:var(--step-2); font-weight:500;">14 Rue des Cendres</p>
+            <p class="text-cream-dim" style="font-size:var(--step-0); line-height:1.7;">
+              Old Quarter &middot; Lyon, FR<br />
+              <span class="font-body italic">A black door, no sign. The candle in the window is the welcome.</span>
+            </p>
+            <a href="https://maps.google.com/?q=14+Rue+des+Cendres+Lyon" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2 mt-5 text-gold hover:text-cream transition-colors duration-400"
+               style="font-family:'Jost',sans-serif; font-size:var(--step--2); letter-spacing:0.26em; text-transform:uppercase;">
+              Open in Maps
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </a>
+          </div>
+
+          <!-- To Reserve -->
+          <div class="bg-obsidian p-8 md:p-10 lg:p-12">
+            <p class="eyebrow mb-7" style="letter-spacing:0.30em;">To Reserve</p>
+            <p class="font-display text-cream mb-3" style="font-size:var(--step-2); font-weight:500;">By Telephone</p>
+            <a href="tel:+33478000000" class="block text-cream hover:text-gold transition-colors duration-400" style="font-size:var(--step-0); letter-spacing:0.02em;">+33 4 78 00 00 00</a>
+            <a href="mailto:reserve@maisonnoir.fr" class="block text-cream-dim hover:text-gold transition-colors duration-400 mt-1" style="font-size:var(--step--1);">reserve@maisonnoir.fr</a>
+            <p class="font-body italic mt-5" style="font-size:var(--step--1); color:var(--cream-mute);">
+              Reservations open sixty days in advance. Twelve seats fill within the hour.
+            </p>
+          </div>
+        </div>
+
+        <div class="reveal text-center mt-16 md:mt-20" data-d="2">
+          <a href="#reserve" class="btn-ghost">Begin the Reservation</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================= RESERVATION FOOTER — second conversion point ============================= -->
+    <footer id="reserve" class="relative overflow-hidden border-t border-gold-soft" role="contentinfo">
+      <div class="absolute inset-0 opacity-25" aria-hidden="true">
+        <img src="https://picsum.photos/seed/maison-noir-footer-ember/1800/900" alt="" class="w-full h-full object-cover" loading="lazy" style="filter: brightness(0.4);" />
+      </div>
+      <div class="absolute inset-0" aria-hidden="true" style="background: linear-gradient(180deg, rgba(10,6,8,0.92), rgba(10,6,8,0.98));"></div>
+
+      <div class="relative z-10 max-w-measure mx-auto px-6 md:px-10 py-24 md:py-36 lg:py-44 text-center">
+
+        <p class="eyebrow reveal mb-8 flex items-center justify-center gap-3">
+          <span class="w-8 h-px bg-gold"></span>
+          The Invitation
+          <span class="w-8 h-px bg-gold"></span>
+        </p>
+
+        <h2 class="font-heavy text-cream reveal" data-d="1"
+            style="font-size: var(--step-4); line-height:1.06; letter-spacing:0.02em; font-weight:800;">
+          Twelve seats. One menu.<br />
+          <span class="italic text-gold font-display" style="font-weight:600;">One night to remember.</span>
+        </h2>
+
+        <p class="font-body italic reveal mt-8 max-w-lg mx-auto" data-d="2"
+           style="font-size:var(--step-1); line-height:1.6; color:var(--cream-dim);">
+          Seven courses at €245 per guest. The sommelier&rsquo;s flight at €145. The candle is already lit &mdash; we are only waiting to lead you in.
+        </p>
+
+        <div class="reveal flex flex-col sm:flex-row sm:items-center sm:justify-center gap-5 sm:gap-8 mt-10 md:mt-12" data-d="2">
+          <a href="tel:+33478000000" class="btn-primary">Reserve a Table</a>
+          <a href="mailto:reserve@maisonnoir.fr" class="btn-ghost">Write to Us</a>
+        </div>
+
+        <p class="caption-xs reveal mt-10" data-d="3">
+          or call &nbsp;<a href="tel:+33478000000" class="text-cream hover:text-gold transition-colors duration-400" style="letter-spacing:0.18em;">+33 4 78 00 00 00</a>
+        </p>
+
+        <div class="ornament mt-16 justify-center reveal" data-d="3">
+          <span class="bar"></span>
+          <span class="wordmark-nav text-gold" style="font-size:var(--step--1);">MAISON NOIR</span>
+          <span class="bar"></span>
+        </div>
+
+        <p class="caption-xs reveal mt-8 leading-relaxed max-w-md mx-auto" data-d="3" style="color:var(--cream-dim);">
+          Smart attire requested. A 48-hour cancellation policy applies.<br />
+          &copy; <span id="year">2026</span> MAISON NOIR &middot; 14 Rue des Cendres, Lyon &middot; All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+  </main>
+
+
+  <script>
+    (function () {
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ----- year -----
+      var y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+
+      // ----- mobile nav disclosure — focus + Escape + restore focus -----
+      var toggle = document.getElementById('navToggle');
+      var mobileNav = document.getElementById('mobileNav');
+      function closeMobileNav(returnFocus) {
+        if (!mobileNav || !toggle) return;
+        mobileNav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open section menu');
+        if (returnFocus) toggle.focus();
+      }
+      function openMobileNav() {
+        if (!mobileNav || !toggle) return;
+        mobileNav.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Close section menu');
+        var first = mobileNav.querySelector('a, button');
+        if (first) first.focus();
+      }
+      if (toggle && mobileNav) {
+        toggle.addEventListener('click', function () {
+          if (mobileNav.classList.contains('is-open')) closeMobileNav(true);
+          else openMobileNav();
+        });
+        mobileNav.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () { closeMobileNav(false); });
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) {
+            closeMobileNav(true);
+          }
+        });
+      }
+
+      // ----- sticky nav appears only past the hero -----
+      var nav = document.getElementById('topnav');
+      var hero = document.getElementById('hero');
+      function onScrollNav() {
+        if (!nav || !hero) return;
+        var trigger = hero.offsetHeight - 120;
+        if (window.scrollY > trigger) nav.classList.add('is-visible');
+        else nav.classList.remove('is-visible');
+      }
+      window.addEventListener('scroll', onScrollNav, { passive: true });
+      onScrollNav();
+
+      // ----- scroll reveal -----
+      var revealEls = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !reduceMotion) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+        revealEls.forEach(function (el) {
+          if (!el.closest('#hero')) io.observe(el);
+          else el.classList.add('is-visible');
+        });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+
+      // ----- signature: course -> plate reveal (keyboard + pointer) -----
+      // Plate 0 is active by default so the canvas always shows a real dish
+      // (never an empty dark box for no-hover / touch-laptop users).
+      // Drives BOTH the desktop sticky canvas AND the tablet/mobile inline fallback,
+      // and updates a visually-hidden live node so SR users hear the reveal too.
+      var rows = document.querySelectorAll('.course-row[data-course]');
+      var canvasPlates = document.querySelectorAll('.menu-canvas .plate[data-plate]');
+      var inlinePlates = document.querySelectorAll('.menu-plate-inline-frame .plate[data-plate]');
+      var canvasLive = document.querySelector('[data-canvas-live]');
+      var canvasNow = document.querySelector('[data-canvas-now]');
+      var ROMAN = ['I','II','III','IV','V','VI','VII'];
+      function showPlate(idx) {
+        var cap = '';
+        [canvasPlates, inlinePlates].forEach(function (set) {
+          set.forEach(function (p) { p.classList.remove('is-active'); });
+          var target = document.querySelector(
+            set === canvasPlates
+              ? '.menu-canvas .plate[data-plate="' + idx + '"]'
+              : '.menu-plate-inline-frame .plate[data-plate="' + idx + '"]'
+          );
+          if (target) {
+            target.classList.add('is-active');
+            var c = target.querySelector('.plate-caption');
+            if (c && !cap) cap = c.textContent;
+          }
+        });
+        if (canvasLive && cap) canvasLive.textContent = cap;
+        // sync the persistent "Now Plating" header with the live plate's tag
+        if (canvasNow) {
+          var row = document.querySelector('.course-row[data-course="' + idx + '"]');
+          var tag = row ? (row.querySelector('.course-tag') || {}).textContent : '';
+          canvasNow.textContent = ROMAN[idx] + ' · ' + (tag || '');
+        }
+      }
+      rows.forEach(function (row) {
+        var idx = row.getAttribute('data-course');
+        row.addEventListener('mouseenter', function () { showPlate(idx); });
+        row.addEventListener('focus', function () { showPlate(idx); });
+      });
+      // when menu section loses hover entirely, settle back on the opening plate
+      var menuStage = document.getElementById('menu');
+      if (menuStage) {
+        menuStage.addEventListener('mouseleave', function () { showPlate(0); });
+      }
+
+      // ----- hero parallax (wrapper only; ken-burns lives on inner img — no transform conflict) -----
+      if (!reduceMotion) {
+        var heroWrap = document.querySelector('[data-parallax-hero]');
+        if (heroWrap) {
+          var ticking = false;
+          function heroParallax() {
+            var y = window.scrollY;
+            var h = hero ? hero.offsetHeight : window.innerHeight;
+            if (y < h) {
+              heroWrap.style.transform = 'translate3d(0,' + (y * 0.18).toFixed(2) + 'px,0)';
+            }
+            ticking = false;
+          }
+          window.addEventListener('scroll', function () {
+            if (!ticking) { window.requestAnimationFrame(heroParallax); ticking = true; }
+          }, { passive: true });
+        }
+      }
+
+      // ----- gentle gallery parallax on the wrapper; hover-lift lives on the inner card -----
+      // Tight 5-up grid: amplitude kept small (±7px) so the row baseline never looks crooked.
+      // Gated to fine-pointer + hover-capable devices only: at ±7px the effect is near-
+      // imperceptible, so touch devices (which never hover) should not pay the per-frame cost.
+      // The hover-lift on the inner card is the motion that actually reads as luxury and stays.
+      var fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!reduceMotion && fineHover && window.matchMedia('(min-width: 768px)').matches) {
+        var cards = document.querySelectorAll('[data-parallax-card]');
+        var tickingG = false;
+        function galleryParallax() {
+          var vh = window.innerHeight;
+          cards.forEach(function (wrap) {
+            var rect = wrap.getBoundingClientRect();
+            if (rect.bottom < -120 || rect.top > vh + 120) return;
+            var depth = wrap.getAttribute('data-depth') === '1' ? 1 : -1;
+            var progress = (rect.top + rect.height / 2 - vh / 2) / vh;
+            var shift = Math.max(-7, Math.min(7, progress * -4.5 * depth));
+            wrap.style.transform = 'translateY(' + shift.toFixed(2) + 'px)';
+          });
+          tickingG = false;
+        }
+        window.addEventListener('scroll', function () {
+          if (!tickingG) { window.requestAnimationFrame(galleryParallax); tickingG = true; }
+        }, { passive: true });
+        galleryParallax();
+      }
+
+      // ----- smooth-scroll respect for reduced motion -----
+      if (reduceMotion) {
+        document.documentElement.style.scrollBehavior = 'auto';
+      }
+    })();
+  </script>
+</body>
+</html>
