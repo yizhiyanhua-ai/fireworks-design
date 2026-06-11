@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fireworks-design · Live</title>
+<meta name="description" content="A Claude Code workflow that replicates ClaudeDesign. Live example outputs.">
+<link rel="icon" href="docs/images/logo/logo-icon.svg" type="image/svg+xml">
+<style>
+  :root{--bg:#0b0b14;--panel:#0f172a;--border:#334155;--txt:#e2e8f0;--dim:#94a3b8;--faint:#475569;
+    --purple:#a855f7;--orange:#f97316;--blue:#3b82f6;--green:#10b981;--gold:#eab308}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1000px 500px at 80% -10%, rgba(124,58,237,.18), transparent 60%),
+      radial-gradient(800px 400px at -5% 20%, rgba(249,115,22,.10), transparent 55%),
+      linear-gradient(180deg,#0f0f1a,#1a1a2e);
+    color:var(--txt);font-family:'Inter',system-ui,sans-serif;line-height:1.6;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:56px 20px 80px;
+  }
+  img.logo{width:min(520px,92vw);height:auto;margin-bottom:18px}
+  .tag{color:var(--dim);max-width:560px;text-align:center;font-size:17px;margin-bottom:36px}
+  .tag b{color:var(--txt)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;width:min(980px,100%)}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--border);
+    border-radius:16px;padding:22px 24px;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+  a.card:hover{transform:translateY(-3px);border-color:var(--purple);box-shadow:0 18px 40px -22px rgba(168,85,247,.6)}
+  .k{font-family:'SF Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  .card h3{font-size:18px;margin:8px 0 6px}
+  .card p{color:var(--dim);font-size:14px}
+  .meta{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:'SF Mono',monospace;font-size:11px;padding:3px 9px;border-radius:6px;border:1px solid var(--border);color:var(--faint)}
+  .row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+  .row a{color:var(--dim);font-family:'SF Mono',monospace;font-size:13px;text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px}
+  .row a:hover{color:var(--txt);border-color:var(--purple)}
+  footer{margin-top:54px;color:var(--faint);font-family:'SF Mono',monospace;font-size:12px;text-align:center}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <img class="logo" src="docs/images/logo/logo-dark.svg" alt="fireworks-design">
+  <p class="tag">An open-source Claude Code workflow that replicates <b>ClaudeDesign</b>.<br>The pages below are <b>real pipeline output</b> — explore → judge → synthesize → refine → polish.</p>
+
+  <div class="grid">
+    <a class="card" href="examples/saas-vector-db/final.html">
+      <div class="k" style="color:var(--orange)">SaaS Landing · 6 directions</div>
+      <h3>vector — similarity search</h3>
+      <p>Open-source vector DB. Hero, benchmark stat strip, Python snippet, 3-tier pricing.</p>
+      <div class="meta"><span class="pill">Bold Editorial</span><span class="pill">49 agents</span><span class="pill">~1.7M tok</span></div>
+    </a>
+    <a class="card" href="examples/oss-cli-homepage/final.html">
+      <div class="k" style="color:var(--blue)">OSS Homepage · 4 directions</div>
+      <h3>tideline — git history as tide</h3>
+      <p>CLI homepage with install command, copy button, terminal demo, feature cards.</p>
+      <div class="meta"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span><span class="pill">~1.07M tok</span></div>
+    </a>
+    <a class="card" href="examples/designer-portfolio/final.html">
+      <div class="k" style="color:var(--green)">Portfolio · 4 directions</div>
+      <h3>Lin Hua — Selected Work</h3>
+      <p>Designer one-pager. Asymmetric editorial grid, 4-project works grid, contact.</p>
+      <div class="meta"><span class="pill">Bold Editorial · 7.67</span><span class="pill">35 agents</span><span class="pill">~0.85M tok</span></div>
+    </a>
+    <a class="card" href="docs/intro.html">
+      <div class="k" style="color:var(--gold)">Illustrated guide</div>
+      <h3>How it works (图文)</h3>
+      <p>The six-phase pipeline explained with inline diagrams — the methodology behind the output.</p>
+      <div class="meta"><span class="pill">SVG diagrams</span><span class="pill">bilingual</span></div>
+    </a>
+  </div>
+
+  <div class="row">
+    <a href="https://github.com/yizhiyanhua-ai/fireworks-design">GitHub ↗</a>
+    <a href="https://github.com/yizhiyanhua-ai/fireworks-design#readme">README</a>
+    <a href="https://github.com/yizhiyanhua-ai/fireworks-design/blob/main/fireworks-design.js">workflow.js</a>
+  </div>
+  <footer>fireworks-design · quality is the only thing that matters</footer>
+</body>
+</html>
