@@ -1,0 +1,18 @@
+# Generated design output (do not commit large HTML batches)
+design-output/
+*.draft.html
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Node (if you add tooling later)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Claude Code local state
+.claude/local/

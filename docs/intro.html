@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fireworks-design · 工作流图解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0b14; --bg2:#14142440;
+    --panel:#0f172a; --panel2:#11182b; --border:#334155;
+    --txt:#e2e8f0; --dim:#94a3b8; --faint:#475569;
+    --purple:#a855f7; --purple2:#7c3aed;
+    --orange:#f97316; --orange2:#ea580c;
+    --blue:#3b82f6; --blue2:#1d4ed8;
+    --green:#10b981; --green2:#059669;
+    --gold:#eab308;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(124,58,237,.18), transparent 60%),
+      radial-gradient(900px 500px at -5% 30%, rgba(249,115,22,.10), transparent 55%),
+      linear-gradient(180deg,#0f0f1a,#1a1a2e 60%,#0f0f1a);
+    background-attachment:fixed;
+    color:var(--txt);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:64px 24px 120px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;
+    color:var(--purple);text-transform:uppercase;
+    background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.3);
+    padding:6px 14px;border-radius:999px;margin-bottom:24px;
+  }
+  h1{
+    font-family:'Sora',sans-serif;font-weight:800;
+    font-size:clamp(34px,6vw,58px);line-height:1.05;letter-spacing:-.02em;
+    margin-bottom:18px;
+  }
+  h1 .grad{
+    background:linear-gradient(110deg,var(--orange),var(--purple) 60%,var(--blue));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .lede{font-size:19px;color:var(--dim);max-width:680px;margin-bottom:14px}
+  code.file{
+    font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--gold);
+    background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.25);
+    padding:3px 9px;border-radius:6px;
+  }
+  h2{
+    font-family:'Sora',sans-serif;font-weight:700;font-size:30px;letter-spacing:-.01em;
+    margin:72px 0 8px;display:flex;align-items:center;gap:14px;
+  }
+  .num{
+    font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;
+    width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:9px;
+    color:#0f0f1a;
+  }
+  .sub{color:var(--dim);font-size:16px;margin-bottom:26px;max-width:680px}
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--border);border-radius:18px;padding:28px 30px;
+    box-shadow:0 20px 50px -25px rgba(0,0,0,.7);
+  }
+  .card + .card{margin-top:18px}
+  .fig{
+    background:#0a0a12;border:1px solid var(--border);border-radius:14px;
+    padding:14px;margin:6px 0 20px;overflow:hidden;
+  }
+  .fig svg{display:block;width:100%;height:auto}
+  .cap{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);text-align:center;margin-top:-8px;margin-bottom:18px;letter-spacing:.05em}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+  .kv{display:grid;grid-template-columns:120px 1fr;gap:6px 18px;font-size:15px;margin-top:8px}
+  .kv dt{color:var(--faint);font-family:'JetBrains Mono',monospace;font-size:13px}
+  .kv dd{color:var(--txt)}
+  .pill{
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;
+    padding:3px 10px;border-radius:6px;margin:2px;border:1px solid;
+  }
+  pre{
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;
+    background:#07070d;border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;overflow:auto;color:#cbd5e1;
+  }
+  pre .k{color:var(--purple)} pre .s{color:var(--green)} pre .c{color:var(--faint)} pre .n{color:var(--orange)}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:6px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  td:first-child{font-weight:600;color:var(--txt)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);margin-bottom:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .footer{margin-top:80px;padding-top:28px;border-top:1px solid var(--border);color:var(--faint);font-size:13px;font-family:'JetBrains Mono',monospace;text-align:center}
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
+  @media(max-width:560px){.stat-row{grid-template-columns:1fr}}
+  .stat{background:#0a0a12;border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+  .stat b{display:block;font-family:'Sora',sans-serif;font-size:30px;font-weight:800}
+  .stat span{font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <span class="eyebrow">◆ Workflow · 多智能体编排</span>
+  <h1>复刻 <span class="grad">ClaudeDesign</span><br>的前端生成工作流</h1>
+  <p class="lede">一个用大规模并行 + 评审面板 + 对抗式打磨,稳定产出<b style="color:var(--txt)">世界级前端页面</b>的机制。所有智能体继承当前会话模型,把"广度探索、视觉判断、反复打磨"做到流水线化。</p>
+  <p><code class="file">.claude/workflows/fireworks-design.js</code></p>
+
+  <!-- Hero pipeline -->
+  <div class="fig" style="margin-top:34px">
+    <svg viewBox="0 0 940 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="六阶段流水线">
+      <defs>
+        <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#a855f7"/></linearGradient>
+        <linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="#ea580c"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+        <linearGradient id="g3" x1="0" x2="1"><stop offset="0" stop-color="#1d4ed8"/><stop offset="1" stop-color="#3b82f6"/></linearGradient>
+        <linearGradient id="g4" x1="0" x2="1"><stop offset="0" stop-color="#059669"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+        <marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 z" fill="#475569"/></marker>
+      </defs>
+      <!-- nodes -->
+      <g font-family="JetBrains Mono, monospace" font-size="12" text-anchor="middle">
+        <!-- 1 Brief -->
+        <rect x="10" y="80" width="120" height="70" rx="12" fill="#0f172a" stroke="url(#g1)" stroke-width="1.6"/>
+        <text x="70" y="108" fill="#a855f7" font-weight="700">① BRIEF</text>
+        <text x="70" y="128" fill="#94a3b8" font-size="10.5">提炼设计系统</text>
+        <!-- 2 Diverge -->
+        <rect x="160" y="55" width="130" height="120" rx="12" fill="#0f172a" stroke="url(#g2)" stroke-width="1.6"/>
+        <text x="225" y="80" fill="#f97316" font-weight="700">② DIVERGE</text>
+        <text x="225" y="100" fill="#94a3b8" font-size="10.5">N 路并行探索</text>
+        <text x="225" y="128" fill="#475569" font-size="20">⊛⊛⊛⊛⊛⊛</text>
+        <text x="225" y="150" fill="#475569" font-size="10">6–8 种风格</text>
+        <!-- 3 Judge -->
+        <rect x="320" y="40" width="130" height="150" rx="12" fill="#0f172a" stroke="url(#g3)" stroke-width="1.6"/>
+        <text x="385" y="66" fill="#3b82f6" font-weight="700">③ JUDGE</text>
+        <text x="385" y="86" fill="#94a3b8" font-size="10.5">评审面板</text>
+        <text x="385" y="116" fill="#475569" font-size="16">▦ ▦ ▦</text>
+        <text x="385" y="138" fill="#475569" font-size="16">▦ ▦ ▦</text>
+        <text x="385" y="165" fill="#475569" font-size="10">6维 × N方向</text>
+        <!-- 4 Synthesize -->
+        <rect x="480" y="80" width="130" height="70" rx="12" fill="#0f172a" stroke="url(#g4)" stroke-width="1.6"/>
+        <text x="545" y="108" fill="#10b981" font-weight="700">④ SYNTH</text>
+        <text x="545" y="128" fill="#94a3b8" font-size="10.5">融合 Top3</text>
+        <!-- 5 Refine loop -->
+        <rect x="640" y="55" width="120" height="120" rx="12" fill="#0f172a" stroke="#eab308" stroke-width="1.6"/>
+        <text x="700" y="80" fill="#eab308" font-weight="700">⑤ REFINE</text>
+        <text x="700" y="100" fill="#94a3b8" font-size="10.5">评审↔修复</text>
+        <path d="M690,128 C690,150 710,150 710,128" fill="none" stroke="#eab308" stroke-width="1.4" marker-end="url(#ah)"/>
+        <text x="700" y="165" fill="#475569" font-size="10">循环 ×2</text>
+        <!-- 6 Polish -->
+        <rect x="790" y="80" width="130" height="70" rx="12" fill="#0f172a" stroke="#a855f7" stroke-width="1.6"/>
+        <text x="855" y="108" fill="#a855f7" font-weight="700">⑥ POLISH</text>
+        <text x="855" y="128" fill="#94a3b8" font-size="10.5">QA + 出图</text>
+      </g>
+      <!-- arrows -->
+      <g stroke="#475569" stroke-width="1.6" fill="none">
+        <line x1="130" y1="115" x2="156" y2="115" marker-end="url(#ah)"/>
+        <line x1="290" y1="115" x2="316" y2="115" marker-end="url(#ah)"/>
+        <line x1="450" y1="115" x2="476" y2="115" marker-end="url(#ah)"/>
+        <line x1="610" y1="115" x2="636" y2="115" marker-end="url(#ah)"/>
+        <line x1="760" y1="115" x2="786" y2="115" marker-end="url(#ah)"/>
+      </g>
+    </svg>
+  </div>
+  <p class="cap">六阶段流水线 · 串行的阶段之间用并行 fan-out 填满算力</p>
+
+  <div class="stat-row">
+    <div class="stat"><b style="color:var(--orange)">6–8</b><span>探索方向</span></div>
+    <div class="stat"><b style="color:var(--blue)">~36</b><span>并行评审</span></div>
+    <div class="stat"><b style="color:var(--green)">40+</b><span>智能体调用</span></div>
+  </div>
+
+  <!-- 核心理念 -->
+  <h2><span class="num" style="background:var(--purple)">核</span>为什么要这么设计</h2>
+  <p class="sub">ClaudeDesign 官方原文一句话点破:<i>"即使是经验丰富的设计师也只能克制地探索——很少有时间做十几个方向。"</i> 本工作流把这句洞察工程化。</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div style="color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:8px">⊗ 单路生成的问题</div>
+      <p style="color:var(--dim);font-size:14.5px">一个模型、一次输出,本质是"抽一次签"。它的品味、当下倾向、prompt 解读都锁死在那一版里,质量上限被方差卡住。</p>
+    </div>
+    <div class="card">
+      <div style="color:var(--green);font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:8px">⊛ 多路 + 评审的价值</div>
+      <p style="color:var(--dim);font-size:14.5px">并行铺开多种独立美学,再让独立评审从不同维度打分、取最优、嫁接亮点——把<b style="color:var(--txt)">分布的方差</b>变成<b style="color:var(--txt)">质量下限的保证</b>。</p>
+    </div>
+  </div>
+
+  <!-- 阶段详解 -->
+  <h2><span class="num" style="background:var(--purple)">①</span>Brief · 提炼设计系统</h2>
+  <p class="sub">先把模糊需求压成所有设计师共享的 brief + design tokens,杜绝"通用 brief 产出通用页面"。</p>
+  <div class="card">
+    <dl class="kv">
+      <dt>输入</dt><dd><code class="file">prompt</code> + 可选 <code class="file">brand</code></dd>
+      <dt>产出</dt><dd>产品定位 · 目标 · 必要章节 · <b>设计令牌</b>(字体配对 / 调色板 hex / 基调 / 参考气质) · 成功标准</dd>
+      <dt>注入到</dt><dd>之后每一个 agent 的 prompt —— 保证整条流水线品牌一致</dd>
+    </dl>
+  </div>
+
+  <h2><span class="num" style="background:var(--orange)">②</span>Diverge · 广度探索</h2>
+  <p class="sub">这是质量的核心。每个 agent 走一种<b>独立美学风格</b>,完整产出自包含 HTML 文件。</p>
+  <div class="card">
+    <div class="legend">
+      <span><i style="background:#a855f7"></i>Bold Editorial</span>
+      <span><i style="background:#3b82f6"></i>Swiss Minimal</span>
+      <span><i style="background:#f97316"></i>Vibrant Gradient</span>
+      <span><i style="background:#eab308"></i>Dark Premium</span>
+      <span><i style="background:#10b981"></i>Soft Organic</span>
+      <span><i style="background:#ef4444"></i>Neo-Brutalist</span>
+      <span><i style="background:#06b6d4"></i>Glass Aurora</span>
+      <span><i style="background:#94a3b8"></i>Mono Tech</span>
+    </div>
+    <p style="color:var(--dim);font-size:14px;margin-top:14px">每个 agent 内部先<b style="color:var(--txt)">自拟方案 → 自我批判一次 → 再产出</b>,而非直接吐结果。</p>
+  </div>
+  <div class="fig">
+    <svg viewBox="0 0 940 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="diverge fan-out">
+      <g font-family="JetBrains Mono,monospace" font-size="12" text-anchor="middle">
+        <circle cx="80" cy="100" r="34" fill="#0f172a" stroke="#7c3aed" stroke-width="1.8"/>
+        <text x="80" y="96" fill="#a855f7" font-weight="700">BRIEF</text>
+        <text x="80" y="112" fill="#475569" font-size="10">tokens</text>
+        <g stroke="#334155" stroke-width="1.4" fill="none">
+          <path d="M114,100 C200,100 250,30 360,30"/>
+          <path d="M114,100 C200,100 250,60 360,60"/>
+          <path d="M114,100 C200,100 250,90 360,90"/>
+          <path d="M114,100 C200,100 250,110 360,110"/>
+          <path d="M114,100 C200,100 250,140 360,140"/>
+          <path d="M114,100 C200,100 250,170 360,170"/>
+        </g>
+        <g>
+          <rect x="360" y="16" width="120" height="28" rx="7" fill="#0f172a" stroke="#a855f7"/><text x="420" y="34" fill="#e2e8f0">Editorial</text>
+          <rect x="360" y="46" width="120" height="28" rx="7" fill="#0f172a" stroke="#3b82f6"/><text x="420" y="64" fill="#e2e8f0">Minimal</text>
+          <rect x="360" y="76" width="120" height="28" rx="7" fill="#0f172a" stroke="#f97316"/><text x="420" y="94" fill="#e2e8f0">Gradient</text>
+          <rect x="360" y="106" width="120" height="28" rx="7" fill="#0f172a" stroke="#eab308"/><text x="420" y="124" fill="#e2e8f0">Dark Premium</text>
+          <rect x="360" y="136" width="120" height="28" rx="7" fill="#0f172a" stroke="#10b981"/><text x="420" y="154" fill="#e2e8f0">Organic</text>
+          <rect x="360" y="166" width="120" height="28" rx="7" fill="#0f172a" stroke="#ef4444"/><text x="420" y="184" fill="#e2e8f0">Brutalist</text>
+        </g>
+        <g stroke="#10b981" stroke-width="1.4" fill="none" marker-end="url(#ah2)">
+          <line x1="480" y1="30" x2="560" y2="30"/><line x1="480" y1="60" x2="560" y2="60"/>
+          <line x1="480" y1="90" x2="560" y2="90"/><line x1="480" y1="120" x2="560" y2="120"/>
+          <line x1="480" y1="150" x2="560" y2="150"/><line x1="480" y1="180" x2="560" y2="180"/>
+        </g>
+        <defs><marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 z" fill="#10b981"/></marker></defs>
+        <g fill="#10b981" font-size="11">
+          <text x="690" y="34">draft-1.html</text><text x="690" y="64">draft-2.html</text>
+          <text x="690" y="94">draft-3.html</text><text x="690" y="124">draft-4.html</text>
+          <text x="690" y="154">draft-5.html</text><text x="690" y="184">draft-6.html</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <p class="cap">1 个 brief 同时扇出成 6 份独立成品 · 全部并行</p>
+
+  <h2><span class="num" style="background:var(--blue)">③</span>Judge · 评审面板</h2>
+  <p class="sub">每个方向 × 6 个设计维度,独立打分(1–10)。~36 路并行,严禁互相看答案。</p>
+  <div class="card">
+    <div class="legend">
+      <span><i style="background:#3b82f6"></i>层级</span>
+      <span><i style="background:#a855f7"></i>排版</span>
+      <span><i style="background:#f97316"></i>配色/对比</span>
+      <span><i style="background:#10b981"></i>动效/交互</span>
+      <span><i style="background:#eab308"></i>工程工艺</span>
+      <span><i style="background:#ef4444"></i>惊艳度</span>
+    </div>
+    <p style="color:var(--dim);font-size:14px;margin-top:14px">每条评审还必须给出<b style="color:var(--txt)">最高杠杆的修复建议</b>,直接喂给下一阶段。</p>
+  </div>
+  <div class="fig">
+    <svg viewBox="0 0 940 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="judge matrix">
+      <g font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">
+        <text x="120" y="20" fill="#475569">方向 ↓　维度 →</text>
+        <g fill="#475569">
+          <text x="280" y="20">层级</text><text x="360" y="20">排版</text><text x="440" y="20">配色</text>
+          <text x="520" y="20">动效</text><text x="600" y="20">工艺</text><text x="680" y="20">惊艳</text><text x="820" y="20">均分</text>
+        </g>
+        <g>
+          <text x="120" y="46" fill="#e2e8f0" text-anchor="end">Editorial</text>
+          <rect x="250" y="32" width="60" height="18" rx="4" fill="#3b82f6" opacity=".35"/><text x="280" y="45" fill="#3b82f6">9</text>
+          <rect x="330" y="32" width="60" height="18" rx="4" fill="#a855f7" opacity=".35"/><text x="360" y="45" fill="#a855f7">9</text>
+          <rect x="410" y="32" width="60" height="18" rx="4" fill="#f97316" opacity=".35"/><text x="440" y="45" fill="#f97316">8</text>
+          <rect x="490" y="32" width="60" height="18" rx="4" fill="#10b981" opacity=".35"/><text x="520" y="45" fill="#10b981">7</text>
+          <rect x="570" y="32" width="60" height="18" rx="4" fill="#eab308" opacity=".35"/><text x="600" y="45" fill="#eab308">9</text>
+          <rect x="650" y="32" width="60" height="18" rx="4" fill="#ef4444" opacity=".35"/><text x="680" y="45" fill="#ef4444">9</text>
+          <rect x="770" y="32" width="100" height="18" rx="4" fill="#0f172a" stroke="#10b981"/><text x="820" y="45" fill="#10b981" font-weight="700">8.5 ★</text>
+        </g>
+        <g transform="translate(0,30)">
+          <text x="120" y="46" fill="#e2e8f0" text-anchor="end">Dark Premium</text>
+          <rect x="250" y="32" width="60" height="18" rx="4" fill="#3b82f6" opacity=".28"/><text x="280" y="45" fill="#3b82f6">8</text>
+          <rect x="330" y="32" width="60" height="18" rx="4" fill="#a855f7" opacity=".28"/><text x="360" y="45" fill="#a855f7">8</text>
+          <rect x="410" y="32" width="60" height="18" rx="4" fill="#f97316" opacity=".28"/><text x="440" y="45" fill="#f97316">9</text>
+          <rect x="490" y="32" width="60" height="18" rx="4" fill="#10b981" opacity=".28"/><text x="520" y="45" fill="#10b981">9</text>
+          <rect x="570" y="32" width="60" height="18" rx="4" fill="#eab308" opacity=".28"/><text x="600" y="45" fill="#eab308">8</text>
+          <rect x="650" y="32" width="60" height="18" rx="4" fill="#ef4444" opacity=".28"/><text x="680" y="45" fill="#ef4444">8</text>
+          <rect x="770" y="32" width="100" height="18" rx="4" fill="#0f172a" stroke="#94a3b8"/><text x="820" y="45" fill="#94a3b8">8.3</text>
+        </g>
+        <g transform="translate(0,60)">
+          <text x="120" y="46" fill="#475569" text-anchor="end">… 其余方向</text>
+          <rect x="250" y="32" width="490" height="18" rx="4" fill="#1e293b"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <p class="cap">评分矩阵 · 取均分最高者为基底,同时收集每条修复建议</p>
+
+  <h2><span class="num" style="background:var(--green)">④</span>Synthesize · 融合升华</h2>
+  <p class="sub">不做简单"选冠军"。读 Top3 方向的源码,以最强者为骨架,嫁接其余亮点,并修掉评委所有 flagged 问题。</p>
+  <div class="card">
+    <p style="color:var(--dim);font-size:14.5px"><b style="color:var(--txt)">Editorial</b> 的层级 + <b style="color:var(--txt)">Dark Premium</b> 的氛围 + <b style="color:var(--txt)">Gradient</b> 的动效 → 一份明确超越任何单方向的 <code class="file">final.html</code>。</p>
+  </div>
+
+  <h2><span class="num" style="background:var(--gold);color:#0f0f1a">⑤</span>Refine · 对抗式打磨</h2>
+  <p class="sub">"狠辣评审 → 精准修复"循环 2 轮,这是 ClaudeDesign "fine-grained controls" 的工程化。</p>
+  <div class="fig">
+    <svg viewBox="0 0 940 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="refine loop">
+      <defs><marker id="ah3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 z" fill="#eab308"/></marker></defs>
+      <g font-family="JetBrains Mono,monospace" font-size="13" text-anchor="middle">
+        <rect x="140" y="50" width="180" height="56" rx="12" fill="#0f172a" stroke="#ef4444" stroke-width="1.6"/>
+        <text x="230" y="76" fill="#ef4444" font-weight="700">CRITIQUE</text>
+        <text x="230" y="94" fill="#475569" font-size="11">找问题 + 严重度</text>
+        <rect x="620" y="50" width="180" height="56" rx="12" fill="#0f172a" stroke="#eab308" stroke-width="1.6"/>
+        <text x="710" y="76" fill="#eab308" font-weight="700">FIX</text>
+        <text x="710" y="94" fill="#475569" font-size="11">原地修复 final.html</text>
+        <path d="M320,64 C460,30 560,30 618,64" fill="none" stroke="#eab308" stroke-width="1.6" marker-end="url(#ah3)"/>
+        <path d="M620,92 C480,128 460,128 322,92" fill="none" stroke="#eab308" stroke-width="1.6" marker-end="url(#ah3)"/>
+        <text x="470" y="40" fill="#475569" font-size="11">issue 列表</text>
+        <text x="470" y="140" fill="#475569" font-size="11">已修复版本</text>
+        <text x="850" y="84" fill="#eab308" font-size="30">↻×2</text>
+      </g>
+    </svg>
+  </div>
+  <p class="cap">每轮 critique 返回带严重度的 issue 列表,fix agent 必须处理所有 critical/major</p>
+
+  <h2><span class="num" style="background:var(--purple)">⑥</span>Polish · 终检出图</h2>
+  <div class="card">
+    <p style="color:var(--dim);font-size:14.5px;margin-bottom:12px">最后一道质量闸门,逐项核查并修:</p>
+    <div>
+      <span class="pill" style="color:#3b82f6;border-color:rgba(59,130,246,.4)">响应式 375/768/1280</span>
+      <span class="pill" style="color:#a855f7;border-color:rgba(168,85,247,.4)">WCAG AA 对比</span>
+      <span class="pill" style="color:#10b981;border-color:rgba(16,185,129,.4)">prefers-reduced-motion</span>
+      <span class="pill" style="color:#eab308;border-color:rgba(234,179,8,.4)">语义化 + ARIA</span>
+      <span class="pill" style="color:#f97316;border-color:rgba(249,115,22,.4)">无控制台报错</span>
+      <span class="pill" style="color:#ef4444;border-color:rgba(239,68,68,.4)">无残留占位</span>
+    </div>
+  </div>
+
+  <!-- ClaudeDesign 映射 -->
+  <h2><span class="num" style="background:var(--orange)">≡</span>与 ClaudeDesign 原理对照</h2>
+  <div class="card" style="padding:8px">
+    <table>
+      <thead><tr><th>ClaudeDesign 官方原理</th><th>本工作流对应实现</th></tr></thead>
+      <tbody>
+        <tr><td>广度探索(铺开十几个方向)</td><td>② Diverge · 6–8 路独立美学并行</td></tr>
+        <tr><td>最强视觉模型判断</td><td>③ Judge · 6 维 × N 方向独立评审</td></tr>
+        <tr><td>提炼最佳 + 融合</td><td>④ Synthesize · Top3 嫁接升华</td></tr>
+        <tr><td>细粒度控制反复打磨</td><td>⑤ Refine · critique↔fix 循环</td></tr>
+        <tr><td>设计系统贯穿</td><td>① Brief · design tokens 注入每个 agent</td></tr>
+        <tr><td>导出可交付 HTML</td><td>⑥ Polish · QA 后写出 final.html</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 调用 -->
+  <h2><span class="num" style="background:var(--blue)">▶</span>怎么调用</h2>
+  <div class="card">
+<pre><span class="c">// 命名工作流,直接执行</span>
+<span class="k">Workflow</span>({
+  name: <span class="s">"fireworks-design"</span>,
+  args: {
+    prompt:    <span class="s">"AI 笔记应用落地页,隐私优先 + 秒级检索,面向独立开发者"</span>,
+    outputDir: <span class="s">"/Volumes/ExtaData/newcode/design-output/ai-notes"</span>,  <span class="c">// 必须绝对路径</span>
+    variants:  <span class="n">6</span>,       <span class="c">// 探索方向数(默认6,最多8)</span>
+    refineRounds: <span class="n">2</span>,    <span class="c">// 评审-修复轮数(默认2)</span>
+    brand:     <span class="s">"可选:品牌色 #7c3aed,字体 Inter"</span>
+  }
+})</pre>
+    <dl class="kv" style="margin-top:18px">
+      <dt>产出</dt><dd><code class="file">outputDir/final.html</code> + 若干 <code class="file">draft-*.html</code> 探索稿</dd>
+      <dt>返回</dt><dd>胜出风格 · 完整排名 · 所有方向路径 · polish 总结</dd>
+      <dt>模型</dt><dd>所有 agent <b>省略 model</b>,继承当前会话模型</dd>
+      <dt>观察</dt><dd>后台运行,完成后通知;<code class="file">/workflows</code> 看实时进度树</dd>
+    </dl>
+  </div>
+
+  <p class="footer">fireworks-design · 把"广度探索 + 视觉判断 + 反复打磨"流水线化<br>质量是唯一重要的事</p>
+
+</div>
+</body>
+</html>

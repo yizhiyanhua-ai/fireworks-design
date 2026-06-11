@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 220" width="940" height="220" role="img" aria-label="diverge fan-out">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f0f1a"/><stop offset="1" stop-color="#1a1a2e"/></linearGradient>
+    <marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 z" fill="#10b981"/></marker>
+  </defs>
+  <rect width="940" height="220" fill="url(#bg)"/>
+  <text x="470" y="28" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#94a3b8" letter-spacing="2">DIVERGE · 1 BRIEF → 6 DIRECTIONS</text>
+  <g font-family="JetBrains Mono,monospace" font-size="12" text-anchor="middle">
+    <circle cx="90" cy="120" r="36" fill="#0f172a" stroke="#7c3aed" stroke-width="1.8"/>
+    <text x="90" y="116" fill="#a855f7" font-weight="700">BRIEF</text>
+    <text x="90" y="132" fill="#475569" font-size="10">tokens</text>
+    <g stroke="#334155" stroke-width="1.4" fill="none">
+      <path d="M126,120 C220,120 270,50 370,50"/>
+      <path d="M126,120 C220,120 270,80 370,80"/>
+      <path d="M126,120 C220,120 270,110 370,110"/>
+      <path d="M126,120 C220,120 270,140 370,140"/>
+      <path d="M126,120 C220,120 270,170 370,170"/>
+      <path d="M126,120 C220,120 270,195 370,195"/>
+    </g>
+    <g>
+      <rect x="370" y="36" width="130" height="28" rx="7" fill="#0f172a" stroke="#a855f7"/><text x="435" y="54" fill="#e2e8f0">Editorial</text>
+      <rect x="370" y="66" width="130" height="28" rx="7" fill="#0f172a" stroke="#3b82f6"/><text x="435" y="84" fill="#e2e8f0">Minimal</text>
+      <rect x="370" y="96" width="130" height="28" rx="7" fill="#0f172a" stroke="#f97316"/><text x="435" y="114" fill="#e2e8f0">Gradient</text>
+      <rect x="370" y="126" width="130" height="28" rx="7" fill="#0f172a" stroke="#eab308"/><text x="435" y="144" fill="#e2e8f0">Dark Premium</text>
+      <rect x="370" y="156" width="130" height="28" rx="7" fill="#0f172a" stroke="#10b981"/><text x="435" y="174" fill="#e2e8f0">Organic</text>
+      <rect x="370" y="181" width="130" height="28" rx="7" fill="#0f172a" stroke="#ef4444"/><text x="435" y="199" fill="#e2e8f0">Brutalist</text>
+    </g>
+    <g stroke="#10b981" stroke-width="1.4" fill="none">
+      <line x1="500" y1="50" x2="580" y2="50" marker-end="url(#ah2)"/>
+      <line x1="500" y1="80" x2="580" y2="80" marker-end="url(#ah2)"/>
+      <line x1="500" y1="110" x2="580" y2="110" marker-end="url(#ah2)"/>
+      <line x1="500" y1="140" x2="580" y2="140" marker-end="url(#ah2)"/>
+      <line x1="500" y1="170" x2="580" y2="170" marker-end="url(#ah2)"/>
+      <line x1="500" y1="195" x2="580" y2="195" marker-end="url(#ah2)"/>
+    </g>
+    <g fill="#10b981" font-size="11">
+      <text x="720" y="54">draft-1.html</text>
+      <text x="720" y="84">draft-2.html</text>
+      <text x="720" y="114">draft-3.html</text>
+      <text x="720" y="144">draft-4.html</text>
+      <text x="720" y="174">draft-5.html</text>
+      <text x="720" y="199">draft-6.html</text>
+    </g>
+  </g>
+</svg>

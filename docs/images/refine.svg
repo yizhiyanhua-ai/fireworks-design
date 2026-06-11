@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 170" width="940" height="170" role="img" aria-label="refine critique-fix loop">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f0f1a"/><stop offset="1" stop-color="#1a1a2e"/></linearGradient>
+    <marker id="ah3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 z" fill="#eab308"/></marker>
+  </defs>
+  <rect width="940" height="170" fill="url(#bg)"/>
+  <text x="470" y="28" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#94a3b8" letter-spacing="2">REFINE · CRITIQUE ⇄ FIX · ×2</text>
+  <g font-family="JetBrains Mono,monospace" font-size="13" text-anchor="middle">
+    <rect x="160" y="70" width="180" height="56" rx="12" fill="#0f172a" stroke="#ef4444" stroke-width="1.6"/>
+    <text x="250" y="96" fill="#ef4444" font-weight="700">CRITIQUE</text>
+    <text x="250" y="114" fill="#475569" font-size="11">找问题 + 严重度</text>
+    <rect x="620" y="70" width="180" height="56" rx="12" fill="#0f172a" stroke="#eab308" stroke-width="1.6"/>
+    <text x="710" y="96" fill="#eab308" font-weight="700">FIX</text>
+    <text x="710" y="114" fill="#475569" font-size="11">原地修复 final.html</text>
+    <path d="M340,84 C480,50 560,50 618,84" fill="none" stroke="#eab308" stroke-width="1.6" marker-end="url(#ah3)"/>
+    <path d="M620,112 C480,148 460,148 342,112" fill="none" stroke="#eab308" stroke-width="1.6" marker-end="url(#ah3)"/>
+    <text x="480" y="60" fill="#475569" font-size="11">issue 列表</text>
+    <text x="480" y="160" fill="#475569" font-size="11">已修复版本</text>
+    <text x="860" y="106" fill="#eab308" font-size="30">↻×2</text>
+  </g>
+</svg>
