@@ -14,7 +14,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-7c3aed.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/平台-Claude%20Code-1d4ed8.svg)](https://claude.com/claude-code)
-[![Workflow](https://img.shields.io/badge/类型-工作流-f97316.svg)](https://claude.com/claude-code)
+[![Dynamic Workflow](https://img.shields.io/badge/Built%20on-Claude%20Code%20Dynamic%20Workflow-f97316.svg)](#-基于-claude-code-动态工作流dynamic-workflow)
 [![Model](https://img.shields.io/badge/模型-任意-10b981.svg)](#-模型选择)
 [![PRs Welcome](https://img.shields.io/badge/PR-欢迎-eab308.svg)](./CONTRIBUTING.md)
 
@@ -25,6 +25,41 @@
 > **一句话简介:** 别再把质量赌在单次模型输出上。`fireworks-design` 并行探索 6–8 种独立美学、从 6 个设计维度给每条打分、把最优者嫁接融合,再用"评审↔修复"循环打磨到可交付。
 
 ![六阶段流水线](./docs/images/pipeline.svg)
+
+## 🧩 基于 Claude Code 动态工作流(Dynamic Workflow)
+
+`fireworks-design` **不是**一段 prompt、一个库,也不是托管服务。它是一个**由 Claude Code Workflow 运行时执行的 JavaScript 文件——即 *Dynamic Workflow***:确定性的代码去派生模型 agent、并行运行它们、再组合其 schema 校验后的输出。控制流属于脚本(循环、扇出、屏障),而非模型,因此每次运行都可复现、可恢复。你带模型来,它负责编排。
+
+整条流水线约 270 行,结构一眼可读:
+
+```js
+// fireworks-design.js —— 精简到骨架
+phase('Brief');    const brief    = await agentRetry(briefPrompt, { schema: BRIEF_SCHEMA })
+
+phase('Diverge');  const variants = await parallel(LENSES.map(l => () =>          // 扇出:N 个方向
+                    agent(generate(l), { schema: VARIANT_SCHEMA }))).filter(Boolean)
+
+phase('Judge');    const verdicts = await parallel(variants.flatMap(v =>          // 评审面板:N × 6 维
+                    DIMS.map(d => () => agent(judge(v, d), { schema: SCORE_SCHEMA }))))
+
+phase('Synthesize'); await agentRetry(synthesize(top(variants, verdicts)))        // 嫁接最优
+
+for (let i = 0; i < REFINE_ROUNDS; i++) {                                         // 评审 ↔ 修复 循环
+  const issues = await agentRetry(critique, { schema: CRITIQUE_SCHEMA })
+  await agentRetry(fix(issues))
+}
+
+phase('Polish');   await agentRetry(polish)                                       // 出厂 QA
+return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
+```
+
+让它成为"动态"工作流(而非只是调用模型的脚本)的三点:
+
+- **确定性编排** —— `parallel()` 是真正的屏障,`phase()` 分组实时进度,`for` 循环由你掌控。模型绝不决定下一步跑什么。
+- **schema 校验的 agent** —— 每个 `agent()` 返回类型化 JSON,流水线组合的是**数据**,不是散文,无需正则解析模型输出。
+- **可恢复** —— 改个 prompt 重跑,未变更的前缀从缓存回放(`resumeFromRunId`)。
+
+完整文件见 [`fireworks-design.js`](./fireworks-design.js)。各阶段背后的技术见下方 [🔬 技术内核](#-技术内核--是编排不是迭代)。
 
 ## ✨ 为什么会有这个项目
 

@@ -14,7 +14,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-7c3aed.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code-1d4ed8.svg)](https://claude.com/claude-code)
-[![Workflow](https://img.shields.io/badge/Type-Workflow-f97316.svg)](https://claude.com/claude-code)
+[![Dynamic Workflow](https://img.shields.io/badge/Built%20on-Claude%20Code%20Dynamic%20Workflow-f97316.svg)](#-built-on-claude-codes-dynamic-workflow)
 [![Model](https://img.shields.io/badge/Model-agnostic-10b981.svg)](#--model-choices)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-eab308.svg)](./CONTRIBUTING.md)
 
@@ -25,6 +25,41 @@
 > **One-sentence pitch:** Stop rolling the dice on a single model output. `fireworks-design` explores 6–8 independent aesthetics in parallel, scores each across 6 design dimensions, grafts the winners together, then critique-fix-loops the result until it's shippable.
 
 ![Six-phase pipeline](./docs/images/pipeline.svg)
+
+## 🧩 Built on Claude Code's Dynamic Workflow
+
+`fireworks-design` is **not** a prompt, a library, or a hosted service. It's a **single JavaScript file that the Claude Code Workflow runtime executes as a *Dynamic Workflow*** — deterministic code that spawns model agents, runs them in parallel, and composes their schema-validated outputs. Control flow belongs to the script (loops, fan-out, barriers), not to the model, so every run is reproducible and resumable. Bring it your model; it brings the orchestration.
+
+The whole pipeline is ~270 lines with a shape you can read at a glance:
+
+```js
+// fireworks-design.js — condensed to its bones
+phase('Brief');    const brief    = await agentRetry(briefPrompt, { schema: BRIEF_SCHEMA })
+
+phase('Diverge');  const variants = await parallel(LENSES.map(l => () =>          // fan-out: N directions
+                    agent(generate(l), { schema: VARIANT_SCHEMA }))).filter(Boolean)
+
+phase('Judge');    const verdicts = await parallel(variants.flatMap(v =>          // panel: N × 6 dimensions
+                    DIMS.map(d => () => agent(judge(v, d), { schema: SCORE_SCHEMA }))))
+
+phase('Synthesize'); await agentRetry(synthesize(top(variants, verdicts)))        // graft the best
+
+for (let i = 0; i < REFINE_ROUNDS; i++) {                                         // critique ↔ fix loop
+  const issues = await agentRetry(critique, { schema: CRITIQUE_SCHEMA })
+  await agentRetry(fix(issues))
+}
+
+phase('Polish');   await agentRetry(polish)                                       // ship-ready QA
+return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
+```
+
+What makes this a *dynamic* workflow rather than a script that calls a model:
+
+- **Deterministic orchestration** — `parallel()` is a real barrier, `phase()` groups live progress, the `for` loop is yours. The model never decides what runs next.
+- **Schema-validated agents** — every `agent()` returns typed JSON, so the pipeline composes *data*, not prose. No regex-parsing model output.
+- **Resumable** — edit a prompt and re-run; the unchanged prefix replays from cache (`resumeFromRunId`).
+
+Full file: [`fireworks-design.js`](./fireworks-design.js). The technique behind each phase: [🔬 Under the hood](#-under-the-hood--orchestration-not-iteration).
 
 ## ✨ Why this exists
 
