@@ -65,6 +65,25 @@
 ### ⑥ Polish · 终检出图
 最后一道闸门,逐项核查并修:响应式(375/768/1280+)、所有交互态、`prefers-reduced-motion`、语义化 HTML + ARIA、WCAG AA 对比度、无控制台报错、无残留占位 —— 然后写出 `final.html`。
 
+## 🔬 技术内核 —— 是编排,不是迭代
+
+这不是"生成一遍,再让同一个模型自己改"的循环。它是一条**确定性多智能体流水线**,把多项最新的推理期(inference-time)技术组合进一次可复现的运行 —— 构建在 Claude Code Workflow 运行时之上(`parallel()` / `pipeline()` / `agent()` 原语、schema 校验返回、可恢复执行)。
+
+| 技术 | 出现在哪 | 为什么重要 |
+|------|----------|------------|
+| **Best-of-N + 自洽性(self-consistency)** | Diverge → Judge | 生成 N 个方向,保留跨独立评分均分最高者 —— 质量随 N 上升,而非靠运气。 |
+| **LLM-as-judge 评审面板** | Judge | 6 维 × N 方向,评审互不可见彼此答案,消除单一评审偏差。 |
+| **多样化生成(diverse beams)** | Diverge 各风格 | 每个 agent 钉死一种美学,N 个样本覆盖设计空间,而非聚类在同一想法上。 |
+| **批判-修订(Self-Refine / Reflexion)** | Refine | 专职评审输出带严重度的问题,修复 agent 精准施治,循环到过线。 |
+| **融合/嫁接** | Synthesize | 冠军做骨架,其余方向捐献亮点 —— 不是均值合并。 |
+| **结构化工具调用** | 每个 agent | 返回是 schema 校验的 JSON,确定性组合 —— 不靠脆弱的正则解析模型文本。 |
+| **上下文隔离** | 每 agent 独立 | 每个 agent 在自己的上下文里只带必要 token;共享 brief 注入(可缓存),而非反复读取。 |
+| **可恢复执行** | 运行时 | `resumeFromRunId` 对未变更前缀回放缓存结果 —— 中途改 prompt 不必重跑整条。 |
+| **模型无关** | `agent()` 省略 `model` | 继承会话模型。Opus ↔ Sonnet ↔ 任意模型切换,流水线不变。 |
+| **预算/限流感知** | `budget` 全局 + 重试 | fan-out 可随 token 预算缩放;agent 遇 429 自动重试而非崩溃。 |
+
+净效果:你不再指望模型"今天状态好",而是用采样、评审、打磨**工程化出一条质量下限** —— 正是 best-of-N 与 self-consistency 背后的推理期算力扩展(inference-time scaling)思想,用在了设计上。
+
 ## 📦 安装
 
 一条命令,把工作流放进项目即可:

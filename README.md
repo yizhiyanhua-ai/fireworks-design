@@ -65,6 +65,25 @@ A ruthless reviewer returns prioritized issues (severity-tagged); a fixer applie
 ### ⑥ Polish — ship-ready QA
 A final gate checks and fixes: responsiveness (375/768/1280+), all interactive states, `prefers-reduced-motion`, semantic HTML + ARIA, WCAG AA contrast, no console errors, no leftover placeholders — then writes `final.html`.
 
+## 🔬 Under the hood — orchestration, not iteration
+
+This isn't a "generate, then ask the same model to improve it" loop. It's a **deterministic multi-agent pipeline** that composes several modern inference-time techniques into one reproducible run — built on the Claude Code Workflow runtime (`parallel()` / `pipeline()` / `agent()` primitives, schema-validated returns, resumable execution).
+
+| Technique | Where it lives | Why it matters |
+|-----------|----------------|----------------|
+| **Best-of-N + self-consistency** | Diverge → Judge | Generate N directions, keep the one with the highest average across independent scores — quality rises with N, not with luck. |
+| **LLM-as-judge panel** | Judge | 6 dimensions × N directions, scored by critics that never see each other's answers. Kills single-judge bias. |
+| **Diverse generation** *(diverse beams)* | Diverge lenses | Each agent commits to a distinct aesthetic, so the N samples cover the design space instead of clustering on one idea. |
+| **Critique-and-revise** *(Self-Refine / Reflexion)* | Refine | A dedicated critic emits severity-tagged issues; a fixer applies them surgically; loop until the bar clears. |
+| **Synthesis / grafting** | Synthesize | The winner is the skeleton, runners-up donate their best parts — not a merge of averages. |
+| **Structured tool-use** | every agent | Returns are schema-validated JSON, composed deterministically — no brittle regex parsing of model prose. |
+| **Context isolation** | per-agent | Each agent runs in its own context with only the tokens it needs; the shared brief is injected (cacheable), not re-read. |
+| **Resumable execution** | runtime | `resumeFromRunId` replays cached results for the unchanged prefix — edit a prompt mid-run without paying to re-run everything. |
+| **Model-agnostic** | `agent()` omits `model` | Inherits the session model. Swap Opus ↔ Sonnet ↔ anything; the pipeline is identical. |
+| **Budget- & rate-limit-aware** | `budget` global, retries | Fan-out can scale to a token budget; agents auto-retry on 429s instead of crashing the run. |
+
+The net effect: you're not hoping the model has a good day. You're engineering a **quality floor** out of sampling, judging, and refinement — the same inference-time-scaling ideas behind best-of-N and self-consistency, applied to design instead of math.
+
 ## 📦 Install
 
 One command — drop the workflow into your project:
