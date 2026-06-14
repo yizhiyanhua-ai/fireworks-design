@@ -28,7 +28,14 @@
 
 ## 📦 Install
 
-One command — drop the workflow into your project:
+In Claude Code, just say:
+
+> Install fireworks-design into this project — repo is `yizhiyanhua-ai/fireworks-design`.
+
+Claude drops the workflow into `.claude/workflows/` and you're done.
+
+<details>
+<summary><b>Prefer the shell?</b></summary>
 
 ```bash
 mkdir -p .claude/workflows
@@ -36,7 +43,7 @@ curl -fsSL -o .claude/workflows/fireworks-design.js \
   https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/fireworks-design.js
 ```
 
-Run it from your project root (the folder you open `claude` in). Done.
+</details>
 
 ## 🚀 Usage
 

@@ -28,7 +28,14 @@
 
 ## 📦 安装
 
-一条命令,把工作流放进项目即可:
+在 Claude Code 里直接说:
+
+> 把 fireworks-design 装到这个项目,仓库是 `yizhiyanhua-ai/fireworks-design`
+
+Claude 会把工作流放进 `.claude/workflows/`,就装好了。
+
+<details>
+<summary><b>想用命令行?</b></summary>
 
 ```bash
 mkdir -p .claude/workflows
@@ -36,7 +43,7 @@ curl -fsSL -o .claude/workflows/fireworks-design.js \
   https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/fireworks-design.js
 ```
 
-在项目根目录(你打开 `claude` 的那个目录)执行,就完事了。
+</details>
 
 ## 🚀 使用
 
