@@ -26,99 +26,6 @@
 
 ![六阶段流水线](./docs/images/pipeline.svg)
 
-## 🧩 基于 Claude Code 动态工作流(Dynamic Workflow)
-
-`fireworks-design` **不是**一段 prompt、一个库,也不是托管服务。它是一个**由 Claude Code Workflow 运行时执行的 JavaScript 文件——即 *Dynamic Workflow***:确定性的代码去派生模型 agent、并行运行它们、再组合其 schema 校验后的输出。控制流属于脚本(循环、扇出、屏障),而非模型,因此每次运行都可复现、可恢复。你带模型来,它负责编排。
-
-整条流水线约 270 行,结构一眼可读:
-
-```js
-// fireworks-design.js —— 精简到骨架
-phase('Brief');    const brief    = await agentRetry(briefPrompt, { schema: BRIEF_SCHEMA })
-
-phase('Diverge');  const variants = await parallel(LENSES.map(l => () =>          // 扇出:N 个方向
-                    agent(generate(l), { schema: VARIANT_SCHEMA }))).filter(Boolean)
-
-phase('Judge');    const verdicts = await parallel(variants.flatMap(v =>          // 评审面板:N × 6 维
-                    DIMS.map(d => () => agent(judge(v, d), { schema: SCORE_SCHEMA }))))
-
-phase('Synthesize'); await agentRetry(synthesize(top(variants, verdicts)))        // 嫁接最优
-
-for (let i = 0; i < REFINE_ROUNDS; i++) {                                         // 评审 ↔ 修复 循环
-  const issues = await agentRetry(critique, { schema: CRITIQUE_SCHEMA })
-  await agentRetry(fix(issues))
-}
-
-phase('Polish');   await agentRetry(polish)                                       // 出厂 QA
-return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
-```
-
-让它成为"动态"工作流(而非只是调用模型的脚本)的三点:
-
-- **确定性编排** —— `parallel()` 是真正的屏障,`phase()` 分组实时进度,`for` 循环由你掌控。模型绝不决定下一步跑什么。
-- **schema 校验的 agent** —— 每个 `agent()` 返回类型化 JSON,流水线组合的是**数据**,不是散文,无需正则解析模型输出。
-- **可恢复** —— 改个 prompt 重跑,未变更的前缀从缓存回放(`resumeFromRunId`)。
-
-完整文件见 [`fireworks-design.js`](./fireworks-design.js)。各阶段背后的技术见下方 [🔬 技术内核](#-技术内核--是编排不是迭代)。
-
-## ✨ 为什么会有这个项目
-
-即使是经验丰富的设计师也只能克制地探索——很少有时间做十几个方向。引自 [Claude Design 官方公告](https://www.anthropic.com/news/claude-design-anthropic-labs):
-
-> *"即使是经验丰富的设计师也只能克制地探索——很少有时间做十几个方向,所以你只能做那么几个。"*
-
-单次 LLM 生成本质是**从分布里抽一次签**,它的品味、当下倾向、prompt 解读都锁死在那一版里。`fireworks-design` 把这种方差变成**质量下限的保证**:
-
-- **广度探索** —— N 个 agent 并行,各自死磕一种独立美学。
-- **独立评审** —— 评审团从不同设计维度给每条方向打分。
-- **融合升华** —— 以冠军为骨架,嫁接其余方向的亮点。
-- **对抗打磨** —— 评审 → 修复,循环到过线为止。
-
-## 🧠 工作原理 —— 六个阶段
-
-### ① Brief · 提炼设计系统
-一个 agent 把你的 `prompt`(+ 可选 `brand`)压成共享创意 brief:产品定位、受众、必要章节,以及具体的**设计令牌**(字体配对、调色板 hex、基调、参考)。这些令牌会注入之后每一个 agent,保证整条流水线品牌一致。
-
-### ② Diverge · 广度探索 *(质量核心)*
-每个 agent 全身心投入一种美学,产出完整、自包含的 HTML 文件。生成器内部先**拟方案 → 自我批判一次 → 再产出**,而不是直接吐初稿。
-
-![Diverge 扇出](./docs/images/diverge.svg)
-
-### ③ Judge · 评审面板
-每个方向 × 每个设计维度,由独立评审打 1–10 分(6 个方向约 36 路并行)。每条评审还会给出**最高杠杆的修复建议**,直接喂给下一阶段。
-
-![评审矩阵](./docs/images/judge.svg)
-
-### ④ Synthesize · 融合升华
-读 Top-3 方向的源码,以最强者为骨架,嫁接其余亮点,并修掉评委所有 flagged 的问题。产出必须明确超越任何单方向。
-
-### ⑤ Refine · 对抗式打磨
-狠辣评审返回带严重度的优先级问题清单,修复 agent 精准施治。循环 `refineRounds` 次(默认 2)。这就是 ClaudeDesign "fine-grained controls" 的工程化。
-
-![Refine 循环](./docs/images/refine.svg)
-
-### ⑥ Polish · 终检出图
-最后一道闸门,逐项核查并修:响应式(375/768/1280+)、所有交互态、`prefers-reduced-motion`、语义化 HTML + ARIA、WCAG AA 对比度、无控制台报错、无残留占位 —— 然后写出 `final.html`。
-
-## 🔬 技术内核 —— 是编排,不是迭代
-
-这不是"生成一遍,再让同一个模型自己改"的循环。它是一条**确定性多智能体流水线**,把多项最新的推理期(inference-time)技术组合进一次可复现的运行 —— 构建在 Claude Code Workflow 运行时之上(`parallel()` / `pipeline()` / `agent()` 原语、schema 校验返回、可恢复执行)。
-
-| 技术 | 出现在哪 | 为什么重要 |
-|------|----------|------------|
-| **Best-of-N + 自洽性(self-consistency)** | Diverge → Judge | 生成 N 个方向,保留跨独立评分均分最高者 —— 质量随 N 上升,而非靠运气。 |
-| **LLM-as-judge 评审面板** | Judge | 6 维 × N 方向,评审互不可见彼此答案,消除单一评审偏差。 |
-| **多样化生成(diverse beams)** | Diverge 各风格 | 每个 agent 钉死一种美学,N 个样本覆盖设计空间,而非聚类在同一想法上。 |
-| **批判-修订(Self-Refine / Reflexion)** | Refine | 专职评审输出带严重度的问题,修复 agent 精准施治,循环到过线。 |
-| **融合/嫁接** | Synthesize | 冠军做骨架,其余方向捐献亮点 —— 不是均值合并。 |
-| **结构化工具调用** | 每个 agent | 返回是 schema 校验的 JSON,确定性组合 —— 不靠脆弱的正则解析模型文本。 |
-| **上下文隔离** | 每 agent 独立 | 每个 agent 在自己的上下文里只带必要 token;共享 brief 注入(可缓存),而非反复读取。 |
-| **可恢复执行** | 运行时 | `resumeFromRunId` 对未变更前缀回放缓存结果 —— 中途改 prompt 不必重跑整条。 |
-| **模型无关** | `agent()` 省略 `model` | 继承会话模型。Opus ↔ Sonnet ↔ 任意模型切换,流水线不变。 |
-| **预算/限流感知** | `budget` 全局 + 重试 | fan-out 可随 token 预算缩放;agent 遇 429 自动重试而非崩溃。 |
-
-净效果:你不再指望模型"今天状态好",而是用采样、评审、打磨**工程化出一条质量下限** —— 正是 best-of-N 与 self-consistency 背后的推理期算力扩展(inference-time scaling)思想,用在了设计上。
-
 ## 📦 安装
 
 一条命令,把工作流放进项目即可:
@@ -153,62 +60,44 @@ Workflow({
 })
 ```
 
-`prompt` 和 `outputDir`(绝对路径)必填;`variants`(3–8)、`refineRounds`、`brand`、`lenses` 可选。完整参数见下方「参数」表。
-
-</details>
-
-## 💼 使用案例
-
-> 📖 **真实生成成品**(非假设)在 [`examples/`](./examples/README.md) —— 14 张完整页面由真实工作流跑出,含胜出风格、agent/token 成本、以及每个流水线阶段修了什么。
-
-### 案例 1 —— SaaS 落地页
-```
-prompt: "开源向量数据库 'Vector' 的定价+落地页。面向开发者,
-         强调速度基准、代码块 hero、清爽的对比表。"
-variants: 6, refineRounds: 2
-```
-预期:带真实代码片段的磁性 hero、基准数据条、精修的三档定价块,并已校验响应式与对比度。
-
-### 案例 2 —— 开源项目主页
-```
-prompt: "MIT 协议 CLI 工具 'tideline' 的主页。气质:极客、精准、快。
-         含安装命令、3 张特性卡、终端风格 demo。"
-brand: "偏等宽字体,强调色 #10b981,深色 hero"
-variants: 4, refineRounds: 2
-```
-开发者气质页面:可一键复制的安装行、等宽字体点缀、尊重 `prefers-reduced-motion` 的伪终端动画。
-
-### 案例 3 —— 个人作品集
-```
-prompt: "产品设计师的作品集单页。不对称编辑式布局,
-         大字号、精选作品网格、联系 CTA。"
-variants: 8, refineRounds: 3
-```
-最大探索量 —— 八种方向(Editorial / Swiss Minimal / Dark Premium / Brutalist…)评审融合,三轮打磨排版。
-
-### 案例 4 —— 营销单页
-```
-prompt: "一天 AI 大会的活动落地页。醒目倒计时 hero、
-         讲者网格、日程时间线、报名 CTA。"
-brand: "品牌色 #ea580c"
-variants: 6, refineRounds: 2
-```
-
-<details>
-<summary><b>更多快速配方</b></summary>
-
-| 目标 | 建议参数 |
-|------|----------|
-| 快速初版 | `variants: 4, refineRounds: 1` |
-| 极致质量 | `variants: 8, refineRounds: 3` |
-| 锁定品牌 | 用 `brand:` 传 hex + 字体 |
-| 只要特定风格 | `lenses: ["editorial","dark-premium"]` |
+`prompt` 和 `outputDir`(绝对路径)必填;`variants`(3–8)、`refineRounds`、`brand`、`lenses` 可选。完整参数见下方「参数」一节。
 
 </details>
 
 ## ✨ 精选成品(效果解读)
 
 14 个跨完全不同领域的真实页面 —— [**全部 GitHub Pages 在线**](https://yizhiyanhua-ai.github.io/fireworks-design/) · [完整表格 + 深度解读](./examples/README.md)。四个亮点:
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html">
+        <img src="docs/images/examples/movie-rating-platform.png" alt="LUMIÈRE" width="100%">
+      </a>
+      <sub>🎬 <b>LUMIÈRE</b> — 电影评分 · Dark Premium</sub>
+    </td>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html">
+        <img src="docs/images/examples/music-album.png" alt="NOVA · AURORA" width="100%">
+      </a>
+      <sub>🎵 <b>NOVA · AURORA</b> — 专辑 · Bold Editorial</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html">
+        <img src="docs/images/examples/creative-agency.png" alt="OBJECT & ECHO" width="100%">
+      </a>
+      <sub>🎨 <b>OBJECT & ECHO</b> — 工作室 · Bold Editorial</sub>
+    </td>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html">
+        <img src="docs/images/examples/travel-destination.png" alt="AZORES" width="100%">
+      </a>
+      <sub>✈️ <b>AZORES</b> — 旅行 · Bold Editorial</sub>
+    </td>
+  </tr>
+</table>
 
 | | 页面 | 胜出风格 & 契合理由 | 签名时刻 |
 |---|------|---------------------|----------|
@@ -218,6 +107,130 @@ variants: 6, refineRounds: 2
 | ✈️ | [**AZORES**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html) — 旅行 | **Bold Editorial** —— 照片即产品,国家地理 × Cereal 杂志质感 | 可交互岛屿地图 + 呼吸光晕 + 淡入切换详情 |
 
 > **胜出风格的多样性正说明问题:** 14 个 brief 里,Bold Editorial ×8、Dark Premium ×3(电影/餐厅/电商)、Swiss Minimal ×2(健身/教育)、Editorial ×1(公益)。不同气质的 brief 选出不同的最优解 —— 这正是"评审而非一次生成"的价值。完整的 **效果解读**(胜出理由、签名时刻、打磨阶段揪出的真实 bug)在 [`examples/README.md`](./examples/README.md#-featured--效果解读-effect-deep-dives)。
+
+### 🖼️ 全部 14 个在线示例
+
+<table>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html"><img src="docs/images/examples/movie-rating-platform.png" width="100%"></a><br><sub>LUMIÈRE</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/restaurant-fine-dining/final.html"><img src="docs/images/examples/restaurant-fine-dining.png" width="100%"></a><br><sub>MAISON NOIR</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html"><img src="docs/images/examples/creative-agency.png" width="100%"></a><br><sub>OBJECT & ECHO</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html"><img src="docs/images/examples/music-album.png" width="100%"></a><br><sub>NOVA · AURORA</sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/fitness-app/final.html"><img src="docs/images/examples/fitness-app.png" width="100%"></a><br><sub>PULSE</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html"><img src="docs/images/examples/travel-destination.png" width="100%"></a><br><sub>AZORES</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/edtech-course/final.html"><img src="docs/images/examples/edtech-course.png" width="100%"></a><br><sub>LUMEN</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/game-launch/final.html"><img src="docs/images/examples/game-launch.png" width="100%"></a><br><sub>ECHOES OF THE VOID</sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/nonprofit-cause/final.html"><img src="docs/images/examples/nonprofit-cause.png" width="100%"></a><br><sub>Brightwater</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/ecommerce-product/final.html"><img src="docs/images/examples/ecommerce-product.png" width="100%"></a><br><sub>AURA ONE</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/tech-conference/final.html"><img src="docs/images/examples/tech-conference.png" width="100%"></a><br><sub>BUILD/2026</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html"><img src="docs/images/examples/saas-vector-db.png" width="100%"></a><br><sub>vector</sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html"><img src="docs/images/examples/oss-cli-homepage.png" width="100%"></a><br><sub>tideline</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html"><img src="docs/images/examples/designer-portfolio.png" width="100%"></a><br><sub>Lin Hua</sub></td>
+    <td width="25%"></td>
+    <td width="25%"></td>
+  </tr>
+</table>
+
+## 🧠 工作原理 —— 六个阶段
+
+### ① Brief · 提炼设计系统
+一个 agent 把你的 `prompt`(+ 可选 `brand`)压成共享创意 brief:产品定位、受众、必要章节,以及具体的**设计令牌**(字体配对、调色板 hex、基调、参考)。这些令牌会注入之后每一个 agent,保证整条流水线品牌一致。
+
+### ② Diverge · 广度探索 *(质量核心)*
+每个 agent 全身心投入一种美学,产出完整、自包含的 HTML 文件。生成器内部先**拟方案 → 自我批判一次 → 再产出**,而不是直接吐初稿。
+
+![Diverge 扇出](./docs/images/diverge.svg)
+
+### ③ Judge · 评审面板
+每个方向 × 每个设计维度,由独立评审打 1–10 分(6 个方向约 36 路并行)。每条评审还会给出**最高杠杆的修复建议**,直接喂给下一阶段。
+
+![评审矩阵](./docs/images/judge.svg)
+
+### ④ Synthesize · 融合升华
+读 Top-3 方向的源码,以最强者为骨架,嫁接其余亮点,并修掉评委所有 flagged 的问题。产出必须明确超越任何单方向。
+
+### ⑤ Refine · 对抗式打磨
+狠辣评审返回带严重度的优先级问题清单,修复 agent 精准施治。循环 `refineRounds` 次(默认 2)。这就是 ClaudeDesign "fine-grained controls" 的工程化。
+
+![Refine 循环](./docs/images/refine.svg)
+
+### ⑥ Polish · 终检出图
+最后一道闸门,逐项核查并修:响应式(375/768/1280+)、所有交互态、`prefers-reduced-motion`、语义化 HTML + ARIA、WCAG AA 对比度、无控制台报错、无残留占位 —— 然后写出 `final.html`。
+
+## ✨ 为什么会有这个项目
+
+即使是经验丰富的设计师也只能克制地探索——很少有时间做十几个方向。引自 [Claude Design 官方公告](https://www.anthropic.com/news/claude-design-anthropic-labs):
+
+> *"即使是经验丰富的设计师也只能克制地探索——很少有时间做十几个方向,所以你只能做那么几个。"*
+
+单次 LLM 生成本质是**从分布里抽一次签**,它的品味、当下倾向、prompt 解读都锁死在那一版里。`fireworks-design` 把这种方差变成**质量下限的保证**:
+
+- **广度探索** —— N 个 agent 并行,各自死磕一种独立美学。
+- **独立评审** —— 评审团从不同设计维度给每条方向打分。
+- **融合升华** —— 以冠军为骨架,嫁接其余方向的亮点。
+- **对抗打磨** —— 评审 → 修复,循环到过线为止。
+
+---
+
+## 🧩 基于 Claude Code 动态工作流(Dynamic Workflow)
+
+`fireworks-design` **不是**一段 prompt、一个库,也不是托管服务。它是一个**由 Claude Code Workflow 运行时执行的 JavaScript 文件——即 *Dynamic Workflow***:确定性的代码去派生模型 agent、并行运行它们、再组合其 schema 校验后的输出。控制流属于脚本(循环、扇出、屏障),而非模型,因此每次运行都可复现、可恢复。你带模型来,它负责编排。
+
+整条流水线约 270 行,结构一眼可读:
+
+```js
+// fireworks-design.js —— 精简到骨架
+phase('Brief');    const brief    = await agentRetry(briefPrompt, { schema: BRIEF_SCHEMA })
+
+phase('Diverge');  const variants = await parallel(LENSES.map(l => () =>          // 扇出:N 个方向
+                    agent(generate(l), { schema: VARIANT_SCHEMA }))).filter(Boolean)
+
+phase('Judge');    const verdicts = await parallel(variants.flatMap(v =>          // 评审面板:N × 6 维
+                    DIMS.map(d => () => agent(judge(v, d), { schema: SCORE_SCHEMA }))))
+
+phase('Synthesize'); await agentRetry(synthesize(top(variants, verdicts)))        // 嫁接最优
+
+for (let i = 0; i < REFINE_ROUNDS; i++) {                                         // 评审 ↔ 修复 循环
+  const issues = await agentRetry(critique, { schema: CRITIQUE_SCHEMA })
+  await agentRetry(fix(issues))
+}
+
+phase('Polish');   await agentRetry(polish)                                       // 出厂 QA
+return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
+```
+
+让它成为"动态"工作流(而非只是调用模型的脚本)的三点:
+
+- **确定性编排** —— `parallel()` 是真正的屏障,`phase()` 分组实时进度,`for` 循环由你掌控。模型绝不决定下一步跑什么。
+- **schema 校验的 agent** —— 每个 `agent()` 返回类型化 JSON,流水线组合的是**数据**,不是散文,无需正则解析模型输出。
+- **可恢复** —— 改个 prompt 重跑,未变更的前缀从缓存回放(`resumeFromRunId`)。
+
+完整文件见 [`fireworks-design.js`](./fireworks-design.js)。
+
+## 🔬 技术内核 —— 是编排,不是迭代
+
+这不是"生成一遍,再让同一个模型自己改"的循环。它是一条**确定性多智能体流水线**,把多项最新的推理期(inference-time)技术组合进一次可复现的运行 —— 构建在 Claude Code Workflow 运行时之上(`parallel()` / `pipeline()` / `agent()` 原语、schema 校验返回、可恢复执行)。
+
+| 技术 | 出现在哪 | 为什么重要 |
+|------|----------|------------|
+| **Best-of-N + 自洽性(self-consistency)** | Diverge → Judge | 生成 N 个方向,保留跨独立评分均分最高者 —— 质量随 N 上升,而非靠运气。 |
+| **LLM-as-judge 评审面板** | Judge | 6 维 × N 方向,评审互不可见彼此答案,消除单一评审偏差。 |
+| **多样化生成(diverse beams)** | Diverge 各风格 | 每个 agent 钉死一种美学,N 个样本覆盖设计空间,而非聚类在同一想法上。 |
+| **批判-修订(Self-Refine / Reflexion)** | Refine | 专职评审输出带严重度的问题,修复 agent 精准施治,循环到过线。 |
+| **融合/嫁接** | Synthesize | 冠军做骨架,其余方向捐献亮点 —— 不是均值合并。 |
+| **结构化工具调用** | 每个 agent | 返回是 schema 校验的 JSON,确定性组合 —— 不靠脆弱的正则解析模型文本。 |
+| **上下文隔离** | 每 agent 独立 | 每个 agent 在自己的上下文里只带必要 token;共享 brief 注入(可缓存),而非反复读取。 |
+| **可恢复执行** | 运行时 | `resumeFromRunId` 对未变更前缀回放缓存结果 —— 中途改 prompt 不必重跑整条。 |
+| **模型无关** | `agent()` 省略 `model` | 继承会话模型。Opus ↔ Sonnet ↔ 任意模型切换,流水线不变。 |
+| **预算/限流感知** | `budget` 全局 + 重试 | fan-out 可随 token 预算缩放;agent 遇 429 自动重试而非崩溃。 |
+
+净效果:你不再指望模型"今天状态好",而是用采样、评审、打磨**工程化出一条质量下限** —— 正是 best-of-N 与 self-consistency 背后的推理期算力扩展(inference-time scaling)思想,用在了设计上。
 
 ## ⚙️ 参数
 
@@ -251,6 +264,29 @@ variants: 6, refineRounds: 2
 
 ### 🤖 模型选择
 每个 `agent()` 调用**都省略 `model` 参数**,所有子 agent 继承**当前会话模型**。想要顶级质量用 Opus、要速度用 Sonnet、或用你环境里的任意模型 —— 无需改代码。
+
+## 💼 使用案例
+
+几个可试的 prompt(`outputDir` 设为绝对路径):
+
+| 类型 | Prompt | 参数 |
+|------|--------|------|
+| SaaS 落地页 | 开源向量库的定价+落地页;速度基准、代码 hero、对比表。 | `variants: 6` |
+| 开源主页 | MIT CLI 工具;安装命令、3 张特性卡、终端 demo。 | `variants: 4, brand: "等宽, #10b981"` |
+| 作品集 | 设计师单页;不对称编辑式、大字号、作品网格。 | `variants: 8, refineRounds: 3` |
+| 活动 | 一天 AI 大会;倒计时 hero、讲者、日程、报名。 | `variants: 6, brand: "#ea580c"` |
+
+<details>
+<summary><b>更多快速配方</b></summary>
+
+| 目标 | 建议参数 |
+|------|----------|
+| 快速初版 | `variants: 4, refineRounds: 1` |
+| 极致质量 | `variants: 8, refineRounds: 3` |
+| 锁定品牌 | 用 `brand:` 传 hex + 字体 |
+| 只要特定风格 | `lenses: ["editorial","dark-premium"]` |
+
+</details>
 
 ## 🔗 与 ClaudeDesign 原理对照
 

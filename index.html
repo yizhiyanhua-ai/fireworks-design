@@ -161,6 +161,8 @@
   a.ex h3{font-size:16.5px;margin:8px 0 5px;font-weight:700}
   a.ex p{color:var(--dim);font-size:13px;line-height:1.5}
   a.ex .m{margin-top:11px;display:flex;gap:6px;flex-wrap:wrap}
+  a.ex .shot{display:block;width:calc(100% + 40px);margin:-20px -20px 14px;aspect-ratio:128/90;object-fit:cover;border-bottom:1px solid var(--border);transition:transform .3s}
+  a.ex:hover .shot{transform:scale(1.03)}
   .pill{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);color:var(--faint)}
   .ex-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:30px}
   .ex-head .left .k{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
@@ -245,7 +247,7 @@
     </svg>
   </div>
   <div class="wrap inner">
-    <span class="eyebrow"><span class="dot"></span> Open-source · Claude Code workflow</span>
+    <span class="eyebrow"><span class="dot"></span> Open-source · Claude Code Dynamic Workflow</span>
     <h1>One prompt in.<br>A studio's worth of <span class="grad">directions</span> out.</h1>
     <p class="lede"><b>fireworks-design</b> replicates ClaudeDesign — it fans out 6–8 distinct aesthetics in parallel, judges each across 6 design dimensions, synthesizes the best, then adversarially refines to a <b>single shippable page</b>.</p>
 
@@ -329,7 +331,7 @@ curl -fsSL -o .claude/workflows/fireworks-design.js \
     <div class="sec-head reveal">
       <div class="k">How it works</div>
       <h2>Six phases, one shippable page</h2>
-      <p>Every phase is deterministic orchestration over many model agents — no hand-holding, no single lucky roll.</p>
+      <p>A <b style="color:var(--txt)">Claude Code Dynamic Workflow</b> — deterministic orchestration over many model agents in one JS file. No hand-holding, no single lucky roll.</p>
     </div>
     <div class="phases">
       <div class="phase reveal" style="--c:#a855f7"><div class="num">① BRIEF</div><h3>Distill a design system</h3><p>Turn the prompt into shared tokens — fonts, palette, mood — injected into every agent after.</p></div>
@@ -354,20 +356,20 @@ curl -fsSL -o .claude/workflows/fireworks-design.js \
       <a class="btn btn-ghost" href="examples/README.md">Full deep-dives →</a>
     </div>
     <div class="ex-grid">
-      <a class="ex" href="examples/movie-rating-platform/final.html"><div class="k" style="color:var(--gold)">🎬 MOVIE</div><h3>LUMIÈRE</h3><p>Cinematic rating & discovery. Hero 9.2 score, trending, charts, genres.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">49 agents</span></div></a>
-      <a class="ex" href="examples/restaurant-fine-dining/final.html"><div class="k" style="color:var(--gold)">🍽️ DINING</div><h3>MAISON NOIR</h3><p>Fine dining. Tasting menu, candle-lit cellar, antique gold.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/creative-agency/final.html"><div class="k" style="color:var(--green)">🎨 STUDIO</div><h3>OBJECT &amp; ECHO</h3><p>Experimental agency. Kinetic type, object/echo duality, acid signal.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/music-album/final.html"><div class="k" style="color:var(--purple)">🎵 MUSIC</div><h3>NOVA · AURORA</h3><p>Immersive album. Generative cover, 32-bar visualizer, play-state aura.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/fitness-app/final.html"><div class="k" style="color:var(--green)">💪 FITNESS</div><h3>PULSE</h3><p>Training app. Adaptive plans, data-minimal athletic aesthetic.</p><div class="m"><span class="pill">Swiss Minimal</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/travel-destination/final.html"><div class="k" style="color:var(--blue)">✈️ TRAVEL</div><h3>AZORES</h3><p>Destination guide. Interactive islands map, big editorial photography.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/edtech-course/final.html"><div class="k" style="color:var(--orange)">📚 EDTECH</div><h3>LUMEN</h3><p>Learning platform. Course cards, learning-path journey animation.</p><div class="m"><span class="pill">Swiss Minimal</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/game-launch/final.html"><div class="k" style="color:var(--blue)">🎮 GAME</div><h3>ECHOES OF THE VOID</h3><p>AAA promo. Ship-status HUD, cinematic title reveal, editions.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/nonprofit-cause/final.html"><div class="k" style="color:var(--blue)">🤝 NONPROFIT</div><h3>Brightwater</h3><p>Clean-water cause. Animated donation well, transparency donut.</p><div class="m"><span class="pill">Editorial</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/ecommerce-product/final.html"><div class="k" style="color:var(--gold)">🛒 COMMERCE</div><h3>AURA ONE</h3><p>Premium headphones. Variant picker, instrument-grade specs.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/tech-conference/final.html"><div class="k" style="color:var(--orange)">🎤 CONFERENCE</div><h3>BUILD/2026</h3><p>Dev conference. Multi-track schedule, build-pipeline graph.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">29 agents</span></div></a>
-      <a class="ex" href="examples/saas-vector-db/final.html"><div class="k" style="color:var(--orange)">🗄️ SAAS</div><h3>vector</h3><p>Vector DB landing. Benchmark stats, Python snippet, pricing.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">49 agents</span></div></a>
-      <a class="ex" href="examples/oss-cli-homepage/final.html"><div class="k" style="color:var(--blue)">⌨️ OSS</div><h3>tideline</h3><p>CLI homepage. Install command, terminal demo, monospace.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
-      <a class="ex" href="examples/designer-portfolio/final.html"><div class="k" style="color:var(--green)">🖼️ PORTFOLIO</div><h3>Lin Hua</h3><p>Designer portfolio. Stat hero, 6-project grid, testimonials.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">enriched</span></div></a>
+      <a class="ex" href="examples/movie-rating-platform/final.html"><img class="shot" src="docs/images/examples/movie-rating-platform.png" alt="" loading="lazy"><div class="k" style="color:var(--gold)">🎬 MOVIE</div><h3>LUMIÈRE</h3><p>Cinematic rating & discovery. Hero 9.2 score, trending, charts, genres.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">49 agents</span></div></a>
+      <a class="ex" href="examples/restaurant-fine-dining/final.html"><img class="shot" src="docs/images/examples/restaurant-fine-dining.png" alt="" loading="lazy"><div class="k" style="color:var(--gold)">🍽️ DINING</div><h3>MAISON NOIR</h3><p>Fine dining. Tasting menu, candle-lit cellar, antique gold.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/creative-agency/final.html"><img class="shot" src="docs/images/examples/creative-agency.png" alt="" loading="lazy"><div class="k" style="color:var(--green)">🎨 STUDIO</div><h3>OBJECT &amp; ECHO</h3><p>Experimental agency. Kinetic type, object/echo duality, acid signal.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/music-album/final.html"><img class="shot" src="docs/images/examples/music-album.png" alt="" loading="lazy"><div class="k" style="color:var(--purple)">🎵 MUSIC</div><h3>NOVA · AURORA</h3><p>Immersive album. Generative cover, 32-bar visualizer, play-state aura.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/fitness-app/final.html"><img class="shot" src="docs/images/examples/fitness-app.png" alt="" loading="lazy"><div class="k" style="color:var(--green)">💪 FITNESS</div><h3>PULSE</h3><p>Training app. Adaptive plans, data-minimal athletic aesthetic.</p><div class="m"><span class="pill">Swiss Minimal</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/travel-destination/final.html"><img class="shot" src="docs/images/examples/travel-destination.png" alt="" loading="lazy"><div class="k" style="color:var(--blue)">✈️ TRAVEL</div><h3>AZORES</h3><p>Destination guide. Interactive islands map, big editorial photography.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/edtech-course/final.html"><img class="shot" src="docs/images/examples/edtech-course.png" alt="" loading="lazy"><div class="k" style="color:var(--orange)">📚 EDTECH</div><h3>LUMEN</h3><p>Learning platform. Course cards, learning-path journey animation.</p><div class="m"><span class="pill">Swiss Minimal</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/game-launch/final.html"><img class="shot" src="docs/images/examples/game-launch.png" alt="" loading="lazy"><div class="k" style="color:var(--blue)">🎮 GAME</div><h3>ECHOES OF THE VOID</h3><p>AAA promo. Ship-status HUD, cinematic title reveal, editions.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/nonprofit-cause/final.html"><img class="shot" src="docs/images/examples/nonprofit-cause.png" alt="" loading="lazy"><div class="k" style="color:var(--blue)">🤝 NONPROFIT</div><h3>Brightwater</h3><p>Clean-water cause. Animated donation well, transparency donut.</p><div class="m"><span class="pill">Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/ecommerce-product/final.html"><img class="shot" src="docs/images/examples/ecommerce-product.png" alt="" loading="lazy"><div class="k" style="color:var(--gold)">🛒 COMMERCE</div><h3>AURA ONE</h3><p>Premium headphones. Variant picker, instrument-grade specs.</p><div class="m"><span class="pill">Dark Premium</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/tech-conference/final.html"><img class="shot" src="docs/images/examples/tech-conference.png" alt="" loading="lazy"><div class="k" style="color:var(--orange)">🎤 CONFERENCE</div><h3>BUILD/2026</h3><p>Dev conference. Multi-track schedule, build-pipeline graph.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">29 agents</span></div></a>
+      <a class="ex" href="examples/saas-vector-db/final.html"><img class="shot" src="docs/images/examples/saas-vector-db.png" alt="" loading="lazy"><div class="k" style="color:var(--orange)">🗄️ SAAS</div><h3>vector</h3><p>Vector DB landing. Benchmark stats, Python snippet, pricing.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">49 agents</span></div></a>
+      <a class="ex" href="examples/oss-cli-homepage/final.html"><img class="shot" src="docs/images/examples/oss-cli-homepage.png" alt="" loading="lazy"><div class="k" style="color:var(--blue)">⌨️ OSS</div><h3>tideline</h3><p>CLI homepage. Install command, terminal demo, monospace.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">35 agents</span></div></a>
+      <a class="ex" href="examples/designer-portfolio/final.html"><img class="shot" src="docs/images/examples/designer-portfolio.png" alt="" loading="lazy"><div class="k" style="color:var(--green)">🖼️ PORTFOLIO</div><h3>Lin Hua</h3><p>Designer portfolio. Stat hero, 6-project grid, testimonials.</p><div class="m"><span class="pill">Bold Editorial</span><span class="pill">enriched</span></div></a>
     </div>
   </div>
 </section>

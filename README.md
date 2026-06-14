@@ -15,7 +15,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-7c3aed.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code-1d4ed8.svg)](https://claude.com/claude-code)
 [![Dynamic Workflow](https://img.shields.io/badge/Built%20on-Claude%20Code%20Dynamic%20Workflow-f97316.svg)](#-built-on-claude-codes-dynamic-workflow)
-[![Model](https://img.shields.io/badge/Model-agnostic-10b981.svg)](#--model-choices)
+[![Model](https://img.shields.io/badge/Model-agnostic-10b981.svg)](#-model-choices)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-eab308.svg)](./CONTRIBUTING.md)
 
 </div>
@@ -25,99 +25,6 @@
 > **One-sentence pitch:** Stop rolling the dice on a single model output. `fireworks-design` explores 6–8 independent aesthetics in parallel, scores each across 6 design dimensions, grafts the winners together, then critique-fix-loops the result until it's shippable.
 
 ![Six-phase pipeline](./docs/images/pipeline.svg)
-
-## 🧩 Built on Claude Code's Dynamic Workflow
-
-`fireworks-design` is **not** a prompt, a library, or a hosted service. It's a **single JavaScript file that the Claude Code Workflow runtime executes as a *Dynamic Workflow*** — deterministic code that spawns model agents, runs them in parallel, and composes their schema-validated outputs. Control flow belongs to the script (loops, fan-out, barriers), not to the model, so every run is reproducible and resumable. Bring it your model; it brings the orchestration.
-
-The whole pipeline is ~270 lines with a shape you can read at a glance:
-
-```js
-// fireworks-design.js — condensed to its bones
-phase('Brief');    const brief    = await agentRetry(briefPrompt, { schema: BRIEF_SCHEMA })
-
-phase('Diverge');  const variants = await parallel(LENSES.map(l => () =>          // fan-out: N directions
-                    agent(generate(l), { schema: VARIANT_SCHEMA }))).filter(Boolean)
-
-phase('Judge');    const verdicts = await parallel(variants.flatMap(v =>          // panel: N × 6 dimensions
-                    DIMS.map(d => () => agent(judge(v, d), { schema: SCORE_SCHEMA }))))
-
-phase('Synthesize'); await agentRetry(synthesize(top(variants, verdicts)))        // graft the best
-
-for (let i = 0; i < REFINE_ROUNDS; i++) {                                         // critique ↔ fix loop
-  const issues = await agentRetry(critique, { schema: CRITIQUE_SCHEMA })
-  await agentRetry(fix(issues))
-}
-
-phase('Polish');   await agentRetry(polish)                                       // ship-ready QA
-return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
-```
-
-What makes this a *dynamic* workflow rather than a script that calls a model:
-
-- **Deterministic orchestration** — `parallel()` is a real barrier, `phase()` groups live progress, the `for` loop is yours. The model never decides what runs next.
-- **Schema-validated agents** — every `agent()` returns typed JSON, so the pipeline composes *data*, not prose. No regex-parsing model output.
-- **Resumable** — edit a prompt and re-run; the unchanged prefix replays from cache (`resumeFromRunId`).
-
-Full file: [`fireworks-design.js`](./fireworks-design.js). The technique behind each phase: [🔬 Under the hood](#-under-the-hood--orchestration-not-iteration).
-
-## ✨ Why this exists
-
-Even experienced designers ration exploration — there's rarely time to prototype a dozen directions, so you settle for two. From the [Claude Design announcement](https://www.anthropic.com/news/claude-design-anthropic-labs):
-
-> *"Even experienced designers have to ration exploration — there's rarely time to prototype a dozen directions, so you limit yourself to a few."*
-
-A single LLM generation is **one draw from a distribution**. Its taste, mood, and prompt interpretation are locked into that one version. `fireworks-design` turns that variance into a **quality floor** by:
-
-- **Exploring widely** — N parallel agents, each committed to a distinct aesthetic.
-- **Judging independently** — a panel scores every direction across separate design dimensions.
-- **Synthesizing** — taking the winner as the skeleton and grafting the best of the runners-up.
-- **Refining adversarially** — critique → fix, looped until it clears the bar.
-
-## 🧠 How it works — six phases
-
-### ① Brief — distill a design system
-One agent turns your `prompt` (+ optional `brand`) into a shared creative brief: product framing, audience, required sections, and concrete **design tokens** (font pairings, palette hexes, mood, references). These tokens are injected into every subsequent agent, so the whole pipeline stays on-brand.
-
-### ② Diverge — wide exploration *(the quality core)*
-Each agent commits fully to one aesthetic and produces a complete, self-contained HTML file. Each generator internally **plans → self-critiques → produces**, rather than dumping a first draft.
-
-![Diverge fan-out](./docs/images/diverge.svg)
-
-### ③ Judge — panel scoring
-Every direction × every design dimension, scored 1–10 by independent critics (~36 critiques in parallel for 6 directions). Each verdict also returns its **single highest-leverage fix**, which feeds the next phase.
-
-![Judge matrix](./docs/images/judge.svg)
-
-### ④ Synthesize — graft the best
-Reads the Top-3 directions' source, uses the strongest as the base, folds in the best elements of the others, and fixes every issue the judges flagged. The output must clearly beat any single direction.
-
-### ⑤ Refine — adversarial polishing
-A ruthless reviewer returns prioritized issues (severity-tagged); a fixer applies them surgically. Looped `refineRounds` times (default 2). This is ClaudeDesign's "fine-grained controls," engineered.
-
-![Refine loop](./docs/images/refine.svg)
-
-### ⑥ Polish — ship-ready QA
-A final gate checks and fixes: responsiveness (375/768/1280+), all interactive states, `prefers-reduced-motion`, semantic HTML + ARIA, WCAG AA contrast, no console errors, no leftover placeholders — then writes `final.html`.
-
-## 🔬 Under the hood — orchestration, not iteration
-
-This isn't a "generate, then ask the same model to improve it" loop. It's a **deterministic multi-agent pipeline** that composes several modern inference-time techniques into one reproducible run — built on the Claude Code Workflow runtime (`parallel()` / `pipeline()` / `agent()` primitives, schema-validated returns, resumable execution).
-
-| Technique | Where it lives | Why it matters |
-|-----------|----------------|----------------|
-| **Best-of-N + self-consistency** | Diverge → Judge | Generate N directions, keep the one with the highest average across independent scores — quality rises with N, not with luck. |
-| **LLM-as-judge panel** | Judge | 6 dimensions × N directions, scored by critics that never see each other's answers. Kills single-judge bias. |
-| **Diverse generation** *(diverse beams)* | Diverge lenses | Each agent commits to a distinct aesthetic, so the N samples cover the design space instead of clustering on one idea. |
-| **Critique-and-revise** *(Self-Refine / Reflexion)* | Refine | A dedicated critic emits severity-tagged issues; a fixer applies them surgically; loop until the bar clears. |
-| **Synthesis / grafting** | Synthesize | The winner is the skeleton, runners-up donate their best parts — not a merge of averages. |
-| **Structured tool-use** | every agent | Returns are schema-validated JSON, composed deterministically — no brittle regex parsing of model prose. |
-| **Context isolation** | per-agent | Each agent runs in its own context with only the tokens it needs; the shared brief is injected (cacheable), not re-read. |
-| **Resumable execution** | runtime | `resumeFromRunId` replays cached results for the unchanged prefix — edit a prompt mid-run without paying to re-run everything. |
-| **Model-agnostic** | `agent()` omits `model` | Inherits the session model. Swap Opus ↔ Sonnet ↔ anything; the pipeline is identical. |
-| **Budget- & rate-limit-aware** | `budget` global, retries | Fan-out can scale to a token budget; agents auto-retry on 429s instead of crashing the run. |
-
-The net effect: you're not hoping the model has a good day. You're engineering a **quality floor** out of sampling, judging, and refinement — the same inference-time-scaling ideas behind best-of-N and self-consistency, applied to design instead of math.
 
 ## 📦 Install
 
@@ -153,62 +60,44 @@ Workflow({
 })
 ```
 
-`prompt` and `outputDir` (absolute path) are required; `variants` (3–8), `refineRounds`, `brand`, and `lenses` are optional. Full reference in the **Arguments** table below.
-
-</details>
-
-## 💼 Example cases
-
-> 📖 **Real generated outputs** (not hypothetical) live in [`examples/`](./examples/README.md) — 14 full pages produced by actual workflow runs, with the winner, agent/token cost, and what each pipeline stage fixed.
-
-### Case 1 — SaaS landing page
-```
-prompt: "Pricing + landing page for 'Vector', an open-source vector DB. Developer audience,
-         emphasize speed benchmarks, a code block hero, and a clean comparison table."
-variants: 6, refineRounds: 2
-```
-Expect a magnetic hero with a real code snippet, a benchmark stat strip, and a polished 3-tier pricing block — cross-checked for responsive behavior and contrast.
-
-### Case 2 — Open-source project homepage
-```
-prompt: "Homepage for an MIT-licensed CLI tool called 'tideline'. Tone: hacker, precise, fast.
-         Include install command, 3 feature cards, and a terminal-style demo."
-brand: "mono-leaning, accent #10b981, dark hero"
-variants: 4, refineRounds: 2
-```
-A developer-grade page with a copy-to-clipboard install line, monospace accents, and a fake-terminal animation that respects `prefers-reduced-motion`.
-
-### Case 3 — Personal portfolio
-```
-prompt: "Portfolio one-pager for a product designer. Asymmetric editorial layout,
-         large type, a selected-works grid, and a contact CTA."
-variants: 8, refineRounds: 3
-```
-Maximum exploration — eight directions (Editorial, Swiss Minimal, Dark Premium, Brutalist…) judged and merged; three refine rounds for type polish.
-
-### Case 4 — Marketing one-pager
-```
-prompt: "Event landing page for a one-day AI conference. Bold countdown hero,
-         speaker grid, schedule timeline, and a registration CTA."
-brand: "brand color #ea580c"
-variants: 6, refineRounds: 2
-```
-
-<details>
-<summary><b>More quick recipes</b></summary>
-
-| Goal | Suggested args |
-|------|----------------|
-| Fast first draft | `variants: 4, refineRounds: 1` |
-| Maximum quality | `variants: 8, refineRounds: 3` |
-| Brand-locked | pass `brand:` with hexes + fonts |
-| Specific aesthetics only | `lenses: ["editorial","dark-premium"]` |
+`prompt` and `outputDir` (absolute path) are required; `variants` (3–8), `refineRounds`, `brand`, and `lenses` are optional. Full reference in the **Arguments** section below.
 
 </details>
 
 ## ✨ Featured outputs (效果解读)
 
 14 real pages across totally different domains — [**all live on GitHub Pages**](https://yizhiyanhua-ai.github.io/fireworks-design/) · [full table + deep-dives](./examples/README.md). Four highlights:
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html">
+        <img src="docs/images/examples/movie-rating-platform.png" alt="LUMIÈRE" width="100%">
+      </a>
+      <sub>🎬 <b>LUMIÈRE</b> — movie rating · Dark Premium</sub>
+    </td>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html">
+        <img src="docs/images/examples/music-album.png" alt="NOVA · AURORA" width="100%">
+      </a>
+      <sub>🎵 <b>NOVA · AURORA</b> — album · Bold Editorial</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html">
+        <img src="docs/images/examples/creative-agency.png" alt="OBJECT & ECHO" width="100%">
+      </a>
+      <sub>🎨 <b>OBJECT & ECHO</b> — studio · Bold Editorial</sub>
+    </td>
+    <td width="50%" align="center" valign="bottom">
+      <a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html">
+        <img src="docs/images/examples/travel-destination.png" alt="AZORES" width="100%">
+      </a>
+      <sub>✈️ <b>AZORES</b> — travel · Bold Editorial</sub>
+    </td>
+  </tr>
+</table>
 
 | | Page | Winner & why it fits | Signature moment |
 |---|------|---------------------|------------------|
@@ -217,7 +106,131 @@ variants: 6, refineRounds: 2
 | 🎨 | [**OBJECT & ECHO**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html) — studio | **Bold Editorial** — gallery-zine, kinetic grotesque "object" vs ghosted italic "echo" | spatial afterimage echo behind the hero wordmark |
 | ✈️ | [**AZORES**](https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html) — travel | **Bold Editorial** — photography-as-product, NatGeo-meets-Cereal | interactive islands map with breathing halo + cross-fade detail panel |
 
-> **Winner diversity proves the point:** across 14 briefs, Bold Editorial won ×8, Dark Premium ×3 (movie/restaurant/ecommerce), Swiss Minimal ×2 (fitness/edtech), Editorial ×1 (nonprofit). Different briefs crown different winners — that's why we judge instead of generating once. Read the full **效果解读** (winning rationale, signature moments, real bugs the refine/polish pass caught) in [`examples/README.md`](./examples/README.md#-featured--效果解读-effect-deep-dives).
+> **Winner diversity proves the point:** across 14 briefs, Bold Editorial won ×8, Dark Premium ×3 (movie/restaurant/ecommerce), Swiss Minimal ×2 (fitness/edtech), Editorial ×1 (nonprofit). Different briefs crown different winners — that's why we judge instead of generating once. Full **效果解读** (winning rationale, signature moments, real bugs the refine/polish pass caught) in [`examples/README.md`](./examples/README.md#-featured--效果解读-effect-deep-dives).
+
+### 🖼️ Gallery — all 14 live examples
+
+<table>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/movie-rating-platform/final.html"><img src="docs/images/examples/movie-rating-platform.png" width="100%"></a><br><sub>LUMIÈRE</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/restaurant-fine-dining/final.html"><img src="docs/images/examples/restaurant-fine-dining.png" width="100%"></a><br><sub>MAISON NOIR</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/creative-agency/final.html"><img src="docs/images/examples/creative-agency.png" width="100%"></a><br><sub>OBJECT & ECHO</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/music-album/final.html"><img src="docs/images/examples/music-album.png" width="100%"></a><br><sub>NOVA · AURORA</sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/fitness-app/final.html"><img src="docs/images/examples/fitness-app.png" width="100%"></a><br><sub>PULSE</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/travel-destination/final.html"><img src="docs/images/examples/travel-destination.png" width="100%"></a><br><sub>AZORES</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/edtech-course/final.html"><img src="docs/images/examples/edtech-course.png" width="100%"></a><br><sub>LUMEN</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/game-launch/final.html"><img src="docs/images/examples/game-launch.png" width="100%"></a><br><sub>ECHOES OF THE VOID</sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/nonprofit-cause/final.html"><img src="docs/images/examples/nonprofit-cause.png" width="100%"></a><br><sub>Brightwater</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/ecommerce-product/final.html"><img src="docs/images/examples/ecommerce-product.png" width="100%"></a><br><sub>AURA ONE</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/tech-conference/final.html"><img src="docs/images/examples/tech-conference.png" width="100%"></a><br><sub>BUILD/2026</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/saas-vector-db/final.html"><img src="docs/images/examples/saas-vector-db.png" width="100%"></a><br><sub>vector</sub></td>
+  </tr>
+  <tr>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/oss-cli-homepage/final.html"><img src="docs/images/examples/oss-cli-homepage.png" width="100%"></a><br><sub>tideline</sub></td>
+    <td width="25%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/designer-portfolio/final.html"><img src="docs/images/examples/designer-portfolio.png" width="100%"></a><br><sub>Lin Hua</sub></td>
+    <td width="25%"></td>
+    <td width="25%"></td>
+  </tr>
+</table>
+
+## 🧠 How it works — six phases
+
+### ① Brief — distill a design system
+One agent turns your `prompt` (+ optional `brand`) into a shared creative brief: product framing, audience, required sections, and concrete **design tokens** (font pairings, palette hexes, mood, references). These tokens are injected into every subsequent agent, so the whole pipeline stays on-brand.
+
+### ② Diverge — wide exploration *(the quality core)*
+Each agent commits fully to one aesthetic and produces a complete, self-contained HTML file. Each generator internally **plans → self-critiques → produces**, rather than dumping a first draft.
+
+![Diverge fan-out](./docs/images/diverge.svg)
+
+### ③ Judge — panel scoring
+Every direction × every design dimension, scored 1–10 by independent critics (~36 critiques in parallel for 6 directions). Each verdict also returns its **single highest-leverage fix**, which feeds the next phase.
+
+![Judge matrix](./docs/images/judge.svg)
+
+### ④ Synthesize — graft the best
+Reads the Top-3 directions' source, uses the strongest as the base, folds in the best elements of the others, and fixes every issue the judges flagged. The output must clearly beat any single direction.
+
+### ⑤ Refine — adversarial polishing
+A ruthless reviewer returns prioritized issues (severity-tagged); a fixer applies them surgically. Looped `refineRounds` times (default 2). This is ClaudeDesign's "fine-grained controls," engineered.
+
+![Refine loop](./docs/images/refine.svg)
+
+### ⑥ Polish — ship-ready QA
+A final gate checks and fixes: responsiveness (375/768/1280+), all interactive states, `prefers-reduced-motion`, semantic HTML + ARIA, WCAG AA contrast, no console errors, no leftover placeholders — then writes `final.html`.
+
+## ✨ Why this exists
+
+Even experienced designers ration exploration — there's rarely time to prototype a dozen directions, so you settle for two. From the [Claude Design announcement](https://www.anthropic.com/news/claude-design-anthropic-labs):
+
+> *"Even experienced designers have to ration exploration — there's rarely time to prototype a dozen directions, so you limit yourself to a few."*
+
+A single LLM generation is **one draw from a distribution**. Its taste, mood, and prompt interpretation are locked into that one version. `fireworks-design` turns that variance into a **quality floor** by:
+
+- **Exploring widely** — N parallel agents, each committed to a distinct aesthetic.
+- **Judging independently** — a panel scores every direction across separate design dimensions.
+- **Synthesizing** — taking the winner as the skeleton and grafting the best of the runners-up.
+- **Refining adversarially** — critique → fix, looped until it clears the bar.
+
+---
+
+## 🧩 Built on Claude Code's Dynamic Workflow
+
+`fireworks-design` is **not** a prompt, a library, or a hosted service. It's a **single JavaScript file that the Claude Code Workflow runtime executes as a *Dynamic Workflow*** — deterministic code that spawns model agents, runs them in parallel, and composes their schema-validated outputs. Control flow belongs to the script (loops, fan-out, barriers), not to the model, so every run is reproducible and resumable. Bring it your model; it brings the orchestration.
+
+The whole pipeline is ~270 lines with a shape you can read at a glance:
+
+```js
+// fireworks-design.js — condensed to its bones
+phase('Brief');    const brief    = await agentRetry(briefPrompt, { schema: BRIEF_SCHEMA })
+
+phase('Diverge');  const variants = await parallel(LENSES.map(l => () =>          // fan-out: N directions
+                    agent(generate(l), { schema: VARIANT_SCHEMA }))).filter(Boolean)
+
+phase('Judge');    const verdicts = await parallel(variants.flatMap(v =>          // panel: N × 6 dimensions
+                    DIMS.map(d => () => agent(judge(v, d), { schema: SCORE_SCHEMA }))))
+
+phase('Synthesize'); await agentRetry(synthesize(top(variants, verdicts)))        // graft the best
+
+for (let i = 0; i < REFINE_ROUNDS; i++) {                                         // critique ↔ fix loop
+  const issues = await agentRetry(critique, { schema: CRITIQUE_SCHEMA })
+  await agentRetry(fix(issues))
+}
+
+phase('Polish');   await agentRetry(polish)                                       // ship-ready QA
+return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
+```
+
+What makes this a *dynamic* workflow rather than a script that calls a model:
+
+- **Deterministic orchestration** — `parallel()` is a real barrier, `phase()` groups live progress, the `for` loop is yours. The model never decides what runs next.
+- **Schema-validated agents** — every `agent()` returns typed JSON, so the pipeline composes *data*, not prose. No regex-parsing model output.
+- **Resumable** — edit a prompt and re-run; the unchanged prefix replays from cache (`resumeFromRunId`).
+
+Full file: [`fireworks-design.js`](./fireworks-design.js).
+
+## 🔬 Under the hood — orchestration, not iteration
+
+This isn't a "generate, then ask the same model to improve it" loop. It's a **deterministic multi-agent pipeline** that composes several modern inference-time techniques into one reproducible run — built on the Claude Code Workflow runtime (`parallel()` / `pipeline()` / `agent()` primitives, schema-validated returns, resumable execution).
+
+| Technique | Where it lives | Why it matters |
+|-----------|----------------|----------------|
+| **Best-of-N + self-consistency** | Diverge → Judge | Generate N directions, keep the one with the highest average across independent scores — quality rises with N, not with luck. |
+| **LLM-as-judge panel** | Judge | 6 dimensions × N directions, scored by critics that never see each other's answers. Kills single-judge bias. |
+| **Diverse generation** *(diverse beams)* | Diverge lenses | Each agent commits to a distinct aesthetic, so the N samples cover the design space instead of clustering on one idea. |
+| **Critique-and-revise** *(Self-Refine / Reflexion)* | Refine | A dedicated critic emits severity-tagged issues; a fixer applies them surgically; loop until the bar clears. |
+| **Synthesis / grafting** | Synthesize | The winner is the skeleton, runners-up donate their best parts — not a merge of averages. |
+| **Structured tool-use** | every agent | Returns are schema-validated JSON, composed deterministically — no brittle regex parsing of model prose. |
+| **Context isolation** | per-agent | Each agent runs in its own context with only the tokens it needs; the shared brief is injected (cacheable), not re-read. |
+| **Resumable execution** | runtime | `resumeFromRunId` replays cached results for the unchanged prefix — edit a prompt mid-run without paying to re-run everything. |
+| **Model-agnostic** | `agent()` omits `model` | Inherits the session model. Swap Opus ↔ Sonnet ↔ anything; the pipeline is identical. |
+| **Budget- & rate-limit-aware** | `budget` global, retries | Fan-out can scale to a token budget; agents auto-retry on 429s instead of crashing the run. |
+
+The net effect: you're not hoping the model has a good day. You're engineering a **quality floor** out of sampling, judging, and refinement — the same inference-time-scaling ideas behind best-of-N and self-consistency, applied to design instead of math.
 
 ## ⚙️ Arguments
 
@@ -251,6 +264,29 @@ What the panel scores on: hierarchy · typography · color/contrast · motion ·
 
 ### 🤖 Model choices
 Every `agent()` call **omits the `model` parameter**, so all subagents inherit the **current session model**. Run it on Opus for top quality, on Sonnet for speed, or on any model your harness exposes — no code changes needed.
+
+## 💼 Example cases
+
+A few prompts to try (all `outputDir` set to an absolute path):
+
+| Type | Prompt | Args |
+|------|--------|------|
+| SaaS landing | Pricing + landing for an open-source vector DB; speed benchmarks, code hero, comparison table. | `variants: 6` |
+| OSS homepage | MIT CLI tool; install command, 3 feature cards, terminal demo. | `variants: 4, brand: "mono, #10b981"` |
+| Portfolio | Designer one-pager; asymmetric editorial, large type, works grid. | `variants: 8, refineRounds: 3` |
+| Event | One-day AI conference; countdown hero, speakers, schedule, register CTA. | `variants: 6, brand: "#ea580c"` |
+
+<details>
+<summary><b>More quick recipes</b></summary>
+
+| Goal | Suggested args |
+|------|----------------|
+| Fast first draft | `variants: 4, refineRounds: 1` |
+| Maximum quality | `variants: 8, refineRounds: 3` |
+| Brand-locked | pass `brand:` with hexes + fonts |
+| Specific aesthetics only | `lenses: ["editorial","dark-premium"]` |
+
+</details>
 
 ## 🔗 Mapping to ClaudeDesign
 
