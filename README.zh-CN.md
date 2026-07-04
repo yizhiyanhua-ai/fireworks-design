@@ -32,28 +32,34 @@
 
 > 把 fireworks-design 装到这个项目,仓库是 `yizhiyanhua-ai/fireworks-design`
 
-Claude 会把工作流放进 `.claude/workflows/`,就装好了。
+Claude 会把工作流放进 `.claude/workflows/`,**并**加一个 `/fireworks-design` 斜杠命令 —— 就装好了。
 
 <details>
 <summary><b>想用命令行?</b></summary>
 
 ```bash
-mkdir -p .claude/workflows
+mkdir -p .claude/workflows .claude/commands
 curl -fsSL -o .claude/workflows/fireworks-design.js \
   https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/fireworks-design.js
+curl -fsSL -o .claude/commands/fireworks-design.md \
+  https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/.claude/commands/fireworks-design.md
 ```
 
 </details>
 
 ## 🚀 使用
 
-装好就完事。接下来**直接用自然语言告诉 Claude** 你要什么、放哪里:
+敲斜杠命令,后面跟你的需求:
+
+```
+/fireworks-design 给咖啡店做落地页,存到 ~/design/coffee,6 个方向,品牌色 #7c3aed
+```
+
+Claude 会在后台自动跑工作流(用 `/workflows` 看实时进度),给你一个成品 `final.html`。也可以直接用自然语言:
 
 > 用 fireworks-design 给一个咖啡店做落地页,存到 `~/design/coffee`
 
-Claude 会在后台自动跑工作流(用 `/workflows` 看实时进度),给你一个成品 `final.html`。想调参就顺口说:
-
-> 探索 6 个方向、打磨 3 轮、品牌色用 `#7c3aed`
+想调参就顺口说 —— `探索 8 个方向、打磨 3 轮、品牌色 #7c3aed`。
 
 **你会得到:** 一个自包含的 `final.html`(外加探索阶段的 `draft-*.html`),以及一份「哪个风格胜出、为什么」的总结。
 
@@ -265,6 +271,16 @@ return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
 | `brutalist` | Neo-Brutalist —— 裸边、硬阴影、等宽、高能 |
 | `glass` | Glass Aurora —— 半透明层、极光光斑、背景模糊 |
 | `mono-tech` | Mono Tech —— 等宽点缀、终端/数据导向 |
+| `synthwave` | Synthwave —— 复古未来霓虹,品红/青、铬、透视网格 |
+| `bauhaus` | Bauhaus —— 红黄蓝三原色、几何原语、构成主义 |
+| `art-deco` | Art Deco —— 1920s 金黑配色、对称几何装饰、奢华 |
+| `memphis` | Memphis 80s —— 彩纸形状、波浪线、后现代玩味 |
+| `risograph` | Risograph —— 限色印刷、半调、叠印错位、纸纹 |
+| `scandi` | Nordic Scandi —— 浅木色、柔和、北欧 cozy 极简 |
+| `holographic` | Holographic —— 全息棱镜铬、光线折射、未来感 |
+| `couture` | Fashion Couture —— 满版摄影、极小衬线字标、极致留白 |
+| `punk-zine` | Punk Zine —— 影印拼贴、勒索信字体、DIY 叛逆 |
+| `claymorphism` | Claymorphism —— 柔和 3D 马卡龙、膨胀圆角、触感深度 |
 
 ### 评审维度(`DIMS`)
 评审团打分的维度:层级 · 排版 · 配色/对比 · 动效 · 工程工艺 · 惊艳度/原创性。

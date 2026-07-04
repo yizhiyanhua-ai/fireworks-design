@@ -47,6 +47,16 @@ const LENSES = [
   { key: 'brutalist',    name: 'Neo-Brutalist',    vibe: 'Raw 1-2px borders, hard offset shadows, monospace accents, bold blocks, high-energy, instantly memorable.' },
   { key: 'glass',        name: 'Glass Aurora',     vibe: 'Translucent frosted layers, animated aurora blobs, backdrop-blur, light text on dark, futuristic calm.' },
   { key: 'mono-tech',    name: 'Mono Tech',        vibe: 'Monospace display accents, terminal/data-forward, precise grids, developer-tool aesthetic, chart and stat heavy.' },
+  { key: 'synthwave',    name: 'Synthwave',        vibe: 'Retrofuturist neon: magenta/cyan glow, perspective grid receding to a sunset horizon, chrome type, scanlines, 80s VHS energy on a dark canvas.' },
+  { key: 'bauhaus',      name: 'Bauhaus',          vibe: 'Primary red/yellow/blue on off-white, geometric primitives (circle/triangle/bar) as structure, Helvetica/Akzidenz, constructivist grid, form-follows-function rigor.' },
+  { key: 'art-deco',     name: 'Art Deco',         vibe: '1920s luxury: gold-on-black or gold-on-cream, symmetrical geometric ornament, slender condensed display serif, sunburst/chevron motifs, opulent restraint.' },
+  { key: 'memphis',      name: 'Memphis 80s',      vibe: 'Postmodern playfulness: confetti shapes, squiggles, bold color blocks, mixed patterns, terrazzo, exuberant and irreverent.' },
+  { key: 'risograph',    name: 'Risograph',        vibe: 'Limited 2–3 ink print: halftone dots, overprint misregistration, visible paper grain, punchy flat colors that interact where they overlap. Hand-printed warmth.' },
+  { key: 'scandi',       name: 'Nordic Scandi',    vibe: 'Calm cozy minimalism: pale wood and muted stone tones, generous light, soft rounded forms, restrained palette, hygge warmth, every object considered.' },
+  { key: 'holographic',  name: 'Holographic',      vibe: 'Iridescent prism chrome: shifting holographic gradients, light refraction, iridescent foil, mercurial futuristic surfaces, soft neon pastels.' },
+  { key: 'couture',      name: 'Fashion Couture',  vibe: 'Luxury fashion editorial: full-bleed photography, tiny serif wordmark, extreme negative space, high-contrast black/white with one accent, Vogue-grade couture restraint.' },
+  { key: 'punk-zine',    name: 'Punk Zine',        vibe: 'DIY cut-and-paste: xeroxed collage, ransom-note typography, masking tape, deliberate misalignment, raw high-contrast B&W with marker accents, rebellious.' },
+  { key: 'claymorphism', name: 'Claymorphism',     vibe: 'Soft 3D pastel: rounded inflated shapes, layered soft shadows, matte clay materials, candy pastels, friendly tactile depth.' },
 ]
 const chosen = (A.lenses && Array.isArray(A.lenses) ? LENSES.filter(l => A.lenses.includes(l.key)) : LENSES).slice(0, VARIANT_COUNT)
 

@@ -32,28 +32,34 @@ In Claude Code, just say:
 
 > Install fireworks-design into this project — repo is `yizhiyanhua-ai/fireworks-design`.
 
-Claude drops the workflow into `.claude/workflows/` and you're done.
+Claude drops the workflow into `.claude/workflows/` **and** adds a `/fireworks-design` slash command — done.
 
 <details>
 <summary><b>Prefer the shell?</b></summary>
 
 ```bash
-mkdir -p .claude/workflows
+mkdir -p .claude/workflows .claude/commands
 curl -fsSL -o .claude/workflows/fireworks-design.js \
   https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/fireworks-design.js
+curl -fsSL -o .claude/commands/fireworks-design.md \
+  https://raw.githubusercontent.com/yizhiyanhua-ai/fireworks-design/main/.claude/commands/fireworks-design.md
 ```
 
 </details>
 
 ## 🚀 Usage
 
-That's the whole setup. Now just **talk to Claude in plain language** — say what you want and where to save it:
+Type the slash command, then your request:
+
+```
+/fireworks-design a landing page for a coffee shop, save to ~/design/coffee, 6 directions, brand #7c3aed
+```
+
+Claude runs the workflow in the background (watch it live with `/workflows`) and hands you a finished `final.html`. Or just ask in plain language:
 
 > Use fireworks-design to build a landing page for a coffee shop. Save it to `~/design/coffee`.
 
-Claude runs the workflow in the background (watch it live with `/workflows`) and hands you a finished `final.html`. Tweak it conversationally whenever:
-
-> …explore 6 directions, refine 3 rounds, and use brand color `#7c3aed`.
+Tweak it conversationally — `…explore 8 directions, refine 3 rounds, brand color #7c3aed`.
 
 **What you get:** a single self-contained `final.html` (plus the explored `draft-*.html` directions) and a summary of which aesthetic won and why.
 
@@ -265,6 +271,16 @@ The distinct directions explored in phase ②. Edit the `LENSES` array to add yo
 | `brutalist` | Neo-Brutalist — raw borders, hard shadows, mono, high-energy |
 | `glass` | Glass Aurora — translucent layers, aurora blobs, backdrop blur |
 | `mono-tech` | Mono Tech — monospace accents, terminal/data-forward |
+| `synthwave` | Synthwave — retrofuturist neon, magenta/cyan, chrome, perspective grid |
+| `bauhaus` | Bauhaus — primary red/yellow/blue, geometric primitives, constructivist |
+| `art-deco` | Art Deco — 1920s gold-on-black, symmetrical geometric ornament, luxury |
+| `memphis` | Memphis 80s — confetti shapes, squiggles, postmodern playfulness |
+| `risograph` | Risograph — limited-ink print, halftone, overprint, paper grain |
+| `scandi` | Nordic Scandi — pale wood, muted, cozy minimalism, hygge warmth |
+| `holographic` | Holographic — iridescent prism chrome, light refraction, futuristic |
+| `couture` | Fashion Couture — full-bleed photography, tiny serif, extreme negative space |
+| `punk-zine` | Punk Zine — xerox collage, ransom-note type, DIY rebellious |
+| `claymorphism` | Claymorphism — soft 3D pastel, inflated rounded forms, tactile depth |
 
 ### Judge dimensions (`DIMS`)
 What the panel scores on: hierarchy · typography · color/contrast · motion · engineering craft · delight/originality.

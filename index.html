@@ -101,6 +101,8 @@
   .copy{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:var(--purple);
     font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 9px;border-radius:6px;cursor:pointer;transition:.18s}
   .copy:hover{background:rgba(168,85,247,.22)}
+  .then{font-size:13px;color:var(--faint);margin-top:14px;font-family:'JetBrains Mono',monospace;letter-spacing:.02em}
+  .then code{color:var(--purple);background:rgba(168,85,247,.12);padding:2px 8px;border-radius:6px;border:1px solid rgba(168,85,247,.25)}
   .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:8px}
   .stat{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px 20px;min-width:120px}
   .stat b{display:block;font-family:'Sora',sans-serif;font-size:24px;font-weight:800}
@@ -263,10 +265,11 @@
       <div class="label"><span>~ in claude code, just say</span><button class="copy" id="copy">copy</button></div>
       <pre id="code">Install fireworks-design into this project — repo is <span class="s">yizhiyanhua-ai/fireworks-design</span></pre>
     </div>
+    <p class="then">then type <code>/fireworks-design</code> + your request →</p>
 
     <div class="stats">
       <div class="stat"><b>14</b><span>LIVE EXAMPLES</span></div>
-      <div class="stat"><b>8</b><span>AESTHETICS</span></div>
+      <div class="stat"><b>18</b><span>AESTHETICS</span></div>
       <div class="stat"><b>6</b><span>JUDGE DIMENSIONS</span></div>
       <div class="stat"><b>∞</b><span>MODEL-AGNOSTIC</span></div>
     </div>
