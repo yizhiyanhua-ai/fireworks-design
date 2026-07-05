@@ -17,6 +17,7 @@
 [![Dynamic Workflow](https://img.shields.io/badge/Built%20on-Claude%20Code%20Dynamic%20Workflow-f97316.svg)](#-built-on-claude-codes-dynamic-workflow)
 [![Model](https://img.shields.io/badge/Model-agnostic-10b981.svg)](#-model-choices)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-eab308.svg)](./CONTRIBUTING.md)
+[![Sponsor](https://img.shields.io/badge/❤️-Sponsor-eab308.svg)](https://github.com/sponsors/ccc7574)
 
 </div>
 
@@ -365,6 +366,18 @@ A few prompts to try (all `outputDir` set to an absolute path):
 ## 🤝 Contributing
 
 Contributions welcome — new aesthetic lenses, judge dimensions, or smarter synthesis. Open an issue first to discuss scope. See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## ❤️ Sponsor
+
+If fireworks-design helps you ship, [become a sponsor](https://github.com/sponsors/ccc7574) — it funds new aesthetic lenses, more example domains, and keeps the workflow sharp.
+
+| Tier | Amount | Benefits |
+|------|--------|----------|
+| ☕ Backer | $5/mo (or one-time) | Name in [BACKERS.md](./BACKERS.md) · early access to new lenses |
+| 🎯 Studio | $19/mo | + priority issue triage · vote on new lenses |
+| 🏛️ Patron | $49/mo | + 1 custom lens per quarter · logo in this README |
+
+→ **[github.com/sponsors/ccc7574](https://github.com/sponsors/ccc7574)**
 
 ## 📄 License
 

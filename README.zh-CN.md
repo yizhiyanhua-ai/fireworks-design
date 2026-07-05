@@ -17,6 +17,7 @@
 [![Dynamic Workflow](https://img.shields.io/badge/Built%20on-Claude%20Code%20Dynamic%20Workflow-f97316.svg)](#-基于-claude-code-动态工作流dynamic-workflow)
 [![Model](https://img.shields.io/badge/模型-任意-10b981.svg)](#-模型选择)
 [![PRs Welcome](https://img.shields.io/badge/PR-欢迎-eab308.svg)](./CONTRIBUTING.md)
+[![Sponsor](https://img.shields.io/badge/❤️-赞助-eab308.svg)](https://github.com/sponsors/ccc7574)
 
 </div>
 
@@ -365,6 +366,18 @@ return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
 ## 🤝 贡献
 
 欢迎贡献 —— 新美学风格、评审维度、或更聪明的融合策略。先开 issue 讨论范围。见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+
+## ❤️ 赞助
+
+如果 fireworks-design 帮你交付了更好的页面,[成为赞助者](https://github.com/sponsors/ccc7574) —— 资金用于新增美学风格、更多示例领域、持续打磨。
+
+| 档位 | 金额 | 权益 |
+|------|------|------|
+| ☕ Backer | $5/月(或一次性) | 名字进 [BACKERS.md](./BACKERS.md) · 新风格抢先体验 |
+| 🎯 Studio | $19/月 | + 优先 issue 处理 · 投票决定新风格 |
+| 🏛️ Patron | $49/月 | + 每季度 1 个定制风格 · README 里放 logo |
+
+→ **[github.com/sponsors/ccc7574](https://github.com/sponsors/ccc7574)**
 
 ## 📄 许可证
 
