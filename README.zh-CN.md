@@ -17,7 +17,7 @@
 [![Dynamic Workflow](https://img.shields.io/badge/Built%20on-Claude%20Code%20Dynamic%20Workflow-f97316.svg)](#-基于-claude-code-动态工作流dynamic-workflow)
 [![Model](https://img.shields.io/badge/模型-任意-10b981.svg)](#-模型选择)
 [![PRs Welcome](https://img.shields.io/badge/PR-欢迎-eab308.svg)](./CONTRIBUTING.md)
-[![Sponsor](https://img.shields.io/badge/❤️-赞助-eab308.svg)](https://github.com/sponsors/ccc7574)
+[![Sponsor](https://img.shields.io/badge/❤️-赞助-eab308.svg)](https://paypal.me/yizhiyanhua)
 
 </div>
 
@@ -369,15 +369,15 @@ return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
 
 ## ❤️ 赞助
 
-如果 fireworks-design 帮你交付了更好的页面,[成为赞助者](https://github.com/sponsors/ccc7574) —— 资金用于新增美学风格、更多示例领域、持续打磨。
+如果 fireworks-design 帮你交付了更好的页面,[通过 PayPal 赞助](https://paypal.me/yizhiyanhua) —— 资金用于新增美学风格、更多示例领域、持续打磨。无需美国账户,国际可用。
 
 | 档位 | 金额 | 权益 |
 |------|------|------|
-| ☕ Backer | $50/月(或一次性) | 名字进 [BACKERS.md](./BACKERS.md) · 新风格抢先体验 |
-| 🎯 Studio | $99/月 | + 优先 issue 处理 · 投票决定新风格 |
-| 🏛️ Patron | $199/月 | + 每季度 1 个定制风格 · README 里放 logo |
+| ☕ Backer | [$50](https://paypal.me/yizhiyanhua/50) | 名字进 [BACKERS.md](./BACKERS.md) · 新风格抢先体验 |
+| 🎯 Studio | [$99](https://paypal.me/yizhiyanhua/99) | + 优先 issue 处理 · 投票决定新风格 |
+| 🏛️ Patron | [$199](https://paypal.me/yizhiyanhua/199) | + 每季度 1 个定制风格 · README 里放 logo |
 
-→ **[github.com/sponsors/ccc7574](https://github.com/sponsors/ccc7574)**
+→ **[paypal.me/yizhiyanhua](https://paypal.me/yizhiyanhua)** · 或 [自定义金额](https://paypal.me/yizhiyanhua)
 
 ## 📄 许可证
 

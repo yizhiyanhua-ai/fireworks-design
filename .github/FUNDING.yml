@@ -1,8 +1,9 @@
-# Sponsor fireworks-design — this powers the "Sponsor this project" button on GitHub.
-# Primary: GitHub Sponsors (ccc7574). Add/enable more below as you set them up.
-github: ccc7574
+# Sponsor fireworks-design — powers the "Sponsor this project" button on GitHub.
+# PayPal.me (no US identity required, works internationally).
+custom: ["https://paypal.me/yizhiyanhua"]
+# To add more channels later, append to the list above (max 4 custom URLs),
+# or uncomment one of the platform-specific keys below:
 # open_collective: fireworks-design
 # ko_fi: ccc7574
 # buy_me_a_coffee: ccc7574
-# patreon: # replace
-# custom: ["https://github.com/sponsors/ccc7574"]
+# liberapay: ccc7574
