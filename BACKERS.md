@@ -8,9 +8,9 @@ fireworks-design is MIT-licensed and built in the open. Sponsorship funds new ae
 
 | Tier | Amount | Benefits |
 |------|--------|----------|
-| ☕ Backer | $5/mo (or one-time) | Name below · early access to new lenses |
-| 🎯 Studio | $19/mo | + priority issue triage · vote on new lenses |
-| 🏛️ Patron | $49/mo | + 1 custom lens per quarter · logo in the README |
+| ☕ Backer | $50/mo (or one-time) | Name below · early access to new lenses |
+| 🎯 Studio | $99/mo | + priority issue triage · vote on new lenses |
+| 🏛️ Patron | $199/mo | + 1 custom lens per quarter · logo in the README |
 
 ## Sponsors
 

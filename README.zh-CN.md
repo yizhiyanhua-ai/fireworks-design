@@ -373,9 +373,9 @@ return { outputPath: FINAL_PATH, winner, ranking, summary: polish }
 
 | 档位 | 金额 | 权益 |
 |------|------|------|
-| ☕ Backer | $5/月(或一次性) | 名字进 [BACKERS.md](./BACKERS.md) · 新风格抢先体验 |
-| 🎯 Studio | $19/月 | + 优先 issue 处理 · 投票决定新风格 |
-| 🏛️ Patron | $49/月 | + 每季度 1 个定制风格 · README 里放 logo |
+| ☕ Backer | $50/月(或一次性) | 名字进 [BACKERS.md](./BACKERS.md) · 新风格抢先体验 |
+| 🎯 Studio | $99/月 | + 优先 issue 处理 · 投票决定新风格 |
+| 🏛️ Patron | $199/月 | + 每季度 1 个定制风格 · README 里放 logo |
 
 → **[github.com/sponsors/ccc7574](https://github.com/sponsors/ccc7574)**
 

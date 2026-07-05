@@ -3,11 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f0f1a">
+<meta name="color-scheme" content="dark">
+
 <title>fireworks-design — World-class frontend pages from one prompt</title>
-<meta name="description" content="An open-source Claude Code workflow that replicates ClaudeDesign: explore many design directions, judge them like a panel, synthesize the best, refine to one shippable page.">
+<meta name="description" content="An open-source Claude Code Dynamic Workflow that replicates ClaudeDesign: explore 6–8 design directions in parallel, judge each across 6 dimensions, synthesize the best, and adversarially refine to one shippable, accessible page. 24 live examples, 18 aesthetics, MIT, model-agnostic.">
+<meta name="keywords" content="fireworks-design, Claude Code, ClaudeDesign, dynamic workflow, multi-agent, frontend design, AI design, landing page generator, LLM-as-judge, best-of-N, self-refine, open source design, HTML generator, design workflow">
+<meta name="author" content="yizhiyanhua-ai">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="canonical" href="https://yizhiyanhua-ai.github.io/fireworks-design/">
+<meta name="application-name" content="fireworks-design">
+
+<!-- hreflang: English primary + Chinese alternate -->
+<link rel="alternate" hreflang="en" href="https://yizhiyanhua-ai.github.io/fireworks-design/">
+<link rel="alternate" hreflang="zh" href="https://github.com/yizhiyanhua-ai/fireworks-design/blob/main/README.zh-CN.md">
+<link rel="alternate" hreflang="x-default" href="https://yizhiyanhua-ai.github.io/fireworks-design/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="fireworks-design">
+<meta property="og:title" content="fireworks-design — World-class frontend pages from one prompt">
+<meta property="og:description" content="Open-source Claude Code Dynamic Workflow that replicates ClaudeDesign: explore 8 directions, judge across 6 dimensions, synthesize, refine, polish. 24 live examples. MIT, model-agnostic.">
+<meta property="og:url" content="https://yizhiyanhua-ai.github.io/fireworks-design/">
+<meta property="og:image" content="https://yizhiyanhua-ai.github.io/fireworks-design/docs/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="fireworks-design — 24 live pages, 18 aesthetics, MIT licensed">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="zh_CN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="fireworks-design — World-class frontend pages from one prompt">
+<meta name="twitter:description" content="Open-source Claude Code Dynamic Workflow. Explore 8 directions, judge across 6 dimensions, refine to one shippable page. 24 live examples.">
+<meta name="twitter:image" content="https://yizhiyanhua-ai.github.io/fireworks-design/docs/images/og-image.png">
+<meta name="twitter:image:alt" content="fireworks-design — 24 live pages, 18 aesthetics">
+
 <link rel="icon" href="docs/images/logo/logo-icon.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="docs/images/logo/logo-icon.svg?v=2">
+<link rel="manifest" href="site.webmanifest">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Structured data: SoftwareApplication + FAQPage (SEO + GEO / generative engine) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "fireworks-design",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Cross-platform (Claude Code)",
+  "description": "An open-source Claude Code Dynamic Workflow that replicates ClaudeDesign: explore 6–8 design directions in parallel, judge each across 6 dimensions, synthesize the best, and adversarially refine to one shippable, accessible page.",
+  "url": "https://yizhiyanhua-ai.github.io/fireworks-design/",
+  "downloadUrl": "https://github.com/yizhiyanhua-ai/fireworks-design",
+  "license": "https://github.com/yizhiyanhua-ai/fireworks-design/blob/main/LICENSE",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "yizhiyanhua-ai", "url": "https://github.com/yizhiyanhua-ai" },
+  "softwareVersion": "1.0",
+  "featureList": [
+    "Parallel exploration of 6–8 distinct design directions",
+    "LLM-as-judge panel scoring across 6 dimensions",
+    "Adversarial critique-and-revise refinement",
+    "Schema-validated, resumable, model-agnostic orchestration",
+    "18 aesthetic lenses, 24 live example pages"
+  ],
+  "screenshot": "https://yizhiyanhua-ai.github.io/fireworks-design/docs/images/og-image.png"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Do I need a specific model?","acceptedAnswer":{"@type":"Answer","text":"No. Every agent inherits your current session model. Stronger models explore more sharply, but the judge-and-refine loop lifts any model toward the same bar."}},
+    {"@type":"Question","name":"How long does a fireworks-design run take?","acceptedAnswer":{"@type":"Answer","text":"Roughly 15–30 minutes for 4–6 directions. About 30–50 agents explore, judge, synthesize, and polish in parallel."}},
+    {"@type":"Question","name":"What do I get from a run?","acceptedAnswer":{"@type":"Answer","text":"One self-contained final.html file, the explored draft HTML directions, and a short summary of which aesthetic won and why."}},
+    {"@type":"Question","name":"Can I plug in my own design system?","acceptedAnswer":{"@type":"Answer","text":"Yes. Pass brand notes such as colors, fonts, and references via the brand argument; the brief phase folds your tokens into every agent so the whole pipeline stays on-brand."}},
+    {"@type":"Question","name":"Is fireworks-design free?","acceptedAnswer":{"@type":"Answer","text":"It is MIT-licensed open source and runs locally in your Claude Code. Sponsorship is optional and funds new lenses and examples."}}
+  ]
+}
+</script>
 <style>
   :root{
     --bg:#08080f; --panel:#0f172a; --panel2:#11182b; --border:#26314a; --border2:#334155;
@@ -475,19 +552,19 @@
       <div class="tiers">
         <div class="tier">
           <div class="p">☕ Backer</div>
-          <div class="amt">$5<span>/mo</span></div>
-          <div class="per">or a one-time coffee</div>
+          <div class="amt">$50<span>/mo</span></div>
+          <div class="per">or one-time</div>
           <ul><li>Name in BACKERS.md</li><li>Early access to new lenses</li></ul>
         </div>
         <div class="tier featured">
           <div class="p">🎯 Studio</div>
-          <div class="amt">$19<span>/mo</span></div>
+          <div class="amt">$99<span>/mo</span></div>
           <div class="per">for active users</div>
           <ul><li>Everything in Backer</li><li>Priority issue triage</li><li>Vote on new lenses</li></ul>
         </div>
         <div class="tier">
           <div class="p">🏛️ Patron</div>
-          <div class="amt">$49<span>/mo</span></div>
+          <div class="amt">$199<span>/mo</span></div>
           <div class="per">for teams</div>
           <ul><li>Everything in Studio</li><li>1 custom lens / quarter</li><li>Logo in the README</li></ul>
         </div>

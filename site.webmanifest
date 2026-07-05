@@ -1,0 +1,14 @@
+{
+  "name": "fireworks-design",
+  "short_name": "fireworks-design",
+  "description": "Open-source Claude Code Dynamic Workflow that replicates ClaudeDesign — explore, judge, synthesize, refine to one world-class frontend page.",
+  "start_url": "/fireworks-design/",
+  "scope": "/fireworks-design/",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#0f0f1a",
+  "lang": "en",
+  "icons": [
+    { "src": "docs/images/logo/logo-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

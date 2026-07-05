@@ -373,9 +373,9 @@ If fireworks-design helps you ship, [become a sponsor](https://github.com/sponso
 
 | Tier | Amount | Benefits |
 |------|--------|----------|
-| ☕ Backer | $5/mo (or one-time) | Name in [BACKERS.md](./BACKERS.md) · early access to new lenses |
-| 🎯 Studio | $19/mo | + priority issue triage · vote on new lenses |
-| 🏛️ Patron | $49/mo | + 1 custom lens per quarter · logo in this README |
+| ☕ Backer | $50/mo (or one-time) | Name in [BACKERS.md](./BACKERS.md) · early access to new lenses |
+| 🎯 Studio | $99/mo | + priority issue triage · vote on new lenses |
+| 🏛️ Patron | $199/mo | + 1 custom lens per quarter · logo in this README |
 
 → **[github.com/sponsors/ccc7574](https://github.com/sponsors/ccc7574)**
 

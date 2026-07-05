@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f0f1a"/><stop offset="1" stop-color="#1a1a2e"/></linearGradient>
+    <radialGradient id="glow1" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7c3aed" stop-opacity=".35"/><stop offset="100" stop-color="#7c3aed" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glow2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#f97316" stop-opacity=".22"/><stop offset="100" stop-color="#f97316" stop-opacity="0"/></radialGradient>
+    <linearGradient id="wm" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f97316"/><stop offset=".5" stop-color="#a855f7"/><stop offset="1" stop-color="#3b82f6"/></linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="980" cy="80" rx="380" ry="300" fill="url(#glow1)"/>
+  <ellipse cx="120" cy="560" rx="360" ry="280" fill="url(#glow2)"/>
+
+  <!-- eyebrow -->
+  <text x="600" y="150" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="22" letter-spacing="6" fill="#a855f7" font-weight="600">OPEN SOURCE · CLAUDE CODE DYNAMIC WORKFLOW</text>
+
+  <!-- wordmark -->
+  <text x="600" y="290" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="118" font-weight="800" letter-spacing="-3">
+    <tspan fill="#e2e8f0">fireworks</tspan><tspan fill="url(#wm)">-design</tspan>
+  </text>
+
+  <!-- tagline -->
+  <text x="600" y="370" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="34" fill="#94a3b8" font-weight="500">World-class frontend pages from one prompt.</text>
+
+  <!-- stat row -->
+  <g font-family="'Segoe UI',system-ui,sans-serif" text-anchor="middle">
+    <text x="360" y="450" font-size="40" font-weight="800" fill="#e2e8f0">24</text>
+    <text x="360" y="478" font-size="16" fill="#5b6478" letter-spacing="2">LIVE PAGES</text>
+    <text x="540" y="450" font-size="40" font-weight="800" fill="#e2e8f0">18</text>
+    <text x="540" y="478" font-size="16" fill="#5b6478" letter-spacing="2">AESTHETICS</text>
+    <text x="720" y="450" font-size="40" font-weight="800" fill="#e2e8f0">6</text>
+    <text x="720" y="478" font-size="16" fill="#5b6478" letter-spacing="2">JUDGE DIMS</text>
+    <text x="840" y="450" font-size="40" font-weight="800" fill="#e2e8f0">MIT</text>
+    <text x="840" y="478" font-size="16" fill="#5b6478" letter-spacing="2">LICENSED</text>
+  </g>
+
+  <!-- url -->
+  <text x="600" y="560" text-anchor="middle" font-family="'SF Mono','JetBrains Mono',monospace" font-size="20" fill="#475569" letter-spacing="2">yizhiyanhua-ai.github.io/fireworks-design</text>
+</svg>
