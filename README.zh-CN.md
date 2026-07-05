@@ -150,6 +150,29 @@ Workflow({
   </tr>
 </table>
 
+## 🎨 风格研究 —— 10 种风格 × 10 个主题
+
+10 个新风格,每个配一个贴合它气质的领域(复古街机酒吧、1920s 地下酒吧、高定时装、朋克乐队巡演、儿童学习 App……)。同一套工作流,单风格定向产出。
+
+<table>
+  <tr>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/synthwave/final.html"><img src="docs/images/style-study/synthwave.png" width="100%"></a><br><sub>PIXEL DIVE · synthwave</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/bauhaus/final.html"><img src="docs/images/style-study/bauhaus.png" width="100%"></a><br><sub>FORM & FUNCTION · bauhaus</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/art-deco/final.html"><img src="docs/images/style-study/art-deco.png" width="100%"></a><br><sub>THE GILDED HOUR · art deco</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/memphis/final.html"><img src="docs/images/style-study/memphis.png" width="100%"></a><br><sub>RIOT DECK · memphis</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/risograph/final.html"><img src="docs/images/style-study/risograph.png" width="100%"></a><br><sub>INK & PAPER · riso</sub></td>
+  </tr>
+  <tr>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/scandi/final.html"><img src="docs/images/style-study/scandi.png" width="100%"></a><br><sub>HYGGE & CO · scandi</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/holographic/final.html"><img src="docs/images/style-study/holographic.png" width="100%"></a><br><sub>PRISM · holographic</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/couture/final.html"><img src="docs/images/style-study/couture.png" width="100%"></a><br><sub>VESPER · couture</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/punk-zine/final.html"><img src="docs/images/style-study/punk-zine.png" width="100%"></a><br><sub>BLACKOUT · punk zine</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/claymorphism/final.html"><img src="docs/images/style-study/claymorphism.png" width="100%"></a><br><sub>BLOOM · claymorphism</sub></td>
+  </tr>
+</table>
+
+→ 完整表格 + 每个风格的细节见 [`examples/README.md`](./examples/README.md#-style-study--10-styles--10-themes)。
+
 ## 🧠 工作原理 —— 六个阶段
 
 ### ① Brief · 提炼设计系统

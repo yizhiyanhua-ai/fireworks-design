@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BLACKOUT — TOUR / RECORD / DIY FOREVER</title>
+<meta name="description" content="BLACKOUT tour + record drop. A photocopied zine. Buy a ticket, pre-save the record, grab a shirt. Loud, cheap, handmade." />
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Anton&family=Oswald:wght@600;700&family=Bebas+Neue&family=Archivo+Black&family=Rubik+Mono+One&family=Permanent+Marker&family=Cutive+Mono&display=swap" rel="stylesheet" />
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0a0a0a',
+          paper: '#f3efe4',
+          blood: '#ff2d2d',
+          bloodDeep: '#c81414',
+          shadow: '#111111',
+          ash: '#475569',
+        },
+        fontFamily: {
+          type: ['"Special Elite"', 'monospace'],
+          cond: ['Anton', 'sans-serif'],
+          marker: ['"Permanent Marker"', 'cursive'],
+          mono: ['"Cutive Mono"', 'monospace'],
+          bebas: ['"Bebas Neue"', 'sans-serif'],
+          archivo: ['"Archivo Black"', 'sans-serif'],
+          rubik: ['"Rubik Mono One"', 'sans-serif'],
+          oswald: ['Oswald', 'sans-serif'],
+        },
+        fontSize: {
+          'micro': ['0.64rem', { lineHeight: '1.1', letterSpacing: '0.12em' }],
+          'xs2':   ['0.8rem',   { lineHeight: '1.3' }],
+          'sm2':   ['1rem',     { lineHeight: '1.4' }],
+          'md2':   ['1.25rem',  { lineHeight: '1.35' }],
+          'lg2':   ['1.563rem', { lineHeight: '1.2' }],
+          'xl2':   ['1.953rem', { lineHeight: '1.1' }],
+          '2x2':   ['2.441rem', { lineHeight: '1' }],
+          '3x2':   ['3.052rem', { lineHeight: '0.95' }],
+          '4x2':   ['3.815rem', { lineHeight: '0.9' }],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #f3efe4;
+    --blood: #ff2d2d;
+    --blood-deep: #c81414; /* AA-compliant red for text & small CTA fills (5.1:1 on paper) */
+    --shadow: #111111;
+    --ash: #475569;
+  }
+
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { overflow-x: hidden; }
+
+  body {
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(0,0,0,0.04) 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(0,0,0,0.05) 0, transparent 45%);
+    color: var(--ink);
+    font-family: 'Special Elite', monospace;
+  }
+
+  /* Xerox grain overlay — sits BEHIND content (z-index:1) so red CTAs stay #ff2d2d,
+     not muddy maroon. Body bg + content layers raise above it. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+    animation: grain 3.2s steps(2) infinite;
+  }
+  body.grain-paused::before { animation-play-state: paused; }
+  /* Ensure all real content stacks above the grain layer */
+  header, main, footer, .skip-link { position: relative; z-index: 2; }
+  @keyframes grain {
+    0%   { transform: translate(0,0); }
+    25%  { transform: translate(-6px, 4px); }
+    50%  { transform: translate(5px, -5px); }
+    75%  { transform: translate(-4px, -3px); }
+    100% { transform: translate(3px, 4px); }
+  }
+
+  /* Halftone overlay for image treatments */
+  .halftone { position: relative; }
+  .halftone::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.85) 1px, transparent 1.4px);
+    background-size: 4px 4px;
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+  }
+  .halftone-img { filter: grayscale(1) contrast(1.6) brightness(0.9); }
+  .contrast-up { filter: contrast(1.25); }
+
+  /* Torn paper edge */
+  .torn-edge {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='40' preserveAspectRatio='none'><path d='M0,20 L40,8 L80,24 L130,6 L180,22 L220,10 L270,26 L320,9 L370,21 L420,7 L470,25 L520,11 L570,23 L620,8 L670,24 L720,10 L770,22 L820,6 L870,26 L920,11 L970,23 L1020,9 L1070,25 L1120,10 L1170,22 L1200,12 L1200,40 L0,40 Z' fill='black'/></svg>");
+            mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='40' preserveAspectRatio='none'><path d='M0,20 L40,8 L80,24 L130,6 L180,22 L220,10 L270,26 L320,9 L370,21 L420,7 L470,25 L520,11 L570,23 L620,8 L670,24 L720,10 L770,22 L820,6 L870,26 L920,11 L970,23 L1020,9 L1070,25 L1120,10 L1170,22 L1200,12 L1200,40 L0,40 Z' fill='black'/></svg>");
+    -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+  }
+
+  /* Masking tape — bridges card edges by extending past the box */
+  .tape {
+    position: absolute;
+    background: rgba(225, 215, 195, 0.78);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    z-index: 5;
+  }
+  .tape::before, .tape::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 4px;
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0 1px, transparent 1px 3px);
+  }
+  .tape::before { left: 0; }
+  .tape::after  { right: 0; }
+
+  /* Ransom-note letter chips — varied per letter to read as collage */
+  .ransom-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 0.05em 0.12em;
+    line-height: 0.9;
+    box-shadow:
+      2px 2px 0 rgba(0,0,0,0.18),
+      inset 0 0 0 1px rgba(0,0,0,0.08);
+    position: relative;
+    transition: transform 0.18s ease;
+  }
+  .ransom-letter:hover { transform: translateY(-3px) rotate(-2deg); }
+  .ransom-row { flex-wrap: wrap; row-gap: 0.4rem; }
+
+  /* Collage variations — different source sheets per letter */
+  .rv-invert { background: var(--ink); color: var(--paper); box-shadow: 2px 2px 0 rgba(255,255,255,0.12), inset 0 0 0 1px rgba(255,255,255,0.18); }
+  .rv-newsprint { background: #e8e2d2; }
+  .rv-torn {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' preserveAspectRatio='none'><path d='M0,4 L12,2 L26,6 L40,3 L55,7 L70,4 L85,6 L100,3 L100,96 L85,94 L70,97 L55,93 L40,96 L26,94 L12,97 L0,95 Z' fill='black'/></svg>");
+            mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' preserveAspectRatio='none'><path d='M0,4 L12,2 L26,6 L40,3 L55,7 L70,4 L85,6 L100,3 L100,96 L85,94 L70,97 L55,93 L40,96 L26,94 L12,97 L0,95 Z' fill='black'/></svg>");
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  }
+  .rv-shadow-down { box-shadow: -2px 3px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(0,0,0,0.08); }
+  .rv-pad { padding: 0.08em 0.18em; }
+
+  /* PRIMARY stamped CTA — stamped flyer tab with tape + offset shadow.
+     Fill uses --blood-deep so paper text passes WCAG AA at every size. */
+  .stamp-cta {
+    position: relative;
+    display: inline-block;
+    background: var(--blood-deep);
+    color: var(--paper);
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.08em;
+    padding: 0.6em 1.2em 0.5em;
+    box-shadow:
+      5px 5px 0 var(--ink),
+      inset 0 0 0 2px rgba(255,255,255,0.18);
+    transform: rotate(-2deg);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 2px solid var(--ink);
+  }
+  .stamp-cta:hover {
+    transform: rotate(-1deg) translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--ink), inset 0 0 0 2px rgba(255,255,255,0.25);
+  }
+  .stamp-cta:active { transform: rotate(-1deg) translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .stamp-cta:focus-visible { outline: 3px dashed var(--ink); outline-offset: 4px; }
+  /* Tape tab on each CTA — bridges the stamp onto the page */
+  .stamp-cta .cta-tape {
+    position: absolute;
+    width: 38px; height: 14px;
+    top: -8px; left: 50%;
+    transform: translateX(-50%) rotate(-6deg);
+    background: rgba(225, 215, 195, 0.82);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    z-index: 2;
+  }
+  .stamp-cta .cta-tape::before, .stamp-cta .cta-tape::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 3px;
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0 1px, transparent 1px 3px);
+  }
+  .stamp-cta .cta-tape::before { left: 0; } .stamp-cta .cta-tape::after { right: 0; }
+  .stamp-cta:hover .cta-tape { transform: translateX(-50%) rotate(-10deg) translateY(-2px); }
+
+  /* PRE-SAVE stamped tab variant — co-equal, paper ground, blood type.
+     Type uses --blood-deep for AA compliance at every size. */
+  .stamp-tab-cta {
+    position: relative;
+    display: inline-block;
+    background: var(--paper);
+    color: var(--blood-deep);
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.08em;
+    padding: 0.6em 1.2em 0.5em;
+    box-shadow:
+      5px 5px 0 var(--ink),
+      inset 0 0 0 2px rgba(200,20,20,0.25);
+    transform: rotate(1.5deg);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 2px solid var(--ink);
+  }
+  .stamp-tab-cta:hover { transform: rotate(0.5deg) translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink), inset 0 0 0 2px rgba(200,20,20,0.4); }
+  .stamp-tab-cta:active { transform: rotate(0.5deg) translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+  .stamp-tab-cta:focus-visible { outline: 3px dashed var(--blood); outline-offset: 4px; }
+  .stamp-tab-cta .cta-tape {
+    position: absolute; width: 38px; height: 14px; top: -8px; left: 50%;
+    transform: translateX(-50%) rotate(8deg);
+    background: rgba(225, 215, 195, 0.82); box-shadow: 0 1px 2px rgba(0,0,0,0.3); z-index: 2;
+  }
+  .stamp-tab-cta .cta-tape::before, .stamp-tab-cta .cta-tape::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 3px;
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0 1px, transparent 1px 3px);
+  }
+  .stamp-tab-cta .cta-tape::before { left: 0; } .stamp-tab-cta .cta-tape::after { right: 0; }
+
+  /* Stamped tab (footer / social) */
+  .stamp-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.1em;
+    padding: 0.4em 0.8em;
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .stamp-tab:hover { background: var(--ink); color: var(--paper); transform: translate(-1px,-1px); }
+  .stamp-tab:focus-visible { outline: 3px dashed var(--blood); outline-offset: 3px; }
+  .stamp-tab svg { stroke-width: 2.4; }
+
+  /* Marker divider */
+  .marker-line {
+    height: 3px;
+    background: var(--ink);
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+    opacity: 0.85;
+  }
+  .marker-line.rough {
+    background-image: linear-gradient(90deg, var(--ink) 0%, var(--ink) 60%, transparent 60%, transparent 62%, var(--ink) 62%, var(--ink) 100%);
+  }
+
+  /* SOLD OUT strike — --blood-deep text for AA on paper */
+  .sold-out {
+    color: var(--blood-deep);
+    font-family: 'Permanent Marker', cursive;
+    text-decoration: line-through;
+    text-decoration-color: var(--blood-deep);
+    text-decoration-thickness: 3px;
+    text-decoration-skip-ink: none;
+  }
+
+  /* ====== Tour flyer sheet — one continuous photocopied card with marker dividers between rows ====== */
+  .tour-flyer {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: 6px 7px 0 rgba(0,0,0,0.32);
+    padding: 1rem 1.1rem 1.4rem;
+    position: relative;
+  }
+  /* Marker divider between tour rows — hand-ruled, slightly rough */
+  .marker-divider {
+    height: 0;
+    border: 0;
+    margin: 0;
+    position: relative;
+  }
+  .marker-divider svg { display: block; width: 100%; height: 7px; }
+  /* Divider <li> wrapper inside the tour <ol> — no list bullet, just the SVG */
+  .divider-li { list-style: none; margin: 0; padding: 0 0.2rem; }
+  .divider-li svg { display: block; width: 100%; height: 7px; }
+  /* Tour row inside the flyer sheet — no per-row box/shadow, just content */
+  .tour-row,
+  .tour-row-soldout {
+    position: relative;
+    padding: 0.85rem 0.2rem;
+    transition: transform 0.18s ease;
+  }
+  .tour-row:hover { transform: translateX(2px); }
+  /* Hand-scribbled SVG strike across the full SOLD OUT row */
+  .row-strike {
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 4;
+    width: 100%;
+    height: 14px;
+  }
+  .row-strike svg { display: block; width: 100%; height: 100%; }
+
+  /* Price tag sticker */
+  .price-tag {
+    font-family: 'Permanent Marker', cursive;
+    background: var(--paper);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.1em 0.5em;
+    transform: rotate(-6deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    display: inline-block;
+  }
+
+  /* Coffee ring */
+  .coffee-ring {
+    position: absolute;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 10px solid rgba(90, 55, 25, 0.35);
+    box-shadow: inset 0 0 6px rgba(90,55,25,0.25);
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  /* Section header cut-out */
+  .cutout-head { display: inline-block; position: relative; }
+  .cutout-head span {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.05em 0.18em;
+    margin: 0 0.02em;
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(22px) rotate(-0.5deg); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0) rotate(0); }
+
+  /* One-shot hero entrance jitter (no perpetual motion) */
+  @keyframes jitter-burst {
+    0%   { transform: translate(0,0) rotate(var(--r,0deg)); }
+    20%  { transform: translate(2px,-2px) rotate(calc(var(--r,0deg) - 1deg)); }
+    40%  { transform: translate(-2px,1px) rotate(calc(var(--r,0deg) + 0.8deg)); }
+    60%  { transform: translate(1px,2px) rotate(calc(var(--r,0deg) + 0.6deg)); }
+    80%  { transform: translate(-1px,-1px) rotate(calc(var(--r,0deg) - 0.4deg)); }
+    100% { transform: translate(0,0) rotate(var(--r,0deg)); }
+  }
+  .jitter-burst { animation: jitter-burst 0.45s steps(2) 1; }
+  .ransom-letter:hover.jitter-burst { animation: jitter-burst 0.4s steps(2) 1; }
+
+  /* Polaroid / paper card */
+  .polaroid {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: 5px 6px 0 rgba(0,0,0,0.35);
+    padding: 0.6rem 0.6rem 1.1rem;
+  }
+  .slip {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+  }
+
+  /* Zine link */
+  a.zine-link { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  a.zine-link:hover { color: var(--blood-deep); }
+  a.zine-link:focus-visible { outline: 3px dashed var(--blood); outline-offset: 3px; }
+
+  /* Stamped zine CTA — merch purchase links + secondary record CTA.
+     Oswald condensed bold caps + ink underline reads as a stamped flyer link. */
+  a.text-cta {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    border-bottom: 2px solid var(--ink);
+    text-decoration: none;
+    padding-bottom: 1px;
+    transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    display: inline-block;
+  }
+  a.text-cta:hover { color: var(--blood-deep); border-color: var(--blood-deep); transform: translateY(-1px); }
+  a.text-cta:focus-visible { outline: 3px dashed var(--blood); outline-offset: 3px; }
+
+  /* Tour row stamp label */
+  .row-stamp {
+    display: inline-block;
+    border: 2px solid var(--ink);
+    padding: 0.1em 0.5em;
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.06em;
+    transform: rotate(-3deg);
+    background: var(--paper);
+  }
+
+  /* Dedicated STAMP+ toggle button (replaces whole-row-as-button) */
+  .stamp-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.08em;
+    padding: 0.25em 0.6em;
+    box-shadow: 2px 2px 0 var(--ink);
+    transform: rotate(2deg);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+    font-size: 0.8rem;
+  }
+  .stamp-toggle:hover { transform: rotate(1deg) translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
+  .stamp-toggle:focus-visible { outline: 3px dashed var(--blood); outline-offset: 3px; }
+  .stamp-toggle[aria-pressed="true"] { background: var(--blood-deep); color: var(--paper); border-color: var(--ink); }
+
+  /* Due date stamp — --blood-deep text for AA at small sizes */
+  .due-stamp {
+    display: inline-block;
+    border: 3px double var(--blood-deep);
+    color: var(--blood-deep);
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.1em;
+    padding: 0.25em 0.6em;
+    transform: rotate(-6deg);
+    text-transform: uppercase;
+  }
+
+  /* ====== Tour-date "stamp onto flyer" interaction (li is plain listitem) ====== */
+  .tour-row { position: relative; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+  .tour-row.is-stamped .row-stamp { background: var(--blood-deep); color: var(--paper); border-color: var(--ink); }
+  .tour-row.is-stamped::after {
+    content: "STAMPED";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%) rotate(-8deg);
+    font-family: 'Permanent Marker', cursive;
+    color: var(--blood-deep);
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    opacity: 0.55;
+    pointer-events: none;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+  }
+  .flyer-card { position: sticky; top: 1rem; }
+  .flyer-empty { opacity: 0.55; }
+  .flyer-card.has-stamps .flyer-empty { display: none; }
+  .flyer-card.has-stamps .flyer-list { display: block; }
+  @keyframes stampIn {
+    0% { transform: scale(2) rotate(8deg); opacity: 0; }
+    60% { transform: scale(0.92) rotate(-3deg); opacity: 1; }
+    100% { transform: scale(1) rotate(-2deg); opacity: 1; }
+  }
+  .flyer-stamp-in { animation: stampIn 0.34s cubic-bezier(.2,.8,.2,1); }
+
+  /* ====== Record sleeve fold-out: real toggle (tap/click/Enter) + hover bonus on fine pointers ====== */
+  .sleeve { position: relative; transition: transform 0.3s ease; }
+  .sleeve .b-side {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+  /* Toggle state — works on touch + keyboard */
+  .sleeve.is-peeled .b-side { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .sleeve.is-peeled .sleeve-tape { transform: rotate(var(--tr,0deg)) translateY(-6px); }
+  /* Progressive-enhancement hover bonus only on fine pointers (desktop) */
+  @media (pointer: fine) {
+    .sleeve:hover .b-side { opacity: 1; transform: translateY(0); }
+    .sleeve:hover .sleeve-tape { transform: rotate(var(--tr,0deg)) translateY(-6px); }
+  }
+  /* Peel button — always visible, the real interaction */
+  .peel-btn {
+    position: absolute;
+    top: 0.5rem; right: 0.5rem;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    border: 2px solid var(--paper);
+    background: rgba(10,10,10,0.55);
+    color: var(--paper);
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25em 0.55em;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    backdrop-filter: blur(2px);
+  }
+  .peel-btn:hover { background: var(--paper); color: var(--ink); border-color: var(--ink); transform: rotate(-2deg); }
+  .peel-btn:focus-visible { outline: 3px dashed var(--blood); outline-offset: 3px; }
+  .peel-btn .peel-arrow { transition: transform 0.3s ease; display: inline-block; }
+  .sleeve.is-peeled .peel-btn .peel-arrow { transform: rotate(180deg); }
+
+  /* Corkboard pin for merch — INK (black pushpin), not red. Red is reserved for
+     urgent action only (CTAs / SOLD OUT / due-stamp / focus rings). */
+  .pin {
+    position: absolute;
+    top: -8px; left: 50%;
+    transform: translateX(-50%);
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #3a3a3a 0%, #0a0a0a 60%, #000 100%);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.45), inset -2px -2px 3px rgba(0,0,0,0.55), inset 1px 1px 2px rgba(255,255,255,0.18);
+    z-index: 12;
+  }
+
+  /* Tagline contrast guard */
+  .tagline-guard {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 18px rgba(0,0,0,0.45);
+  }
+
+  /* Hero — flexible min-height column so CTAs never overflow on short screens */
+  .hero-shell { min-height: 58vh; }
+  .hero-stack { padding-top: 1.25rem; padding-bottom: 1.5rem; }
+  @media (min-width: 640px) { .hero-shell { min-height: 72vh; } }
+  /* Short viewports (landscape phones, short windows): shrink ransom word + tighten CTA gap */
+  @media (max-height: 640px) {
+    .hero-word { font-size: clamp(1.6rem, 11vw, 3rem) !important; }
+    .hero-word span { font-size: clamp(1.6rem, 11vw, 3rem) !important; }
+    .hero-stack { padding-top: 0.5rem; padding-bottom: 0.75rem; }
+    .hero-ctas { gap: 0.75rem !important; }
+    .tagline-guard { font-size: 1rem; margin-top: 0.5rem !important; }
+    .due-stamp { margin-bottom: 0.5rem !important; }
+  }
+
+  /* ====== Footer collage — scattered tabs, overlapping ransom word, torn corner strip ====== */
+  .footer-collage { position: relative; }
+  .footer-ransom {
+    position: relative;
+    z-index: 3;
+    transform: rotate(-1.5deg);
+  }
+  /* Scatter the social tabs — varied rotation + vertical offset, no straight baseline */
+  .footer-tabs-scatter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.6rem 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .footer-tabs-scatter > a:nth-child(1) { transform: rotate(-3deg) translateY(2px); }
+  .footer-tabs-scatter > a:nth-child(2) { transform: rotate(2deg) translateY(-4px); }
+  .footer-tabs-scatter > a:nth-child(3) { transform: rotate(-1.5deg) translateY(3px); }
+  /* Mailing slip overlaps the ransom word slightly (negative margin) as if taped on top */
+  .footer-slip {
+    position: relative;
+    z-index: 4;
+    margin-top: -0.5rem;
+  }
+  @media (min-width: 768px) {
+    .footer-slip { margin-top: 0; margin-left: -1.5rem; }
+  }
+  /* Second bridging tape piece on the slip */
+  .footer-slip .tape-bridge {
+    position: absolute;
+    width: 60px; height: 16px;
+    bottom: -7px; right: 24px;
+    transform: rotate(6deg);
+    background: rgba(225, 215, 195, 0.82);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    z-index: 5;
+  }
+  .footer-slip .tape-bridge::before, .footer-slip .tape-bridge::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 3px;
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0 1px, transparent 1px 3px);
+  }
+  .footer-slip .tape-bridge::before { left: 0; } .footer-slip .tape-bridge::after { right: 0; }
+  /* Torn corner strip for the "PRINTED ON STOLED PAPER" line — rotated, off-center */
+  .footer-corner-strip {
+    position: relative;
+    display: inline-block;
+    transform: rotate(3deg);
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    padding: 0.3em 0.7em;
+    margin-top: 0.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body::before { animation: none !important; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .jitter-burst { animation: none !important; }
+    * { transition: none !important; animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute; left: -9999px; top: 0; z-index: 10000;
+    background: var(--ink); color: var(--paper); padding: 0.5rem 1rem; font-family: 'Anton', sans-serif;
+  }
+  .skip-link:focus { left: 0; }
+
+  /* Mobile ransom-note guard: scale whole word down on tiny screens */
+  @media (max-width: 379px) {
+    .ransom-row.hero-word { transform: scale(0.82); transform-origin: top center; margin-bottom: -1.2rem; }
+  }
+</style>
+</head>
+<body class="min-h-screen text-ink">
+
+<a href="#main" class="skip-link">SKIP TO CONTENT →</a>
+
+<!-- ===================== NAV ===================== -->
+<header role="banner" class="relative z-40 border-b-[3px] border-ink bg-paper/80 backdrop-blur-[2px]">
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2 group" aria-label="BLACKOUT home">
+      <span class="font-cond text-xl sm:text-2xl tracking-wider">BLACKOUT</span>
+      <span class="font-marker text-blood-deep text-lg leading-none rotate-[-6deg]">!?</span>
+    </a>
+    <ul class="hidden md:flex items-center gap-6 font-oswald font-bold uppercase text-sm tracking-wider">
+      <li><a href="#tour" class="hover:text-blood-deep transition-colors focus-visible:outline-2 outline-offset-2 outline-dashed outline-ink">Tour</a></li>
+      <li><a href="#record" class="hover:text-blood-deep transition-colors focus-visible:outline-2 outline-offset-2 outline-dashed outline-ink">Record</a></li>
+      <li><a href="#merch" class="hover:text-blood-deep transition-colors focus-visible:outline-2 outline-offset-2 outline-dashed outline-ink">Merch</a></li>
+      <li><a href="#manifesto" class="hover:text-blood-deep transition-colors focus-visible:outline-2 outline-offset-2 outline-dashed outline-ink">Manifesto</a></li>
+    </ul>
+    <a href="#tour" class="stamp-tab text-xs sm:text-sm" aria-label="Get tickets">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 8.5c1.2 0 1.2-2 2.4-2H19c1.2 0 1.2 2 2.4 2v7c-1.2 0-1.2 2-2.4 2H5.4c-1.2 0-1.2-2-2.4-2z"/>
+        <path d="M9.5 6.5L9 17.5M14.5 6.5L15 17.5" stroke-dasharray="0.5 2.2"/>
+      </svg>
+      TIX
+    </a>
+  </nav>
+</header>
+
+<main id="main">
+
+<!-- ===================== HERO ===================== -->
+<section id="top" class="relative overflow-hidden" aria-label="BLACKOUT tour and record">
+  <div class="relative w-full hero-shell">
+    <div class="torn-edge overflow-hidden halftone absolute inset-0">
+      <img
+        src="https://picsum.photos/seed/blackout-hero/1600/900"
+        alt="BLACKOUT live on stage, xeroxed and grainy"
+        class="halftone-img w-full h-full min-h-[58vh] sm:min-h-[72vh] object-cover contrast-up"
+        loading="eager"
+      />
+      <!-- controlled ink gradient — held dark through the tagline band for AA on any source image -->
+      <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.82) 45%, rgba(10,10,10,0.86) 100%);"></div>
+    </div>
+    <span class="tape rotate-[-8deg] w-28 h-7 top-3 left-4 sm:left-10" aria-hidden="true"></span>
+    <span class="tape rotate-[5deg] w-20 h-6 top-2 right-6 sm:right-12" aria-hidden="true"></span>
+
+  <!-- Relatively-positioned content stack — grows with content, no absolute overlay overflow -->
+  <div class="relative z-10 flex flex-col items-center justify-center min-h-[58vh] sm:min-h-[72vh] px-4 text-center hero-stack">
+    <span class="due-stamp text-xs sm:text-sm mb-5">No. 07 — Tour Issue</span>
+
+    <h1 class="text-paper font-cond uppercase leading-none select-none" aria-label="BLACKOUT">
+      <span class="ransom-row hero-word inline-flex flex-nowrap items-end justify-center gap-1 sm:gap-1.5" style="white-space:nowrap;">
+        <span class="ransom-letter font-rubik jitter-burst rv-invert rv-pad" style="--r:-4deg; transform:rotate(-4deg); font-size:clamp(2.2rem, 14vw, 5.5rem);">B</span>
+        <span class="ransom-letter font-bebas jitter-burst rv-shadow-down" style="--r:3deg; transform:rotate(3deg); font-size:clamp(2.3rem, 15vw, 5.8rem);">L</span>
+        <span class="ransom-letter font-archivo jitter-burst" style="--r:-2deg; transform:rotate(-2deg); font-size:clamp(2rem, 12vw, 4.8rem);">A</span>
+        <span class="ransom-letter font-oswald font-bold jitter-burst rv-newsprint rv-pad" style="--r:4deg; transform:rotate(4deg); font-size:clamp(2.2rem, 14vw, 5.5rem);">C</span>
+        <span class="ransom-letter font-rubik jitter-burst rv-torn" style="--r:-3deg; transform:rotate(-3deg); font-size:clamp(2.1rem, 13vw, 5.2rem);">K</span>
+        <span class="ransom-letter font-bebas jitter-burst rv-shadow-down" style="--r:2deg; transform:rotate(2deg); font-size:clamp(2.2rem, 14vw, 5.5rem);">O</span>
+        <span class="ransom-letter font-archivo jitter-burst rv-invert" style="--r:-4deg; transform:rotate(-4deg); font-size:clamp(2.3rem, 15vw, 5.8rem);">U</span>
+        <span class="ransom-letter font-oswald font-bold jitter-burst rv-newsprint rv-pad" style="--r:3deg; transform:rotate(3deg); font-size:clamp(2rem, 12vw, 4.8rem);">T</span>
+      </span>
+    </h1>
+
+    <p class="tagline-guard mt-6 sm:mt-8 font-type text-paper text-base sm:text-xl md:text-2xl max-w-xl tracking-wide">
+      FIVE SHOWS. ONE RECORD. NO ALGORITHM. <span class="font-cond tracking-wider text-paper" style="border-bottom:2px solid var(--paper); text-underline-offset:3px;">TURN IT UP.</span>
+    </p>
+
+    <div class="hero-ctas mt-8 flex flex-col sm:flex-row items-center gap-6">
+      <a href="#tour" class="stamp-cta text-lg sm:text-xl uppercase" aria-label="Get tickets">
+        <span class="cta-tape" aria-hidden="true"></span>Get Tickets
+      </a>
+      <a href="#record" class="stamp-tab-cta text-base sm:text-lg uppercase" aria-label="Pre-save the record">
+        <span class="cta-tape" aria-hidden="true"></span>Pre-Save
+      </a>
+    </div>
+  </div>
+  </div>
+
+  <!-- Bottom torn strip -->
+  <div class="relative -mt-6 sm:-mt-10 bg-paper z-10">
+    <div class="bg-paper h-6 sm:h-8 -mb-1" aria-hidden="true"
+      style="-webkit-mask-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='40' preserveAspectRatio='none'><path d='M0,40 L40,28 L80,34 L130,26 L180,33 L220,27 L270,35 L320,26 L370,33 L420,25 L470,34 L520,27 L570,34 L620,26 L670,35 L720,27 L770,33 L820,25 L870,35 L920,27 L970,34 L1020,26 L1070,35 L1120,27 L1170,33 L1200,28 L1200,0 L0,0 Z' fill='black'/></svg>&quot;);mask-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='40' preserveAspectRatio='none'><path d='M0,40 L40,28 L80,34 L130,26 L180,33 L220,27 L270,35 L320,26 L370,33 L420,25 L470,34 L520,27 L570,34 L620,26 L670,35 L720,27 L770,33 L820,25 L870,35 L920,27 L970,34 L1020,26 L1070,35 L1120,27 L1170,33 L1200,28 L1200,0 L0,0 Z' fill='black'/></svg>&quot;);-webkit-mask-size:100% 100%;mask-size:100% 100%;"></div>
+  </div>
+</section>
+
+<!-- ===================== TOUR DATES — flyer-stamp interaction ===================== -->
+<section id="tour" class="relative max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20" aria-label="Tour dates">
+  <div class="reveal">
+    <h2 class="cutout-head text-3x2 sm:text-4x2">
+      <span>T</span><span>O</span><span>U</span><span>R</span>
+      <span class="ml-2">D</span><span>A</span><span>T</span><span>E</span><span>S</span>
+    </h2>
+    <p class="font-type text-sm2 text-ash mt-3 max-w-md">Five basements. Five cities. Doors at 8, louder by 8:15. Cash at the door, shirts from a duffel bag.</p>
+    <div class="marker-line rough w-32 mt-4"></div>
+    <p class="font-type text-xs2 text-ash mt-3 max-w-lg">
+      <span class="font-marker text-ink">TIP:</span> hit <span class="font-cond">STAMP +</span> on a date to pin it to your flyer. Build your run. Then grab TIX.
+    </p>
+  </div>
+
+  <div class="mt-8 grid lg:grid-cols-[1fr_18rem] gap-8 lg:gap-10 items-start">
+    <!-- One continuous photocopied flyer sheet with marker dividers between rows.
+         Tape in a corner, slight rotation. Reads as a xeroxed flyer, not a card stack. -->
+    <div class="reveal tour-flyer" style="transform:rotate(-0.6deg);">
+      <span class="tape rotate-[-10deg] w-24 h-6 -top-3 left-6" aria-hidden="true"></span>
+      <span class="tape rotate-[6deg] w-16 h-5 -top-3 right-10" aria-hidden="true"></span>
+      <p class="font-mono text-micro text-ash uppercase tracking-widest mb-1">— BLACKOUT / NO. 07 / TOUR FLYER —</p>
+      <ol role="list" id="tour-list">
+        <li data-date="SEP 14" data-city="BROOKLYN, NY" data-venue="Saint Vitus"
+            class="tour-row flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <div class="flex items-center gap-3 sm:gap-5 flex-1 flex-wrap">
+            <span class="row-stamp text-sm2">SEP 14</span>
+            <span class="font-cond uppercase text-lg2 tracking-wide">BROOKLYN, NY</span>
+            <span class="font-type text-ash text-sm2">/ Saint Vitus</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" class="stamp-toggle" aria-pressed="false" aria-label="Stamp Brooklyn Sep 14 onto your flyer">STAMP +</button>
+            <a href="#" class="font-oswald font-bold uppercase text-sm2 zine-link" aria-label="Buy tickets for Brooklyn Sep 14">TIX →</a>
+          </div>
+        </li>
+
+        <li class="divider-li" aria-hidden="true" role="separator"><svg class="w-full" height="7" viewBox="0 0 400 7" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="display:block;">
+          <path d="M0,4 Q40,2 80,4 T160,3.5 T240,4.5 T320,3 T400,4" stroke="#0a0a0a" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.85"/>
+        </svg></li>
+
+        <li data-date="SEP 21" data-city="PHILADELPHIA, PA" data-venue="First Unitarian Church"
+            class="tour-row flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <div class="flex items-center gap-3 sm:gap-5 flex-1 flex-wrap">
+            <span class="row-stamp text-sm2">SEP 21</span>
+            <span class="font-cond uppercase text-lg2 tracking-wide">PHILADELPHIA, PA</span>
+            <span class="font-type text-ash text-sm2">/ First Unitarian Church</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" class="stamp-toggle" aria-pressed="false" aria-label="Stamp Philadelphia Sep 21 onto your flyer">STAMP +</button>
+            <a href="#" class="font-oswald font-bold uppercase text-sm2 zine-link" aria-label="Buy tickets for Philadelphia Sep 21">TIX →</a>
+          </div>
+        </li>
+
+        <li class="divider-li" aria-hidden="true" role="separator"><svg class="w-full" height="7" viewBox="0 0 400 7" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="display:block;">
+          <path d="M0,3.5 Q50,5 100,3.5 T200,4 T300,3 T400,4" stroke="#0a0a0a" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.85"/>
+        </svg></li>
+
+        <li data-date="SEP 28" data-city="CHICAGO, IL" data-venue="Empty Bottle"
+            class="tour-row flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <div class="flex items-center gap-3 sm:gap-5 flex-1 flex-wrap">
+            <span class="row-stamp text-sm2">SEP 28</span>
+            <span class="font-cond uppercase text-lg2 tracking-wide">CHICAGO, IL</span>
+            <span class="font-type text-ash text-sm2">/ Empty Bottle</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" class="stamp-toggle" aria-pressed="false" aria-label="Stamp Chicago Sep 28 onto your flyer">STAMP +</button>
+            <a href="#" class="font-oswald font-bold uppercase text-sm2 zine-link" aria-label="Buy tickets for Chicago Sep 28">TIX →</a>
+          </div>
+        </li>
+
+        <li class="divider-li" aria-hidden="true" role="separator"><svg class="w-full" height="7" viewBox="0 0 400 7" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="display:block;">
+          <path d="M0,4 Q60,2.5 120,4 T240,3.5 T360,4 T400,3.5" stroke="#0a0a0a" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.85"/>
+        </svg></li>
+
+        <li class="tour-row-soldout flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 opacity-95"
+            role="img" aria-label="October 4, Los Angeles, The Echo — sold out">
+          <div class="flex items-center gap-3 sm:gap-5 flex-1 flex-wrap">
+            <span class="row-stamp text-sm2">OCT 04</span>
+            <span class="sold-out font-cond uppercase text-lg2 tracking-wide">LOS ANGELES, CA</span>
+            <span class="font-type text-ash text-sm2">/ The Echo</span>
+          </div>
+          <span class="sold-out font-cond uppercase text-md2">SOLD OUT</span>
+          <!-- Hand-scribbled marker strike across the full row -->
+          <span class="row-strike" aria-hidden="true">
+            <svg viewBox="0 0 400 14" preserveAspectRatio="none" focusable="false">
+              <path d="M2,8 Q30,3 60,9 T120,6 T180,10 T240,5 T300,9 T360,6 T398,8"
+                    stroke="#ff2d2d" stroke-width="3.2" stroke-linecap="round" fill="none"
+                    style="filter:url(#marker-rough);"/>
+            </svg>
+            <svg width="0" height="0" aria-hidden="true" focusable="false">
+              <defs>
+                <filter id="marker-rough">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.04 0.9" numOctaves="2" result="n"/>
+                  <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"/>
+                </filter>
+              </defs>
+            </svg>
+          </span>
+        </li>
+
+        <li class="divider-li" aria-hidden="true" role="separator"><svg class="w-full" height="7" viewBox="0 0 400 7" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="display:block;">
+          <path d="M0,4 Q45,5 90,3.5 T180,4 T270,3 T360,4.5 T400,3.5" stroke="#0a0a0a" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.85"/>
+        </svg></li>
+
+        <li data-date="OCT 11" data-city="OAKLAND, CA" data-venue="924 Gilman"
+            class="tour-row flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <div class="flex items-center gap-3 sm:gap-5 flex-1 flex-wrap">
+            <span class="row-stamp text-sm2">OCT 11</span>
+            <span class="font-cond uppercase text-lg2 tracking-wide">OAKLAND, CA</span>
+            <span class="font-type text-ash text-sm2">/ 924 Gilman</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" class="stamp-toggle" aria-pressed="false" aria-label="Stamp Oakland Oct 11 onto your flyer">STAMP +</button>
+            <a href="#" class="font-oswald font-bold uppercase text-sm2 zine-link" aria-label="Buy tickets for Oakland Oct 11">TIX →</a>
+          </div>
+        </li>
+      </ol>
+      <p class="font-mono text-micro text-ash uppercase tracking-widest mt-3 text-right">— doors 8pm / louder by 8:15 —</p>
+    </div>
+
+    <aside class="reveal" aria-label="Your stamped flyer">
+      <div id="flyer" class="flyer-card slip p-5 relative" style="transform:rotate(1.4deg);">
+        <span class="tape rotate-[-12deg] w-20 h-5 -top-2 left-6" aria-hidden="true"></span>
+        <h3 class="font-cond uppercase text-xl2 tracking-wide leading-none">YOUR FLYER</h3>
+        <p class="font-type text-xs2 text-ash mt-1">Tap dates to build your run.</p>
+        <div class="marker-line rough w-20 mt-3 mb-3"></div>
+        <p class="flyer-empty font-type text-sm2 text-ash">— empty —<br/>stamp a show.</p>
+        <ul id="flyer-list" class="flyer-list font-type text-sm2 space-y-2" style="display:none;"></ul>
+        <div class="marker-line rough w-full mt-5"></div>
+        <p class="font-mono text-micro text-ash mt-2 uppercase">No. 07 — collect &amp; go</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="mt-10 flex flex-wrap items-center gap-5">
+    <a href="#" class="stamp-cta text-base sm:text-lg2 uppercase"><span class="cta-tape" aria-hidden="true"></span>Get Tickets</a>
+    <a href="#record" class="stamp-tab-cta text-sm2 uppercase"><span class="cta-tape" aria-hidden="true"></span>Pre-Save</a>
+    <span class="font-type text-ash text-xs2">— All ages unless some cop says otherwise.</span>
+  </div>
+</section>
+
+<!-- ===================== NEW RECORD — stamped sleeve fold-out ===================== -->
+<section id="record" class="relative max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t-[3px] border-ink" aria-label="New record">
+  <div class="reveal grid md:grid-cols-2 gap-10 md:gap-14 items-start">
+
+    <div class="relative mx-auto md:mx-0 w-full max-w-sm">
+      <div class="sleeve relative polaroid halftone" style="transform:rotate(-2deg);" role="group" aria-label="Static Forever record sleeve — use the Peel button to flip and reveal the B-side">
+        <span class="tape sleeve-tape rotate-[-12deg] w-16 h-5 -top-2 -left-2" style="--tr:-12deg;" aria-hidden="true"></span>
+        <span class="tape sleeve-tape rotate-[8deg] w-16 h-5 -top-2 -right-2" style="--tr:8deg;" aria-hidden="true"></span>
+        <img
+          src="https://picsum.photos/seed/blackout-record/700/700"
+          alt="BLACKOUT record sleeve, xeroxed with masking-tape corners"
+          class="halftone-img w-full aspect-square object-cover contrast-up"
+          loading="lazy"
+        />
+        <!-- Real toggle button: works on tap/click/keyboard. Hover is a fine-pointer bonus only. -->
+        <button type="button" class="peel-btn" aria-expanded="false" aria-controls="b-side-panel">
+          <span class="peel-arrow">⇅</span> <span class="peel-label">PEEL</span>
+        </button>
+        <div class="b-side" id="b-side-panel" aria-hidden="true">
+          <span class="font-mono text-micro" style="color:var(--paper); opacity:0.6;">B-SIDE</span>
+          <p class="font-marker text-3x2 mt-1 leading-none" style="color:var(--paper);">Tape Hiss<br/>Hymn</p>
+          <p class="font-type text-xs2 mt-3" style="color:var(--paper); opacity:0.7;">+ hidden track:<br/>“Phone Pole Sermon (demo)”</p>
+        </div>
+        <span class="coffee-ring -bottom-3 right-2" aria-hidden="true"></span>
+        <p class="font-marker text-center text-2xl mt-3 text-ink">BLACKOUT</p>
+        <p class="font-type text-center text-xs2 text-ash -mt-1">“Static Forever” · LP</p>
+      </div>
+      <p class="font-mono text-micro text-ash mt-3 text-center uppercase tracking-wider peel-hint">↑ tap the sleeve — flip the tape</p>
+    </div>
+
+    <div>
+      <div class="flex items-center gap-3 mb-2 flex-wrap">
+        <span class="due-stamp text-xs2">Due: OCT 18</span>
+        <span class="font-type text-ash text-xs2">/ self-released / no label</span>
+      </div>
+
+      <h2 class="font-cond uppercase leading-none mb-1" aria-label="Static Forever">
+        <span class="ransom-row inline-flex items-end gap-1" style="white-space:nowrap;">
+          <span class="ransom-letter font-bebas text-3x2 sm:text-4x2 rv-newsprint" style="transform:rotate(-3deg);">S</span>
+          <span class="ransom-letter font-archivo text-2x2 sm:text-3x2 rv-invert" style="transform:rotate(2deg);">T</span>
+          <span class="ransom-letter font-rubik text-3x2 sm:text-4x2" style="transform:rotate(-2deg);">A</span>
+          <span class="ransom-letter font-oswald font-bold text-3x2 sm:text-4x2 rv-torn" style="transform:rotate(3deg);">T</span>
+          <span class="ransom-letter font-bebas text-2x2 sm:text-3x2" style="transform:rotate(-1deg);">I</span>
+          <span class="ransom-letter font-archivo text-3x2 sm:text-4x2 rv-shadow-down" style="transform:rotate(2deg);">C</span>
+        </span>
+        <span class="ransom-row inline-flex items-end gap-1 mt-1" style="white-space:nowrap;">
+          <span class="ransom-letter font-rubik text-3x2 sm:text-4x2 rv-invert" style="transform:rotate(2deg);">F</span>
+          <span class="ransom-letter font-bebas text-3x2 sm:text-4x2 rv-newsprint" style="transform:rotate(-3deg);">O</span>
+          <span class="ransom-letter font-archivo text-2x2 sm:text-3x2" style="transform:rotate(2deg);">R</span>
+          <span class="ransom-letter font-oswald font-bold text-3x2 sm:text-4x2 rv-torn" style="transform:rotate(-2deg);">E</span>
+          <span class="ransom-letter font-bebas text-2x2 sm:text-3x2 rv-shadow-down" style="transform:rotate(3deg);">V</span>
+          <span class="ransom-letter font-rubik text-3x2 sm:text-4x2" style="transform:rotate(-1deg);">E</span>
+          <span class="ransom-letter font-archivo text-2x2 sm:text-3x2 rv-invert" style="transform:rotate(2deg);">R</span>
+        </span>
+      </h2>
+
+      <div class="marker-line rough w-24 mt-4 mb-5"></div>
+
+      <p class="font-type text-sm2 text-ash max-w-md mb-5">
+        Eight tracks. Recorded in a storage unit on a borrowed 8-track. No clicks, no comps, no mercy. Mastered louder than the law allows.
+      </p>
+
+      <ol class="font-type text-sm2 space-y-1 max-w-md" role="list">
+        <li class="flex justify-between gap-4"><span><span class="text-ash">01.</span> No Algorithm In The Pit</span><span class="text-ash">1:48</span></li>
+        <li class="flex justify-between gap-4"><span><span class="text-ash">02.</span> Xeroxed Youth</span><span class="text-ash">2:11</span></li>
+        <li class="flex justify-between gap-4"><span><span class="text-ash">03.</span> Static Forever</span><span class="text-ash">3:02</span></li>
+        <li class="flex justify-between gap-4"><span><span class="text-ash">04.</span> Cash At The Door</span><span class="text-ash">1:33</span></li>
+        <li class="flex justify-between gap-4"><span><span class="text-ash">05.</span> Phone Pole Sermon</span><span class="text-ash">2:27</span></li>
+        <li class="flex justify-between gap-4"><span><span class="text-ash">06.</span> Tape Hiss Hymn</span><span class="text-ash">4:09</span></li>
+        <li class="flex justify-between gap-4"><span><span class="text-ash">07.</span> We Don't Line Up</span><span class="text-ash">1:55</span></li>
+        <li class="flex justify-between gap-4"><span><span class="text-ash">08.</span> Blackout (Reprise)</span><span class="text-ash">2:44</span></li>
+      </ol>
+
+      <div class="mt-7 flex flex-wrap items-center gap-5">
+        <a href="#" class="stamp-tab-cta text-base sm:text-lg2 uppercase"><span class="cta-tape" aria-hidden="true"></span>Pre-Save</a>
+        <a href="#" class="text-cta text-sm2">Bandcamp →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MERCH — corkboard pin collage (varied fasteners) ===================== -->
+<section id="merch" class="relative py-14 sm:py-20" aria-label="Merch">
+  <!-- torn-paper transition instead of repeating 3px line -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 mb-10" aria-hidden="true">
+    <div class="bg-ink h-3" style="-webkit-mask-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='40' preserveAspectRatio='none'><path d='M0,20 L40,8 L80,24 L130,6 L180,22 L220,10 L270,26 L320,9 L370,21 L420,7 L470,25 L520,11 L570,23 L620,8 L670,24 L720,10 L770,22 L820,6 L870,26 L920,11 L970,23 L1020,9 L1070,25 L1120,10 L1170,22 L1200,12 L1200,40 L0,40 Z' fill='black'/></svg>&quot;);mask-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='40' preserveAspectRatio='none'><path d='M0,20 L40,8 L80,24 L130,6 L180,22 L220,10 L270,26 L320,9 L370,21 L420,7 L470,25 L520,11 L570,23 L620,8 L670,24 L720,10 L770,22 L820,6 L870,26 L920,11 L970,23 L1020,9 L1070,25 L1120,10 L1170,22 L1200,12 L1200,40 L0,40 Z' fill='black'/></svg>&quot;);-webkit-mask-size:100% 100%;mask-size:100% 100%;"></div>
+  </div>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <div class="reveal">
+      <h2 class="cutout-head text-3x2 sm:text-4x2">
+        <span>M</span><span>E</span><span>R</span><span>C</span><span>H</span>
+      </h2>
+      <p class="font-type text-sm2 text-ash mt-3 max-w-md">Pinned to a corkboard in the practice space. Limited runs. When it's gone, it's gone — we ain't restocking.</p>
+      <div class="marker-line rough w-24 mt-4"></div>
+    </div>
+
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-8 lg:gap-10">
+      <!-- Tee: pinned only, tape removed -->
+      <article class="reveal relative" style="transform:rotate(-2.5deg);">
+        <span class="pin" aria-hidden="true"></span>
+        <div class="polaroid halftone">
+          <img src="https://picsum.photos/seed/blackout-tee/500/500" alt="BLACKOUT shirt, xeroxed" class="halftone-img w-full aspect-square object-cover contrast-up" loading="lazy" />
+          <div class="flex items-end justify-between mt-3 gap-2">
+            <h3 class="font-marker text-xl2 sm:text-2x2 uppercase leading-none">Static Tee</h3>
+            <span class="price-tag text-md2">$18</span>
+          </div>
+          <p class="font-type text-xs2 text-ash mt-1">Black on black. One-screen print. S–XXL.</p>
+          <a href="#" class="mt-3 inline-block text-cta text-xs2">Grab one →</a>
+        </div>
+      </article>
+
+      <!-- Zine: taped only, pin removed — tape bridges card edge -->
+      <article class="reveal relative sm:mt-8" style="transform:rotate(1.8deg);">
+        <span class="tape rotate-[-8deg] w-20 h-5 -top-3 left-10 z-10" aria-hidden="true"></span>
+        <span class="tape rotate-[5deg] w-16 h-5 -top-3 -right-2 z-10" aria-hidden="true"></span>
+        <div class="polaroid halftone">
+          <img src="https://picsum.photos/seed/blackout-zine/500/500" alt="BLACKOUT zine, photocopied" class="halftone-img w-full aspect-square object-cover contrast-up" loading="lazy" />
+          <div class="flex items-end justify-between mt-3 gap-2">
+            <h3 class="font-marker text-xl2 sm:text-2x2 uppercase leading-none">Tour Zine #07</h3>
+            <span class="price-tag text-md2">$5</span>
+          </div>
+          <p class="font-type text-xs2 text-ash mt-1">24 pages. Rants, flyers, setlists. Stapled by hand.</p>
+          <a href="#" class="mt-3 inline-block text-cta text-xs2">Grab one →</a>
+        </div>
+      </article>
+
+      <!-- Pin badge: pin + bridging tape -->
+      <article class="reveal relative sm:-mt-4 lg:mt-0" style="transform:rotate(-1.5deg);">
+        <span class="pin" aria-hidden="true"></span>
+        <span class="tape rotate-[4deg] w-20 h-5 -top-3 left-1/2 -translate-x-1/2 z-10" aria-hidden="true"></span>
+        <div class="polaroid halftone">
+          <img src="https://picsum.photos/seed/blackout-pin/500/500" alt="BLACKOUT pin badge, xeroxed" class="halftone-img w-full aspect-square object-cover contrast-up" loading="lazy" />
+          <div class="flex items-end justify-between mt-3 gap-2">
+            <h3 class="font-marker text-xl2 sm:text-2x2 uppercase leading-none">Logo Pin</h3>
+            <span class="price-tag text-md2">$3</span>
+          </div>
+          <p class="font-type text-xs2 text-ash mt-1">1-inch button. Stick it on your jacket. Lose it. Buy another.</p>
+          <a href="#" class="mt-3 inline-block text-cta text-xs2">Grab one →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MANIFESTO — pinned flyer, near-full-bleed, no top border ===================== -->
+<section id="manifesto" class="relative py-16 sm:py-24" aria-label="Manifesto">
+  <div class="max-w-4xl mx-auto px-6 sm:px-10">
+    <div class="reveal relative slip p-7 sm:p-12" style="transform:rotate(-0.8deg);">
+      <span class="tape rotate-[-10deg] w-28 h-6 -top-3 left-10" aria-hidden="true"></span>
+      <span class="tape rotate-[7deg] w-24 h-6 -top-3 right-10" aria-hidden="true"></span>
+
+      <h2 class="cutout-head text-xl2 sm:text-3x2 mb-5">
+        <span>M</span><span>A</span><span>N</span><span>I</span><span>F</span><span>E</span><span>S</span><span>T</span><span>O</span>
+      </h2>
+
+      <p class="font-type text-md2 sm:text-xl2 uppercase leading-relaxed tracking-wide" style="text-align:left; hyphens:auto; -webkit-hyphens:auto;">
+        No algorithm sent you here. A friend did, or a flyer did, or a phone pole did. We don't queue for playlists. We press play and the walls move. Volume is a stance. Tape hiss is a feature. This record was stapled, photocopied, and handed to you at 3am. Now turn it up.
+      </p>
+
+      <div class="marker-line rough w-28 mt-6"></div>
+      <p class="font-marker text-2x2 sm:text-3x2 mt-3 text-right">— BLACKOUT</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER — xeroxed collage strip (deliberately crooked) ===================== -->
+<footer role="contentinfo" class="relative border-t-[3px] border-ink mt-4" style="transform:rotate(-0.4deg);">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12 footer-collage">
+
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+      <div class="footer-ransom">
+        <h2 class="font-cond uppercase leading-none" aria-label="BLACKOUT">
+          <span class="ransom-row inline-flex items-end gap-0.5">
+            <span class="ransom-letter font-rubik text-2xl" style="transform:rotate(-3deg);">B</span>
+            <span class="ransom-letter font-bebas text-2xl rv-invert" style="transform:rotate(2deg);">L</span>
+            <span class="ransom-letter font-archivo text-xl" style="transform:rotate(-2deg);">A</span>
+            <span class="ransom-letter font-oswald font-bold text-2xl rv-newsprint" style="transform:rotate(3deg);">C</span>
+            <span class="ransom-letter font-rubik text-xl" style="transform:rotate(-1deg);">K</span>
+            <span class="ransom-letter font-bebas text-2xl" style="transform:rotate(2deg);">O</span>
+            <span class="ransom-letter font-archivo text-xl rv-shadow-down" style="transform:rotate(-3deg);">U</span>
+            <span class="ransom-letter font-oswald font-bold text-xl" style="transform:rotate(3deg);">T</span>
+          </span>
+        </h2>
+
+        <!-- Scattered social tabs — varied rotation + vertical offset, no straight baseline -->
+        <div class="footer-tabs-scatter">
+          <a href="#" class="stamp-tab text-xs" aria-label="Instagram">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="4" transform="rotate(-1.5 12 12)"/>
+              <circle cx="12" cy="12" r="4.2"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+            </svg> IG
+          </a>
+          <a href="#" class="stamp-tab text-xs" aria-label="Bandcamp">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="6" width="18" height="12" rx="1"/>
+              <circle cx="8" cy="12" r="2"/>
+              <circle cx="16" cy="12" r="2"/>
+              <path d="M11 11.2c1 0 1 1.6 0 1.6"/>
+            </svg> BANDCAMP
+          </a>
+          <a href="#tour" class="stamp-tab text-xs" aria-label="Tickets">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 8.5c1.2 0 1.2-2 2.4-2H19c1.2 0 1.2 2 2.4 2v7c-1.2 0-1.2 2-2.4 2H5.4c-1.2 0-1.2-2-2.4-2z"/>
+              <path d="M9.5 6.5L9 17.5M14.5 6.5L15 17.5" stroke-dasharray="0.5 2.2"/>
+            </svg> TIX
+          </a>
+        </div>
+      </div>
+
+      <!-- Mailing-list slip — overlaps the ransom word slightly via negative margin,
+           second bridging tape piece pins it onto the footer -->
+      <div class="footer-slip relative slip p-5 sm:p-6 w-full max-w-sm" style="transform:rotate(1deg);">
+        <span class="tape rotate-[-12deg] w-20 h-5 -top-2 left-8" aria-hidden="true"></span>
+        <span class="tape-bridge" aria-hidden="true"></span>
+        <h3 class="font-cond uppercase text-xl2 sm:text-2x2">Get on the list</h3>
+        <p class="font-type text-xs2 text-ash mt-1">No spam. No “drops.” Just show info and the record link. Maybe a flyer scan.</p>
+        <form class="mt-4 flex flex-col sm:flex-row gap-2" aria-label="Mailing list signup" onsubmit="event.preventDefault(); var b=this.querySelector('button'); var s=b.querySelector('span:last-child')||b; s.textContent='YOU’RE IN'; this.querySelector('input').value=''; b.setAttribute('aria-disabled','true');">
+          <label for="email" class="sr-only">Email address</label>
+          <input id="email" type="email" required placeholder="you@basement.show"
+            class="flex-1 bg-paper border-2 border-ink px-3 py-2 font-type text-sm2 focus:outline-none focus:ring-2 focus:ring-blood focus:ring-offset-2 focus:ring-offset-paper" />
+          <button type="submit" class="stamp-cta text-sm2 uppercase"><span class="cta-tape" aria-hidden="true"></span><span>Sign Up</span></button>
+        </form>
+      </div>
+    </div>
+
+    <!-- No straight baseline anywhere: torn corner strip (rotated) carries the print line,
+         copyright sits at a different alignment -->
+    <div class="mt-10 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3">
+      <span class="footer-corner-strip font-mono text-micro text-ink tracking-wider uppercase">Printed on stoled paper · DIY forever</span>
+      <p class="font-mono text-micro text-ash tracking-wider uppercase sm:text-right" style="transform:rotate(-0.8deg);">© <span id="yr">2026</span> BLACKOUT — no label, no manager, no algorithm</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ---------- Year ---------- */
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ---------- Reduced motion ---------- */
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Scroll reveal ---------- */
+  if (!reduce && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ---------- Hero one-shot jitter burst on entrance ---------- */
+  (function () {
+    if (reduce) return;
+    var hero = document.querySelector('#top');
+    if (!hero || !('IntersectionObserver' in window)) return;
+    var fired = false;
+    var hio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !fired) {
+          fired = true;
+          // burst already running via CSS animation on load; nothing else to do
+          hio.unobserve(hero);
+        }
+      });
+    }, { threshold: 0.2 });
+    hio.observe(hero);
+  })();
+
+  /* ---------- Grain: pause when idle / tab hidden / hero offscreen ----------
+     Throttled: only re-enable on scroll-start + pointerdown (NOT every pointermove,
+     which thrashes style recalc). Pause when the hero leaves the viewport — users
+     deep in tour/record/merch don't need hero-grain. Idle timer lengthened to 3000ms
+     so reading actually pauses it. */
+  (function () {
+    if (reduce) return;
+    var body = document.body;
+    var idleTimer = null;
+    var ACTIVE_MS = 3000;
+    var scrolling = false;
+    function pauseSoon() {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(function () { body.classList.add('grain-paused'); }, ACTIVE_MS);
+    }
+    function active() {
+      body.classList.remove('grain-paused');
+      pauseSoon();
+    }
+    // Re-enable on scroll start (not continuously) + pointerdown + keydown.
+    window.addEventListener('scroll', function () {
+      if (!scrolling) { scrolling = true; active(); }
+      clearTimeout(idleTimer);
+      // reset the "scrolling" flag shortly after scroll settles
+      clearTimeout(window.__grainScrollEnd);
+      window.__grainScrollEnd = setTimeout(function () { scrolling = false; pauseSoon(); }, 200);
+    }, { passive: true });
+    ['pointerdown','keydown'].forEach(function (ev) {
+      window.addEventListener(ev, active, { passive: true });
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { body.classList.add('grain-paused'); } else { active(); }
+    });
+    // Pause grain when the hero is offscreen (most users below don't need hero-grain)
+    var hero = document.querySelector('#top');
+    if (hero && 'IntersectionObserver' in window) {
+      var gio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { active(); } else { body.classList.add('grain-paused'); }
+        });
+      }, { threshold: 0.05 });
+      gio.observe(hero);
+    }
+    active();
+  })();
+
+  /* ---------- Record sleeve peel toggle (real toggle, works on touch + keyboard) ---------- */
+  (function () {
+    var sleeves = document.querySelectorAll('.sleeve');
+    sleeves.forEach(function (sleeve) {
+      var btn = sleeve.querySelector('.peel-btn');
+      var panel = sleeve.querySelector('.b-side');
+      if (!btn || !panel) return;
+      function setPeeled(peeled) {
+        sleeve.classList.toggle('is-peeled', peeled);
+        btn.setAttribute('aria-expanded', peeled ? 'true' : 'false');
+        panel.setAttribute('aria-hidden', peeled ? 'false' : 'true');
+        var label = btn.querySelector('.peel-label');
+        if (label) label.textContent = peeled ? 'CLOSE' : 'PEEL';
+      }
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setPeeled(!sleeve.classList.contains('is-peeled'));
+      });
+      // Allow the whole sleeve image to act as a tap target for the toggle (touch-friendly)
+      sleeve.addEventListener('click', function (e) {
+        if (e.target === btn || btn.contains(e.target)) return;
+        setPeeled(!sleeve.classList.contains('is-peeled'));
+      });
+    });
+    // Coarse-pointer hint copy swap: "tap to flip" instead of "hover"
+    if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+      document.querySelectorAll('.peel-hint').forEach(function (el) {
+        el.textContent = '↑ tap the sleeve — flip the tape';
+      });
+    }
+  })();
+
+  /* ---------- Signature: stamp tour dates onto a collectible flyer ---------- */
+  (function () {
+    var flyer = document.getElementById('flyer');
+    var flyerList = document.getElementById('flyer-list');
+    var rows = document.querySelectorAll('.tour-row');
+    var stamped = new Set();
+
+    function render() {
+      if (!flyer || !flyerList) return;
+      if (stamped.size === 0) {
+        flyer.classList.remove('has-stamps');
+        flyerList.style.display = 'none';
+        flyerList.innerHTML = '';
+        return;
+      }
+      flyer.classList.add('has-stamps');
+      flyerList.style.display = 'block';
+      flyerList.innerHTML = '';
+      Array.from(stamped).forEach(function (key) {
+        var parts = key.split('|');
+        var li = document.createElement('li');
+        li.className = 'flex justify-between gap-3 flyer-stamp-in';
+        li.innerHTML =
+          '<span class="font-cond uppercase tracking-wide">' + parts[1] + '</span>' +
+          '<span class="font-type text-ash text-xs2">' + parts[0] + ' · ' + parts[2] + '</span>';
+        flyerList.appendChild(li);
+      });
+    }
+
+    rows.forEach(function (row) {
+      var btn = row.querySelector('.stamp-toggle');
+      if (!btn) return;
+      function toggle() {
+        var key = row.dataset.date + '|' + row.dataset.city + '|' + row.dataset.venue;
+        if (stamped.has(key)) {
+          stamped.delete(key);
+          row.classList.remove('is-stamped');
+          btn.setAttribute('aria-pressed', 'false');
+        } else {
+          stamped.add(key);
+          row.classList.add('is-stamped');
+          btn.setAttribute('aria-pressed', 'true');
+        }
+        render();
+      }
+      btn.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+    });
+  })();
+</script>
+</body>
+</html>

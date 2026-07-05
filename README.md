@@ -150,6 +150,29 @@ Workflow({
   </tr>
 </table>
 
+## 🎨 Style Study — 10 styles × 10 themes
+
+Each of the 10 newer aesthetics, paired with a domain that fits it (a synthwave arcade bar, a 1920s speakeasy, a couture lookbook, a punk-band tour, a kids' learning app…). Same workflow, single-lens runs.
+
+<table>
+  <tr>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/synthwave/final.html"><img src="docs/images/style-study/synthwave.png" width="100%"></a><br><sub>PIXEL DIVE · synthwave</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/bauhaus/final.html"><img src="docs/images/style-study/bauhaus.png" width="100%"></a><br><sub>FORM & FUNCTION · bauhaus</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/art-deco/final.html"><img src="docs/images/style-study/art-deco.png" width="100%"></a><br><sub>THE GILDED HOUR · art deco</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/memphis/final.html"><img src="docs/images/style-study/memphis.png" width="100%"></a><br><sub>RIOT DECK · memphis</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/risograph/final.html"><img src="docs/images/style-study/risograph.png" width="100%"></a><br><sub>INK & PAPER · riso</sub></td>
+  </tr>
+  <tr>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/scandi/final.html"><img src="docs/images/style-study/scandi.png" width="100%"></a><br><sub>HYGGE & CO · scandi</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/holographic/final.html"><img src="docs/images/style-study/holographic.png" width="100%"></a><br><sub>PRISM · holographic</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/couture/final.html"><img src="docs/images/style-study/couture.png" width="100%"></a><br><sub>VESPER · couture</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/punk-zine/final.html"><img src="docs/images/style-study/punk-zine.png" width="100%"></a><br><sub>BLACKOUT · punk zine</sub></td>
+    <td width="20%" align="center"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/claymorphism/final.html"><img src="docs/images/style-study/claymorphism.png" width="100%"></a><br><sub>BLOOM · claymorphism</sub></td>
+  </tr>
+</table>
+
+→ Full table + per-style details in [`examples/README.md`](./examples/README.md#-style-study--10-styles--10-themes).
+
 ## 🧠 How it works — six phases
 
 ### ① Brief — distill a design system

@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PRISM — Holographic Color Lab</title>
+<meta name="description" content="PRISM — a holographic cosmetics house. Lip gloss, eye palette, highlighter, and nail lacquer engineered as wearable prisms. Light, refracted for your face." />
+<meta name="theme-color" content="#0B0B14" />
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Fraunces (display, opsz axis), Space Grotesk (UI/body), JetBrains Mono (labels) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:        '#0B0B14',
+          ink2:       '#11111E',
+          panel:      '#15151F',
+          obsidian:   '#08080F',
+          moonstone:  '#F5F0FF',
+          mist:       '#A39FB8',
+          dim:        '#8A86A0',   // lifted for WCAG AA (~5:1 on ink)
+          violet:     '#6D28D9',
+          cyan:       '#22D3EE',
+          magenta:    '#E879F7',
+          rose:       '#FB7185',
+          gold:       '#F5D67A',
+          mint:       '#86EFAC',
+        },
+        fontFamily: {
+          display: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+          sans:    ['"Space Grotesk"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        letterSpacing: {
+          widest2: '0.28em',
+          widest3: '0.4em',
+        },
+        boxShadow: {
+          foil: '0 1px 0 rgba(255,255,255,0.06) inset, 0 30px 60px -30px rgba(109,40,217,0.45)',
+          pill: '0 8px 30px -8px rgba(34,211,238,0.35)',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root{
+    --ink:#0B0B14;
+    --moonstone:#F5F0FF;
+    --cyan:#22D3EE;
+  }
+
+  html,body{ background:var(--ink); color:var(--moonstone); }
+  body{
+    font-family:'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* Activate Fraunces optical-size axis across the document */
+  .font-display{ font-optical-sizing:auto; }
+
+  /* --- Iridescent text gradient (the brand) --- */
+  .iridescent{
+    background-image:linear-gradient(
+      100deg,
+      #22D3EE 0%,
+      #6D28D9 28%,
+      #E879F7 52%,
+      #FB7185 74%,
+      #F5D67A 100%
+    );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    background-size:200% 100%;
+    background-position:0% 0%;
+  }
+
+  /* Hero wordmark — signature prism-light sweep (the ONE perpetual motion) */
+  /* opsz 144 → Fraunces' most dramatic high-contrast cut refracts the gradient */
+  .wordmark-sweep{
+    font-variation-settings:'opsz' 144;
+    background-image:linear-gradient(
+      100deg,
+      #22D3EE 0%,
+      #6D28D9 26%,
+      #E879F7 50%,
+      #FB7185 72%,
+      #F5D67A 100%
+    );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    background-size:220% 100%;
+    animation: sweep 9s linear infinite;
+  }
+  @keyframes sweep{
+    0%   { background-position: 0% 0%; }
+    100% { background-position: -220% 0%; }
+  }
+
+  /* Smaller display uses a lower optical size — tighter thins, less fragility */
+  .display-sm{ font-variation-settings:'opsz' 36; }
+  /* About thesis headline — a heavier Fraunces cut than the section headers */
+  .display-lg{ font-variation-settings:'opsz' 96; }
+
+  /* Mercurial chrome surface — hero bg + about frame */
+  .mercury{
+    background:
+      radial-gradient(120% 90% at 18% 8%,  rgba(34,211,238,0.22), transparent 55%),
+      radial-gradient(110% 80% at 82% 18%, rgba(232,121,247,0.20), transparent 55%),
+      radial-gradient(130% 100% at 50% 100%, rgba(109,40,217,0.34), transparent 60%),
+      conic-gradient(from 210deg at 50% 50%,
+        #0d0d18 0deg,
+        #14142640 40deg,
+        #1a1030 90deg,
+        #0b0b14 180deg,
+        #11111e 270deg,
+        #0d0d18 360deg);
+  }
+
+  /* Foil swatch tint over picsum imagery */
+  .foil-tint{
+    filter: saturate(1.05) contrast(1.04) brightness(0.9);
+    mix-blend-mode:luminosity;
+  }
+  /* Foil veil — static at rest; a one-shot hue-rotate fires on hover/focus
+     so the only perpetual motion on the page is the hero wordmark sweep. */
+  .foil-veil{
+    background:
+      radial-gradient(80% 70% at 25% 20%, rgba(34,211,238,0.55), transparent 60%),
+      radial-gradient(80% 70% at 80% 30%, rgba(232,121,247,0.50), transparent 60%),
+      radial-gradient(90% 80% at 55% 90%, rgba(109,40,217,0.60), transparent 65%),
+      linear-gradient(120deg, rgba(245,214,122,0.25), rgba(34,211,238,0.18));
+    mix-blend-mode:color-dodge;
+    filter:hue-rotate(0deg);
+    transition:filter .6s ease;
+  }
+  .tilt:hover .foil-veil,
+  .look-tilt:hover .foil-veil,
+  .foil-border:focus-within .foil-veil,
+  .foil-border-always:focus-within .foil-veil{
+    filter:hue-rotate(38deg);
+  }
+
+  /* Pointer-tracked specular sheen layer (driven by JS on each .sheen-host) */
+  .sheen{
+    background:radial-gradient(180px 180px at var(--mx,50%) var(--my,40%),
+      rgba(255,255,255,0.28), rgba(255,255,255,0.10) 30%, transparent 60%);
+    mix-blend-mode:screen;
+    opacity:0;
+    transition:opacity .5s ease;
+    pointer-events:none;
+  }
+  .sheen-host:hover .sheen,
+  .sheen-host:focus-within .sheen{ opacity:1; }
+
+  /* Iridescent hairline (spectrum signature) */
+  .spectrum-hairline{
+    height:2px; margin:0; border:0;
+    background:linear-gradient(90deg,
+      #22D3EE 0%, #6D28D9 26%, #E879F7 50%, #FB7185 72%, #F5D67A 100%);
+    background-size:200% 100%;
+  }
+
+  /* Focus ring — Cyan Shift, visible */
+  :focus-visible{
+    outline:2px solid var(--cyan);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  /* Scroll reveal — one-shot */
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* Card tilt on hover */
+  .tilt{ transition:transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease, border-color .5s ease; transform-style:preserve-3d; }
+  .tilt:hover{ transform:perspective(1000px) rotateX(2.4deg) rotateY(-3.2deg) translateY(-4px); }
+
+  /* Shade dots */
+  .dot{ width:14px; height:14px; border-radius:9999px; box-shadow:0 0 0 1px rgba(255,255,255,0.18) inset, 0 0 10px -2px currentColor; }
+
+  /* Spectrum bar — calibration chart. 9 named stops at i*100/8 so the gradient
+     and the tick grid share one coordinate system; the underlying band stays
+     static (truthful), and a per-stop radial specular highlight does the "tilt
+     toward that hue" emphasis locally instead of a global hue-rotate. */
+  .spectrum-bar{
+    position:relative;
+    height:72px; border-radius:16px;
+    background:linear-gradient(90deg,
+      #7FE9F7 0%,      /* 01 Cyan Shift */
+      #8FE7C8 12.5%,   /* 02 Aurora (teal-green) */
+      #9BC7F5 25%,     /* 03 Cobalt Drift (blue) */
+      #B79BE8 37.5%,   /* 04 Violet Melt (pastel violet) */
+      #D6BCEF 50%,     /* 05 Lilac Haze */
+      #F0A0E4 62.5%,   /* 06 Magenta Flash */
+      #FBA3B4 75%,     /* 07 Rose Quartz */
+      #EEE6DA 87.5%,   /* 08 Pearl (pale neutral) */
+      #F5D67A 100%     /* 09 Gold */
+    );
+    background-size:100% 100%;
+    background-position:0 0;
+    filter:saturate(1.06) brightness(1.04);
+    box-shadow:0 1px 0 rgba(255,255,255,0.18) inset, 0 24px 60px -28px rgba(109,40,217,0.6);
+    cursor:crosshair;
+  }
+  /* Per-stop specular highlight — a soft white hotspot positioned at the active
+     stop's x. Sits above the static gradient so the spectrum never lies; only
+     the emphasis moves. */
+  .spectrum-spec{
+    position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:
+      radial-gradient(22% 130% at var(--spec-x,50%) 50%,
+        rgba(255,255,255,0.55) 0%,
+        rgba(255,255,255,0.18) 28%,
+        transparent 60%);
+    mix-blend-mode:screen;
+    opacity:0; transition:opacity .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .spectrum-bar:hover .spectrum-spec,
+  .spectrum-bar:focus-within .spectrum-spec{ opacity:1; }
+  /* playhead that tracks the pointer across the bar */
+  .spectrum-playhead{
+    position:absolute; top:-6px; bottom:-6px; width:2px;
+    background:rgba(245,240,255,0.85);
+    box-shadow:0 0 14px 2px rgba(245,240,255,0.5);
+    left:50%; opacity:0; transition:opacity .25s ease, left .12s linear;
+    pointer-events:none; border-radius:2px;
+  }
+  .spectrum-bar:hover .spectrum-playhead,
+  .spectrum-bar:focus-within .spectrum-playhead{ opacity:1; }
+
+  /* Mono spec labels */
+  .spec{ font-family:'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  /* Nav blur pill */
+  .glass{
+    background:rgba(11,11,20,0.55);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border:1px solid rgba(245,240,255,0.08);
+  }
+
+  /* eyebrow — 12px, wide tracking */
+  .eyebrow{ font-family:'JetBrains Mono', monospace; text-transform:uppercase; letter-spacing:0.32em; font-size:12px; color:#9B97AE; }
+
+  /* Tilted look card gesture */
+  .look-tilt{ transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+  .look-tilt:hover{ transform:perspective(1200px) rotateX(3deg) rotateY(-2deg) translateY(-6px); }
+
+  /* Foil mercurial border (reveals on hover) */
+  .foil-border{ position:relative; }
+  .foil-border::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
+    background:linear-gradient(130deg, rgba(34,211,238,0.7), rgba(109,40,217,0.5) 40%, rgba(232,121,247,0.6) 70%, rgba(245,214,122,0.5));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    pointer-events:none; opacity:.0; transition:opacity .5s ease;
+  }
+  .foil-border:hover::before,
+  .foil-border:focus-within::before{ opacity:1; }
+  /* Persistent foil border — the "pull one more surface into foil" gate */
+  .foil-border-always::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
+    background:linear-gradient(130deg, rgba(34,211,238,0.55), rgba(109,40,217,0.45) 40%, rgba(232,121,247,0.5) 70%, rgba(245,214,122,0.45));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    pointer-events:none; opacity:1;
+  }
+
+  /* Skip-to-content link — visible on focus */
+  .skip-link{
+    position:absolute; left:50%; top:0; transform:translate(-50%, -120%);
+    z-index:60; background:var(--moonstone); color:var(--ink);
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.12em;
+    text-transform:uppercase; padding:10px 18px; border-radius:0 0 12px 12px;
+    transition:transform .2s ease; text-decoration:none; font-weight:500;
+  }
+  .skip-link:focus{ transform:translate(-50%, 0); }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .wordmark-sweep{ animation:none; background-position:0% 0%; }
+    .foil-veil{ animation:none; transition:none; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .tilt:hover, .look-tilt:hover{ transform:none; }
+    .tilt, .look-tilt{ transition:none; }
+    .spectrum-spec, .spectrum-playhead{ transition:none; opacity:0; }
+    .sheen{ transition:none; }
+    .mercury{ transition:none; }
+    *{ scroll-behavior:auto !important; }
+  }
+
+  /* Mobile menu disclosure */
+  .mobile-menu{ display:none; }
+  .mobile-menu.open{ display:block; }
+
+  /* Tiny grain overlay for hero */
+  .grain{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+</style>
+</head>
+
+<body class="bg-ink text-moonstone font-sans antialiased selection:bg-violet/40 selection:text-moonstone">
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ===================== NAV ===================== -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <nav class="glass mt-3 rounded-full px-4 sm:px-5 py-2.5 flex items-center justify-between shadow-foil" aria-label="Primary">
+      <a href="#top" class="flex items-center gap-2.5 group" aria-label="PRISM home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="shrink-0">
+          <path d="M12 2 L22 20 L2 20 Z" stroke="url(#pg)" stroke-width="1.2" stroke-linejoin="round" />
+          <path d="M12 2 L12 20" stroke="url(#pg)" stroke-width="0.7" opacity="0.6" />
+          <defs>
+            <linearGradient id="pg" x1="0" y1="0" x2="24" y2="0" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#22D3EE"/><stop offset="0.5" stop-color="#6D28D9"/><stop offset="1" stop-color="#F5D67A"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="font-display font-black tracking-widest2 text-lg leading-none text-moonstone">PRISM</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8 text-[13px] text-mist">
+        <a href="#products" class="hover:text-moonstone transition-colors">Products</a>
+        <a href="#shades"  class="hover:text-moonstone transition-colors">Shades</a>
+        <a href="#looks"    class="hover:text-moonstone transition-colors">Looks</a>
+        <a href="#about"    class="hover:text-moonstone transition-colors">About</a>
+      </div>
+
+      <button id="menuBtn" type="button" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-white/10 text-moonstone hover:bg-white/5 transition-colors" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <i data-lucide="menu" class="w-4 h-4" aria-hidden="true"></i>
+      </button>
+    </nav>
+
+    <div id="mobileMenu" class="mobile-menu md:hidden mt-2">
+      <div class="glass rounded-2xl p-2 text-sm">
+        <a href="#products" class="block px-4 py-3 rounded-xl hover:bg-white/5 transition-colors">Products</a>
+        <a href="#shades"  class="block px-4 py-3 rounded-xl hover:bg-white/5 transition-colors">Shades</a>
+        <a href="#looks"    class="block px-4 py-3 rounded-xl hover:bg-white/5 transition-colors">Looks</a>
+        <a href="#about"    class="block px-4 py-3 rounded-xl hover:bg-white/5 transition-colors">About</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<span id="main" class="absolute" tabindex="-1" aria-hidden="true"></span>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero" class="relative min-h-[100svh] flex flex-col justify-center overflow-hidden">
+  <div id="mercuryBase" class="absolute inset-0 mercury" aria-hidden="true"></div>
+  <div id="mercuryGlow" class="absolute inset-0 pointer-events-none" aria-hidden="true"
+       style="background:
+         radial-gradient(60% 50% at var(--gx,30%) var(--gy,25%), rgba(34,211,238,0.18), transparent 60%),
+         radial-gradient(50% 45% at var(--gx2,70%) var(--gy2,80%), rgba(232,121,247,0.16), transparent 60%);
+         transition:background .4s ease-out;"></div>
+
+  <img src="https://picsum.photos/seed/prism-chrome-surface/1800/1100" alt="" aria-hidden="true" fetchpriority="high"
+       class="absolute inset-0 w-full h-full object-cover opacity-[0.10] foil-tint pointer-events-none" />
+  <div class="absolute inset-0 grain opacity-60 pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-ink/30 via-transparent to-ink pointer-events-none" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-7xl px-5 sm:px-6 pt-28 pb-20 w-full">
+    <p class="eyebrow mb-6 sm:mb-8 reveal">Holographic Color Lab</p>
+
+    <h1 class="reveal py-2">
+      <span class="wordmark-sweep font-display font-black leading-[0.85] block
+                  text-[clamp(3.75rem,20vw,15rem)]
+                  tracking-tight px-1">
+        PRISM
+      </span>
+    </h1>
+
+    <p class="reveal mt-6 sm:mt-8 text-xl sm:text-2xl md:text-3xl text-moonstone/90 font-light max-w-2xl leading-snug">
+      Light, refracted for your face.
+    </p>
+
+    <div class="reveal mt-9 sm:mt-11 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+      <a href="#products"
+         class="group inline-flex items-center justify-center gap-2 rounded-full bg-moonstone text-ink font-medium text-sm sm:text-base px-7 py-3.5 shadow-pill hover:shadow-[0_12px_40px_-8px_rgba(34,211,238,0.55)] hover:-translate-y-0.5 transition-all">
+        Shop holographics
+        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true"></i>
+      </a>
+      <a href="#shades" class="group inline-flex items-center gap-1.5 px-3 py-2 text-sm text-mist hover:text-moonstone transition-colors underline-offset-4 hover:underline">
+        See the spectrum
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="absolute bottom-0 inset-x-0 spectrum-hairline opacity-80" aria-hidden="true"></div>
+</section>
+
+<!-- ===================== PRODUCTS ===================== -->
+<section id="products" class="relative py-24 sm:py-32 bg-ink">
+  <div class="mx-auto max-w-7xl px-5 sm:px-6">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12 sm:mb-16">
+      <div class="reveal">
+        <p class="eyebrow mb-4">The Refraction Collection</p>
+        <h2 class="font-display display-sm font-light text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[0.95]">
+          Four surfaces.<br>
+          <span class="italic font-normal text-moonstone">One spectrum.</span>
+        </h2>
+      </div>
+      <p class="reveal spec text-[11px] text-dim max-w-xs leading-relaxed">
+        // each texture engineered as a<br>wearable prism — pigment calibrated<br>at the wavelength level.
+      </p>
+    </div>
+
+    <!-- Refraction Collection — four equal columns on desktop (the brief's
+         4-across read). Lip Gloss earns emphasis through a taller aspect,
+         larger name type, and its persistent foil border — never column span. -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 items-stretch">
+
+      <!-- 1. Lip Gloss — Most wanted (taller aspect + larger name type + persistent foil border) -->
+      <article class="reveal foil-border foil-border-always sheen-host tilt group relative rounded-3xl bg-panel/60 border border-white/5 overflow-hidden shadow-foil">
+        <span class="absolute top-4 left-4 z-20 spec text-[11px] tracking-widest2 uppercase text-cyan border border-cyan/40 bg-cyan/10 rounded-full px-2.5 py-1 backdrop-blur-sm">Most wanted</span>
+        <div class="relative aspect-[4/5] lg:aspect-[3/4] overflow-hidden">
+          <img src="https://picsum.photos/seed/prism-lipgloss-foil/700/900" alt="Holographic Lip Gloss foil swatch" class="absolute inset-0 w-full h-full object-cover foil-tint" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-90" aria-hidden="true"></div>
+          <div class="absolute inset-0 mercury opacity-30" aria-hidden="true"></div>
+          <div class="sheen absolute inset-0" aria-hidden="true"></div>
+        </div>
+        <div class="p-6 sm:p-7">
+          <h3 class="font-display display-sm text-2xl sm:text-[1.75rem] lg:text-3xl tracking-tight">Holographic Lip Gloss</h3>
+          <p class="text-[14px] text-mist mt-2 leading-relaxed">Glass-clear glaze with a cyan-shift foil that bends with every angle.</p>
+          <div class="mt-5 flex items-center gap-2.5" role="list" aria-label="Shades: Cyan Shift, Violet Melt, Rose Quartz">
+            <span class="dot" style="color:#22D3EE;background:linear-gradient(135deg,#7FE9F7,#22D3EE)" title="Cyan Shift" role="listitem" aria-label="Cyan Shift"></span>
+            <span class="dot" style="color:#B79BE8;background:linear-gradient(135deg,#D6BCEF,#B79BE8)" title="Violet Melt" role="listitem" aria-label="Violet Melt"></span>
+            <span class="dot" style="color:#FB7185;background:linear-gradient(135deg,#FBC7CE,#FB7185)" title="Rose Quartz" role="listitem" aria-label="Rose Quartz"></span>
+            <span class="spec text-[11px] text-dim ml-1.5">3 shades</span>
+          </div>
+          <ul class="mt-2 flex flex-wrap gap-x-3 gap-y-1 spec text-[11px] text-dim" aria-hidden="true">
+            <li>Cyan Shift</li><li>Violet Melt</li><li>Rose Quartz</li>
+          </ul>
+          <div class="mt-6 flex items-center justify-between">
+            <span class="spec text-moonstone text-lg">$24</span>
+            <button type="button" class="spec text-[11px] tracking-widest2 uppercase rounded-full border border-white/15 px-4 py-2 hover:bg-moonstone hover:text-ink hover:border-moonstone transition-colors">Add to bag</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2. Eye Palette -->
+      <article class="reveal foil-border sheen-host tilt group relative rounded-3xl bg-panel/60 border border-white/5 overflow-hidden shadow-foil">
+        <div class="relative aspect-[4/5] overflow-hidden">
+          <img src="https://picsum.photos/seed/prism-eyepalette-foil/600/750" alt="Prism Eye Palette foil swatch" class="absolute inset-0 w-full h-full object-cover foil-tint" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-90" aria-hidden="true"></div>
+          <div class="absolute inset-0 mercury opacity-30" aria-hidden="true"></div>
+          <div class="sheen absolute inset-0" aria-hidden="true"></div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display display-sm text-xl tracking-tight">Prism Eye Palette</h3>
+          <p class="text-[14px] text-mist mt-1.5 leading-relaxed">Six-pan spectrum deck — matte ground, foil drift, mercury shimmer.</p>
+          <div class="mt-4 flex items-center gap-2.5" role="list" aria-label="Shades: Spectrum, Aurora, Cobalt Drift, Mint Flash, Lilac Haze, Mercury">
+            <span class="dot" style="color:#22D3EE;background:linear-gradient(135deg,#7FE9F7,#22D3EE)" title="Spectrum" role="listitem" aria-label="Spectrum"></span>
+            <span class="dot" style="color:#E879F7;background:linear-gradient(135deg,#F0B6F5,#E879F7)" title="Aurora" role="listitem" aria-label="Aurora"></span>
+            <span class="dot" style="color:#3B82F6;background:linear-gradient(135deg,#93C5FD,#1D4ED8)" title="Cobalt Drift" role="listitem" aria-label="Cobalt Drift"></span>
+            <span class="dot" style="color:#86EFAC;background:linear-gradient(135deg,#BBF7D0,#22C55E)" title="Mint Flash" role="listitem" aria-label="Mint Flash"></span>
+            <span class="dot" style="color:#A855F7;background:linear-gradient(135deg,#E0C9F2,#A855F7)" title="Lilac Haze" role="listitem" aria-label="Lilac Haze"></span>
+            <span class="dot" style="color:#8A86A0;background:linear-gradient(135deg,#D7D0EE,#8A86A0)" title="Mercury" role="listitem" aria-label="Mercury"></span>
+            <span class="spec text-[11px] text-dim ml-1.5">6 pans</span>
+          </div>
+          <ul class="mt-2 flex flex-wrap gap-x-3 gap-y-1 spec text-[11px] text-dim" aria-hidden="true">
+            <li>Spectrum</li><li>Aurora</li><li>Cobalt Drift</li><li>Mint Flash</li><li>Lilac Haze</li><li>Mercury</li>
+          </ul>
+          <div class="mt-5 flex items-center justify-between">
+            <span class="spec text-moonstone text-base">$34</span>
+            <button type="button" class="spec text-[11px] tracking-widest2 uppercase rounded-full border border-white/15 px-3 py-1.5 hover:bg-moonstone hover:text-ink hover:border-moonstone transition-colors">Add to bag</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3. Liquid Highlighter -->
+      <article class="reveal foil-border sheen-host tilt group relative rounded-3xl bg-panel/60 border border-white/5 overflow-hidden shadow-foil">
+        <div class="relative aspect-[4/5] overflow-hidden">
+          <img src="https://picsum.photos/seed/prism-highlighter-foil/600/750" alt="Liquid Highlighter foil swatch" class="absolute inset-0 w-full h-full object-cover foil-tint" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-90" aria-hidden="true"></div>
+          <div class="absolute inset-0 mercury opacity-30" aria-hidden="true"></div>
+          <div class="sheen absolute inset-0" aria-hidden="true"></div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display display-sm text-xl tracking-tight">Liquid Highlighter</h3>
+          <p class="text-[14px] text-mist mt-1.5 leading-relaxed">Weightless serum-bright pearl — a second-skin mirror on bone.</p>
+          <div class="mt-4 flex items-center gap-2.5" role="list" aria-label="Shades: Pearl, Opal, Moonstone">
+            <span class="dot" style="color:#F5F0FF;background:linear-gradient(135deg,#FFFFFF,#D7D0EE)" title="Pearl" role="listitem" aria-label="Pearl"></span>
+            <span class="dot" style="color:#E879F7;background:linear-gradient(135deg,#F5D6F8,#C79BE8)" title="Opal" role="listitem" aria-label="Opal"></span>
+            <span class="dot" style="color:#F5D67A;background:linear-gradient(135deg,#FBEEC0,#F5D67A)" title="Moonstone" role="listitem" aria-label="Moonstone"></span>
+          </div>
+          <ul class="mt-2 flex flex-wrap gap-x-3 gap-y-1 spec text-[11px] text-dim" aria-hidden="true">
+            <li>Pearl</li><li>Opal</li><li>Moonstone</li>
+          </ul>
+          <div class="mt-5 flex items-center justify-between">
+            <span class="spec text-moonstone text-base">$28</span>
+            <button type="button" class="spec text-[11px] tracking-widest2 uppercase rounded-full border border-white/15 px-3 py-1.5 hover:bg-moonstone hover:text-ink hover:border-moonstone transition-colors">Add to bag</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4. Nail Lacquer — equal column on lg, vertical layout matching the collection -->
+      <article class="reveal foil-border sheen-host tilt group relative rounded-3xl bg-panel/60 border border-white/5 overflow-hidden shadow-foil">
+        <div class="relative aspect-[4/5] overflow-hidden">
+          <img src="https://picsum.photos/seed/prism-naillacquer-foil/600/750" alt="Holographic Nail Lacquer foil swatch" class="absolute inset-0 w-full h-full object-cover foil-tint" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-90" aria-hidden="true"></div>
+          <div class="absolute inset-0 mercury opacity-30" aria-hidden="true"></div>
+          <div class="sheen absolute inset-0" aria-hidden="true"></div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display display-sm text-xl tracking-tight">Holographic Nail Lacquer</h3>
+          <p class="text-[14px] text-mist mt-1.5 leading-relaxed">Long-wear chrome flakes suspended in a tinted glass base.</p>
+          <div class="mt-4 flex items-center gap-2.5" role="list" aria-label="Shades: Supernova, Ice, Bubblegum Prism">
+            <span class="dot" style="color:#E879F7;background:linear-gradient(135deg,#F0B6F5,#B79BE8)" title="Supernova" role="listitem" aria-label="Supernova"></span>
+            <span class="dot" style="color:#7FE9F7;background:linear-gradient(135deg,#D7F8FB,#22D3EE)" title="Ice" role="listitem" aria-label="Ice"></span>
+            <span class="dot" style="color:#FB7185;background:linear-gradient(135deg,#FDC4D0,#FB7185)" title="Bubblegum Prism" role="listitem" aria-label="Bubblegum Prism"></span>
+          </div>
+          <ul class="mt-2 flex flex-wrap gap-x-3 gap-y-1 spec text-[11px] text-dim" aria-hidden="true">
+            <li>Supernova</li><li>Ice</li><li>Bubblegum Prism</li>
+          </ul>
+          <div class="mt-5 flex items-center justify-between">
+            <span class="spec text-moonstone text-base">$22</span>
+            <button type="button" class="spec text-[11px] tracking-widest2 uppercase rounded-full border border-white/15 px-3 py-1.5 hover:bg-moonstone hover:text-ink hover:border-moonstone transition-colors">Add to bag</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SHADES ===================== -->
+<section id="shades" class="relative py-24 sm:py-32 bg-obsidian">
+  <div class="mx-auto max-w-7xl px-5 sm:px-6">
+    <div class="reveal max-w-3xl mb-12 sm:mb-16">
+      <p class="eyebrow mb-4">Calibration</p>
+      <h2 class="font-display display-sm font-light text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[0.95]">
+        The full <span class="italic font-normal text-cyan">PRISM</span> spectrum.
+      </h2>
+      <p class="mt-5 text-mist text-base sm:text-lg leading-relaxed max-w-xl">
+        Nine named wavelengths, one continuous band. Drag your cursor across the chart or focus a stop to tilt the gradient toward that hue — this is the spectrum our lab mixes against.
+      </p>
+    </div>
+
+    <!-- Spectrum bar — pointer-reactive calibration chart -->
+    <div class="reveal">
+      <div id="spectrumBar"
+           class="spectrum-bar"
+           role="slider"
+           aria-label="PRISM spectrum, cyan to gold across nine named shades"
+           aria-orientation="horizontal"
+           aria-valuemin="1" aria-valuemax="9" aria-valuenow="1"
+           aria-valuetext="01 Cyan Shift, 478nm"
+           tabindex="0">
+        <div class="spectrum-spec" id="spectrumSpec" aria-hidden="true"></div>
+        <div class="spectrum-playhead" id="spectrumPlayhead" aria-hidden="true"></div>
+      </div>
+
+      <!-- tick stops — presentational labels that mirror the slider's stops.
+           They highlight visually but are not a second tab-stop each; the bar
+           is the single primary control. -->
+      <ol id="spectrumStops" class="mt-5 grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-y-5 gap-x-2 list-none" role="presentation">
+        <li data-pos="0" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="01 Cyan Shift, 478nm">
+            <span class="text-moonstone">01</span> Cyan Shift
+          </span>
+        </li>
+        <li data-pos="1" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="02 Aurora, 495nm">
+            <span class="text-moonstone">02</span> Aurora
+          </span>
+        </li>
+        <li data-pos="2" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="03 Cobalt Drift, 455nm">
+            <span class="text-moonstone">03</span> Cobalt Drift
+          </span>
+        </li>
+        <li data-pos="3" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="04 Violet Melt, 405nm">
+            <span class="text-moonstone">04</span> Violet Melt
+          </span>
+        </li>
+        <li data-pos="4" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="05 Lilac Haze, 420nm">
+            <span class="text-moonstone">05</span> Lilac Haze
+          </span>
+        </li>
+        <li data-pos="5" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="06 Magenta Flash, 560nm">
+            <span class="text-moonstone">06</span> Magenta Flash
+          </span>
+        </li>
+        <li data-pos="6" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="07 Rose Quartz, 610nm">
+            <span class="text-moonstone">07</span> Rose Quartz
+          </span>
+        </li>
+        <li data-pos="7" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="08 Pearl, 525nm">
+            <span class="text-moonstone">08</span> Pearl
+          </span>
+        </li>
+        <li data-pos="8" class="stop flex flex-col items-start gap-2" role="presentation">
+          <span class="tick w-px h-3 bg-white/40" aria-hidden="true"></span>
+          <span class="spec text-[11px] text-mist leading-tight text-left hover:text-moonstone transition-colors cursor-pointer"
+                role="presentation" tabindex="-1"
+                data-stop-label="09 Gold, 590nm">
+            <span class="text-moonstone">09</span> Gold
+          </span>
+        </li>
+      </ol>
+
+      <!-- live readout — silent during pointer preview, polite only on commit -->
+      <div class="mt-8 flex items-center gap-3 spec text-[11px] text-dim" role="status" aria-live="off" id="readoutWrap">
+        <span class="inline-block w-2 h-2 rounded-full bg-cyan shadow-[0_0_10px_#22D3EE]" aria-hidden="true"></span>
+        <span id="readout">Reading: 01 Cyan Shift · 478nm</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LOOKS ===================== -->
+<section id="looks" class="relative py-24 sm:py-32 bg-ink">
+  <div class="mx-auto max-w-7xl px-5 sm:px-6">
+    <div class="reveal mb-12 sm:mb-16">
+      <p class="eyebrow mb-4">Wear the light</p>
+      <h2 class="font-display display-sm font-light text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[0.95]">
+        Three ways to <span class="italic font-normal text-moonstone">refract.</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+
+      <article class="reveal look-tilt foil-border group relative rounded-3xl overflow-hidden border border-white/5 shadow-foil">
+        <div class="relative aspect-[3/4] overflow-hidden">
+          <img src="https://picsum.photos/seed/prism-look-aurora-eye/700/900" alt="Aurora Eye look portrait" class="absolute inset-0 w-full h-full object-cover foil-tint" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-80" aria-hidden="true"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" aria-hidden="true"></div>
+          <div class="absolute bottom-0 p-6 sm:p-7">
+            <h3 class="font-display italic text-2xl sm:text-3xl text-moonstone">Aurora Eye</h3>
+            <p class="spec text-[12px] text-mist mt-3 leading-relaxed">Dust Cobalt Drift across the lid, tap Aurora on the center.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="reveal look-tilt foil-border group relative rounded-3xl overflow-hidden border border-white/5 shadow-foil">
+        <div class="relative aspect-[3/4] overflow-hidden">
+          <img src="https://picsum.photos/seed/prism-look-glass-skin/700/900" alt="Glass Skin look portrait" class="absolute inset-0 w-full h-full object-cover foil-tint" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-80" aria-hidden="true"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" aria-hidden="true"></div>
+          <div class="absolute bottom-0 p-6 sm:p-7">
+            <h3 class="font-display italic text-2xl sm:text-3xl text-moonstone">Glass Skin</h3>
+            <p class="spec text-[12px] text-mist mt-3 leading-relaxed">Sheer Liquid Highlighter in Pearl over cheekbones and brow bone.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="reveal look-tilt foil-border group relative rounded-3xl overflow-hidden border border-white/5 shadow-foil">
+        <div class="relative aspect-[3/4] overflow-hidden">
+          <img src="https://picsum.photos/seed/prism-look-prism-nail/700/900" alt="Prism Nail look portrait" class="absolute inset-0 w-full h-full object-cover foil-tint" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-80" aria-hidden="true"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" aria-hidden="true"></div>
+          <div class="absolute bottom-0 p-6 sm:p-7">
+            <h3 class="font-display italic text-2xl sm:text-3xl text-moonstone">Prism Nail</h3>
+            <p class="spec text-[12px] text-mist mt-3 leading-relaxed">Two coats Supernova, one coat Ice on the tips.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section id="about" class="relative py-24 sm:py-32 bg-obsidian">
+  <div class="mx-auto max-w-7xl px-5 sm:px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+      <!-- Left: mercurial image block (persistent foil border — the "pull one more surface into foil" gate) -->
+      <div class="reveal relative">
+        <div class="foil-border foil-border-always relative rounded-3xl overflow-hidden aspect-[4/5] sm:aspect-square mercury shadow-foil">
+          <img src="https://picsum.photos/seed/prism-lab-mercury/900/900" alt="PRISM color lab mercurial surface" class="absolute inset-0 w-full h-full object-cover foil-tint opacity-70" loading="lazy" />
+          <div class="absolute inset-0 foil-veil opacity-90" aria-hidden="true"></div>
+          <div class="absolute left-5 top-5 right-5 flex items-center gap-1.5 spec text-[12px] text-moonstone/80" aria-hidden="true">
+            <span>380nm</span>
+            <span class="flex-1 h-px bg-white/20"></span>
+            <span>540nm</span>
+            <span class="flex-1 h-px bg-white/20"></span>
+            <span>700nm</span>
+          </div>
+          <div class="absolute left-5 bottom-5 spec text-[11px] text-moonstone/70 tracking-widest2 uppercase">// lab sample 09 · gold</div>
+        </div>
+      </div>
+
+      <!-- Right: copy -->
+      <div class="reveal">
+        <p class="eyebrow mb-5">The lab</p>
+        <h2 class="font-display display-lg font-extralight text-5xl sm:text-6xl md:text-7xl tracking-tight leading-[0.95]">
+          Color is a <span class="iridescent italic font-medium">frequency.</span>
+        </h2>
+        <div class="mt-7 space-y-5 text-mist text-base sm:text-lg leading-relaxed max-w-xl">
+          <p>PRISM is not a makeup brand. It is a color lab where pigment is engineered at the wavelength level — every shade a measured band of refracted light, suspended in a texture you can wear.</p>
+          <p>We do not chase glow. We tune frequency. Each foil, gloss, and chrome flake is calibrated against the spectrum, so the same cyan that reads cool on your wrist reads electric on your lid.</p>
+        </div>
+
+        <blockquote class="mt-9 pl-5 border-l-2 border-violet/60">
+          <p class="font-display italic text-2xl sm:text-3xl text-moonstone leading-snug">
+            &ldquo;We don&rsquo;t make color. We make light, hold still.&rdquo;
+          </p>
+        </blockquote>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="relative bg-obsidian pt-0">
+  <div class="spectrum-hairline opacity-90" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-7xl px-5 sm:px-6 py-16 sm:py-20">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-8">
+
+      <div class="col-span-2 lg:col-span-2">
+        <div class="flex items-center gap-2.5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2 L22 20 L2 20 Z" stroke="url(#pg2)" stroke-width="1.2" stroke-linejoin="round" />
+            <defs>
+              <linearGradient id="pg2" x1="0" y1="0" x2="24" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#22D3EE"/><stop offset="0.5" stop-color="#6D28D9"/><stop offset="1" stop-color="#F5D67A"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="font-display font-black tracking-widest2 text-lg text-moonstone">PRISM</span>
+        </div>
+        <p class="mt-4 text-mist text-sm leading-relaxed max-w-xs">Light, refracted for your face. A holographic color lab.</p>
+      </div>
+
+      <nav aria-label="Shop">
+        <h3 class="eyebrow mb-4">Shop</h3>
+        <ul class="space-y-2.5 text-sm text-mist">
+          <li><a href="#products" class="hover:text-moonstone transition-colors">Lip Gloss</a></li>
+          <li><a href="#products" class="hover:text-moonstone transition-colors">Eye Palette</a></li>
+          <li><a href="#products" class="hover:text-moonstone transition-colors">Highlighter</a></li>
+          <li><a href="#products" class="hover:text-moonstone transition-colors">Nail Lacquer</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Shades">
+        <h3 class="eyebrow mb-4">Shades</h3>
+        <ul class="space-y-2.5 text-sm text-mist">
+          <li><a href="#shades" class="hover:text-moonstone transition-colors">Cyan Shift</a></li>
+          <li><a href="#shades" class="hover:text-moonstone transition-colors">Violet Melt</a></li>
+          <li><a href="#shades" class="hover:text-moonstone transition-colors">Rose Quartz</a></li>
+          <li><a href="#shades" class="hover:text-moonstone transition-colors">Spectrum chart</a></li>
+          <li><a href="#looks" class="hover:text-moonstone transition-colors">Looks</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="About">
+        <h3 class="eyebrow mb-4">About</h3>
+        <ul class="space-y-2.5 text-sm text-mist">
+          <li><a href="#about" class="hover:text-moonstone transition-colors">The lab</a></li>
+          <li><a href="#about" class="hover:text-moonstone transition-colors">Wavelengths</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Connect">
+        <h3 class="eyebrow mb-4">Connect</h3>
+        <ul class="space-y-2.5 text-sm text-mist">
+          <li><a href="#" class="hover:text-moonstone transition-colors inline-flex items-center gap-2"><i data-lucide="instagram" class="w-3.5 h-3.5" aria-hidden="true"></i> Instagram</a></li>
+          <li><a href="#" class="hover:text-moonstone transition-colors inline-flex items-center gap-2"><i data-lucide="music-2" class="w-3.5 h-3.5" aria-hidden="true"></i> TikTok</a></li>
+          <li><a href="#" class="hover:text-moonstone transition-colors inline-flex items-center gap-2"><i data-lucide="mail" class="w-3.5 h-3.5" aria-hidden="true"></i> Email</a></li>
+        </ul>
+      </nav>
+
+    </div>
+
+    <div class="mt-14 pt-6 border-t border-white/5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 spec text-[11px] text-dim">
+      <p>© 2026 PRISM Color Lab · Made with refracted light</p>
+      <div class="flex items-center gap-5">
+        <a href="#" class="hover:text-moonstone transition-colors">Privacy</a>
+        <a href="#" class="hover:text-moonstone transition-colors">Terms</a>
+        <a href="#" class="hover:text-moonstone transition-colors">Shipping</a>
+      </div>
+    </div>
+  </div>
+  <hr class="spectrum-hairline opacity-90" aria-hidden="true" />
+</footer>
+
+</main>
+
+<script>
+  // ---- Lucide ----
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) window.lucide.createIcons();
+  });
+
+  // ---- Mobile disclosure menu (aria-expanded, Escape, click-outside) ----
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  function setMenu(open){
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    mobileMenu.classList.toggle('open', open);
+    menuBtn.innerHTML = open
+      ? '<i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>'
+      : '<i data-lucide="menu" class="w-4 h-4" aria-hidden="true"></i>';
+    if (window.lucide) window.lucide.createIcons();
+  }
+  menuBtn.addEventListener('click', () => {
+    const open = menuBtn.getAttribute('aria-expanded') === 'true';
+    setMenu(!open);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') setMenu(false);
+  });
+  document.addEventListener('click', (e) => {
+    if (menuBtn.getAttribute('aria-expanded') !== 'true') return;
+    if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) setMenu(false);
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+  // ---- Scroll reveal (IntersectionObserver) ----
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduceMotion) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting){
+          const delay = Math.min(i * 60, 220);
+          setTimeout(() => entry.target.classList.add('in'), delay);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+
+  // ---- Spectrum bar: per-stop specular emphasis + keyboard control ----
+  // The underlying gradient is static (truthful calibration). The "tilt toward
+  // that hue" interaction is a local radial highlight that brightens+saturates
+  // the stop under the cursor/pointer, plus a playhead nudged to its x.
+  const bar = document.getElementById('spectrumBar');
+  const stops = document.querySelectorAll('#spectrumStops .stop');
+  const readout = document.getElementById('readout');
+  const readoutWrap = document.getElementById('readoutWrap');
+  const playhead = document.getElementById('spectrumPlayhead');
+  const spec = document.getElementById('spectrumSpec');
+
+  const wavelengths = ['478nm','495nm','455nm','405nm','420nm','560nm','610nm','525nm','590nm'];
+  const names = ['Cyan Shift','Aurora','Cobalt Drift','Violet Melt','Lilac Haze','Magenta Flash','Rose Quartz','Pearl','Gold'];
+
+  let lastCommitted = 0;   // the stop that "holds" the chart reading
+
+  function formatReadout(idx){
+    const n = String(idx+1).padStart(2,'0');
+    return `Reading: ${n} ${names[idx]} · ${wavelengths[idx]}`;
+  }
+  // Preview moves the specular highlight + playhead to a stop WITHOUT announcing
+  // (readout stays silent during pointer drag to avoid chatter).
+  function previewStop(idx){
+    if (reduceMotion) return;
+    const pct = (idx / 8) * 100;
+    bar.style.setProperty('--spec-x', pct + '%');
+    spec.style.opacity = '1';
+    playhead.style.left = `${pct}%`;
+    playhead.style.opacity = '1';
+  }
+  // Commit persists the reading: updates aria, announces politely, holds the stop.
+  function commitStop(idx){
+    lastCommitted = idx;
+    previewStop(idx);
+    readout.textContent = formatReadout(idx);
+    // Announce on commit only.
+    readoutWrap.setAttribute('aria-live', 'polite');
+    bar.setAttribute('aria-valuenow', String(idx+1));
+    bar.setAttribute('aria-valuetext', `${String(idx+1).padStart(2,'0')} ${names[idx]}, ${wavelengths[idx]}`);
+  }
+  function revertToCommitted(){
+    previewStop(lastCommitted);
+    // Silence the readout again for the next preview sweep.
+    readoutWrap.setAttribute('aria-live', 'off');
+  }
+
+  // Pointer-driven preview across the bar.
+  function pointerToStop(clientX){
+    const rect = bar.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    return Math.min(8, Math.max(0, Math.round(ratio * 8)));
+  }
+  bar.addEventListener('mousemove', (e) => {
+    if (reduceMotion) return;
+    previewStop(pointerToStop(e.clientX));
+  });
+  bar.addEventListener('mouseleave', () => {
+    if (reduceMotion) return;
+    revertToCommitted();
+  });
+  bar.addEventListener('click', (e) => {
+    commitStop(pointerToStop(e.clientX));
+  });
+
+  // Tick labels: hover previews, click commits + focuses the bar (single tab-stop).
+  stops.forEach(stop => {
+    const label = stop.querySelector('[data-stop-label]');
+    const idx = parseInt(stop.dataset.pos, 10);
+    label.addEventListener('mouseenter', () => previewStop(idx));
+    label.addEventListener('mouseleave', () => revertToCommitted());
+    label.addEventListener('click', () => { commitStop(idx); bar.focus(); });
+  });
+
+  // Keyboard control on the bar (slider widget) — commits the reading.
+  bar.addEventListener('keydown', (e) => {
+    const cur = parseInt(bar.getAttribute('aria-valuenow'), 10) - 1;
+    let next = cur;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = Math.min(8, cur + 1);
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = Math.max(0, cur - 1);
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = 8;
+    else return;
+    e.preventDefault();
+    commitStop(next);
+  });
+
+  // Initialize the chart at the first stop so the visual matches the readout.
+  commitStop(0);
+  if (reduceMotion) { spec.style.opacity = '0'; playhead.style.opacity = '0'; }
+
+  // ---- Pointer-tracked specular sheen on product cards ----
+  document.querySelectorAll('.sheen-host').forEach(host => {
+    host.addEventListener('mousemove', (e) => {
+      const rect = host.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      host.style.setProperty('--mx', x + '%');
+      host.style.setProperty('--my', y + '%');
+    });
+  });
+
+  // ---- Hero mercury glow: one-shot settle on first pointer entry only ----
+  // (fine-pointer + hover-capable). No continuous tracking — the wordmark
+  // sweep is the sole perpetual motion while idle.
+  const mercuryGlow = document.getElementById('mercuryGlow');
+  const hero = document.getElementById('hero');
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  if (hero && mercuryGlow && !reduceMotion && finePointer && canHover){
+    let settled = false;
+    hero.addEventListener('pointerenter', (e) => {
+      if (settled) return;
+      settled = true;
+      const rect = hero.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      mercuryGlow.style.setProperty('--gx', x + '%');
+      mercuryGlow.style.setProperty('--gy', y + '%');
+      mercuryGlow.style.setProperty('--gx2', (100 - x) + '%');
+      mercuryGlow.style.setProperty('--gy2', (100 - y) + '%');
+    }, { once: true });
+  }
+</script>
+</body>
+</html>

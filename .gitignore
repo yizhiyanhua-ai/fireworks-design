@@ -16,3 +16,4 @@ yarn-error.log*
 
 # Claude Code local state
 .claude/local/
+.staging-style-study/

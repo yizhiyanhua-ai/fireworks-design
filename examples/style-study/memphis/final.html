@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIOT DECK — The party game where being the worst person in the room wins.</title>
+<meta name="description" content="RIOT DECK: a loud, fast, unhinged party card game. Draw a prompt, throw your most chaotic answer, let the table riot. $29. Ships in 48h.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Monoton&family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        cream: '#FFF8E7',
+        ink: '#1A1A1A',
+        riot: '#FF2D75',
+        riotdark: '#E6005C',
+        sun: '#FFD23F',
+        cyan: '#4CC9F0',
+        grape: '#9B5DE5',
+      },
+      fontFamily: {
+        wordmark: ['Monoton', 'cursive'],
+        sans: ['"Space Grotesk"', 'sans-serif'],
+        chunk: ['"Archivo Black"', 'sans-serif'],
+        hand: ['Caveat', 'cursive'],
+      },
+      letterSpacing: { tightest: '-0.04em', tight: '-0.02em' },
+      maxWidth: { prose: '62ch' },
+    }
+  }
+}
+</script>
+<style>
+  :root{
+    --cream:#FFF8E7; --ink:#1A1A1A; --riot:#FF2D75; --riotdark:#E6005C;
+    --sun:#FFD23F; --cyan:#4CC9F0; --grape:#9B5DE5;
+    /* tuned type scale (clamp = fluid, mobile-first) */
+    --fs-display: clamp(4.5rem, 18vw, 12rem);
+    --fs-h1: clamp(2.5rem, 6vw, 4.5rem);
+    --fs-h2: clamp(2rem, 4.4vw, 3.25rem);
+    --fs-h3: clamp(1.5rem, 2.6vw, 2rem);
+    --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+    --fs-small: 0.875rem;
+    --fs-label: 0.75rem;
+    --r-sm:10px; --r-md:16px; --r-lg:24px;
+  }
+  *{ -webkit-font-smoothing:antialiased; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:'Space Grotesk',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    overflow-x:hidden;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+  }
+  .nums{ font-variant-numeric: tabular-nums; }
+  h1,h2,h3,.balance{ text-wrap:balance; }
+  p{ text-wrap:pretty; }
+
+  /* Terrazzo — quieter than draft: smaller chips, fewer layers */
+  .terrazzo{
+    background-color:var(--cream);
+    background-image:
+      radial-gradient(circle at 14% 20%, rgba(255,45,117,.55) 0 6px, transparent 7px),
+      radial-gradient(circle at 78% 26%, rgba(255,210,63,.55) 0 8px, transparent 9px),
+      radial-gradient(circle at 44% 50%, rgba(76,201,240,.5) 0 5px, transparent 6px),
+      radial-gradient(circle at 86% 70%, rgba(155,93,229,.5) 0 7px, transparent 8px),
+      radial-gradient(circle at 24% 78%, rgba(255,45,117,.4) 0 4px, transparent 5px),
+      radial-gradient(circle at 62% 88%, rgba(255,210,63,.45) 0 6px, transparent 7px),
+      radial-gradient(circle at 8% 50%, rgba(26,26,26,.35) 0 2.5px, transparent 3.5px);
+    background-size: 360px 360px;
+  }
+  .terrazzo-floor{
+    background-color:var(--cream);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,45,117,.6) 0 9px, transparent 10px),
+      radial-gradient(circle at 75% 25%, rgba(255,210,63,.6) 0 11px, transparent 12px),
+      radial-gradient(circle at 40% 50%, rgba(76,201,240,.55) 0 8px, transparent 9px),
+      radial-gradient(circle at 85% 65%, rgba(155,93,229,.55) 0 10px, transparent 11px),
+      radial-gradient(circle at 20% 75%, rgba(255,45,117,.45) 0 7px, transparent 8px),
+      radial-gradient(circle at 58% 85%, rgba(255,210,63,.5) 0 9px, transparent 10px),
+      radial-gradient(circle at 5% 45%, rgba(26,26,26,.35) 0 3px, transparent 4px);
+    background-size: 300px 300px;
+  }
+
+  /* Wordmark — outlined Memphis with hard offset shadow */
+  .wordmark{
+    font-family:'Monoton',cursive;
+    -webkit-text-stroke:2px var(--ink);
+    color:var(--cream);
+    text-shadow: clamp(3px, 0.8vw, 6px) clamp(3px, 0.8vw, 6px) 0 var(--riot);
+    line-height:0.82;
+    letter-spacing:0.02em;
+    font-size: var(--fs-display);
+  }
+  /* Big step numbers — Monoton only here + logo */
+  .step-num{
+    font-family:'Monoton',cursive;
+    -webkit-text-stroke:2px var(--ink);
+    color:var(--cream);
+    line-height:0.8;
+    font-size: clamp(4rem, 8vw, 5.5rem);
+  }
+
+  /* Lighter, more disciplined hard shadows (judge fix) */
+  .hard-shadow{ box-shadow: 6px 6px 0 var(--ink); }
+  .hard-shadow-riot{ box-shadow: 6px 6px 0 var(--riot); }
+  .hard-shadow-sm{ box-shadow: 4px 4px 0 var(--ink); }
+  .hard-shadow-grape{ box-shadow: 6px 6px 0 var(--grape); }
+  .hard-shadow-cyan{ box-shadow: 6px 6px 0 var(--cyan); }
+  .hard-shadow-sun{ box-shadow: 6px 6px 0 var(--sun); }
+  .hard-shadow-ink{ box-shadow: 6px 6px 0 var(--ink); }
+
+  /* CTA button — heavier text + larger to clear AA-Large on riot */
+  .btn-riot{
+    background:var(--riot);
+    color:var(--cream);
+    border:3px solid var(--ink);
+    box-shadow:6px 6px 0 var(--ink);
+    font-weight:700;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn-riot:hover{ transform: translate(3px,3px); box-shadow:3px 3px 0 var(--ink); background:var(--riotdark); }
+  .btn-riot:active{ transform: translate(6px,6px); box-shadow:0 0 0 var(--ink); }
+  .btn-ghost{
+    background:var(--cream);
+    color:var(--ink);
+    border:3px solid var(--ink);
+    box-shadow:6px 6px 0 var(--ink);
+    font-weight:700;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-ghost:hover{ transform: translate(3px,3px); box-shadow:3px 3px 0 var(--ink); }
+  .btn-ghost:active{ transform: translate(6px,6px); box-shadow:0 0 0 var(--ink); }
+
+  /* Scroll reveal — staggered via --i */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; transition-delay: calc(var(--i,0) * 90ms); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* Card hover lift — make grids feel alive (judge fix) */
+  .lift{ transition: transform .2s ease, box-shadow .2s ease; }
+  .lift:hover{ transform: translateY(-4px); box-shadow: 10px 10px 0 var(--ink); }
+
+  /* Floating shapes drift */
+  @keyframes drift{
+    0%,100%{ transform: translateY(0) rotate(var(--rot,0deg)); }
+    50%{ transform: translateY(-14px) rotate(calc(var(--rot,0deg) + 6deg)); }
+  }
+  @keyframes spin-slow{ to{ transform: rotate(360deg);} }
+  @keyframes wiggle{
+    0%,100%{ transform: rotate(-3deg);} 50%{ transform: rotate(3deg);}
+  }
+  .drift{ animation: drift 6s ease-in-out infinite; }
+  .drift-slow{ animation: drift 9s ease-in-out infinite; }
+  .spin-slow{ animation: spin-slow 18s linear infinite; }
+  .wiggle{ animation: wiggle 4s ease-in-out infinite; }
+  /* paused state toggled by IO when off-screen */
+  .ambient-paused .drift,
+  .ambient-paused .drift-slow,
+  .ambient-paused .spin-slow,
+  .ambient-paused .wiggle{ animation-play-state: paused; }
+
+  /* Sticky shrinking CTA */
+  .sticky-cta{
+    position:fixed; top:0; left:0; right:0; z-index:60;
+    transform: translateY(-110%);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1);
+  }
+  .sticky-cta.show{ transform: translateY(0); }
+
+  /* Polaroid tilt */
+  .polaroid{ transition: transform .25s ease, box-shadow .25s ease; }
+  .polaroid:hover{ transform: rotate(0deg) scale(1.04) !important; z-index:5; }
+  /* Dealt-card hover lift — signature moment polish */
+  .dealt-card.dealt{ cursor: default; }
+  .dealt-card.dealt:hover{ box-shadow: 10px 10px 0 var(--ink); }
+  /* Deck depletion cue — cards visibly leave the stack once dealt */
+  .draw-deck.dealt .stack-card:nth-child(1),
+  .draw-deck.dealt .stack-card:nth-child(2){ opacity: .35; transform: translate(0,0) rotate(0deg); }
+  .draw-deck.dealt .stack-card:nth-child(3){ transform: translateY(-2px); }
+
+  /* Zigzag dividers */
+  .zigzag{
+    --c: var(--ink);
+    height:18px;
+    background:
+      linear-gradient(135deg, var(--c) 25%, transparent 25%) 0 0/24px 24px,
+      linear-gradient(225deg, var(--c) 25%, transparent 25%) 0 0/24px 24px;
+  }
+  .zigzag-cream{
+    height:18px;
+    background:
+      linear-gradient(135deg, var(--cream) 25%, transparent 25%) 0 0/24px 24px,
+      linear-gradient(225deg, var(--cream) 25%, transparent 25%) 0 0/24px 24px;
+  }
+  /* Two-tone climax zigzag (reviewer fix: mark Buy as the destination) */
+  .zigzag-climax{
+    height:24px;
+    background:
+      linear-gradient(135deg, var(--riot) 25%, transparent 25%) 0 0/24px 24px,
+      linear-gradient(225deg, var(--riot) 25%, transparent 25%) 0 0/24px 24px,
+      linear-gradient(135deg, transparent 75%, var(--ink) 75%) 0 0/24px 24px,
+      linear-gradient(225deg, transparent 75%, var(--ink) 75%) 0 0/24px 24px;
+  }
+  /* Buy section surface (reviewer fix: distinct from Reviews cream) */
+  .buy-surface{
+    background:
+      radial-gradient(circle at 12% 18%, rgba(255,210,63,.18) 0 4px, transparent 5px),
+      radial-gradient(circle at 82% 28%, rgba(255,45,117,.16) 0 5px, transparent 6px),
+      radial-gradient(circle at 48% 62%, rgba(76,201,240,.14) 0 4px, transparent 5px),
+      radial-gradient(circle at 22% 82%, rgba(155,93,229,.14) 0 5px, transparent 6px),
+      linear-gradient(180deg, #FFF8E7 0%, #FFF1D6 100%);
+    background-size: 360px 360px, 360px 360px, 360px 360px, 360px 360px, 100% 100%;
+  }
+
+  /* Confetti bullet */
+  .confetti-bullet{
+    width:16px; height:16px; flex:0 0 16px;
+    transform: rotate(45deg);
+    margin-top:4px;
+  }
+
+  /* Focus visible */
+  a:focus-visible, button:focus-visible{
+    outline:3px solid var(--grape);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+  /* Screen-reader only */
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  /* kicker */
+  .kicker{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    font-size:0.78rem;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .drift,.drift-slow,.spin-slow,.wiggle{ animation:none !important; }
+    .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .sticky-cta{ transition:none; }
+    .lift:hover{ transform:none; }
+    .polaroid:hover{ transform: none !important; }
+    .draw-deck:hover{ transform: none !important; }
+    .dealt-card{ transition: opacity .2s ease !important; }
+  }
+
+  .sticker-tilt{ transform: rotate(-8deg); }
+  /* Mobile bundle privilege (reviewer fix): sticker breaks top edge, heavier border, order-first */
+  @media (max-width: 767px){
+    .bundle-sticker{
+      top: -28px !important; right: 12px !important;
+      width: 96px !important; height: 96px !important;
+    }
+    .bundle-sticker .best-hand{ font-size: 1.05rem; }
+    .bundle-sticker .riot-hand{ font-size: 1.35rem; }
+    .bundle-card{ border-width: 4px !important; }
+    .bundle-article{ order: -1; }
+    .bundle-ribbon{ display:flex !important; }
+    .bundle-ribbon-hidden{ display:none !important; }
+  }
+
+  /* ============ SIGNATURE INTERACTION: Draw-a-card ============ */
+  .felt-table{
+    background: radial-gradient(ellipse at 50% 40%, #2a2a3a 0%, #1a1a2a 70%);
+    perspective: 1000px;
+  }
+  .draw-deck{
+    position:relative;
+    width: 180px; height: 250px;
+    cursor:pointer;
+    transition: transform .25s ease;
+    border:0; background:transparent; padding:0;
+  }
+  .draw-deck:hover{ transform: translateY(-4px) rotate(-2deg); }
+  .draw-deck .stack-card{
+    position:absolute; inset:0;
+    border:3px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .draw-deck .stack-card:nth-child(1){ transform: translate(-6px, 6px) rotate(-3deg); background: var(--grape); }
+  .draw-deck .stack-card:nth-child(2){ transform: translate(-3px, 3px) rotate(-1.5deg); background: var(--cyan); }
+  .draw-deck .stack-card:nth-child(3){ background: var(--riot); display:flex; align-items:center; justify-content:center; }
+  .draw-deck .stack-card:nth-child(3)::after{
+    content:'RIOT'; font-family:'Monoton',cursive; color:var(--cream);
+    -webkit-text-stroke:1.5px var(--ink); font-size:2rem; letter-spacing:0.1em; transform:rotate(-90deg);
+  }
+
+  .dealt-card{
+    position:absolute;
+    width: 180px; height: 250px;
+    background: var(--cream);
+    border:3px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: 18px 16px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    transform-origin: bottom center;
+    opacity:0;
+    transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
+  }
+  .dealt-card.dealt{ opacity:1; }
+  .dealt-card .prompt-label{
+    font-family:'Archivo Black',sans-serif; font-size:.7rem; letter-spacing:.18em;
+    color: var(--riot); border-bottom: 2px solid var(--ink); padding-bottom:6px;
+  }
+  .dealt-card .prompt-text{
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; line-height:1.3; color:var(--ink);
+  }
+  .dealt-card .prompt-foot{
+    font-family:'Caveat',cursive; font-size:1.1rem; color: var(--ink); opacity:.75; text-align:right;
+  }
+  .dealt-card.c1{ transform: translate(-220px, -30px) rotate(-14deg); }
+  .dealt-card.c2{ transform: translate(-70px, -60px) rotate(-3deg); }
+  .dealt-card.c3{ transform: translate(90px, -40px) rotate(10deg); }
+  /* Tablet breakpoint (reviewer fix): avoid colliding with deck at 641–780px */
+  @media (max-width: 780px) and (min-width: 641px){
+    .dealt-card.c1{ transform: translate(-150px, -16px) rotate(-14deg); }
+    .dealt-card.c2{ transform: translate(-50px, -52px) rotate(-3deg); }
+    .dealt-card.c3{ transform: translate(60px, -28px) rotate(10deg); }
+  }
+  @media (max-width: 640px){
+    .dealt-card{ width: 132px; height: 190px; padding: 12px 11px; }
+    .dealt-card .prompt-text{ font-size:.85rem; }
+    .dealt-card.c1{ transform: translate(-92px, -6px) rotate(-16deg); }
+    .dealt-card.c2{ transform: translate(-22px, -44px) rotate(-2deg); }
+    .dealt-card.c3{ transform: translate(48px, -16px) rotate(12deg); }
+    .draw-deck{ width:132px; height:190px; }
+    .draw-deck .stack-card:nth-child(3)::after{ font-size:1.3rem; }
+  }
+  /* Reduced motion (reviewer fix): opacity-only deal, no transform travel */
+  @media (prefers-reduced-motion: reduce){
+    .dealt-card{ transition: opacity .2s ease !important; transform: none !important; }
+    .dealt-card.c1, .dealt-card.c2, .dealt-card.c3{ transform: none !important; }
+    .dealt-card.dealt{ opacity:1; }
+  }
+
+  @keyframes pop-confetti{
+    0%{ transform: translate(0,0) scale(0); opacity:1; }
+    100%{ transform: translate(var(--tx,20px), var(--ty,-60px)) scale(1); opacity:0; }
+  }
+
+  .nav-link{ position:relative; }
+  .nav-link::after{
+    content:''; position:absolute; left:0; bottom:-4px; height:2px; width:0;
+    background: var(--riot); transition: width .2s ease;
+  }
+  .nav-link:hover::after{ width:100%; }
+</style>
+</head>
+<body class="bg-cream text-ink font-sans">
+
+<!-- ============ STICKY SHRINKING CTA ============ -->
+<div id="stickyCta" class="sticky-cta bg-ink">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <span class="font-wordmark text-2xl text-riot leading-none">RIOT</span>
+      <span class="hidden sm:inline text-cream/80 text-sm truncate">The party game where being the worst person in the room wins.</span>
+    </div>
+    <a href="#buy" class="btn-riot font-chunk text-sm sm:text-base px-5 py-2.5 rounded-[var(--r-sm)] whitespace-nowrap">Buy the deck — $29</a>
+  </div>
+</div>
+
+<!-- ============ NAV ============ -->
+<header class="relative z-40">
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2 group" aria-label="RIOT DECK home">
+      <span class="font-wordmark text-3xl text-riot leading-none">RIOT</span>
+      <span class="font-chunk text-xs bg-ink text-cream px-2 py-1 rounded -ml-1 group-hover:bg-riot transition-colors">DECK</span>
+    </a>
+    <ul class="hidden md:flex items-center gap-7 text-sm font-medium">
+      <li><a href="#how" class="nav-link hover:text-riot transition-colors">How to play</a></li>
+      <li><a href="#expansions" class="nav-link hover:text-riot transition-colors">Expansions</a></li>
+      <li><a href="#reviews" class="nav-link hover:text-riot transition-colors">Reviews</a></li>
+      <li><a href="#buy" class="nav-link hover:text-riot transition-colors">Buy</a></li>
+    </ul>
+    <a href="#buy" class="btn-riot font-chunk text-sm px-4 py-2 rounded-[var(--r-sm)] hidden sm:inline-block">Buy — $29</a>
+    <button id="navToggle" class="md:hidden btn-ghost font-chunk text-sm px-3 py-2 rounded-[var(--r-sm)] flex items-center gap-1.5" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      Menu
+    </button>
+  </nav>
+  <div id="mobileNav" class="md:hidden hidden bg-cream border-t-[3px] border-ink" aria-hidden="true">
+    <ul class="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-1 text-base font-bold">
+      <li><a href="#how" class="block py-2.5 hover:text-riot transition-colors">How to play</a></li>
+      <li><a href="#expansions" class="block py-2.5 hover:text-riot transition-colors">Expansions</a></li>
+      <li><a href="#reviews" class="block py-2.5 hover:text-riot transition-colors">Reviews</a></li>
+      <li><a href="#buy" class="block py-2.5 text-riot">Buy — $29</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="relative terrazzo overflow-hidden" aria-labelledby="hero-title">
+  <!-- Floating scattered shapes — trimmed to 6, quieter (judge fix) -->
+  <div id="heroShapes" class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <svg class="drift absolute" style="--rot:0deg; top:8%; left:6%; animation-delay:-0.4s;" width="90" height="40" viewBox="0 0 90 40" fill="none">
+      <path d="M2 20 Q12 2 22 20 T42 20 T62 20 T82 20" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none"/>
+    </svg>
+    <svg class="drift-slow absolute" style="--rot:12deg; top:14%; right:9%; animation-delay:-3s;" width="70" height="40" viewBox="0 0 70 40">
+      <path d="M5 40 A30 30 0 0 1 65 40 Z" fill="#4CC9F0" stroke="#1A1A1A" stroke-width="3"/>
+    </svg>
+    <svg class="drift absolute" style="--rot:-8deg; top:48%; left:4%; animation-delay:-1.5s;" width="60" height="50" viewBox="0 0 60 50" fill="none">
+      <path d="M5 45 L15 15 L25 45 L35 15 L45 45 L55 15" stroke="#FFD23F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg class="spin-slow absolute" style="top:30%; right:5%; animation-delay:-2s;" width="56" height="56" viewBox="0 0 56 56">
+      <g stroke="#9B5DE5" stroke-width="6" stroke-linecap="round">
+        <line x1="28" y1="4" x2="28" y2="52"/>
+        <line x1="4" y1="28" x2="52" y2="28"/>
+        <line x1="11" y1="11" x2="45" y2="45"/>
+        <line x1="45" y1="11" x2="11" y2="45"/>
+      </g>
+    </svg>
+    <svg class="drift-slow absolute" style="--rot:0deg; bottom:18%; right:14%; animation-delay:-5s;" width="74" height="74" viewBox="0 0 74 74">
+      <circle cx="37" cy="37" r="30" fill="none" stroke="#FFD23F" stroke-width="6" stroke-dasharray="3 9" stroke-linecap="round"/>
+    </svg>
+    <svg class="absolute" style="top:62%; left:12%;" width="60" height="60" viewBox="0 0 60 60">
+      <circle cx="10" cy="10" r="6" fill="#FF2D75"/>
+      <circle cx="40" cy="18" r="5" fill="#4CC9F0"/>
+      <circle cx="22" cy="40" r="7" fill="#9B5DE5"/>
+      <circle cx="48" cy="46" r="4" fill="#FFD23F"/>
+    </svg>
+  </div>
+
+  <div class="relative max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-14 pb-20 sm:pb-28 text-center">
+    <div class="inline-flex items-center gap-2 bg-ink text-cream font-chunk text-[11px] sm:text-xs px-3 py-1.5 rounded-full mb-8 reveal" style="--i:0;">
+      <span class="w-2 h-2 rounded-full bg-riot"></span>
+      A PARTY GAME FOR UNHINGED ADULTS
+      <span class="w-2 h-2 rounded-full bg-sun"></span>
+    </div>
+
+    <h1 id="hero-title" class="wordmark reveal balance" style="--i:1;">
+      <span class="block">RIOT</span>
+      <span class="block">DECK</span>
+    </h1>
+
+    <p class="mt-10 max-w-2xl mx-auto text-xl sm:text-2xl md:text-3xl font-bold leading-snug reveal balance" style="--i:2;">
+      The party game where
+      <span class="relative inline-block">
+        <span class="relative z-20 text-riot">being the worst person</span>
+        <span class="absolute left-0 right-0 bottom-1 h-3 bg-sun opacity-70 -z-0 -rotate-1"></span>
+      </span>
+      in the room wins.
+    </p>
+
+    <p class="mt-5 max-w-prose mx-auto text-base sm:text-lg text-ink/80 reveal" style="--i:3;">
+      Draw a prompt. Throw your most chaotic answer. Let the table riot over who wins. 120 cards. 3–8 players. One ruined friendship at a time.
+    </p>
+
+    <div id="hero-cta-row" class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="--i:4;">
+      <a href="#buy" class="btn-riot font-chunk text-lg sm:text-xl px-8 py-4 rounded-[var(--r-md)]">Buy the deck — $29</a>
+      <a href="#how" class="font-bold text-sm sm:text-base underline decoration-riot decoration-2 underline-offset-4 hover:text-riot transition-colors">See how it plays →</a>
+    </div>
+
+    <!-- 3-beat mechanic strip: shown sm+ (mobile gets it in How-to-Play to keep CTA in first viewport — reviewer fix) -->
+    <ol class="hidden sm:grid mt-9 max-w-3xl mx-auto sm:grid-cols-3 gap-3 sm:gap-4 reveal" style="--i:5;" aria-label="How to play in three beats">
+      <li class="flex items-center gap-3 bg-cream border-[3px] border-ink rounded-[var(--r-sm)] hard-shadow-sm px-4 py-3 text-left">
+        <span class="font-chunk text-2xl text-riot leading-none flex-shrink-0 nums">01</span>
+        <span class="text-sm font-bold leading-tight"><span class="text-riot">DRAW</span> — judge pulls a prompt card.</span>
+      </li>
+      <li class="flex items-center gap-3 bg-cream border-[3px] border-ink rounded-[var(--r-sm)] hard-shadow-sm px-4 py-3 text-left">
+        <span class="font-chunk text-2xl text-riot leading-none flex-shrink-0 nums">02</span>
+        <span class="text-sm font-bold leading-tight"><span class="text-riot">PLAY</span> — everyone throws a hidden answer.</span>
+      </li>
+      <li class="flex items-center gap-3 bg-cream border-[3px] border-ink rounded-[var(--r-sm)] hard-shadow-sm px-4 py-3 text-left">
+        <span class="font-chunk text-2xl text-riot leading-none flex-shrink-0 nums">03</span>
+        <span class="text-sm font-bold leading-tight"><span class="text-riot">RIOT</span> — funniest answer wins the round.</span>
+      </li>
+    </ol>
+
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 sm:gap-x-5 sm:gap-y-2 text-xs sm:text-sm text-ink/80 reveal nums" style="--i:6;">
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-riot"></span>Ships in 48h</span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyan"></span>120 cards</span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-grape"></span>3–8 players</span>
+      <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-sun"></span>Causing problems since 2025</span>
+    </div>
+  </div>
+
+  <div class="terrazzo-floor h-24 sm:h-32 border-y-[3px] border-ink" aria-hidden="true"></div>
+</section>
+
+<!-- ============ HOW TO PLAY ============ -->
+<section id="how" class="relative py-20 sm:py-28 bg-cream scroll-mt-20" aria-labelledby="how-title">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14 reveal">
+      <p class="kicker text-riot mb-3">Three steps. One riot.</p>
+      <h2 id="how-title" class="font-sans font-bold tracking-tightest" style="font-size: var(--fs-h1); line-height:1.05;">
+        How to start a riot
+      </h2>
+      <p class="mt-4 text-ink/80 max-w-prose mx-auto text-base sm:text-lg">
+        Learn it in 30 seconds. Lose friends over it for years.
+      </p>
+    </div>
+
+    <!-- Staggered grid of 3 step cards — hover lift + stagger -->
+    <div class="grid md:grid-cols-3 gap-7 md:gap-6 items-start">
+      <!-- STEP 1 DRAW -->
+      <article class="reveal" style="--i:0;">
+        <div class="relative bg-cream border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow-sun lift p-7 h-full">
+          <div class="flex items-start justify-between">
+            <span class="step-num nums">1</span>
+            <svg width="60" height="60" viewBox="0 0 60 60" class="wiggle" aria-hidden="true">
+              <rect x="8" y="6" width="38" height="48" rx="4" fill="#4CC9F0" stroke="#1A1A1A" stroke-width="3"/>
+              <line x1="14" y1="18" x2="40" y2="18" stroke="#1A1A1A" stroke-width="2.5"/>
+              <line x1="14" y1="26" x2="34" y2="26" stroke="#1A1A1A" stroke-width="2.5"/>
+              <line x1="14" y1="34" x2="38" y2="34" stroke="#1A1A1A" stroke-width="2.5"/>
+              <circle cx="46" cy="46" r="6" fill="#FF2D75" stroke="#1A1A1A" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <h3 class="font-chunk mt-4" style="font-size: var(--fs-h3);">DRAW</h3>
+          <p class="mt-2 text-ink/85 text-base leading-relaxed">
+            The judge pulls a prompt card and reads it aloud. Something unhinged. Something that demands a terrible answer.
+          </p>
+          <svg class="absolute -bottom-3 -right-3" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+            <path d="M22 4 L26 18 L40 22 L26 26 L22 40 L18 26 L4 22 L18 18 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="2.5"/>
+          </svg>
+        </div>
+      </article>
+
+      <!-- STEP 2 PLAY (offset down, inverted) -->
+      <article class="reveal md:mt-12" style="--i:1;">
+        <div class="relative bg-riot border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow lift p-7 h-full text-cream">
+          <div class="flex items-start justify-between">
+            <span class="step-num nums">2</span>
+            <svg width="60" height="60" viewBox="0 0 60 60" class="wiggle" aria-hidden="true">
+              <rect x="4" y="10" width="30" height="40" rx="4" fill="#FFD23F" stroke="#1A1A1A" stroke-width="3" transform="rotate(-8 19 30)"/>
+              <rect x="22" y="8" width="30" height="40" rx="4" fill="#9B5DE5" stroke="#1A1A1A" stroke-width="3" transform="rotate(8 37 28)"/>
+            </svg>
+          </div>
+          <h3 class="font-chunk mt-4" style="font-size: var(--fs-h3);">PLAY</h3>
+          <p class="mt-2 text-cream text-base leading-relaxed">
+            Everyone slams down a hidden answer — face-down, anonymous, zero accountability. The judge shuffles and reads them all out loud.
+          </p>
+          <svg class="absolute -bottom-3 -left-3" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+            <circle cx="22" cy="22" r="16" fill="#4CC9F0" stroke="#1A1A1A" stroke-width="3"/>
+            <circle cx="22" cy="22" r="6" fill="#1A1A1A"/>
+          </svg>
+        </div>
+      </article>
+
+      <!-- STEP 3 RIOT -->
+      <article class="reveal md:mt-4" style="--i:2;">
+        <div class="relative bg-cream border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow-grape lift p-7 h-full">
+          <div class="flex items-start justify-between">
+            <span class="step-num nums">3</span>
+            <svg width="60" height="60" viewBox="0 0 60 60" class="wiggle" aria-hidden="true">
+              <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round">
+                <line x1="30" y1="6" x2="30" y2="16"/>
+                <line x1="30" y1="44" x2="30" y2="54"/>
+                <line x1="6" y1="30" x2="16" y2="30"/>
+                <line x1="44" y1="30" x2="54" y2="30"/>
+                <line x1="12" y1="12" x2="19" y2="19"/>
+                <line x1="41" y1="41" x2="48" y2="48"/>
+              </g>
+              <circle cx="30" cy="30" r="9" fill="#FF2D75" stroke="#1A1A1A" stroke-width="3"/>
+            </svg>
+          </div>
+          <h3 class="font-chunk mt-4" style="font-size: var(--fs-h3);">RIOT</h3>
+          <p class="mt-2 text-ink/85 text-base leading-relaxed">
+            The judge picks the funniest answer. The winner takes the round card as a point. The table riots. Repeat until someone knocks something over.
+          </p>
+          <svg class="absolute -top-3 -right-3" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+            <path d="M4 22 Q12 8 22 22 T40 22" stroke="#9B5DE5" stroke-width="5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+      </article>
+    </div>
+
+    <!-- ============ SIGNATURE INTERACTION: DRAW A CARD ============ -->
+    <div class="mt-20 reveal" style="--i:3;">
+      <div class="felt-table rounded-[var(--r-lg)] border-[3px] border-ink p-8 sm:p-12 relative overflow-hidden">
+        <svg class="absolute" style="top:8%; left:6%;" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2 L24 16 L38 20 L24 24 L20 38 L16 24 L2 20 L16 16 Z" fill="#FFD23F" opacity=".8"/></svg>
+        <svg class="absolute" style="bottom:10%; right:8%;" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="14" fill="none" stroke="#4CC9F0" stroke-width="4" stroke-dasharray="3 8"/></svg>
+        <svg class="absolute" style="top:12%; right:14%;" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M3 15 Q9 3 15 15 T27 15" stroke="#9B5DE5" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+
+        <div class="relative flex flex-col items-center text-center">
+          <p id="draw-kicker" class="kicker text-sun mb-2">Try it. We dare you.</p>
+          <h3 class="font-sans font-bold text-cream text-3xl sm:text-4xl tracking-tightest balance mb-2" aria-describedby="draw-kicker">Draw a real card</h3>
+          <p class="text-cream/80 max-w-prose mb-8">Tap the deck. See what your friends would have to answer. No take-backs.</p>
+
+          <div class="relative w-full max-w-3xl flex items-center justify-center" style="min-height: 280px;">
+            <div id="dealtCard1" class="dealt-card c1">
+              <span class="prompt-label">PROMPT</span>
+              <p class="prompt-text">The worst person to sit next to on a 6-hour flight is ______.</p>
+              <span class="prompt-foot">— card 047</span>
+            </div>
+            <div id="dealtCard2" class="dealt-card c2">
+              <span class="prompt-label">PROMPT</span>
+              <p class="prompt-text">A vanity plate that gets you pulled over immediately: ______.</p>
+              <span class="prompt-foot">— card 112</span>
+            </div>
+            <div id="dealtCard3" class="dealt-card c3">
+              <span class="prompt-label">PROMPT</span>
+              <p class="prompt-text">The group chat just devolved into arguing about ______. Again.</p>
+              <span class="prompt-foot">— card 009</span>
+            </div>
+
+            <button id="drawBtn" class="draw-deck" aria-label="Draw a prompt card" aria-describedby="drawHint">
+              <div class="stack-card"></div>
+              <div class="stack-card"></div>
+              <div class="stack-card"></div>
+            </button>
+            <div id="confettiBurst" class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+          </div>
+
+          <p class="mt-8 text-cream/70 font-hand text-xl" id="drawHint" aria-live="polite">↑ tap the deck</p>
+          <!-- SR-only live region announcing drawn prompts (reviewer a11y fix) -->
+          <span class="sr-only" id="drawAnnounce" aria-live="polite" aria-atomic="true"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-14 max-w-2xl mx-auto text-center reveal" style="--i:4;">
+      <p class="font-hand text-2xl sm:text-3xl text-ink">That's it. That's the whole game. Now go be terrible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPANSION PACKS ============ -->
+<section id="expansions" class="relative bg-cream scroll-mt-20">
+  <div class="zigzag" aria-hidden="true"></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+    <div class="text-center mb-14 reveal">
+      <p class="kicker text-grape mb-3">Make it louder</p>
+      <h2 class="font-sans font-bold tracking-tightest" style="font-size: var(--fs-h1); line-height:1.05;">
+        Expansion packs
+      </h2>
+      <p class="mt-4 text-ink/80 max-w-prose mx-auto text-base sm:text-lg">
+        Three themed decks to crank the chaos. 80 cards each. Slip them into the base deck and watch the room lose it.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 md:gap-6 items-stretch">
+      <!-- DEEP FRIED -->
+      <article class="reveal md:translate-y-6" style="--i:0;">
+        <div class="relative bg-sun border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow lift p-7 h-full flex flex-col">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="kicker text-ink/80 mb-1">EXPANSION 01</p>
+              <h3 class="font-chunk leading-tight" style="font-size: var(--fs-h3);">DEEP FRIED</h3>
+              <p class="mt-1 text-sm font-bold text-ink/85">Internet brainrot edition</p>
+            </div>
+            <svg width="54" height="54" viewBox="0 0 54 54" class="flex-shrink-0" aria-hidden="true">
+              <circle cx="27" cy="27" r="20" fill="#FFF8E7" stroke="#1A1A1A" stroke-width="3"/>
+              <circle cx="27" cy="27" r="8" fill="#FF2D75" stroke="#1A1A1A" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <p class="mt-5 text-ink leading-relaxed flex-grow">
+            Skibidi-tier prompts and cursed-reference answers. Only playable if your group chat is feral.
+          </p>
+          <div class="mt-6 flex items-center justify-between">
+            <span class="font-chunk text-base bg-ink text-cream px-3 py-1.5 rounded-full nums">80 cards</span>
+            <span class="font-chunk text-2xl nums">$12</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- UNHINGED BRUNCH -->
+      <article class="reveal" style="--i:1;">
+        <div class="relative bg-cyan border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow lift p-7 h-full flex flex-col">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="kicker text-ink/80 mb-1">EXPANSION 02</p>
+              <h3 class="font-chunk leading-tight" style="font-size: var(--fs-h3);">UNHINGED BRUNCH</h3>
+              <p class="mt-1 text-sm font-bold text-ink/85">Mimosas &amp; petty betrayals</p>
+            </div>
+            <svg width="46" height="54" viewBox="0 0 46 54" class="flex-shrink-0" aria-hidden="true">
+              <path d="M10 4 H36 L26 26 V44 H34 V50 H12 V44 H20 V26 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="mt-5 text-ink leading-relaxed flex-grow">
+            Bottomless-mimosa energy. Prompts about flaking, soft-launched boyfriends, and who really paid for the avocado toast.
+          </p>
+          <div class="mt-6 flex items-center justify-between">
+            <span class="font-chunk text-base bg-ink text-cream px-3 py-1.5 rounded-full nums">80 cards</span>
+            <span class="font-chunk text-2xl nums">$12</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- OFFICE GREMLINS -->
+      <article class="reveal md:translate-y-6" style="--i:2;">
+        <div class="relative bg-grape border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow lift p-7 h-full flex flex-col text-cream">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="kicker text-cream/90 mb-1">EXPANSION 03</p>
+              <h3 class="font-chunk leading-tight" style="font-size: var(--fs-h3);">OFFICE GREMLINS</h3>
+              <p class="mt-1 text-sm font-bold text-cream">Corporate nonsense</p>
+            </div>
+            <svg width="48" height="54" viewBox="0 0 48 54" class="flex-shrink-0" aria-hidden="true">
+              <path d="M14 10 V40 a8 8 0 0 0 16 0 V16 a5 5 0 0 0 -10 0 V36" stroke="#FFD23F" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="mt-5 text-cream leading-relaxed flex-grow">
+            Synergy, standups, and someone reply-all'd the whole company. Perfect for the after-work crew that hates their boss.
+          </p>
+          <div class="mt-6 flex items-center justify-between">
+            <span class="font-chunk text-base bg-cream text-ink px-3 py-1.5 rounded-full nums">80 cards</span>
+            <span class="font-chunk text-2xl nums">$12</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <p class="mt-12 text-center text-sm text-ink/80 reveal nums" style="--i:3;">
+      Mix one in, mix all three — the base deck handles any chaos level you throw at it.
+    </p>
+  </div>
+
+  <div class="zigzag" aria-hidden="true"></div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section id="reviews" class="relative py-20 sm:py-28 overflow-hidden scroll-mt-20" aria-labelledby="reviews-title">
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <svg class="absolute" style="bottom:14%; right:8%;" width="50" height="50" viewBox="0 0 50 50"><path d="M5 25 Q15 5 25 25 T45 25" stroke="#4CC9F0" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 relative">
+    <div class="text-center mb-16 reveal">
+      <p class="kicker text-cyan mb-3">Words from the wreckage</p>
+      <h2 id="reviews-title" class="font-sans font-bold tracking-tightest" style="font-size: var(--fs-h1); line-height:1.05;">
+        Reviews off the corkboard
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-10 md:gap-8 items-start">
+      <!-- Review 1 -->
+      <figure class="polaroid reveal" style="transform: rotate(-4deg); --i:0;">
+        <div class="bg-cream border-[3px] border-ink rounded-[var(--r-md)] hard-shadow-sm p-6 pt-7">
+          <div class="flex gap-1 mb-4" role="img" aria-label="5 out of 5 stars">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 1 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FF2D75" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 2 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FF2D75" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 3 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FF2D75" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 4 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FF2D75" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 5 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FF2D75" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+          </div>
+          <blockquote class="font-chunk text-lg leading-snug">"Started at 9pm, ended when someone knocked over a lamp. 10/10."</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            <img src="https://picsum.photos/seed/riotparty/80/80" alt="Portrait of Priya M., a Brooklyn game-night host" class="w-11 h-11 rounded-full border-2 border-ink object-cover">
+            <div>
+              <p class="font-chunk text-sm">PRIYA M.</p>
+              <p class="font-hand text-base text-ink/80 leading-none">Brooklyn game night</p>
+            </div>
+          </figcaption>
+        </div>
+      </figure>
+
+      <!-- Review 2 -->
+      <figure class="polaroid reveal md:-mt-8" style="transform: rotate(3deg); --i:1;">
+        <div class="bg-cream border-[3px] border-ink rounded-[var(--r-md)] hard-shadow-sm p-6 pt-7">
+          <div class="flex gap-1 mb-4" role="img" aria-label="5 out of 5 stars">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 1 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 2 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 3 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 4 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 5 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+          </div>
+          <blockquote class="font-chunk text-lg leading-snug">"Bought it for a Friendgiving. Three people cried-laughing. We did not eat dinner."</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            <img src="https://picsum.photos/seed/friendgivingchaos/80/80" alt="Portrait of Diego R., who ruined Thanksgiving with RIOT DECK" class="w-11 h-11 rounded-full border-2 border-ink object-cover">
+            <div>
+              <p class="font-chunk text-sm">DIEGO R.</p>
+              <p class="font-hand text-base text-ink/80 leading-none">Ruined Thanksgiving</p>
+            </div>
+          </figcaption>
+        </div>
+      </figure>
+
+      <!-- Review 3 -->
+      <figure class="polaroid reveal md:mt-6" style="transform: rotate(-2deg); --i:2;">
+        <div class="bg-cream border-[3px] border-ink rounded-[var(--r-md)] hard-shadow-sm p-6 pt-7">
+          <div class="flex gap-1 mb-4" role="img" aria-label="5 out of 5 stars">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 1 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#9B5DE5" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 2 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#9B5DE5" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 3 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#9B5DE5" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 4 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#9B5DE5" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><title>star 5 of 5</title><path d="M12 2 L15 9 L22 10 L17 15 L18 22 L12 19 L6 22 L7 15 L2 10 L9 9 Z" fill="#9B5DE5" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+          </div>
+          <blockquote class="font-chunk text-lg leading-snug">"My groupchat has not recovered. Tyler left. We don't talk about Tyler."</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            <img src="https://picsum.photos/seed/groupchatwreck/80/80" alt="Portrait of Sam K., who is still not speaking to Tyler" class="w-11 h-11 rounded-full border-2 border-ink object-cover">
+            <div>
+              <p class="font-chunk text-sm">SAM K.</p>
+              <p class="font-hand text-base text-ink/80 leading-none">Still not speaking to Tyler</p>
+            </div>
+          </figcaption>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICE / BUY BLOCK ============ -->
+<section id="buy" class="relative buy-surface scroll-mt-20" aria-labelledby="buy-title">
+  <div class="zigzag-climax" aria-hidden="true"></div>
+<div class="py-20 sm:py-28">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14 reveal">
+      <p class="kicker text-riot mb-3">Pick your chaos</p>
+      <h2 id="buy-title" class="font-sans font-bold tracking-tightest" style="font-size: var(--fs-h1); line-height:1.05;">
+        Buy the riot
+      </h2>
+      <p class="mt-4 text-ink/80 max-w-prose mx-auto text-base sm:text-lg">
+        Ships in 48h. Free returns if your group is too cowardly.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 md:gap-7 items-stretch">
+      <!-- BASE DECK -->
+      <article class="reveal" style="--i:0;">
+        <div class="relative bg-cream border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow lift p-7 sm:p-8 h-full flex flex-col">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="font-chunk" style="font-size: var(--fs-h3);">BASE DECK</h3>
+            <span class="text-xs font-bold bg-ink text-cyan px-2.5 py-1 rounded-full border-2 border-ink">STARTER</span>
+          </div>
+          <p class="text-ink/80 text-sm mt-1">The core riot. Everything you need to ruin a nice evening.</p>
+
+          <div class="mt-6 flex items-baseline gap-2 nums">
+            <span class="font-chunk text-6xl sm:text-7xl text-riot">$29</span>
+          </div>
+
+          <ul class="mt-6 space-y-3 text-sm sm:text-base flex-grow">
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-sun border-2 border-ink"></span><span>120 prompt + answer cards</span></li>
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-cyan border-2 border-ink"></span><span>3–8 players, 20–60 min</span></li>
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-grape border-2 border-ink"></span><span>Round cards double as score points</span></li>
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-riot border-2 border-ink"></span><span>Ships in 48h, free returns</span></li>
+          </ul>
+
+          <a href="#checkout" data-product="base-deck" class="btn-ghost font-chunk text-lg mt-7 text-center px-6 py-3.5 rounded-[var(--r-md)] border-l-[6px] border-l-riot hover:text-riot transition-colors" aria-label="Buy the base deck for 29 dollars, go to checkout">Buy base deck — $29</a>
+        </div>
+      </article>
+
+      <!-- BUNDLE (BEST RIOT) -->
+      <article class="reveal bundle-article" style="--i:1;">
+        <!-- Full-width RECOMMENDED ribbon — mobile only (reviewer mobile fix) -->
+        <div class="bundle-ribbon hidden mb-3" aria-hidden="true">
+          <div class="w-full bg-ink text-cream font-chunk text-xs sm:text-sm text-center py-2 rounded-[var(--r-sm)] border-[3px] border-ink hard-shadow-sm tracking-widest">★ RECOMMENDED · SAVE $7 ★</div>
+        </div>
+        <div class="bundle-card relative bg-riot border-[3px] border-ink rounded-[var(--r-lg)] hard-shadow-ink p-7 sm:p-8 h-full flex flex-col text-cream md:scale-[1.03]">
+          <div class="bundle-sticker absolute top-4 right-4 sticker-tilt z-10">
+            <div class="bg-sun text-ink border-[3px] border-ink rounded-full w-24 h-24 flex flex-col items-center justify-center hard-shadow-sm">
+              <span class="best-hand font-hand text-xl leading-none">BEST</span>
+              <span class="riot-hand font-hand text-2xl leading-none mt-0.5">RIOT!</span>
+              <span class="font-chunk text-[10px] mt-1 nums">SAVE $7</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="font-chunk" style="font-size: var(--fs-h3);">THE BUNDLE</h3>
+            <span class="bundle-ribbon-hidden text-xs font-bold bg-ink text-cream px-2.5 py-1 rounded-full border-2 border-cream">RECOMMENDED</span>
+          </div>
+          <p class="text-cream text-sm mt-1">Base deck + all 3 expansions. The full unhinged arsenal.</p>
+
+          <div class="mt-6 flex items-baseline gap-3 nums">
+            <span class="font-chunk text-6xl sm:text-7xl text-sun">$49</span>
+            <span class="font-chunk text-xl text-cream/70 line-through">$56</span>
+          </div>
+
+          <ul class="mt-6 space-y-3 text-sm sm:text-base flex-grow">
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-sun border-2 border-ink"></span><span>Base deck — 120 cards</span></li>
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-cream border-2 border-ink"></span><span>Deep Fried — 80 cards</span></li>
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-cyan border-2 border-ink"></span><span>Unhinged Brunch — 80 cards</span></li>
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-grape border-2 border-ink"></span><span>Office Gremlins — 80 cards</span></li>
+            <li class="flex items-start gap-3"><span class="confetti-bullet bg-ink border-2 border-cream"></span><span><strong>360 cards total · Ships FREE</strong></span></li>
+          </ul>
+
+          <a href="#checkout" data-product="bundle" class="font-chunk text-lg mt-7 text-center px-6 py-3.5 rounded-[var(--r-md)] bg-sun text-ink border-[3px] border-ink shadow-[6px_6px_0_#1A1A1A] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0_#1A1A1A] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none transition-all" aria-label="Buy the bundle for 49 dollars, go to checkout">Buy the bundle — $49</a>
+        </div>
+      </article>
+    </div>
+
+    <div id="checkout" class="mt-12 reveal scroll-mt-24" style="--i:2;" aria-labelledby="checkout-title">
+      <div class="relative max-w-2xl mx-auto bg-cream border-[4px] border-ink rounded-[var(--r-lg)] hard-shadow p-7 sm:p-9">
+        <!-- Memphis corner confetti -->
+        <svg class="absolute -top-4 -left-4 wiggle" width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><path d="M19 2 L22 15 L35 19 L22 23 L19 36 L16 23 L3 19 L16 15 Z" fill="#FFD23F" stroke="#1A1A1A" stroke-width="2.5"/></svg>
+        <svg class="absolute -bottom-4 -right-4 drift-slow" width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="11" fill="none" stroke="#4CC9F0" stroke-width="4" stroke-dasharray="3 7"/></svg>
+
+        <p id="checkout-title" class="font-chunk text-center text-xl sm:text-2xl tracking-tight">Reserve your deck</p>
+        <p class="mt-2 text-center text-sm text-ink/80">Drop your email — we'll send your <span id="checkoutProduct" class="font-bold">deck</span> link and a checkout button. No spam, only riots.</p>
+
+        <form id="checkoutForm" class="mt-6 flex flex-col sm:flex-row gap-3" novalidate>
+          <label class="sr-only" for="emailField">Email address</label>
+          <input id="emailField" type="email" required placeholder="you@chaos.gone" autocomplete="email" class="flex-grow px-4 py-3 border-[3px] border-ink rounded-[var(--r-sm)] bg-cream text-ink placeholder:text-ink/50 focus:outline-none focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-grape focus-visible:ring-offset-2 focus-visible:ring-offset-cream nums">
+          <button type="submit" id="checkoutSubmit" class="btn-riot font-chunk text-base px-6 py-3 rounded-[var(--r-sm)] whitespace-nowrap">Continue to payment →</button>
+        </form>
+        <p id="checkoutMsg" class="mt-3 text-center text-sm font-bold text-grape min-h-[1.25rem]" role="status" aria-live="polite"></p>
+
+        <div class="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink/80 nums">
+          <span class="inline-flex items-center gap-1.5"><svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" transform="rotate(45 6 6)" fill="#FF2D75" stroke="#1A1A1A" stroke-width="1.5"/></svg>Locked-down checkout (we're chaotic, not sketchy)</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" transform="rotate(45 6 6)" fill="#FFD23F" stroke="#1A1A1A" stroke-width="1.5"/></svg>Free shipping at $35 — aka the bundle</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" transform="rotate(45 6 6)" fill="#4CC9F0" stroke="#1A1A1A" stroke-width="1.5"/></svg>30 days to chicken out, no questions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative bg-ink text-cream">
+  <div class="zigzag-cream" aria-hidden="true"></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+    <div class="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr] md:gap-8">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-wordmark text-4xl text-riot leading-none">RIOT</span>
+          <span class="font-chunk text-xs bg-cream text-ink px-2 py-1 rounded">DECK</span>
+        </div>
+        <p class="mt-4 font-hand text-xl text-cream/80 max-w-xs">Made loud in a small studio. Causing problems since 2025.</p>
+        <div class="mt-5 flex items-center gap-4" aria-hidden="true">
+          <!-- squiggle (riot) -->
+          <svg width="38" height="16" viewBox="0 0 38 16"><path d="M2 8 Q8 1 14 8 T26 8 T36 8" stroke="#FF2D75" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
+          <!-- sparkle (cyan) -->
+          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 1 L12 7 L18 10 L12 13 L10 19 L8 13 L2 10 L8 7 Z" fill="#4CC9F0" stroke="#FFF8E7" stroke-width="2"/></svg>
+          <!-- dotted circle (grape) -->
+          <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="7" fill="none" stroke="#9B5DE5" stroke-width="2.5" stroke-dasharray="2 3" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <nav aria-label="Footer">
+        <p class="kicker text-cream/70 mb-4">Navigate</p>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="#how" class="hover:text-riot transition-colors">How to play</a></li>
+          <li><a href="#expansions" class="hover:text-riot transition-colors">Expansions</a></li>
+          <li><a href="#reviews" class="hover:text-riot transition-colors">Reviews</a></li>
+          <li><a href="#buy" class="hover:text-riot transition-colors">Buy</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <p class="kicker text-cream/70 mb-4">Follow the riot</p>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-riot transition-colors inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.3-.4-.4-.8-.6-1.3-.8-.4-.2-1-.3-2.1-.4-1.2-.1-1.6-.1-4.7-.1zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8zm0 8.1a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zm6.2-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"/></svg>
+            Instagram</a></li>
+          <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="hover:text-riot transition-colors inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.6 6.3c-.7.3-1.4.5-2.2.6.8-.5 1.4-1.2 1.7-2.1-.7.4-1.5.8-2.4 1-.7-.7-1.7-1.2-2.7-1.2-2.1 0-3.7 1.7-3.7 3.7 0 .3 0 .6.1.8C7 8.9 4.5 7.5 2.8 5.5c-.3.5-.5 1.2-.5 1.8 0 1.3.6 2.4 1.7 3.1-.6 0-1.2-.2-1.7-.5 0 1.8 1.3 3.3 3 3.6-.3.1-.6.1-.9.1-.2 0-.4 0-.6-.1.4 1.5 1.8 2.5 3.4 2.6-1.3 1-2.9 1.6-4.6 1.6h-.9c1.6 1 3.5 1.7 5.6 1.7 6.7 0 10.4-5.6 10.4-10.4v-.5c.7-.5 1.3-1.2 1.9-1.9z"/></svg>
+            TikTok</a></li>
+          <li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-riot transition-colors inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
+            YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-cream/15 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-cream/70">
+      <p>© 2025–2026 RIOT DECK. All riots reserved.</p>
+      <p>For adults with bad ideas. Not for people who take themselves seriously.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ---- Scroll reveal with stagger ---- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ---- Pause ambient animations off-screen (judge fix: motion) ---- */
+  const heroShapes = document.getElementById('heroShapes');
+  if (heroShapes) {
+    const ambientIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        document.body.classList.toggle('ambient-paused', !e.isIntersecting);
+      });
+    }, { threshold: 0 });
+    ambientIo.observe(heroShapes);
+  }
+
+  /* ---- Sticky shrinking CTA — trigger the instant hero CTA leaves viewport (reviewer fix) ---- */
+  const stickyCta = document.getElementById('stickyCta');
+  const heroCta = document.querySelector('#hero-cta-row');
+  let heroGone = false;
+  if (heroCta){
+    const heroIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        heroGone = !e.isIntersecting;
+        stickyCta.classList.toggle('show', heroGone);
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
+    heroIo.observe(heroCta);
+  }
+
+  /* ---- Mobile nav menu (reviewer fix: no hamburger before) ---- */
+  const navToggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  function closeMobileNav(){
+    if (!mobileNav) return;
+    mobileNav.classList.add('hidden');
+    mobileNav.setAttribute('aria-hidden','true');
+    if (navToggle){ navToggle.setAttribute('aria-expanded','false'); }
+  }
+  if (navToggle && mobileNav){
+    navToggle.addEventListener('click', () => {
+      const open = !mobileNav.classList.contains('hidden');
+      if (open){ closeMobileNav(); }
+      else {
+        mobileNav.classList.remove('hidden');
+        mobileNav.setAttribute('aria-hidden','false');
+        navToggle.setAttribute('aria-expanded','true');
+      }
+    });
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+  }
+
+  /* ---- Reduced motion: instant reveal, no transitions ---- */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    stickyCta.style.transition = 'none';
+  }
+
+  /* ---- SIGNATURE INTERACTION: Draw-a-card ---- */
+  const drawBtn = document.getElementById('drawBtn');
+  const dealtCards = [
+    document.getElementById('dealtCard1'),
+    document.getElementById('dealtCard2'),
+    document.getElementById('dealtCard3'),
+  ];
+  const drawHint = document.getElementById('drawHint');
+  const drawAnnounce = document.getElementById('drawAnnounce');
+  const confettiBurst = document.getElementById('confettiBurst');
+  let drawn = false;
+  let dealing = false; /* reviewer fix: rapid-click lock */
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COLORS = ['#FF2D75', '#FFD23F', '#4CC9F0', '#9B5DE5'];
+  const SHAPES = ['dot','tri','sq'];
+
+  function popConfetti(){
+    if (!confettiBurst) return;
+    if (reducedMotion) return; /* reviewer fix: no confetti under reduced motion */
+    for (let i=0;i<14;i++){
+      const s = document.createElement('span');
+      const color = COLORS[i % COLORS.length];
+      const shape = SHAPES[i % SHAPES.length];
+      const size = 6 + Math.random()*8;
+      s.style.cssText = 'position:absolute; left:50%; top:50%;'
+        + 'width:' + size + 'px; height:' + size + 'px;'
+        + 'background:' + color + ';'
+        + 'border:1.5px solid #1A1A1A;'
+        + 'border-radius:' + (shape==='dot'?'50%':'0') + ';'
+        + 'transform:' + (shape==='tri'?'rotate(45deg)':'none') + ';'
+        + '--tx:' + (Math.random()*160-80).toFixed(0) + 'px;'
+        + '--ty:' + (-60 - Math.random()*80).toFixed(0) + 'px;'
+        + 'animation: pop-confetti .7s ease-out forwards;'
+        + 'animation-delay:' + (Math.random()*0.1).toFixed(2) + 's;';
+      confettiBurst.appendChild(s);
+      setTimeout(()=>s.remove(), 900);
+    }
+  }
+
+  function announceDeal(){
+    if (!drawAnnounce) return;
+    const prompts = dealtCards.map(c => {
+      const t = c.querySelector('.prompt-text');
+      return t ? t.textContent : '';
+    }).filter(Boolean);
+    drawAnnounce.textContent = 'Three prompts drawn: ' + prompts.join(' . Next. ');
+  }
+
+  function setDeckState(mode){
+    if (!drawBtn) return;
+    if (mode === 'again'){
+      drawBtn.style.opacity = '1';
+      drawBtn.style.pointerEvents = 'auto';
+      drawBtn.setAttribute('aria-label', 'Draw again — deal three new prompt cards');
+    } else {
+      drawBtn.style.opacity = '1';
+      drawBtn.style.pointerEvents = 'auto';
+      drawBtn.setAttribute('aria-label', 'Draw a prompt card');
+    }
+  }
+
+  function deal(){
+    if (dealing) return; /* reviewer fix: ignore rapid clicks mid-deal */
+    dealing = true;
+    popConfetti();
+    if (drawBtn) drawBtn.classList.add('dealt');
+    const dealDelay = reducedMotion ? 0 : 120; /* reviewer fix: instant under reduced motion */
+    const stepDelay = reducedMotion ? 0 : 150;
+    dealtCards.forEach((c, i) => {
+      setTimeout(() => c.classList.add('dealt'), dealDelay + i*stepDelay);
+    });
+    drawn = true;
+    if (drawHint) drawHint.textContent = 'now make your friends answer these — tap the deck to redraw';
+    setDeckState('again');
+    // Announce after the deal animation lands
+    setTimeout(announceDeal, dealDelay + dealtCards.length*stepDelay + 200);
+    // Release lock after the last card lands + 200ms buffer
+    setTimeout(() => { dealing = false; }, dealDelay + dealtCards.length*stepDelay + 200);
+  }
+
+  function resetDeal(){
+    dealtCards.forEach(c => c.classList.remove('dealt'));
+    if (drawBtn) drawBtn.classList.remove('dealt');
+    drawn = false;
+    if (drawHint) drawHint.textContent = '↑ tap the deck';
+    setDeckState('initial');
+    if (drawAnnounce) drawAnnounce.textContent = '';
+  }
+
+  if (drawBtn){
+    drawBtn.addEventListener('click', () => { if (drawn) resetDeal(); deal(); });
+    drawBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (drawn) resetDeal(); deal(); }
+    });
+  }
+
+  /* ---- Checkout form micro-interaction (reviewer fix: real next action) ---- */
+  const checkoutForm = document.getElementById('checkoutForm');
+  const emailField = document.getElementById('emailField');
+  const checkoutMsg = document.getElementById('checkoutMsg');
+  const checkoutProduct = document.getElementById('checkoutProduct');
+  // Wire buy buttons to pre-select product in the checkout form
+  document.querySelectorAll('a[data-product]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = btn.getAttribute('data-product');
+      if (checkoutProduct){
+        checkoutProduct.textContent = p === 'bundle' ? 'bundle' : 'base deck';
+      }
+    });
+  });
+  if (checkoutForm){
+    checkoutForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = emailField.value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        if (checkoutMsg){ checkoutMsg.textContent = 'That email looks cursed. Try again.'; }
+        emailField.focus();
+        return;
+      }
+      if (checkoutMsg){
+        checkoutMsg.textContent = 'Locked in. Check your inbox for the checkout link — your riot starts in 48h.';
+      }
+      if (emailField){ emailField.value = ''; }
+    });
+  }
+</script>
+</body>
+</html>

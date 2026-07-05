@@ -57,6 +57,42 @@ Four runs picked for range, each unpacked: the winning aesthetic and *why it fit
 
 ---
 
+## 🎨 Style Study — 10 styles × 10 themes
+
+Each of the 10 newer aesthetics, run as a single-lens showcase paired with a domain that fits it. Same workflow, one direction, full refine + polish.
+
+<table>
+  <tr>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/synthwave/final.html"><img src="../docs/images/style-study/synthwave.png" width="100%"></a><br><sub><b>PIXEL DIVE</b><br>arcade bar · synthwave</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/bauhaus/final.html"><img src="../docs/images/style-study/bauhaus.png" width="100%"></a><br><sub><b>FORM & FUNCTION</b><br>design academy · bauhaus</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/art-deco/final.html"><img src="../docs/images/style-study/art-deco.png" width="100%"></a><br><sub><b>THE GILDED HOUR</b><br>speakeasy · art deco</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/memphis/final.html"><img src="../docs/images/style-study/memphis.png" width="100%"></a><br><sub><b>RIOT DECK</b><br>card game · memphis</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/risograph/final.html"><img src="../docs/images/style-study/risograph.png" width="100%"></a><br><sub><b>INK & PAPER</b><br>zine & print · riso</sub></td>
+  </tr>
+  <tr>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/scandi/final.html"><img src="../docs/images/style-study/scandi.png" width="100%"></a><br><sub><b>HYGGE & CO</b><br>home goods · scandi</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/holographic/final.html"><img src="../docs/images/style-study/holographic.png" width="100%"></a><br><sub><b>PRISM</b><br>cosmetics · holographic</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/couture/final.html"><img src="../docs/images/style-study/couture.png" width="100%"></a><br><sub><b>VESPER</b><br>courture · A/W</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/punk-zine/final.html"><img src="../docs/images/style-study/punk-zine.png" width="100%"></a><br><sub><b>BLACKOUT</b><br>punk band · zine</sub></td>
+    <td width="20%" align="center" valign="bottom"><a href="https://yizhiyanhua-ai.github.io/fireworks-design/examples/style-study/claymorphism/final.html"><img src="../docs/images/style-study/claymorphism.png" width="100%"></a><br><sub><b>BLOOM</b><br>kids app · clay</sub></td>
+  </tr>
+</table>
+
+| Style | Theme | Domain | Winner score |
+|-------|-------|--------|:------------:|
+| `synthwave` | PIXEL DIVE | Retro arcade & bar | 7.17 |
+| `bauhaus` | FORM & FUNCTION | Design academy / exhibition | 6.83 |
+| `art-deco` | THE GILDED HOUR | 1920s speakeasy | 6.83 |
+| `memphis` | RIOT DECK | Party card game | 6.33 |
+| `risograph` | INK & PAPER | Indie zine & print studio | 6.83 |
+| `scandi` | HYGGE & CO | Scandinavian home goods | 6.83 |
+| `holographic` | PRISM | Holographic cosmetics | 7.33 |
+| `couture` | VESPER | Couture fashion A/W | 7.17 |
+| `punk-zine` | BLACKOUT | Punk band tour + record | 6.67 |
+| `claymorphism` | BLOOM | Kids' learning app | 6.83 |
+
+---
+
 ## How to view
 
 **Live (rendered) on GitHub Pages:** <https://yizhiyanhua-ai.github.io/fireworks-design/> — landing page links to all 14. Or open any file directly, e.g. `…/examples/movie-rating-platform/final.html`.

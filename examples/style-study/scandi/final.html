@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#FAF7F1" />
+<title>HYGGE &amp; CO. — Objects for the long, slow winter.</title>
+<meta name="description" content="Slow-made, material-honest Scandinavian home goods — wool, ceramic, linen and beeswax, made to bring warmth and quiet ritual into Northern homes." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   HYGGE & CO. — design tokens + hand-authored utilities
+   No Tailwind play CDN. Production-grade, first-paint safe.
+   ============================================================ */
+:root{
+  --canvas:#FAF7F1;     /* warm off-white — primary canvas, 80%+ surface */
+  --stone-50:#F3EEE5;
+  --stone-100:#E8E2D6;  /* specimen section tint — gentle two-tone rhythm */
+  --stone-200:#D6CFC1;
+  --stone-300:#C2BAA8;
+  --muted:#6B635A;
+  --oat:#C9B79C;
+  --clay:#B5654A;       /* non-text accents only: clay-rule, blockquote border */
+  --clay-dark:#A65436;  /* text-bearing clay: CTA, prices, ampersand, links — AA on canvas */
+  --clay-deep:#8E4730;
+  --ink:#2B2723;
+
+  --maxw:80rem;
+  --gut:clamp(1.5rem, 4vw, 2.5rem);
+
+  --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans:'Inter', system-ui, -apple-system, sans-serif;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  background:var(--canvas);
+  color:var(--ink);
+  font-family:var(--font-sans);
+  font-size:1rem;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+img{ display:block; max-width:100%; height:auto; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; cursor:pointer; }
+ul{ list-style:none; margin:0; padding:0; }
+figure{ margin:0; }
+:focus-visible{ outline:2px solid var(--clay-dark); outline-offset:3px; border-radius:3px; }
+
+/* ---------- skip link ---------- */
+.skip-link{
+  position:absolute; left:1rem; top:-3rem; z-index:100;
+  background:var(--ink); color:var(--canvas);
+  padding:0.6rem 1rem; border-radius:6px; font-size:0.82rem; font-weight:500;
+  letter-spacing:0.04em; transition:top .25s ease;
+}
+.skip-link:focus{ top:1rem; }
+
+/* ---------- type ---------- */
+.font-display{ font-family:var(--font-display); font-optical-sizing:auto; }
+.tracking-tightest{ letter-spacing:-0.045em; }
+.tracking-tighter{ letter-spacing:-0.025em; }
+.tracking-caps{ letter-spacing:0.16em; }
+.eyebrow{
+  font-family:var(--font-sans); font-size:0.72rem; font-weight:500;
+  letter-spacing:0.16em; text-transform:uppercase; color:var(--muted);
+}
+.muted{ color:var(--muted); }
+
+/* ---------- layout ---------- */
+.wrap{ width:100%; max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gut); }
+/* raised floors: >=8rem between sections, >=12rem hero top per brief */
+.section{ padding-block:clamp(8rem, 10vw, 10rem); }
+.section-tight{ padding-block:clamp(6rem, 8vw, 8rem); }
+.scroll-mt{ scroll-margin-top:5rem; }
+.hairline{ height:1px; background:var(--stone-200); border:0; }
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  background:rgba(250,247,241,0.82);
+  backdrop-filter:saturate(140%) blur(12px);
+  -webkit-backdrop-filter:saturate(140%) blur(12px);
+  border-bottom:1px solid rgba(214,207,193,0.55);
+}
+.topbar-inner{
+  max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gut);
+  height:4rem; display:flex; align-items:center; justify-content:space-between;
+}
+.wordmark{
+  font-family:var(--font-display); font-weight:300; font-optical-sizing:auto;
+  font-size:1.35rem; letter-spacing:-0.02em; color:var(--ink);
+}
+.wordmark .amp{ color:var(--clay-dark); font-weight:400; }
+.nav-list{ display:flex; align-items:center; gap:2.5rem; }
+.nav-link{
+  position:relative; font-size:0.78rem; font-weight:500;
+  letter-spacing:0.16em; text-transform:uppercase; color:var(--ink);
+  transition:color .3s ease;
+}
+.nav-link::after{
+  content:''; position:absolute; left:0; bottom:-6px; height:1px; width:0;
+  background:var(--clay-dark); transition:width .4s cubic-bezier(.16,1,.3,1);
+}
+.nav-link:hover{ color:var(--clay-dark); }
+.nav-link:hover::after{ width:100%; }
+
+/* mobile nav: disclosure preserving three named destinations */
+.nav-toggle{
+  display:none; align-items:center; gap:0.5rem;
+  background:none; border:1px solid var(--stone-200); border-radius:999px;
+  padding:0.5rem 0.95rem; font-size:0.72rem; font-weight:500;
+  letter-spacing:0.16em; text-transform:uppercase; color:var(--ink);
+}
+.nav-toggle .bars{
+  width:14px; height:1px; background:var(--ink); position:relative; display:inline-block;
+}
+.nav-toggle .bars::before, .nav-toggle .bars::after{
+  content:''; position:absolute; left:0; width:14px; height:1px; background:var(--ink);
+}
+.nav-toggle .bars::before{ top:-4px; }
+.nav-toggle .bars::after{ top:4px; }
+.nav-toggle[aria-expanded="true"] .bars{ background:transparent; }
+.nav-toggle[aria-expanded="true"] .bars::before{ transform:translateY(4px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .bars::after{ transform:translateY(-4px) rotate(-45deg); }
+.nav-mobile{ display:none; }
+@media (max-width:48rem){
+  .nav-list{ display:none; }
+  .nav-toggle{ display:inline-flex; }
+  .nav-mobile{
+    position:fixed; top:4rem; left:0; right:0; z-index:49;
+    background:rgba(250,247,241,0.97);
+    backdrop-filter:saturate(140%) blur(12px);
+    -webkit-backdrop-filter:saturate(140%) blur(12px);
+    border-bottom:1px solid var(--stone-200);
+    padding:0.5rem var(--gut) 1.25rem;
+    transform:translateY(-8px); opacity:0; pointer-events:none;
+    transition:transform .3s ease, opacity .3s ease;
+  }
+  .nav-mobile.is-open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+  .nav-mobile ul{ display:flex; flex-direction:column; gap:0.25rem; }
+  .nav-mobile a{
+    display:block; padding:0.85rem 0.25rem; font-size:0.82rem; font-weight:500;
+    letter-spacing:0.16em; text-transform:uppercase; color:var(--ink);
+    border-bottom:1px solid rgba(214,207,193,0.5);
+  }
+  .nav-mobile a:last-child{ border-bottom:0; }
+}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative; overflow:hidden;
+  padding-top:clamp(12rem, 18vw, 13rem);
+  padding-bottom:clamp(10rem, 14vw, 12rem);
+}
+.hero-grain{
+  position:absolute; inset:0; pointer-events:none;
+  background-image:radial-gradient(rgba(43,39,35,0.022) 1px, transparent 1px);
+  background-size:6px 6px;
+}
+.sun-glow{
+  position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(58% 48% at 16% 20%, rgba(201,183,156,0.38) 0%, rgba(201,183,156,0) 70%);
+}
+.hero-grid{
+  position:relative; display:grid; gap:clamp(2.5rem,5vw,4rem); align-items:center;
+  grid-template-columns:1fr;
+}
+@media (min-width:48rem){
+  .hero-grid{ grid-template-columns:1.15fr 0.85fr; }
+}
+.hero-eyebrow-row{
+  display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+  margin-bottom:1.5rem;
+}
+.hero-eyebrow-row .dot{
+  width:4px; height:4px; border-radius:50%; background:var(--clay-dark); display:inline-block;
+}
+
+/* large wordmark — the brand leads the first fold (Fraunces light, optical sizing) */
+.hero-wordmark{
+  font-family:var(--font-display); font-weight:300; font-optical-sizing:auto;
+  color:var(--ink); line-height:0.92; letter-spacing:-0.045em;
+  font-size:clamp(3.5rem, 9vw, 7rem); margin:0;
+}
+.hero-wordmark .amp{ color:var(--clay-dark); font-weight:400; font-style:normal; }
+
+/* tagline steps down — visually subordinate to the wordmark */
+.hero-h1{
+  font-family:var(--font-display); font-weight:300; font-optical-sizing:auto;
+  color:var(--ink); line-height:1.02; letter-spacing:-0.035em;
+  font-size:clamp(1.6rem, 3.4vw, 2.5rem);
+  margin:1.5rem 0 0;
+}
+/* tonal step-down on the emotional phrase, no hanging short line */
+.hero-h1 .em{
+  font-style:italic; font-weight:300; color:var(--ink); opacity:0.7;
+}
+
+/* tagline body in Inter — serif/sans contrast preserved */
+.hero-sub{
+  margin-top:1.5rem; font-family:var(--font-sans); font-weight:400;
+  color:var(--ink); opacity:0.85; line-height:1.5;
+  font-size:clamp(1.05rem, 1.6vw, 1.2rem); max-width:36ch;
+}
+.hero-cta-row{
+  margin-top:2.5rem; display:flex; flex-direction:column; gap:1.25rem; align-items:flex-start;
+}
+@media (min-width:36rem){ .hero-cta-row{ flex-direction:row; align-items:center; gap:1.75rem; } }
+.hero-note{ margin-top:2rem; font-size:0.8rem; color:var(--muted); line-height:1.6; max-width:30ch; }
+
+/* signature object — editorial photograph, soft shadow, hairline frame */
+.hero-figure{ position:relative; display:flex; justify-content:center; }
+.hero-object{
+  position:relative; overflow:hidden; border-radius:4px;
+  aspect-ratio:4/5; width:100%; max-width:22rem;
+  border:1px solid rgba(214,207,193,0.7);
+  box-shadow:0 60px 90px -50px rgba(43,39,35,0.40), 0 24px 50px -30px rgba(43,39,35,0.18);
+  will-change:transform,opacity;
+}
+.hero-object img{ width:100%; height:100%; object-fit:cover; }
+/* quiet Inter-xs credit line below the image — emotional, no price */
+.hero-credit{
+  margin-top:1rem; font-family:var(--font-sans); font-size:0.72rem;
+  letter-spacing:0.08em; color:var(--muted); text-align:center; text-wrap:balance;
+}
+
+/* ---------- buttons / links ---------- */
+.btn-clay{
+  display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+  background:var(--clay-dark); color:var(--canvas);
+  border:0; border-radius:999px;
+  padding:0.95rem 2rem; font-size:0.88rem; font-weight:500; letter-spacing:0.01em;
+  transition:background .35s ease, transform .35s ease, box-shadow .35s ease;
+  box-shadow:0 10px 24px -12px rgba(166,84,54,0.6);
+}
+.btn-clay:hover{ background:var(--clay-deep); transform:translateY(-1px); box-shadow:0 14px 30px -12px rgba(166,84,54,0.7); }
+.btn-clay:active{ transform:translateY(0); }
+.btn-clay:focus-visible{ outline:2px solid var(--clay-dark); outline-offset:3px; }
+.btn-clay:disabled{ opacity:0.7; cursor:default; }
+/* smaller Subscribe modifier — promotes inline style to a token-driven class */
+.btn-clay-sm{ padding:0.85rem 1.75rem; }
+
+.txt-link{ position:relative; transition:color .3s ease; }
+.txt-link::after{
+  content:''; position:absolute; left:0; bottom:-3px; height:1px; width:0;
+  background:currentColor; transition:width .4s cubic-bezier(.16,1,.3,1);
+}
+.txt-link:hover{ color:var(--clay-dark); }
+.txt-link:hover::after{ width:100%; }
+/* secondary hero link — promotes the inline style */
+.txt-link-md{ font-size:0.88rem; font-weight:500; }
+
+/* ---------- section heading + clay rule (signature draw) ---------- */
+.section-eyebrow{ display:block; margin-bottom:1.25rem; }
+.section-h2{
+  font-family:var(--font-display); font-weight:300; font-optical-sizing:auto;
+  color:var(--ink); line-height:1.04; letter-spacing:-0.025em;
+  font-size:clamp(2.2rem, 4.6vw, 3.4rem); margin:0;
+}
+.section-lede{ margin-top:1.75rem; max-width:34ch; color:var(--ink); opacity:0.82; line-height:1.65; }
+.clay-rule{
+  display:block; height:1px; width:3rem; background:var(--clay);
+  margin-top:1.5rem; transform:scaleX(0); transform-origin:left center;
+  transition:transform .9s cubic-bezier(.16,1,.3,1) .15s;
+}
+.reveal.is-visible .clay-rule{ transform:scaleX(1); }
+/* max-width wrapper for section headers — promotes inline style */
+.section-head{ max-width:42rem; }
+
+/* ---------- products — equal four-column grid ---------- */
+.products-grid{
+  margin-top:clamp(3rem, 6vw, 4.5rem);
+  display:grid; gap:clamp(1.25rem, 2.4vw, 2rem);
+  grid-template-columns:1fr;
+}
+@media (min-width:36rem){ .products-grid{ grid-template-columns:repeat(2, 1fr); } }
+@media (min-width:64rem){ .products-grid{ grid-template-columns:repeat(4, 1fr); } }
+.product-card{
+  display:block; position:relative; border-radius:6px;
+  transition:transform .5s cubic-bezier(.16,1,.3,1), box-shadow .5s cubic-bezier(.16,1,.3,1);
+}
+.product-card:hover{ transform:translateY(-4px); box-shadow:0 24px 48px -24px rgba(43,39,35,0.20); }
+.product-card:focus-visible{ outline:2px solid var(--clay-dark); outline-offset:4px; }
+.product-card-img{
+  overflow:hidden; border-radius:6px; background:var(--stone-100);
+  aspect-ratio:1/1; position:relative;
+}
+.product-card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 1.2s cubic-bezier(.16,1,.3,1); }
+.product-card:hover .product-card-img img{ transform:scale(1.03); }
+.product-card-row{ margin-top:0.95rem; display:flex; justify-content:space-between; align-items:baseline; gap:0.75rem; }
+.product-card-row .name{ font-family:var(--font-display); font-weight:600; font-size:1.15rem; color:var(--ink); line-height:1.15; letter-spacing:-0.01em; }
+.product-card-row .price{ font-family:var(--font-display); font-weight:500; font-size:1rem; color:var(--clay-dark); white-space:nowrap; }
+.product-card-desc{ margin-top:0.4rem; font-size:0.86rem; color:var(--muted); line-height:1.5; }
+.product-card-origin{ margin-top:0.5rem; font-size:0.64rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+
+/* ---------- our story ---------- */
+.story-grid{ display:grid; gap:clamp(2.5rem, 5vw, 4rem); grid-template-columns:1fr; align-items:start; }
+@media (min-width:48rem){ .story-grid{ grid-template-columns:5fr 7fr; } }
+.story-img{ overflow:hidden; border-radius:4px; aspect-ratio:3/4; box-shadow:0 40px 80px -40px rgba(43,39,35,0.30), 0 16px 40px -24px rgba(43,39,35,0.14); }
+.story-img img{ width:100%; height:100%; object-fit:cover; }
+.story-body p{ margin:0; color:var(--ink); opacity:0.92; line-height:1.7; font-size:1.0625rem; }
+.story-body p + p{ margin-top:2rem; }
+.pull-quote{
+  margin:3rem 0 0; padding-left:1.5rem; border-left:3px solid var(--clay); max-width:38ch;
+}
+.pull-quote p{
+  font-family:var(--font-display); font-weight:300; font-style:italic;
+  color:var(--ink); opacity:1; line-height:1.3; font-size:clamp(1.35rem, 2.5vw, 1.8rem); margin:0;
+}
+.pull-quote footer{ margin-top:1.25rem; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+
+/* ---------- materials — framed specimen tray ---------- */
+.specimen-tray{
+  border-top:1px solid var(--stone-200);
+  border-bottom:1px solid var(--stone-200);
+}
+.specimen-row{ transition:background-color .5s ease; }
+.specimen-row:hover{ background:rgba(201,183,156,0.13); }
+/* even internal rules via + selector — consistent museum-specimen framing */
+.specimen-row + .specimen-row{ border-top:1px solid var(--stone-200); }
+.specimen-row-inner{ padding-block:1.75rem; display:flex; align-items:center; gap:clamp(1.25rem, 3vw, 2.5rem); }
+@media (max-width:30rem){ .specimen-row-inner{ flex-wrap:wrap; } }
+.specimen-swatch{ flex:none; overflow:hidden; border-radius:4px; background:var(--stone-100); width:4rem; height:4rem; }
+.specimen-swatch img{ width:100%; height:100%; object-fit:cover; }
+.specimen-body{ flex:1 1 auto; min-width:0; }
+.specimen-body h3{ font-family:var(--font-display); font-weight:600; font-size:1.25rem; color:var(--ink); margin:0; line-height:1.15; }
+.specimen-body p{ margin:0.25rem 0 0; font-size:0.88rem; color:var(--muted); line-height:1.5; }
+.specimen-origin{ flex:none; font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); font-weight:500; text-align:right; }
+
+/* ---------- newsletter — the only generous rounded container ---------- */
+.letters-panel{
+  margin-inline:auto; max-width:40rem;
+  background:var(--stone-50); border:1px solid var(--stone-200);
+  border-radius:32px; padding:clamp(2.5rem, 5vw, 4rem) clamp(1.75rem, 5vw, 3.5rem);
+  text-align:center; box-shadow:0 24px 48px -32px rgba(43,39,35,0.16);
+}
+/* smaller newsletter H2 override — promotes inline style */
+.letters-panel .section-h2{ font-size:clamp(1.9rem, 3.6vw, 2.6rem); }
+.letters-lede{ margin:1.25rem auto 0; max-width:34ch; color:var(--ink); opacity:0.82; line-height:1.6; }
+.letters-form{
+  margin-top:2.5rem; display:flex; align-items:center; gap:1rem;
+  max-width:28rem; margin-inline:auto; flex-wrap:wrap;
+}
+.nl-input{
+  flex:1 1 16rem; min-width:0; border:0; border-bottom:1px solid var(--stone-300);
+  background:transparent; border-radius:0;
+  padding:0.85rem 0.25rem; font:inherit; font-size:0.95rem; color:var(--ink);
+  transition:border-color .35s ease;
+}
+.nl-input::placeholder{ color:rgba(107,99,90,0.85); }
+.nl-input:focus{ outline:none; border-color:var(--clay-dark); }
+.nl-submit{ flex:0 0 auto; }
+@media (max-width:30rem){
+  .letters-form{ flex-direction:column; align-items:stretch; }
+  .nl-input{ flex:1 1 auto; }
+  .nl-submit{ width:100%; }
+  .nl-submit .btn-clay{ width:100%; }
+}
+.letters-status{
+  margin-top:1rem; font-size:0.82rem; line-height:1.5;
+  min-height:1.2em; font-weight:500;
+}
+.letters-status.error{ color:var(--clay-deep); }
+.letters-status.ok{ color:var(--clay-dark); }
+.letters-micro{ margin-top:1.25rem; font-size:0.72rem; color:var(--muted); line-height:1.6; }
+
+/* ---------- footer ---------- */
+.footer{
+  background:var(--stone-100); border-top:1px solid var(--stone-200);
+  padding-top:6rem; padding-bottom:4rem;
+}
+.footer-grid{ display:grid; gap:clamp(2rem, 5vw, 3rem); grid-template-columns:1fr; }
+@media (min-width:48rem){ .footer-grid{ grid-template-columns:4fr 6fr 2fr; } }
+.footer-brand .mark{ font-family:var(--font-display); font-weight:300; font-size:1.6rem; letter-spacing:-0.02em; color:var(--ink); }
+.footer-brand .mark .amp{ color:var(--clay-dark); font-weight:400; }
+.footer-brand .manifesto{ margin-top:1rem; font-family:var(--font-display); font-style:italic; font-size:0.95rem; color:var(--muted); }
+.footer-links{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+@media (max-width:30rem){ .footer-links{ grid-template-columns:1fr 1fr; } }
+.footer-col h3{ font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); font-weight:500; margin:0 0 1rem; }
+.footer-col li{ margin-bottom:0.6rem; }
+.footer-col a{ font-size:0.88rem; color:var(--ink); opacity:0.82; }
+.footer-end{ text-align:left; }
+@media (min-width:48rem){ .footer-end{ text-align:right; } }
+.footer-end .ig{ font-size:0.88rem; color:var(--ink); opacity:0.82; }
+.footer-end .copy{ margin-top:1.5rem; font-size:0.7rem; color:var(--muted); line-height:1.6; }
+
+/* ---------- motion: stillness first ----------
+   Per brief, scroll reveals are kept to opacity-only fades on section headers
+   (no translateY, no product-card stagger). Hero object settle and clay-rule
+   draw remain the only intentional gestures. Content is otherwise present on load. */
+.reveal{ opacity:0; transition:opacity .9s cubic-bezier(.16,1,.3,1); }
+.reveal.is-visible{ opacity:1; }
+
+/* hero object settle — signature load motion (no scroll parallax) */
+@keyframes settle{
+  from{ opacity:0; transform:scale(1.04); }
+  to{ opacity:1; transform:scale(1); }
+}
+.settle-anim{ animation:settle 1.6s cubic-bezier(.16,1,.3,1) both; }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ transition:none !important; animation:none !important; }
+  .reveal{ opacity:1 !important; }
+  .clay-rule{ transform:scaleX(1) !important; }
+  .settle-anim{ opacity:1 !important; transform:none !important; }
+  html{ scroll-behavior:auto; }
+  .hero-object{ will-change:auto; }
+}
+
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+</style>
+</head>
+<body>
+
+<a href="#top" class="skip-link">Skip to content</a>
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#top" class="wordmark" aria-label="HYGGE & CO. — home">HYGGE <span class="amp">&amp;</span> CO.</a>
+    <nav aria-label="Primary">
+      <ul class="nav-list">
+        <li><a class="nav-link" href="#collection">Products</a></li>
+        <li><a class="nav-link" href="#story">Story</a></li>
+        <li><a class="nav-link" href="#materials">Materials</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-mobile" aria-label="Open menu">
+      <span class="bars" aria-hidden="true"></span>
+      <span>Menu</span>
+    </button>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <ul>
+      <li><a href="#collection">Products</a></li>
+      <li><a href="#story">Story</a></li>
+      <li><a href="#materials">Materials</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ===== HERO — brand wordmark leads, tagline steps down ===== -->
+<section class="hero" aria-label="Introduction">
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="sun-glow" aria-hidden="true"></div>
+  <div class="wrap" style="position:relative;">
+    <div class="hero-grid">
+
+      <div>
+        <div class="hero-eyebrow-row">
+          <span class="eyebrow">Småland · Faroe Islands · Flanders</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="eyebrow">Slow-made in the North</span>
+        </div>
+
+        <p class="hero-wordmark">HYGGE <span class="amp">&amp;</span> CO.</p>
+
+        <h1 class="hero-h1">
+          Objects for the <span class="em">long, slow winter.</span>
+        </h1>
+
+        <p class="hero-sub">Wool, ceramic, linen and beeswax — slow-made in small Northern workshops, finished by hand.</p>
+
+        <div class="hero-cta-row">
+          <a href="#collection" class="btn-clay">Shop the collection</a>
+          <a href="#story" class="txt-link txt-link-md">Read our story</a>
+        </div>
+        <p class="hero-note">Four materials. Four places. Every object traceable to the field, clay bed or hive it came from.</p>
+      </div>
+
+      <!-- signature object: editorial photograph, settles on load like cloth -->
+      <figure class="hero-figure" style="width:100%; max-width:22rem; margin:0;">
+        <div class="hero-object settle-anim">
+          <img src="https://picsum.photos/seed/scandi-throw-folded/720/900"
+               alt="A hand-loomed undyed wool throw folded on a pale oak chair in low morning light"
+               width="720" height="900" loading="eager" />
+        </div>
+        <figcaption class="hero-credit">Hand-loomed in the Faroe Islands</figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS — equal four-column grid ===== -->
+<section id="collection" class="section scroll-mt" style="background:var(--canvas);" aria-labelledby="collection-heading">
+  <div class="wrap">
+    <header class="reveal section-head">
+      <span class="eyebrow section-eyebrow">The collection</span>
+      <h2 id="collection-heading" class="section-h2">Four objects, made to last.</h2>
+      <span class="clay-rule" aria-hidden="true"></span>
+      <p class="section-lede">Four objects, four materials, four places. Each made in a single workshop — small batches, long lead times, materials you can name.</p>
+    </header>
+
+    <div class="products-grid">
+
+      <a href="#collection" class="product-card" aria-label="Wool Throw, hand-loomed in the Faroe Islands, three winters in the making, €189">
+        <div class="product-card-img">
+          <img src="https://picsum.photos/seed/scandi-throw/900/900" alt="Undyed wool throw draped across a linen-covered daybed in soft natural light" loading="lazy" />
+        </div>
+        <div class="product-card-row">
+          <h3 class="name">Wool Throw</h3>
+          <span class="price">€189</span>
+        </div>
+        <p class="product-card-desc">Hand-loomed in the Faroe Islands, three winters in the making.</p>
+        <p class="product-card-origin">Faroe Islands</p>
+      </a>
+
+      <a href="#collection" class="product-card" aria-label="Ceramic Mug, wheel-thrown stoneware glazed by hand in three tones, €38">
+        <div class="product-card-img">
+          <img src="https://picsum.photos/seed/ceramic-mug/900/900" alt="Wheel-thrown stoneware mug in three hand-glazed tones on pale stone" loading="lazy" />
+        </div>
+        <div class="product-card-row">
+          <h3 class="name">Ceramic Mug</h3>
+          <span class="price">€38</span>
+        </div>
+        <p class="product-card-desc">Wheel-thrown stoneware, glazed by hand in three tones.</p>
+        <p class="product-card-origin">Höganäs, Sweden</p>
+      </a>
+
+      <a href="#collection" class="product-card" aria-label="Linen Cushion, stonewashed Belgian flax, slubby and lived-in, €74">
+        <div class="product-card-img">
+          <img src="https://picsum.photos/seed/linen-cushion/900/900" alt="Stonewashed Belgian linen cushion with a slubby, lived-in weave" loading="lazy" />
+        </div>
+        <div class="product-card-row">
+          <h3 class="name">Linen Cushion</h3>
+          <span class="price">€74</span>
+        </div>
+        <p class="product-card-desc">Stonewashed Belgian flax, slubby and lived-in.</p>
+        <p class="product-card-origin">Flanders, Belgium</p>
+      </a>
+
+      <a href="#collection" class="product-card" aria-label="Beeswax Candle, pure beeswax from Småland apiaries, 40-hour burn, €32">
+        <div class="product-card-img">
+          <img src="https://picsum.photos/seed/beeswax-candle/900/900" alt="Pure beeswax candle from Småland apiaries with a soft, warm flame" loading="lazy" />
+        </div>
+        <div class="product-card-row">
+          <h3 class="name">Beeswax Candle</h3>
+          <span class="price">€32</span>
+        </div>
+        <p class="product-card-desc">Pure beeswax from Småland apiaries, 40-hour burn.</p>
+        <p class="product-card-origin">Småland, Sweden</p>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== OUR STORY ===== -->
+<section id="story" class="section scroll-mt" style="background:var(--stone-100);" aria-labelledby="story-heading">
+  <div class="wrap">
+    <div class="story-grid">
+
+      <div class="reveal">
+        <div class="story-img">
+          <img src="https://picsum.photos/seed/scandi-workshop/900/1200" alt="A maker's hands finishing a wool throw in a light-filled Nordic workshop" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="story-body reveal">
+        <span class="eyebrow section-eyebrow">Our story</span>
+        <h2 id="story-heading" class="section-h2">A workshop,<br>not a factory.</h2>
+
+        <div style="margin-top:2.5rem; max-width:38ch;">
+          <p>Every HYGGE &amp; CO. piece is made in small batches and finished by hand. Nothing leaves the bench identical to the last — a glaze pools differently, a weave settles where the wool decides. We consider that the point, not the flaw.</p>
+          <p>The wool comes from Faroe sheep grazing open pasture. The flax is retted in Flemish fields. The clay is dug from Swedish earth outside Höganäs. The wax is poured from local honeycomb in Småland. Four materials, four places, all named.</p>
+        </div>
+
+        <blockquote class="pull-quote">
+          <p>Warmth isn't a finish you apply. It's what's left when you remove everything that isn't necessary.</p>
+          <footer>— Mette Sørensen, founder</footer>
+        </blockquote>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== MATERIALS ===== -->
+<section id="materials" class="section scroll-mt" style="background:var(--canvas);" aria-labelledby="materials-heading">
+  <div class="wrap" style="max-width:64rem;">
+    <header class="reveal section-head" style="margin-bottom:clamp(3rem,6vw,4rem);">
+      <span class="eyebrow section-eyebrow">Materials</span>
+      <h2 id="materials-heading" class="section-h2">Four materials,<br>four places.</h2>
+      <span class="clay-rule" aria-hidden="true"></span>
+      <p class="section-lede">Trace each object back to the field, the clay bed, the hive. Provenance, plainly named.</p>
+    </header>
+
+    <ul class="specimen-tray reveal" role="list">
+
+      <li class="specimen-row">
+        <div class="specimen-row-inner">
+          <div class="specimen-swatch">
+            <img src="https://picsum.photos/seed/mat-wool/200/200" alt="Swatch of undyed Faroese wool fleece" loading="lazy" />
+          </div>
+          <div class="specimen-body">
+            <h3>Wool</h3>
+            <p>Undyed fleece, sheared and spun in small lots.</p>
+          </div>
+          <p class="specimen-origin">Faroe Islands</p>
+        </div>
+      </li>
+
+      <li class="specimen-row">
+        <div class="specimen-row-inner">
+          <div class="specimen-swatch">
+            <img src="https://picsum.photos/seed/mat-ceramic/200/200" alt="Swatch of Höganäs Swedish clay in raw and fired tones" loading="lazy" />
+          </div>
+          <div class="specimen-body">
+            <h3>Ceramic</h3>
+            <p>Local clay, dug and wedged by hand before throwing.</p>
+          </div>
+          <p class="specimen-origin">Höganäs, Sweden</p>
+        </div>
+      </li>
+
+      <li class="specimen-row">
+        <div class="specimen-row-inner">
+          <div class="specimen-swatch">
+            <img src="https://picsum.photos/seed/mat-linen/200/200" alt="Swatch of stonewashed Belgian retted flax linen" loading="lazy" />
+          </div>
+          <div class="specimen-body">
+            <h3>Linen</h3>
+            <p>Retted flax, stonewashed until soft and slubby.</p>
+          </div>
+          <p class="specimen-origin">Flanders, Belgium</p>
+        </div>
+      </li>
+
+      <li class="specimen-row">
+        <div class="specimen-row-inner">
+          <div class="specimen-swatch">
+            <img src="https://picsum.photos/seed/mat-beeswax/200/200" alt="Swatch of raw honeycomb beeswax from Småland apiaries" loading="lazy" />
+          </div>
+          <div class="specimen-body">
+            <h3>Beeswax</h3>
+            <p>Raw honeycomb, filtered once and poured warm.</p>
+          </div>
+          <p class="specimen-origin">Småland, Sweden</p>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</section>
+
+<!-- ===== NEWSLETTER ===== -->
+<section id="letters" class="section-tight scroll-mt" style="background:var(--canvas); padding-top:0;" aria-labelledby="letters-heading">
+  <div class="wrap">
+    <div class="letters-panel reveal">
+      <h2 id="letters-heading" class="section-h2">Letters from<br>the workshop.</h2>
+      <p class="letters-lede">A quiet note, once a month. New pieces, slow-making stories, no noise.</p>
+
+      <form class="letters-form" novalidate aria-describedby="letters-status">
+        <label for="nl-email" class="sr-only">Email address</label>
+        <input id="nl-email" type="email" name="email" required autocomplete="email"
+               placeholder="your@email.com" class="nl-input" aria-invalid="false" />
+        <span class="nl-submit">
+          <button type="submit" class="btn-clay btn-clay-sm">Subscribe</button>
+        </span>
+      </form>
+      <p class="letters-status" id="letters-status" role="status"></p>
+      <p class="letters-micro">Unsubscribe anytime. We never share your address.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer" aria-labelledby="footer-heading">
+  <h2 id="footer-heading" class="sr-only">Footer</h2>
+  <div class="wrap">
+    <div class="footer-grid">
+
+      <div class="footer-brand">
+        <p class="mark">HYGGE <span class="amp">&amp;</span> CO.</p>
+        <p class="manifesto">Made slowly, in the North.</p>
+      </div>
+
+      <nav class="footer-links" aria-label="Footer">
+        <div class="footer-col">
+          <h3>Shop</h3>
+          <ul>
+            <li><a href="#collection" class="txt-link">Throws</a></li>
+            <li><a href="#collection" class="txt-link">Ceramics</a></li>
+            <li><a href="#collection" class="txt-link">Linen</a></li>
+            <li><a href="#collection" class="txt-link">Candles</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>About</h3>
+          <ul>
+            <li><a href="#story" class="txt-link">Our story</a></li>
+            <li><a href="#materials" class="txt-link">Materials</a></li>
+            <li><a href="#story" class="txt-link">Workshop visits</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Care</h3>
+          <ul>
+            <li><a href="#letters" class="txt-link">Contact</a></li>
+            <li><a href="#collection" class="txt-link">Shipping</a></li>
+            <li><a href="#collection" class="txt-link">Returns</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="footer-end">
+        <a href="#top" class="txt-link ig" aria-label="HYGGE & CO. on Instagram">Instagram</a>
+        <p class="copy">© 2026 HYGGE &amp; CO.<br>Småland, Sweden</p>
+      </div>
+
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal — opacity-only fades on section headers (no translateY, no stagger).
+  // Restores stillness: only the hero settle and clay-rule draw remain as gestures.
+  (function(){
+    var prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var els = document.querySelectorAll('.reveal');
+    if (prefersReduce || !('IntersectionObserver' in window)) {
+      els.forEach(function(el){ el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+    els.forEach(function(el){ io.observe(el); });
+  })();
+
+  // Mobile nav disclosure
+  (function(){
+    var toggle = document.querySelector('.nav-toggle');
+    var panel = document.getElementById('nav-mobile');
+    if (!toggle || !panel) return;
+    function close(){
+      toggle.setAttribute('aria-expanded', 'false');
+      panel.classList.remove('is-open');
+    }
+    toggle.addEventListener('click', function(){
+      var open = toggle.getAttribute('aria-expanded') === 'true';
+      if (open) { close(); }
+      else {
+        toggle.setAttribute('aria-expanded', 'true');
+        panel.classList.add('is-open');
+      }
+    });
+    panel.addEventListener('click', function(e){
+      if (e.target.tagName === 'A') close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') close();
+    });
+    window.addEventListener('resize', function(){
+      if (window.innerWidth > 768) close();
+    });
+  })();
+
+  // Newsletter — graceful submit with aria-live feedback
+  (function(){
+    var form = document.querySelector('#letters form');
+    if (!form) return;
+    var input = form.querySelector('input[type=email]');
+    var btn = form.querySelector('button');
+    var status = document.getElementById('letters-status');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (!input || !input.value || !input.checkValidity()) {
+        if (input){ input.focus(); input.setAttribute('aria-invalid','true'); }
+        if (status){
+          status.textContent = 'Please enter a valid email address.';
+          status.className = 'letters-status error';
+        }
+        return;
+      }
+      input.setAttribute('aria-invalid','false');
+      var orig = btn.textContent;
+      btn.textContent = 'Thank you';
+      btn.disabled = true;
+      input.value = '';
+      if (status){
+        status.textContent = 'Thank you — your first letter will arrive soon.';
+        status.className = 'letters-status ok';
+      }
+      setTimeout(function(){
+        btn.textContent = orig; btn.disabled = false;
+        if (status){ status.textContent = ''; status.className = 'letters-status'; }
+      }, 3200);
+    });
+    input.addEventListener('input', function(){
+      if (input.getAttribute('aria-invalid') === 'true' && input.checkValidity()){
+        input.setAttribute('aria-invalid','false');
+        if (status){ status.textContent = ''; status.className = 'letters-status'; }
+      }
+    });
+  })();
+</script>
+</body>
+</html>

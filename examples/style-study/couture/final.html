@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VESPER — A/W 2026 Nocturne</title>
+<meta name="description" content="VESPER, a couture house. A/W 2026 collection, Nocturne. Private viewings by appointment in Paris, London, and Tokyo." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0A0A0B',
+          ivory: '#E8E4DC',
+          bone: '#F4F1EC',
+          gold: '#B8945F',
+        },
+        fontFamily: {
+          display: ['"Cormorant Garamond"', 'serif'],
+          body: ['"EB Garamond"', 'serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root {
+    --ink: #0A0A0B;
+    --ivory: #E8E4DC;
+    --bone: #F4F1EC;
+    --gold: #B8945F;
+    --rule: rgba(232, 228, 220, 0.18);
+    --rule-bone: rgba(10, 10, 11, 0.16);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--ivory);
+    font-family: 'EB Garamond', serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Oldstyle figures for editorial numerals — reads as print, not sans */
+  .onum { font-feature-settings: "onum" 1, "liga" 1; }
+  .lnum { font-feature-settings: "lnum" 1; }
+
+  /* Loading placeholders for full-bleed imagery — flat near-black, never a spinner.
+     data-src is mirrored to --bg on the element so that without JS the image still loads. */
+  .img-bleed {
+    background-color: #0A0A0B;
+    background-size: cover;
+    background-position: center;
+    background-image: var(--bg, none);
+    transition: opacity 1.6s ease;
+    opacity: 0;
+  }
+  .img-bleed.is-loaded { opacity: 1; }
+  .img-bleed-bone { background-color: #ECE7DF; }
+  /* No-JS fallback: <html> starts as .no-js and is removed by the inline script.
+     While .no-js is present, images show without the fade (the --bg var still resolves). */
+  .no-js .img-bleed { opacity: 1; transition: none; }
+
+  /* Wordmark tracking — tiny, tracked */
+  .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    letter-spacing: 0.42em;
+    font-size: 0.82rem;
+  }
+
+  /* Tracked uppercase labels (mono). Lighter weight + tighter tracking on mobile
+     so tracked mono at 0.26em doesn't feel cramped on a narrow phone. */
+  .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    line-height: 1;
+  }
+  .label-lg {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    line-height: 1;
+  }
+  @media (max-width: 768px) {
+    .label { letter-spacing: 0.22em; }
+    .label-lg { letter-spacing: 0.26em; }
+  }
+
+  /* Hero collection line — the page's first true display moment.
+     One tracked-uppercase serif line, monumental. */
+  .hero-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: clamp(3rem, 11vw, 8.5rem);
+    line-height: 0.98;
+  }
+
+  /* Look numerals — light, oldstyle, oversized. Sits clearly below the atelier stat. */
+  .look-numeral {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    line-height: 0.82;
+    letter-spacing: -0.015em;
+    font-size: clamp(5rem, 9vw, 8rem);
+  }
+  /* Look 03's ghost numeral — decorative, capped below the atelier stat */
+  .look-ghost {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    line-height: 0.82;
+    letter-spacing: -0.015em;
+    font-size: clamp(6rem, 24vw, 14rem);
+  }
+
+  /* Look name italic */
+  .look-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  /* Atelier stat — the single largest numeric on the page, unambiguous climax. */
+  .stat {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    line-height: 0.8;
+    letter-spacing: -0.02em;
+    font-size: clamp(7rem, 26vw, 18rem);
+  }
+  .stat-dash { opacity: 0.55; margin: 0 0.04em; letter-spacing: 0; }
+
+  /* Display serif for section H2s (used sparingly) */
+  .h2-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    line-height: 1.08;
+  }
+
+  /* Pull quote — display serif, 500 tier */
+  .pull-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    line-height: 1.16;
+    letter-spacing: -0.003em;
+    font-feature-settings: "liga" 1, "onum" 1;
+    text-indent: -0.4em;
+  }
+
+  /* Ordinal conceit — lowercase roman numerals as a deliberate, named class
+     for section openers and the atelier crafts grid (consistent editorial voice). */
+  .ordinal {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    font-size: 0.68rem;
+    line-height: 1;
+  }
+
+  /* Text links — typographic, never buttons */
+  .tlink {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 4px;
+    text-decoration: none;
+    transition: color 0.6s ease;
+  }
+  .tlink::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    opacity: 0.5;
+    transform-origin: left;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .tlink:hover::after { opacity: 1; transform: scaleX(1.04); }
+
+  /* Booking CTA — ivory text with a SOLE gold underline (the gold typographic placement).
+     Gold lives only in the ::after, never on the text itself. */
+  .tlink-cta { color: var(--ivory); }
+  .tlink-cta::after { background: var(--gold); opacity: 1; transform: scaleX(0.78); transform-origin: left; }
+  .tlink-cta:hover::after { transform: scaleX(1); }
+
+  /* Hairline rule */
+  .hairline { height: 1px; background: var(--rule); width: 100%; }
+  .hairline-bone { height: 1px; background: var(--rule-bone); width: 100%; }
+
+  /* Scroll cue */
+  .scroll-cue {
+    width: 1px;
+    height: 56px;
+    background: linear-gradient(to bottom, transparent, rgba(232,228,220,0.6));
+    transition: opacity 0.8s ease;
+  }
+  .scroll-cue::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 14px;
+    background: rgba(232,228,220,0.9);
+    animation: cue 2.6s cubic-bezier(0.4,0,0.2,1) infinite;
+  }
+  .scroll-cue.is-paused { opacity: 0; }
+  .scroll-cue.is-paused::after { animation-play-state: paused; }
+  @keyframes cue {
+    0% { transform: translateY(-56px); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translateY(56px); opacity: 0; }
+  }
+
+  /* Scroll reveal tiers */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 1.4s ease, transform 1.4s cubic-bezier(0.2,0,0.2,1); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  .reveal-slow { opacity: 0; transform: translateY(40px); transition: opacity 2.2s ease, transform 2.2s cubic-bezier(0.2,0,0.2,1); }
+  .reveal-slow.is-in { opacity: 1; transform: none; }
+  /* Signature slowest tier — built for the look numerals.
+     Coordinated timeline: draw-rule fires at 0s, numeral resolves starting at 0.6s. */
+  .reveal-numeral { opacity: 0; transform: translateY(60px); transition: opacity 2.4s ease, transform 2.4s cubic-bezier(0.2,0,0.2,1); transition-delay: 0.6s; }
+  .reveal-numeral.is-in { opacity: 1; transform: none; }
+  /* Drive the numeral reveal off the look-section's is-in so the draw-rule (0s)
+     and the numeral (0.6s delay) share one timeline even when the meta block
+     sits low in a full-screen look. Higher specificity than .reveal-numeral.is-in. */
+  .look-section.is-in .reveal-numeral { opacity: 1; transform: none; }
+
+  /* Signature: the gold-less hairline that draws across each look on reveal.
+     Single coordinated timeline with the numeral, driven from look-section.is-in. */
+  .draw-rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+    width: 0;
+    background: rgba(232,228,220,0.32);
+    transition: width 2.6s cubic-bezier(0.2,0,0.2,1);
+  }
+  .look-section.is-in .draw-rule { width: 100%; }
+
+  /* Subtle scroll-parallax on lookbook background images only — depth without gimmick. */
+  .look-img-parallax {
+    will-change: transform;
+    transition: transform 0.1s linear;
+  }
+
+  /* Hero vignette — figure in shadow reads against absolute black */
+  .hero-vignette {
+    background:
+      radial-gradient(120% 80% at 50% 30%, transparent 30%, rgba(10,10,11,0.55) 100%),
+      linear-gradient(to bottom, rgba(10,10,11,0.35) 0%, transparent 22%, transparent 70%, rgba(10,10,11,0.72) 100%);
+  }
+  /* Top scrim guarantees wordmark contrast on any hero photo */
+  .header-scrim {
+    background: linear-gradient(to bottom, rgba(10,10,11,0.55) 0%, rgba(10,10,11,0) 100%);
+  }
+
+  /* Guaranteed scrim behind look-meta — WCAG AA on any photograph */
+  .meta-scrim-left {
+    background: linear-gradient(90deg, rgba(10,10,11,0.78) 0%, rgba(10,10,11,0.55) 55%, rgba(10,10,11,0) 100%);
+  }
+  .meta-scrim-right {
+    background: linear-gradient(270deg, rgba(10,10,11,0.78) 0%, rgba(10,10,11,0.55) 55%, rgba(10,10,11,0) 100%);
+  }
+  .meta-scrim-bottom {
+    background: linear-gradient(0deg, rgba(10,10,11,0.86) 0%, rgba(10,10,11,0.5) 55%, rgba(10,10,11,0) 100%);
+  }
+
+  /* Press gold rule — the SOLE gold placement. A typographic tick mark, not a bar:
+     capped to the cap-height of the first line, anchored to the top. */
+  .gold-rule {
+    width: 1px;
+    height: 2.6em;
+    align-self: start;
+    margin-top: 0.45em;
+    background: var(--gold);
+  }
+
+  /* Focus visible — ivory, never gold. Keeps the accent confined to two placements. */
+  a:focus-visible, button:focus-visible {
+    outline: 1px solid var(--ivory);
+    outline-offset: 6px;
+  }
+
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  /* Mobile nav sheet */
+  .nav-sheet {
+    transform: translateY(-100%);
+    transition: transform 0.7s cubic-bezier(0.2,0,0.2,1);
+  }
+  .nav-sheet.is-open { transform: translateY(0); }
+  .nav-burger span {
+    display: block;
+    width: 22px;
+    height: 1px;
+    background: var(--ivory);
+    margin: 5px 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .nav-burger.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav-burger.is-open span:nth-child(2) { opacity: 0; }
+  .nav-burger.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal, .reveal-slow, .reveal-numeral { opacity: 1 !important; transform: none !important; transition: none !important; transition-delay: 0s !important; }
+    .draw-rule { width: 100% !important; transition: none !important; }
+    .img-bleed { opacity: 1 !important; transition: none !important; }
+    .scroll-cue::after { animation: none; }
+    .nav-sheet { transition: none; }
+    .look-img-parallax { transform: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* Mobile lookbook: bottom-anchored meta with a bottom scrim, guaranteed contrast.
+     Desktop side-positioning is restored at md+. */
+  @media (max-width: 767px) {
+    .look-meta {
+      top: auto !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      transform: none !important;
+      max-width: none !important;
+      text-align: left !important;
+      padding: 0 1.5rem 2rem;
+    }
+    .look-meta-3 {
+      padding: 0 1.5rem 3rem;
+    }
+    .look-scrim-side { display: none !important; }
+    .look-scrim-bottom { display: block !important; }
+  }
+  @media (min-width: 768px) {
+    .look-scrim-bottom { display: none !important; }
+  }
+</style>
+
+<noscript>
+  <style>
+    .img-bleed { opacity: 1 !important; transition: none !important; }
+    .reveal, .reveal-slow, .reveal-numeral { opacity: 1 !important; transform: none !important; }
+    .draw-rule { width: 100% !important; }
+  </style>
+</noscript>
+</head>
+
+<body class="bg-ink text-ivory antialiased">
+
+<!-- Skip link — keyboard users bypass the nav -->
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:bg-ink focus:text-ivory focus:border focus:border-ivory/40 label">Skip to content</a>
+
+<!-- ============ NAV / WORDMARK ============ -->
+<header class="fixed top-0 left-0 right-0 z-50">
+  <div class="absolute inset-0 header-scrim pointer-events-none"></div>
+  <div class="relative mx-auto flex items-center justify-between px-6 md:px-10 py-6">
+    <a href="#hero" class="wordmark text-ivory" aria-label="VESPER — home">VESPER</a>
+    <nav class="hidden md:flex items-center gap-10" aria-label="Primary">
+      <a href="#lookbook" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Lookbook</a>
+      <a href="#atelier" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Atelier</a>
+      <a href="#press" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Press</a>
+      <a href="#book" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Appointments</a>
+    </nav>
+    <div class="flex items-center gap-6">
+      <button class="nav-burger md:hidden flex flex-col items-end justify-center py-2" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-sheet" tabindex="-1">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile sheet -->
+  <div id="mobile-sheet" class="nav-sheet md:hidden absolute top-full left-0 right-0 bg-ink border-t border-ivory/10">
+    <nav class="flex flex-col px-6 py-10 gap-8" aria-label="Mobile">
+      <a href="#lookbook" class="label text-ivory/80 hover:text-ivory transition-colors duration-500">Lookbook</a>
+      <a href="#atelier" class="label text-ivory/80 hover:text-ivory transition-colors duration-500">Atelier</a>
+      <a href="#press" class="label text-ivory/80 hover:text-ivory transition-colors duration-500">Press</a>
+      <a href="#book" class="label text-ivory/80 hover:text-ivory transition-colors duration-500">Appointments</a>
+      <span class="hairline mt-4"></span>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section id="hero" class="relative h-screen min-h-[640px] w-full overflow-hidden">
+  <div
+    id="hero-img"
+    class="img-bleed absolute inset-0"
+    data-src="https://picsum.photos/seed/vesper-hero-nocturne/1600/2000"
+    aria-label="A solitary figure in shadow, draped in jet-beaded silk, photographed full-bleed against absolute black."
+    role="img"
+  ></div>
+  <div class="absolute inset-0 hero-vignette pointer-events-none"></div>
+
+  <div class="relative z-10 flex h-full flex-col justify-end px-6 md:px-10 pb-16 md:pb-24">
+    <div class="reveal-slow max-w-5xl">
+      <h1 class="hero-line text-ivory">
+        A/W 2026 — Nocturne
+      </h1>
+      <p class="font-display italic font-light text-ivory/70 text-lg md:text-2xl mt-6 md:mt-8 max-w-xl leading-snug">
+        A couture collection of six pieces, composed in the manner of a nocturne.
+      </p>
+      <a href="#lookbook" class="tlink label-lg text-ivory mt-10 md:mt-14 inline-block">View the collection</a>
+    </div>
+  </div>
+
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center" aria-hidden="true">
+    <div class="scroll-cue"></div>
+  </div>
+</section>
+
+<!-- ============ LOOKBOOK ============ -->
+<section id="lookbook" aria-label="Nocturne lookbook — six looks">
+
+  <!-- Section opener — vast negative space, single label, no sentence -->
+  <div class="px-6 md:px-10 py-28 md:py-44 max-w-6xl">
+    <div class="reveal">
+      <p class="ordinal text-ivory/70 mb-10">i. — The Collection</p>
+      <h2 class="h2-display text-3xl md:text-5xl max-w-2xl text-ivory">
+        Six pieces.
+      </h2>
+    </div>
+  </div>
+
+  <!-- LOOK 01 — Vespertine (meta left, vertical-center on desktop) -->
+  <article class="look-section relative w-[90vw] max-w-none ml-auto mr-auto">
+    <div class="draw-rule"></div>
+    <div class="relative w-full h-[88vh] min-h-[560px] overflow-hidden">
+      <div class="img-bleed look-img-parallax absolute inset-0" data-src="https://picsum.photos/seed/vesper-look-01/1400/1600" aria-hidden="true"></div>
+      <div class="absolute inset-0 meta-scrim-left look-scrim-side pointer-events-none"></div>
+      <div class="absolute inset-x-0 bottom-0 meta-scrim-bottom look-scrim-bottom pointer-events-none"></div>
+      <div class="look-meta absolute left-6 md:left-12 top-1/2 -translate-y-1/2 max-w-xs reveal-numeral">
+        <p class="look-numeral onum text-ivory leading-none mb-4">01</p>
+        <p class="label text-ivory/75 mb-3">Look No. 01</p>
+        <h3 class="look-name text-3xl md:text-4xl text-ivory mb-4">Vespertine</h3>
+        <p class="font-body text-ivory/80 text-sm md:text-base leading-relaxed">A column of jet beads, hand-knotted over silk cady.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- LOOK 02 — Ember (meta right, meta in the lower-third on desktop for choreographic variety) -->
+  <article class="look-section relative w-[90vw] max-w-none ml-auto mr-auto mt-24 md:mt-40">
+    <div class="draw-rule"></div>
+    <div class="relative w-full h-[92vh] min-h-[600px] overflow-hidden">
+      <div class="img-bleed look-img-parallax absolute inset-0" data-src="https://picsum.photos/seed/vesper-look-02/1500/1700" aria-hidden="true"></div>
+      <div class="absolute inset-0 meta-scrim-right look-scrim-side pointer-events-none"></div>
+      <div class="absolute inset-x-0 bottom-0 meta-scrim-bottom look-scrim-bottom pointer-events-none"></div>
+      <div class="look-meta absolute right-6 md:right-12 top-[68%] -translate-y-1/2 max-w-xs text-right reveal-numeral">
+        <p class="look-numeral onum text-ivory leading-none mb-4">02</p>
+        <p class="label text-ivory/75 mb-3">Look No. 02</p>
+        <h3 class="look-name text-3xl md:text-4xl text-ivory mb-4">Ember</h3>
+        <p class="font-body text-ivory/80 text-sm md:text-base leading-relaxed">Burnt-velvet tailoring cut on the bias, like a held breath.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- LOOK 03 — Vesper Grey (numeral as centered ghost — the choreographed break) -->
+  <article class="look-section relative w-full max-w-none mt-24 md:mt-40">
+    <div class="draw-rule"></div>
+    <div class="relative w-full h-screen min-h-[640px] overflow-hidden">
+      <div class="img-bleed look-img-parallax absolute inset-0" data-src="https://picsum.photos/seed/vesper-look-03/1700/1500" aria-hidden="true"></div>
+      <div class="absolute inset-0 meta-scrim-bottom pointer-events-none"></div>
+      <!-- Oversized ghost numeral floats centred — capped below the atelier stat -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+        <p class="look-ghost onum text-ivory/15 leading-none select-none reveal-numeral">03</p>
+      </div>
+      <div class="look-meta look-meta-3 absolute left-1/2 -translate-x-1/2 bottom-12 md:bottom-20 max-w-md text-center reveal-numeral">
+        <p class="label text-ivory/75 mb-3">Look No. 03</p>
+        <h3 class="look-name text-3xl md:text-4xl text-ivory mb-4">Vesper Grey</h3>
+        <p class="font-body text-ivory/85 text-sm md:text-base leading-relaxed">A smoke-toned duchess satin, sculpted to catch candlelight.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- LOOK 04 — Nocturne (house signature — near-fullscreen breakout, meta right, top-aligned on desktop) -->
+  <article class="look-section relative w-full max-w-none mt-24 md:mt-40">
+    <div class="draw-rule"></div>
+    <div class="relative w-full h-[96vh] min-h-[640px] overflow-hidden">
+      <div class="img-bleed look-img-parallax absolute inset-0" data-src="https://picsum.photos/seed/vesper-look-04/1600/1800" aria-hidden="true"></div>
+      <div class="absolute inset-0 meta-scrim-right look-scrim-side pointer-events-none"></div>
+      <div class="absolute inset-x-0 bottom-0 meta-scrim-bottom look-scrim-bottom pointer-events-none"></div>
+      <div class="look-meta absolute right-6 md:right-12 top-[32%] -translate-y-1/2 max-w-xs text-right reveal-numeral">
+        <p class="look-numeral onum text-ivory leading-none mb-4">04</p>
+        <p class="label text-ivory/75 mb-3">Look No. 04 — House Signature</p>
+        <h3 class="look-name text-3xl md:text-4xl text-ivory mb-4">Nocturne</h3>
+        <p class="font-body text-ivory/85 text-sm md:text-base leading-relaxed">The house's signature: a 4-metre train of pleated organza.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- LOOK 05 — Ash & Lacquer (meta right, vertical-center on desktop) -->
+  <article class="look-section relative w-[90vw] max-w-none ml-auto mr-auto mt-24 md:mt-40">
+    <div class="draw-rule"></div>
+    <div class="relative w-full h-[90vh] min-h-[580px] overflow-hidden">
+      <div class="img-bleed look-img-parallax absolute inset-0" data-src="https://picsum.photos/seed/vesper-look-05a/1400/1600" aria-hidden="true"></div>
+      <div class="absolute inset-0 meta-scrim-right look-scrim-side pointer-events-none"></div>
+      <div class="absolute inset-x-0 bottom-0 meta-scrim-bottom look-scrim-bottom pointer-events-none"></div>
+      <div class="look-meta absolute right-6 md:right-12 top-1/2 -translate-y-1/2 max-w-xs text-right reveal-numeral">
+        <p class="look-numeral onum text-ivory leading-none mb-4">05</p>
+        <p class="label text-ivory/75 mb-3">Look No. 05</p>
+        <h3 class="look-name text-3xl md:text-4xl text-ivory mb-4">Ash &amp; Lacquer</h3>
+        <p class="font-body text-ivory/80 text-sm md:text-base leading-relaxed">Lacquered wool with hand-painted gilt at the hem.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- LOOK 06 — Matins (closing — meta right, lower-third on desktop; the only light) -->
+  <article class="look-section relative w-[90vw] max-w-none ml-auto mr-auto mt-24 md:mt-40">
+    <div class="draw-rule"></div>
+    <div class="relative w-full h-[90vh] min-h-[580px] overflow-hidden">
+      <div class="img-bleed look-img-parallax absolute inset-0" data-src="https://picsum.photos/seed/vesper-look-06/1400/1600" aria-hidden="true"></div>
+      <div class="absolute inset-0 meta-scrim-right look-scrim-side pointer-events-none"></div>
+      <div class="absolute inset-x-0 bottom-0 meta-scrim-bottom look-scrim-bottom pointer-events-none"></div>
+      <div class="look-meta absolute right-6 md:right-12 top-[72%] -translate-y-1/2 max-w-xs text-right reveal-numeral">
+        <p class="look-numeral onum text-ivory leading-none mb-4">06</p>
+        <p class="label text-ivory/75 mb-3">Look No. 06 — Closing</p>
+        <h3 class="look-name text-3xl md:text-4xl text-ivory mb-4">Matins</h3>
+        <p class="font-body text-ivory/85 text-sm md:text-base leading-relaxed">Closing piece: ivory silk, the only light in the collection.</p>
+      </div>
+    </div>
+  </article>
+
+</section>
+
+<!-- ============ ATELIER ============ -->
+<section id="atelier" class="bg-bone text-ink mt-24 md:mt-40">
+  <div class="px-6 md:px-10 py-24 md:py-40">
+    <div class="reveal mb-20 md:mb-28">
+      <p class="ordinal text-ink/70 mb-6">ii. — The Atelier, Paris</p>
+      <h2 class="h2-display text-3xl md:text-5xl max-w-2xl">
+        What is omitted is the work.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+      <div class="lg:col-span-7">
+        <div class="relative w-full aspect-[4/5] overflow-hidden bg-ink/5">
+          <div class="img-bleed img-bleed-bone absolute inset-0" data-src="https://picsum.photos/seed/vesper-atelier-detail/1200/1500" role="img" aria-label="A detail of the atelier — hands, thread, and hand-knotted jet beadwork under a single lamp."></div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 lg:pt-6">
+        <p class="font-body text-ink/85 text-base md:text-lg leading-relaxed mb-12 md:mb-16 reveal">
+          Nocturne is built by hand, in a single room above the Rue de Marignan, by fourteen artisans who have, between them, kept the house's techniques continuous since 1962. There is no machine for pleating here, no shortcut for the beadwork. The collection exists because these hands exist — and because the work refuses to hurry.
+        </p>
+
+        <div class="reveal-slow">
+          <p class="label text-ink/70 mb-5">Hours of hand-work, per piece</p>
+          <p class="stat onum text-ink tabular">
+            180<span class="stat-dash">–</span>420
+          </p>
+          <p class="font-body text-ink/75 text-base md:text-lg leading-relaxed mt-6 max-w-md">
+            Each piece demands between 180 and 420 hours of hand-work in the Paris atelier.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-24 md:mt-36 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 border-t border-ink/10 pt-16">
+      <div class="reveal">
+        <p class="ordinal text-ink/70 mb-4">i.</p>
+        <h3 class="font-display font-light text-2xl md:text-3xl text-ink mb-4">Hand-knotted beading</h3>
+        <p class="font-body text-ink/75 text-base leading-relaxed">Jet and glass, knotted singly onto silk thread, fixed by hand to the cady.</p>
+      </div>
+      <div class="reveal">
+        <p class="ordinal text-ink/70 mb-4">ii.</p>
+        <h3 class="font-display font-light text-2xl md:text-3xl text-ink mb-4">Bias cutting</h3>
+        <p class="font-body text-ink/75 text-base leading-relaxed">Velvet and satin cut on the cross, so the cloth falls with weight and memory.</p>
+      </div>
+      <div class="reveal">
+        <p class="ordinal text-ink/70 mb-4">iii.</p>
+        <h3 class="font-display font-light text-2xl md:text-3xl text-ink mb-4">Pleating &amp; draping</h3>
+        <p class="font-body text-ink/75 text-base leading-relaxed">Organza set by hand over a form, pleat by pleat, and left to take the room.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRESS ============ -->
+<section id="press" class="bg-ink text-ivory">
+  <div class="px-6 md:px-10 py-28 md:py-44 max-w-5xl mx-auto">
+    <div class="reveal mb-20 md:mb-28">
+      <p class="ordinal text-ivory/70 mb-6">iii. — Press</p>
+    </div>
+
+    <div class="space-y-20 md:space-y-28">
+      <blockquote class="reveal flex gap-8 md:gap-12 items-start">
+        <div class="gold-rule shrink-0"></div>
+        <div>
+          <p class="pull-quote text-2xl md:text-4xl text-ivory mb-6">
+            &ldquo;VESPER does not dress you. It dims the room around you.&rdquo;
+          </p>
+          <footer class="label text-ivory/70">Vogue Paris</footer>
+        </div>
+      </blockquote>
+
+      <blockquote class="reveal flex gap-8 md:gap-12 items-start">
+        <div class="gold-rule shrink-0"></div>
+        <div>
+          <p class="pull-quote text-2xl md:text-4xl text-ivory mb-6">
+            &ldquo;The most restrained collection of the season.&rdquo;
+          </p>
+          <footer class="label text-ivory/70">AnOther Magazine</footer>
+        </div>
+      </blockquote>
+
+      <blockquote class="reveal flex gap-8 md:gap-12 items-start">
+        <div class="gold-rule shrink-0"></div>
+        <div>
+          <p class="pull-quote text-2xl md:text-4xl text-ivory mb-6">
+            &ldquo;A masterclass in negative space.&rdquo;
+          </p>
+          <footer class="label text-ivory/70">Numéro</footer>
+        </div>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BOOK A PRIVATE VIEWING ============ -->
+<section id="book" class="bg-ink text-ivory">
+  <div class="px-6 md:px-10 py-40 md:py-64 max-w-3xl mx-auto text-center">
+    <div class="space-y-16 md:space-y-20">
+      <div class="reveal-slow">
+        <p class="ordinal text-ivory/70 mb-12">iv. — Private Viewings</p>
+        <p class="font-display font-light text-3xl md:text-5xl leading-snug text-ivory">
+          Private viewings are held by appointment in <span class="italic">Paris, London, and Tokyo.</span>
+        </p>
+      </div>
+
+      <div class="reveal">
+        <a href="mailto:appointments@vesper.couture?subject=Private%20viewing%20%E2%80%94%20Nocturne%20A%2FW%202026" class="tlink tlink-cta label-lg">
+          Book a private viewing
+        </a>
+      </div>
+
+      <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 pt-12">
+        <p class="font-display italic text-ivory/70 text-lg">Paris — by the Rue de Marignan</p>
+        <p class="font-display italic text-ivory/70 text-lg">London — by appointment, Mayfair</p>
+        <p class="font-display italic text-ivory/70 text-lg">Tokyo — by appointment, Aoyama</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-ink text-ivory">
+  <div class="px-6 md:px-10 pt-16 pb-12">
+    <div class="hairline mb-10"></div>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-6">
+      <a href="#hero" class="wordmark text-ivory" aria-label="VESPER">VESPER</a>
+      <nav class="flex flex-wrap items-center justify-center gap-x-10 gap-y-4" aria-label="Footer">
+        <a href="#lookbook" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Lookbook</a>
+        <a href="#atelier" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Atelier</a>
+        <a href="#press" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Press</a>
+        <a href="#book" class="label text-ivory/70 hover:text-ivory transition-colors duration-500">Appointments</a>
+      </nav>
+      <p class="label text-ivory/70">© MMXXVI</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const supportsIO = 'IntersectionObserver' in window;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- No-JS safety: <html> boots as .no-js. Removing it activates the fade-in
+  //      transitions; while .no-js is present the .img-bleed rules force opacity:1.
+  document.documentElement.classList.remove('no-js');
+
+  // Mirror data-src into a --bg custom property on each .img-bleed so that,
+  // even without JS, the image still loads as a CSS background (no fade).
+  document.querySelectorAll('.img-bleed').forEach((el) => {
+    const src = el.dataset.src;
+    if (src) el.style.setProperty('--bg', `url('${src}')`);
+  });
+
+  // ---- Lazy image loading: flat near-black placeholder, fade in on load ----
+  function loadImg(el) {
+    if (el.dataset.loaded === '1') return;
+    el.dataset.loaded = '1';
+    const src = el.dataset.src;
+    if (!src) { el.classList.add('is-loaded'); return; }
+    const img = new Image();
+    img.onload = () => {
+      el.style.backgroundImage = `url('${src}')`;
+      requestAnimationFrame(() => el.classList.add('is-loaded'));
+    };
+    img.onerror = () => { el.classList.add('is-loaded'); };
+    img.src = src;
+  }
+
+  const imgObserver = supportsIO ? new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        loadImg(e.target);
+        imgObserver.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: '200px 0px' }) : null;
+
+  document.querySelectorAll('.img-bleed').forEach((el) => {
+    if (reduceMotion || !supportsIO) {
+      loadImg(el);
+    } else {
+      imgObserver.observe(el);
+    }
+  });
+
+  // ---- Safety timeout: force-load any image still unloaded after 8s (slow networks / blocked JS image()) ----
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.img-bleed:not(.is-loaded)').forEach((el) => loadImg(el));
+    }, 8000);
+  });
+
+  // ---- Scroll reveal ----
+  const revealObserver = supportsIO && !reduceMotion ? new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-in');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' }) : null;
+
+  document.querySelectorAll('.reveal, .reveal-slow, .reveal-numeral').forEach((el) => {
+    if (!revealObserver) {
+      el.classList.add('is-in');
+    } else {
+      revealObserver.observe(el);
+    }
+  });
+
+  // ---- Lookbook section reveal (drives the draw-rule signature + coordinated numeral timeline) ----
+  const lookObserver = supportsIO && !reduceMotion ? new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-in');
+        lookObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -20% 0px' }) : null;
+
+  document.querySelectorAll('.look-section').forEach((el) => {
+    if (!lookObserver) {
+      el.classList.add('is-in');
+    } else {
+      lookObserver.observe(el);
+    }
+  });
+
+  // ---- Subtle scroll-parallax on lookbook background images only (respects reduced-motion) ----
+  if (!reduceMotion && supportsIO) {
+    const parallaxEls = Array.from(document.querySelectorAll('.look-img-parallax'));
+    let ticking = false;
+    function updateParallax() {
+      const vh = window.innerHeight;
+      parallaxEls.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        // Only shift while the image is in or near the viewport
+        if (r.bottom < -120 || r.top > vh + 120) return;
+        const center = r.top + r.height / 2;
+        const offset = (center - vh / 2) / vh; // -1 .. +1
+        // ~5% travel, split so the image never reveals its edge on tall blocks
+        el.style.transform = `translate3d(0, ${(-offset * 5).toFixed(2)}%, 0) scale(1.06)`;
+      });
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(updateParallax); ticking = true; }
+    }, { passive: true });
+    updateParallax();
+  }
+
+  // ---- Scroll cue: pause once the hero leaves the viewport ----
+  const scrollCue = document.querySelector('.scroll-cue');
+  const heroEl = document.getElementById('hero');
+  if (scrollCue && heroEl && supportsIO) {
+    const cueObserver = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        scrollCue.classList.toggle('is-paused', !e.isIntersecting);
+      });
+    }, { threshold: 0 });
+    cueObserver.observe(heroEl);
+  } else if (scrollCue) {
+    scrollCue.classList.add('is-paused');
+  }
+
+  // ---- Mobile nav ----
+  const burger = document.querySelector('.nav-burger');
+  const sheet = document.getElementById('mobile-sheet');
+  function setNav(open) {
+    burger.classList.toggle('is-open', open);
+    sheet.classList.toggle('is-open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    sheet.setAttribute('aria-hidden', open ? 'false' : 'true');
+    // Re-enable focus on the burger only when the mobile sheet is in play
+    burger.setAttribute('tabindex', open ? '0' : '-1');
+  }
+  // The sheet starts hidden from AT on load
+  sheet.setAttribute('aria-hidden', 'true');
+  burger.addEventListener('click', () => setNav(!sheet.classList.contains('is-open')));
+  sheet.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setNav(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sheet.classList.contains('is-open')) setNav(false);
+  });
+
+  // On desktop, ensure the burger is never tabbable (display:none via md:hidden
+  // already removes it from the tab order; tabindex=-1 is belt-and-braces).
+  const desktopMQ = window.matchMedia('(min-width: 768px)');
+  function syncBurgerFocus() {
+    if (desktopMQ.matches) {
+      burger.setAttribute('tabindex', '-1');
+      // Belt-and-braces: if we just landed on desktop with the sheet open, close it
+      if (sheet.classList.contains('is-open')) setNav(false);
+    } else if (!sheet.classList.contains('is-open')) {
+      burger.setAttribute('tabindex', '0');
+    }
+  }
+  desktopMQ.addEventListener('change', syncBurgerFocus);
+  syncBurgerFocus();
+</script>
+
+</body>
+</html>

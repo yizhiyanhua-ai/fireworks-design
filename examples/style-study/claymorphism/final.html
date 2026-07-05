@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BLOOM — Learning that grows with your kid</title>
+<meta name="description" content="A tactile, learn-at-your-own-pace app for kids 3–10 that turns curiosity into a daily blooming habit across Math, Reading, Science, and Art." />
+
+<!-- Tailwind (pinned play CDN) -->
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+
+<!-- Google Fonts: Baloo 2 (display), Nunito (body), Quicksand (labels) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Lucide icons (pinned) -->
+<script src="https://unpkg.com/lucide@0.460.0"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          rose: {
+            brand: '#FF8FB1',
+            deep: '#D63B6E',
+            cta:   '#A8264F',
+            ctamid:'#C73A6A',
+            ctadeep:'#A8264F',
+          },
+          amethyst: {
+            DEFAULT: '#7C5CFC',
+            soft: '#A78BFA',
+            deep: '#5B3FD6',
+          },
+          cream: '#FBF5FF',
+          grape: {
+            DEFAULT: '#3D2B5C',
+            soft: '#6B5B8C',
+            dim: '#6B5B8C',
+          },
+          math: '#FFB454',
+          mathdeep: '#B87410',
+          reading: '#FF8FB1',
+          science: '#7C5CFC',
+          art: '#0E8C75',
+          artsoft: '#34C9B3',
+        },
+        fontFamily: {
+          display: ['"Baloo 2"', 'system-ui', 'sans-serif'],
+          body: ['Nunito', 'system-ui', 'sans-serif'],
+          label: ['Quicksand', 'system-ui', 'sans-serif'],
+        },
+        borderRadius: {
+          'clay': '28px',
+          'clay-lg': '40px',
+          'clay-xl': '56px',
+        },
+        fontSize: {
+          // Modular type scale — 1.25 ratio
+          'xs': ['0.80rem', { lineHeight: '1.5' }],
+          'sm': ['0.90rem', { lineHeight: '1.55' }],
+          'base': ['1.00rem', { lineHeight: '1.6' }],
+          'md': ['1.125rem', { lineHeight: '1.6' }],
+          'lg': ['1.25rem', { lineHeight: '1.55' }],
+          'xl': ['1.60rem', { lineHeight: '1.3' }],
+          '2xl': ['2.00rem', { lineHeight: '1.2' }],
+          '3xl': ['2.50rem', { lineHeight: '1.1' }],
+          '4xl': ['3.15rem', { lineHeight: '1.05' }],
+          '5xl': ['3.90rem', { lineHeight: '1.0' }],
+          '6xl': ['4.85rem', { lineHeight: '0.98' }],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root {
+    --bg: #FBF5FF;
+    --grape: #3D2B5C;
+    --grape-soft: #6B5B8C;
+    --grape-dim: #6B5B8C;
+    --rose: #FF8FB1;
+    --rose-deep: #D63B6E;
+    --amethyst: #7C5CFC;
+    --amethyst-deep: #5B3FD6;
+    --cream-deep: #F3E9FB;
+    --art-deep: #0E8C75;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--grape);
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(1100px 700px at 12% -8%, rgba(255,143,177,0.18), transparent 60%),
+      radial-gradient(900px 600px at 95% 6%, rgba(124,92,252,0.14), transparent 60%),
+      radial-gradient(800px 800px at 50% 110%, rgba(14,140,117,0.08), transparent 60%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .font-display { font-family: 'Baloo 2', system-ui, sans-serif; }
+  .font-label { font-family: 'Quicksand', system-ui, sans-serif; }
+
+  /* Tabular figures for pricing */
+  .tnum { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
+
+  /* Visually-hidden — screen-reader-only text */
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* ===== Claymorphism core: 3 layered shadows on matte clay ===== */
+  .clay {
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow:
+      inset 0 2px 4px rgba(255,255,255,0.95),
+      inset 0 -8px 16px rgba(124,92,252,0.12),
+      0 18px 36px -12px rgba(124,92,252,0.28),
+      0 6px 14px -6px rgba(61,43,92,0.12);
+  }
+
+  .clay-tint { border-radius: 32px; position: relative; overflow: hidden; }
+  .clay-rose    { background:#FFE7EF; box-shadow: inset 0 2px 4px rgba(255,255,255,.9), inset 0 -8px 16px rgba(214,59,110,.22), 0 18px 34px -12px rgba(214,59,110,.32); }
+  .clay-amber   { background:#FFF1D9; box-shadow: inset 0 2px 4px rgba(255,255,255,.9), inset 0 -8px 16px rgba(214,142,28,.22), 0 18px 34px -12px rgba(214,142,28,.30); }
+  .clay-violet  { background:#EEE6FF; box-shadow: inset 0 2px 4px rgba(255,255,255,.9), inset 0 -8px 16px rgba(124,92,252,.22), 0 18px 34px -12px rgba(124,92,252,.34); }
+  .clay-teal    { background:#DFF7F2; box-shadow: inset 0 2px 4px rgba(255,255,255,.9), inset 0 -8px 16px rgba(14,140,117,.22), 0 18px 34px -12px rgba(14,140,117,.30); }
+
+  /* Chunky pill CTA — deepest layered shadow, primary action.
+     Gradient darkened so the text-bearing band clears 4.5:1 (white on #A8264F ≈ 5.6:1).
+     Bottom stop anchored at #A8264F; mid #C73A6A at 48% keeps the rose brand feel
+     while the glyph sits over the deeper band. A subtle text-shadow adds a safety floor. */
+  .clay-pill {
+    border-radius: 999px;
+    background: linear-gradient(180deg, #FF9CB9 0%, #C73A6A 48%, #A8264F 100%);
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.7),
+      inset 0 -7px 12px rgba(154,28,66,0.6),
+      0 16px 28px -8px rgba(168,38,79,0.62),
+      0 6px 12px -4px rgba(61,43,92,0.22);
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
+  }
+  .clay-pill:hover {
+    transform: translateY(-2px) scale(1.015);
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.75),
+      inset 0 -8px 14px rgba(154,28,66,0.65),
+      0 22px 36px -8px rgba(168,38,79,0.68),
+      0 8px 14px -4px rgba(61,43,92,0.26);
+  }
+  .clay-pill:active { transform: translateY(1px) scale(.99); }
+  .clay-pill:focus-visible { outline: 3px solid #7C5CFC; outline-offset: 4px; }
+  /* Contrast safety floor under the CTA glyph */
+  .clay-pill .pill-label,
+  .clay-pill:not(.badge-stamp) { text-shadow: 0 1px 2px rgba(120,18,52,0.45); }
+
+  /* Secondary (premium) pill — DEMOTED to a tinted ghost/outline so the rose
+     CTA in the hero remains the page's single filled-chunky primary action.
+     White clay fill + amethyst text + amethyst ring: reads clearly as a
+     secondary action while still owning the amethyst accent. */
+  .clay-pill-sec {
+    border-radius: 999px;
+    background: #ffffff;
+    color: #5B3FD6;
+    box-shadow:
+      inset 0 0 0 2px rgba(124,92,252,0.55),
+      inset 0 2px 3px rgba(255,255,255,0.9),
+      inset 0 -5px 9px rgba(124,92,252,0.10),
+      0 8px 18px -8px rgba(124,92,252,0.32);
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
+  }
+  .clay-pill-sec:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 2px rgba(124,92,252,0.75), inset 0 2px 3px rgba(255,255,255,.9), inset 0 -6px 10px rgba(124,92,252,.14), 0 11px 20px -8px rgba(124,92,252,.4); }
+  .clay-pill-sec:focus-visible { outline: 3px solid #FF8FB1; outline-offset: 4px; }
+
+  /* Ghost / text pill */
+  .clay-pill-ghost {
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.9),
+      inset 0 -6px 10px rgba(124,92,252,0.10),
+      0 8px 16px -8px rgba(124,92,252,0.25);
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
+  }
+  .clay-pill-ghost:hover { transform: translateY(-1px); box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -6px 10px rgba(124,92,252,.12), 0 11px 18px -8px rgba(124,92,252,.3); }
+  .clay-pill-ghost:focus-visible { outline: 3px solid #7C5CFC; outline-offset: 3px; }
+
+  /* Number badge */
+  .clay-badge {
+    border-radius: 999px;
+    background: linear-gradient(180deg,#ffffff, #F3E9FB);
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.95),
+      inset 0 -6px 10px rgba(124,92,252,0.22),
+      0 8px 14px -6px rgba(124,92,252,0.4);
+  }
+
+  /* Endorsement stamp — quiet amethyst clay-badge, NOT a rose CTA.
+     Reads as a label, reserving the rose pill exclusively for the primary action. */
+  .badge-stamp {
+    border-radius: 999px;
+    background: linear-gradient(180deg,#ffffff, #F3E9FB);
+    color: #5B3FD6;
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.95),
+      inset 0 -6px 10px rgba(124,92,252,0.2),
+      0 8px 14px -6px rgba(124,92,252,0.34);
+  }
+  .badge-stamp .stamp-heart { color: #7C5CFC; }
+
+  /* Age-range pill — text uses grape for AA on light tint */
+  .age-pill {
+    font-family: 'Quicksand', sans-serif; font-weight: 700; letter-spacing:.02em;
+    border-radius: 999px; padding: .35rem .85rem; font-size: .72rem;
+    color: var(--grape);
+    background: rgba(255,255,255,0.78);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,.9), inset 0 -3px 6px rgba(61,43,92,.08), 0 4px 8px -4px rgba(61,43,92,.12);
+  }
+
+  /* Premium elevated card — accent ring via masked ::before + deeper amethyst shadow */
+  .clay-premium {
+    border-radius: 36px;
+    background: #ffffff;
+    position: relative;
+    box-shadow:
+      inset 0 2px 5px rgba(255,255,255,0.95),
+      inset 0 -10px 20px rgba(124,92,252,0.16),
+      0 28px 50px -14px rgba(124,92,252,0.42),
+      0 10px 20px -8px rgba(61,43,92,0.18);
+  }
+  .clay-premium::before {
+    content:''; position:absolute; inset:0; border-radius:36px; padding:2px;
+    background: linear-gradient(180deg,#A78BFA,#7C5CFC);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
+  }
+
+  /* App store badge — clay-edged */
+  .clay-store {
+    border-radius: 22px;
+    background: linear-gradient(180deg,#3D2B5C,#2A1B45);
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.12),
+      inset 0 -6px 12px rgba(0,0,0,0.4),
+      0 14px 26px -10px rgba(61,43,92,0.5),
+      0 5px 10px -4px rgba(61,43,92,0.25);
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
+  }
+  .clay-store:hover { transform: translateY(-2px) scale(1.02); }
+  /* Hero-grade store badge — deepest non-CTA shadow on the page so the
+     app-store badges read as the conversion exit below pricing. */
+  .clay-store-hero {
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.14),
+      inset 0 -7px 14px rgba(0,0,0,0.45),
+      0 22px 38px -12px rgba(61,43,92,0.6),
+      0 8px 14px -4px rgba(61,43,92,0.3);
+  }
+
+  /* ===== Card hover lift (subject tiles, parent cards, pricing, steps) ===== */
+  .clay-hover { transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s ease; will-change: transform; }
+  .clay-hover:hover { transform: translateY(-3px); }
+  .clay-hover:focus-within { transform: translateY(-3px); }
+  .clay-tint.clay-hover:hover { box-shadow: inset 0 2px 4px rgba(255,255,255,.92), inset 0 -9px 18px rgba(61,43,92,.18), 0 26px 44px -14px rgba(61,43,92,.28); }
+  .clay.clay-hover:hover { box-shadow: inset 0 2px 4px rgba(255,255,255,.95), inset 0 -9px 18px rgba(124,92,252,.14), 0 26px 44px -14px rgba(124,92,252,.34), 0 8px 16px -6px rgba(61,43,92,.16); }
+  .clay-icon { transition: transform .22s cubic-bezier(.34,1.56,.64,1); }
+  .clay-hover:hover .clay-icon { transform: scale(1.08) rotate(-3deg); }
+
+  /* ===== Hero mascot: blooming clay flower (signature moment) ===== */
+  /* Stage shrunk to ~380px so the H1/CTA column wins first fixation */
+  .mascot-stage { position: relative; width: 100%; max-width: 380px; aspect-ratio: 1/1; margin: 0 auto; }
+  .petal {
+    position: absolute; left: 50%; top: 50%;
+    width: 78px; height: 116px; margin-left: -39px; margin-top: -104px;
+    transform-origin: 50% 104px;
+    background: linear-gradient(180deg,#FFC4D6 0%,#FF8FB1 55%,#F47AA0 100%);
+    border-radius: 50% 50% 50% 50% / 70% 70% 40% 40%;
+    box-shadow:
+      inset 0 6px 10px rgba(255,255,255,0.7),
+      inset 0 -10px 18px rgba(193,52,98,0.35),
+      0 10px 22px -8px rgba(233,109,148,0.5);
+    transition: transform .9s cubic-bezier(.34,1.56,.64,1), opacity .6s ease;
+  }
+  /* Petals are BLOOMED by default — no-JS visitors see the finished mascot
+     immediately. The .bloom class only TRIGGERS the entrance animation for
+     JS users (one-shot, plays from hidden to shown, ends at the bloomed
+     state). This guarantees the hero's signature illustration is never
+     stuck at 30% opacity if a CDN/script fails. */
+  .mascot-stage .petal {
+    transform: rotate(var(--r)) translateY(0);
+    opacity: 1;
+  }
+  .mascot-stage.bloom .petal {
+    animation: bloomIn .9s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes bloomIn {
+    0%   { transform: rotate(var(--r)) translateY(40px) scale(.6); opacity: .3; }
+    100% { transform: rotate(var(--r)) translateY(0)    scale(1);  opacity: 1; }
+  }
+
+  .mascot-center {
+    position:absolute; left:50%; top:50%; width:104px; height:104px; margin:-52px 0 0 -52px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 38% 32%, #FFE9A8 0%, #FFB454 60%, #E8951A 100%);
+    box-shadow:
+      inset 0 6px 10px rgba(255,255,255,0.6),
+      inset 0 -10px 16px rgba(180,110,10,0.45),
+      0 14px 24px -8px rgba(214,142,28,0.55);
+    z-index: 3;
+    animation: centerPulse 4s ease-in-out infinite;
+  }
+  @keyframes centerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+
+  .mascot-eye { position:absolute; width:10px; height:13px; background:#3D2B5C; border-radius:50%; top:42%; animation: blink 5.5s infinite; transform-origin: center top; }
+  .mascot-eye.l { left:31%; } .mascot-eye.r { right:31%; }
+  @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+  .mascot-mouth { position:absolute; left:50%; top:58%; width:26px; height:15px; margin-left:-13px; border-bottom: 3px solid #3D2B5C; border-radius: 0 0 24px 24px; }
+
+  /* Floating subject puffs — fewer, lower opacity so hero copy wins */
+  .puff {
+    position:absolute; border-radius:999px; display:flex; align-items:center; justify-content:center; opacity:.92;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.85), inset 0 -8px 14px rgba(0,0,0,0.08), 0 12px 22px -8px rgba(61,43,92,0.22);
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  .stem {
+    position:absolute; left:50%; top:54%; width:16px; height:140px; margin-left:-8px;
+    background: linear-gradient(180deg,#5FBF8E,#0E8C75);
+    border-radius:999px;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,.4), inset 0 -6px 10px rgba(14,120,90,.4), 0 8px 16px -8px rgba(14,120,90,.4);
+    z-index:1;
+  }
+  /* Ground shadow — anchors the floating mascot so it reads as planted, not pasted. */
+  .mascot-ground {
+    position:absolute; left:50%; bottom:2%; width:62%; height:18px; margin-left:-31%;
+    background: radial-gradient(ellipse at center, rgba(124,92,252,0.22) 0%, rgba(124,92,252,0.08) 55%, transparent 78%);
+    border-radius: 50%;
+    z-index:0;
+    animation: groundPulse 4s ease-in-out infinite;
+  }
+  @keyframes groundPulse { 0%,100%{transform:scaleX(1);opacity:.9} 50%{transform:scaleX(.86);opacity:.7} }
+  .leaf {
+    position:absolute; left:50%; top:62%; width:54px; height:36px; margin-left:-40px;
+    background: linear-gradient(180deg,#6FD0A0,#0E8C75);
+    border-radius: 0 100% 0 100%;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,.4), inset 0 -5px 8px rgba(14,120,90,.35), 0 6px 12px -6px rgba(14,120,90,.4);
+    transform: rotate(-18deg); z-index:2;
+  }
+
+  /* ===== Custom CSS-clay mini-illustrations per subject ===== */
+  .subj-illus { width: 84px; height: 84px; position: relative; flex-shrink: 0; }
+
+  .abacus-frame {
+    position:absolute; inset: 8px 6px; border-radius: 14px;
+    background: linear-gradient(180deg,#fff,#FFE9C2);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -5px 8px rgba(214,142,28,.25), 0 6px 12px -6px rgba(214,142,28,.3);
+  }
+  .abacus-rod { position:absolute; left:14%; right:14%; height:5px; border-radius:999px; background: rgba(214,142,28,.45); }
+  .abacus-rod.r1 { top:30%; } .abacus-rod.r2 { top:54%; } .abacus-rod.r3 { top:78%; }
+  .abacus-bead { position:absolute; width:13px; height:13px; border-radius:50%; box-shadow: inset 0 1px 2px rgba(255,255,255,.7), inset 0 -2px 3px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.18); }
+
+  .book-base {
+    position:absolute; inset: 12px 14px; border-radius: 8px 14px 14px 8px;
+    background: linear-gradient(180deg,#fff,#FFE7EF);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -5px 8px rgba(214,59,110,.25), 0 6px 12px -6px rgba(214,59,110,.3);
+  }
+  .book-spine { position:absolute; left:14px; top:12px; bottom:12px; width:8px; border-radius:4px; background: linear-gradient(180deg,#FF8FB1,#D63B6E); box-shadow: inset 0 1px 2px rgba(255,255,255,.4); }
+  .book-line { position:absolute; left:30px; right:22px; height:3px; border-radius:999px; background: rgba(214,59,110,.3); }
+
+  .flask-body {
+    position:absolute; left:50%; bottom:10px; width:46px; height:42px; margin-left:-23px;
+    border-radius: 8px 8px 22px 22px;
+    background: linear-gradient(180deg,#C9B6FF,#A78BFA);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,.7), inset 0 -6px 10px rgba(74,40,170,.4), 0 6px 12px -6px rgba(124,92,252,.4);
+  }
+  .flask-neck { position:absolute; left:50%; bottom:48px; width:16px; height:22px; margin-left:-8px; border-radius:4px 4px 0 0; background: linear-gradient(180deg,#E0D4FF,#C9B6FF); box-shadow: inset 0 1px 2px rgba(255,255,255,.6); }
+  .flask-bubble { position:absolute; width:8px; height:8px; border-radius:50%; background: rgba(255,255,255,.7); box-shadow: inset 0 1px 1px rgba(255,255,255,.9); }
+
+  .palette-base {
+    position:absolute; inset: 12px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: linear-gradient(180deg,#fff,#DFF7F2);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,.9), inset 0 -6px 10px rgba(14,140,117,.25), 0 6px 12px -6px rgba(14,140,117,.3);
+  }
+  .palette-thumb { position:absolute; right:18px; top:50%; width:12px; height:14px; margin-top:-7px; border-radius:50%; background: rgba(14,140,117,.25); box-shadow: inset 0 1px 2px rgba(14,140,117,.3); }
+  .paint-dab { position:absolute; width:13px; height:13px; border-radius:50%; box-shadow: inset 0 1px 2px rgba(255,255,255,.6), inset 0 -2px 3px rgba(0,0,0,.18), 0 2px 3px rgba(0,0,0,.15); }
+
+  /* Reveal on scroll */
+  .reveal { opacity:0; transform: translateY(28px); transition: opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1); }
+  .reveal.in { opacity:1; transform: translateY(0); }
+
+  a:focus-visible, button:focus-visible { outline: 3px solid #7C5CFC; outline-offset: 3px; border-radius: 8px; }
+
+  /* Mobile shadow scale-down */
+  @media (max-width: 640px) {
+    .clay { box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -6px 10px rgba(124,92,252,.1), 0 10px 20px -10px rgba(124,92,252,.22); }
+    .clay-pill { box-shadow: inset 0 2px 3px rgba(255,255,255,.7), inset 0 -6px 10px rgba(154,28,66,.55), 0 10px 18px -8px rgba(168,38,79,.55); }
+    .clay-premium { box-shadow: inset 0 2px 4px rgba(255,255,255,.95), inset 0 -8px 14px rgba(124,92,252,.14), 0 18px 30px -14px rgba(124,92,252,.36); }
+    .mascot-stage { max-width: 280px; }
+    .petal { width:64px; height:96px; margin-left:-32px; margin-top:-86px; transform-origin:50% 86px; }
+    .mascot-center { width:86px; height:86px; margin:-43px 0 0 -43px; }
+  }
+  /* Tablet (md, 768–1024): side-by-side hero needs a smaller mascot so the
+     copy column wins first fixation on the exact device class where parents
+     browse casually. */
+  @media (min-width: 641px) and (max-width: 1023px) {
+    .mascot-stage { max-width: 320px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity:1; transform:none; }
+    /* Petals are bloomed by default; .bloom's entrance animation is suppressed
+       above, so reduced-motion users simply see the finished mascot. */
+    html { scroll-behavior: auto; }
+  }
+
+  .wordmark {
+    font-family:'Baloo 2',sans-serif; font-weight:800; letter-spacing:-.02em;
+    background: linear-gradient(180deg,#FF9CB9,#FF8FB1 60%,#F47AA0);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    /* background-clip:text renders the glyph as a transparency mask with no
+       overflow padding; give descenders (g, y, j) room inside the clip box
+       so they aren't shaved off on Safari's text-rendering path. */
+    display: inline-block; line-height: 1.1; padding-bottom: .08em;
+  }
+
+  /* Section eyebrows — color-coded clay dot landmark for fast scanning.
+     Each section owns an accent so the eye gets a landmark, not a repeated motif. */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-family: 'Quicksand', sans-serif; font-weight: 700;
+    font-size: .8rem; letter-spacing: .18em; text-transform: uppercase;
+  }
+  .eyebrow-dot {
+    width: 9px; height: 9px; border-radius: 999px; flex-shrink: 0;
+    box-shadow: inset 0 1px 1.5px rgba(255,255,255,.7), inset 0 -2px 3px rgba(0,0,0,.18), 0 2px 3px rgba(0,0,0,.12);
+  }
+  .eyebrow-amethyst { color: #5B3FD6; }
+  .eyebrow-amethyst .eyebrow-dot { background: linear-gradient(180deg,#A78BFA,#7C5CFC); }
+  .eyebrow-rose    { color: #B82E5E; }
+  .eyebrow-rose    .eyebrow-dot { background: linear-gradient(180deg,#FF9CB9,#D63B6E); }
+  .eyebrow-teal    { color: #0E8C75; }
+  .eyebrow-teal    .eyebrow-dot { background: linear-gradient(180deg,#34C9B3,#0E8C75); }
+  .eyebrow-grape   { color: #5B3FD6; }
+  .eyebrow-grape   .eyebrow-dot { background: linear-gradient(180deg,#C9B6FF,#7C5CFC); }
+  /* Pricing owns amber — the only accent unused at the eyebrow level, so all
+     four section landmarks (amethyst / rose / teal / amber) stay distinct. */
+  .eyebrow-amber   { color: #B87410; }
+  .eyebrow-amber   .eyebrow-dot { background: linear-gradient(180deg,#FFD27A,#FFB454); }
+</style>
+</head>
+
+<body class="min-h-screen overflow-x-hidden">
+
+<!-- ===== NAV ===== -->
+<header class="relative z-30">
+  <nav class="max-w-7xl mx-auto px-5 sm:px-8 py-5 flex items-center justify-between" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2" aria-label="BLOOM home">
+      <span class="wordmark text-3xl sm:text-4xl">BLOOM</span>
+      <span class="inline-block w-3 h-3 rounded-full bg-amber-400" style="box-shadow: inset 0 1px 2px rgba(255,255,255,.6), inset 0 -2px 3px rgba(180,110,10,.4), 0 3px 6px -2px rgba(214,142,28,.5);" aria-hidden="true"></span>
+    </a>
+    <ul class="hidden md:flex items-center gap-9 font-label font-semibold text-grape-soft text-sm">
+      <li><a href="#how" class="hover:text-grape transition-colors">How it works</a></li>
+      <li><a href="#subjects" class="hover:text-grape transition-colors">Subjects</a></li>
+      <li><a href="#parents" class="hover:text-grape transition-colors">For parents</a></li>
+      <li><a href="#pricing" class="hover:text-grape transition-colors">Pricing</a></li>
+    </ul>
+    <a href="#pricing" class="clay-pill-ghost px-5 py-2.5 font-label font-bold text-sm text-grape inline-flex items-center gap-2">
+      <i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>
+      Get the app
+    </a>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ===== HERO ===== -->
+<section class="relative px-5 sm:px-8 pt-6 sm:pt-10 pb-20 sm:pb-28">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-[1.1fr_0.9fr] gap-10 md:gap-10 items-center">
+    <!-- Copy — wider column wins first fixation -->
+    <div class="text-center md:text-left reveal">
+      <span class="age-pill inline-block text-amethyst-deep mb-6">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-amethyst mr-2 align-middle"></span>For ages 3–10 · Math · Reading · Science · Art
+      </span>
+      <h1 class="font-display font-extrabold text-grape leading-[1.0] sm:leading-[0.98] lg:leading-[1.05] tracking-[-0.02em] text-5xl sm:text-6xl lg:text-[5.2rem]">
+        Learning that
+        <br class="hidden sm:block" /><span class="wordmark">grows with your kid</span>
+      </h1>
+      <p class="mt-7 text-lg sm:text-xl text-grape-soft max-w-xl mx-auto md:mx-0 leading-relaxed">
+        Ten gentle minutes a day. Built by educators, trusted by parents who finally said yes.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+        <a href="#pricing" class="clay-pill px-9 py-4 font-display font-bold text-lg text-white inline-flex items-center gap-2">
+          Start free
+          <i data-lucide="sprout" class="w-5 h-5" aria-hidden="true"></i>
+        </a>
+        <a href="#how" class="font-label font-bold text-grape-soft hover:text-grape transition-colors inline-flex items-center gap-2 underline-offset-4 hover:underline decoration-grape-soft/40">
+          <i data-lucide="play-circle" class="w-5 h-5" aria-hidden="true"></i>
+          See how it works
+        </a>
+      </div>
+
+      <div class="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3 justify-center md:justify-start text-grape-soft font-label text-sm">
+        <div class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-amethyst" aria-hidden="true"></i> 100% private</div>
+        <div class="w-1 h-1 rounded-full bg-grape-soft/50"></div>
+        <div class="flex items-center gap-2"><i data-lucide="ban" class="w-4 h-4 text-amethyst" aria-hidden="true"></i> No ads, ever</div>
+        <div class="w-1 h-1 rounded-full bg-grape-soft/50 hidden sm:block"></div>
+        <div class="flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 text-amber-400" aria-hidden="true"></i> 4.9 · 200k families</div>
+      </div>
+
+      <figure class="mt-8 reveal">
+        <blockquote class="font-display font-semibold text-lg sm:text-xl text-grape max-w-lg mx-auto md:mx-0 leading-snug">
+          “Finally, something I can say yes to.”
+        </blockquote>
+        <figcaption class="mt-2 font-label text-sm text-grape-soft">
+          — Priya R., parent of a 6-year-old · App Store review
+        </figcaption>
+      </figure>
+    </div>
+
+    <!-- Mascot scene — shrunk, fewer puffs -->
+    <div class="reveal flex justify-center">
+      <div class="mascot-stage" id="mascot" role="img" aria-label="A friendly clay flower mascot blooming, with floating subject puffs for Math, Reading, Science, and Art.">
+        <div class="petal" style="--r:0deg"></div>
+        <div class="petal" style="--r:60deg"></div>
+        <div class="petal" style="--r:120deg"></div>
+        <div class="petal" style="--r:180deg"></div>
+        <div class="petal" style="--r:240deg"></div>
+        <div class="petal" style="--r:300deg"></div>
+
+        <div class="mascot-ground" aria-hidden="true"></div>
+        <div class="stem" aria-hidden="true"></div>
+        <div class="leaf" aria-hidden="true"></div>
+
+        <div class="mascot-center">
+          <span class="mascot-eye l" aria-hidden="true"></span>
+          <span class="mascot-eye r" aria-hidden="true"></span>
+          <span class="mascot-mouth" aria-hidden="true"></span>
+        </div>
+
+        <div class="puff" style="top:6%; left:6%; width:58px; height:58px; background:#FFF1D9; animation-delay:.2s;" aria-hidden="true">
+          <i data-lucide="calculator" class="w-6 h-6" style="color:#B87410"></i>
+        </div>
+        <div class="puff" style="top:12%; right:2%; width:62px; height:62px; background:#FFE7EF; animation-delay:1.1s;" aria-hidden="true">
+          <i data-lucide="book-open" class="w-7 h-7" style="color:#D63B6E"></i>
+        </div>
+        <div class="puff" style="bottom:20%; left:-2%; width:60px; height:60px; background:#EEE6FF; animation-delay:.6s;" aria-hidden="true">
+          <i data-lucide="flask-conical" class="w-6 h-6" style="color:#5B3FD6"></i>
+        </div>
+        <div class="puff" style="bottom:8%; right:6%; width:54px; height:54px; background:#DFF7F2; animation-delay:1.6s;" aria-hidden="true">
+          <i data-lucide="palette" class="w-5 h-5" style="color:#0E8C75"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section id="how" class="px-5 sm:px-8 py-20 sm:py-28">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <span class="eyebrow eyebrow-amethyst justify-center"><span class="eyebrow-dot" aria-hidden="true"></span>How it works</span>
+      <h2 class="font-display font-extrabold text-grape text-4xl sm:text-5xl lg:text-[3.4rem] tracking-[-0.02em] mt-3">Three soft steps to a daily bloom</h2>
+      <p class="text-grape-soft mt-4 text-lg max-w-2xl mx-auto">No setup marathon. No lesson planning. You tell us about your kid — we handle the rest, gently.</p>
+    </div>
+
+    <ol class="space-y-6 sm:space-y-7" role="list">
+      <li class="clay clay-hover p-7 sm:p-9 flex items-start gap-5 sm:gap-7 reveal">
+        <div class="clay-badge flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl text-amethyst clay-icon" aria-hidden="true">1</div>
+        <div class="flex-1">
+          <h3 class="font-display font-bold text-2xl sm:text-3xl text-grape">Pick your kid’s age &amp; interests</h3>
+          <p class="text-grape-soft text-base sm:text-lg mt-2 leading-relaxed">A 60-second setup. Slide to their age, tap a few things they love — dinosaurs, drawing, space, fairy tales. That’s it.</p>
+        </div>
+        <div class="hidden sm:flex flex-shrink-0 w-14 h-14 rounded-2xl items-center justify-center clay-icon" style="color:#D63B6E;background:#FFE7EF; box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -5px 8px rgba(214,59,110,.2);" aria-hidden="true">
+          <i data-lucide="heart-handshake" class="w-7 h-7"></i>
+        </div>
+      </li>
+      <li class="clay clay-hover p-7 sm:p-9 flex items-start gap-5 sm:gap-7 reveal">
+        <div class="clay-badge flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl text-amethyst clay-icon" aria-hidden="true">2</div>
+        <div class="flex-1">
+          <h3 class="font-display font-bold text-2xl sm:text-3xl text-grape">BLOOM builds a daily 10-min path</h3>
+          <p class="text-grape-soft text-base sm:text-lg mt-2 leading-relaxed">Each morning, a fresh mini-quest across Math, Reading, Science, and Art — paced to your child, never too hard, never too easy.</p>
+        </div>
+        <div class="hidden sm:flex flex-shrink-0 w-14 h-14 rounded-2xl items-center justify-center clay-icon" style="color:#5B3FD6;background:#EEE6FF; box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -5px 8px rgba(124,92,252,.2);" aria-hidden="true">
+          <i data-lucide="route" class="w-7 h-7"></i>
+        </div>
+      </li>
+      <li class="clay clay-hover p-7 sm:p-9 flex items-start gap-5 sm:gap-7 reveal">
+        <div class="clay-badge flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl text-amethyst clay-icon" aria-hidden="true">3</div>
+        <div class="flex-1">
+          <h3 class="font-display font-bold text-2xl sm:text-3xl text-grape">Kid plays, parent gets a weekly bloom report</h3>
+          <p class="text-grape-soft text-base sm:text-lg mt-2 leading-relaxed">Every Sunday: a warm, jargon-free summary of what they explored, where they grew, and a single gentle next step. No dashboards to babysit.</p>
+        </div>
+        <div class="hidden sm:flex flex-shrink-0 w-14 h-14 rounded-2xl items-center justify-center clay-icon" style="color:#0E8C75;background:#DFF7F2; box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -5px 8px rgba(14,140,117,.2);" aria-hidden="true">
+          <i data-lucide="flower-2" class="w-7 h-7"></i>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== SUBJECTS ===== -->
+<section id="subjects" class="px-5 sm:px-8 py-20 sm:py-28">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <span class="eyebrow eyebrow-rose justify-center"><span class="eyebrow-dot" aria-hidden="true"></span>What they’ll learn</span>
+      <h2 class="font-display font-extrabold text-grape text-4xl sm:text-5xl lg:text-[3.4rem] tracking-[-0.02em] mt-3">Four subjects, one soft daily rhythm</h2>
+      <p class="text-grape-soft mt-4 text-lg max-w-2xl mx-auto">Each subject blooms at your kid’s pace — a little Math here, a story there. Together they add up to a curious mind.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-2xl sm:max-w-6xl mx-auto">
+      <!-- Math — custom clay abacus -->
+      <article class="clay-tint clay-amber clay-hover p-8 sm:p-10 reveal">
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <div class="subj-illus clay-icon" aria-hidden="true">
+            <div class="abacus-frame"></div>
+            <div class="abacus-rod r1"></div>
+            <div class="abacus-bead" style="left:24%; top:24%; background:#FF8FB1;"></div>
+            <div class="abacus-bead" style="left:42%; top:24%; background:#FFB454;"></div>
+            <div class="abacus-bead" style="left:60%; top:24%; background:#7C5CFC;"></div>
+            <div class="abacus-rod r2"></div>
+            <div class="abacus-bead" style="left:30%; top:48%; background:#0E8C75;"></div>
+            <div class="abacus-bead" style="left:54%; top:48%; background:#FFB454;"></div>
+            <div class="abacus-rod r3"></div>
+            <div class="abacus-bead" style="left:38%; top:72%; background:#FF8FB1;"></div>
+          </div>
+          <span class="age-pill">Ages 3–10</span>
+        </div>
+        <h3 class="font-display font-bold text-2xl sm:text-3xl text-grape">Math</h3>
+        <p class="text-grape-soft text-lg mt-2">Numbers that click — counting games that grow into confident little problem-solvers.</p>
+      </article>
+
+      <!-- Reading — custom clay book -->
+      <article class="clay-tint clay-rose clay-hover p-8 sm:p-10 reveal">
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <div class="subj-illus clay-icon" aria-hidden="true">
+            <div class="book-base"></div>
+            <div class="book-spine"></div>
+            <div class="book-line" style="top:42%;"></div>
+            <div class="book-line" style="top:55%; width:60%;"></div>
+            <div class="book-line" style="top:68%; width:70%;"></div>
+          </div>
+          <span class="age-pill">Ages 3–8</span>
+        </div>
+        <h3 class="font-display font-bold text-2xl sm:text-3xl text-grape">Reading</h3>
+        <p class="text-grape-soft text-lg mt-2">From letters to little libraries — phonics first, then stories they can’t put down.</p>
+      </article>
+
+      <!-- Science — custom clay flask -->
+      <article class="clay-tint clay-violet clay-hover p-8 sm:p-10 reveal">
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <div class="subj-illus clay-icon" aria-hidden="true">
+            <div class="flask-neck"></div>
+            <div class="flask-body"></div>
+            <div class="flask-bubble" style="left:38%; bottom:22%;"></div>
+            <div class="flask-bubble" style="left:52%; bottom:32%; width:6px; height:6px;"></div>
+            <div class="flask-bubble" style="left:46%; bottom:42%; width:5px; height:5px;"></div>
+          </div>
+          <span class="age-pill">Ages 5–10</span>
+        </div>
+        <h3 class="font-display font-bold text-2xl sm:text-3xl text-grape">Science</h3>
+        <p class="text-grape-soft text-lg mt-2">Why-everything curiosity — gentle experiments and “wait, really?” moments.</p>
+      </article>
+
+      <!-- Art — custom clay palette -->
+      <article class="clay-tint clay-teal clay-hover p-8 sm:p-10 reveal">
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <div class="subj-illus clay-icon" aria-hidden="true">
+            <div class="palette-base"></div>
+            <div class="palette-thumb"></div>
+            <div class="paint-dab" style="left:22%; top:30%; background:#FF8FB1;"></div>
+            <div class="paint-dab" style="left:42%; top:24%; background:#FFB454;"></div>
+            <div class="paint-dab" style="left:32%; top:55%; background:#7C5CFC;"></div>
+          </div>
+          <span class="age-pill">Ages 3–10</span>
+        </div>
+        <h3 class="font-display font-bold text-2xl sm:text-3xl text-grape">Art</h3>
+        <p class="text-grape-soft text-lg mt-2">Make a beautiful mess — drawing, color, and shape play that builds creative confidence.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOR PARENTS ===== -->
+<section id="parents" class="px-5 sm:px-8 py-20 sm:py-28">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <span class="eyebrow eyebrow-teal justify-center"><span class="eyebrow-dot" aria-hidden="true"></span>For parents</span>
+      <h2 class="font-display font-extrabold text-grape text-4xl sm:text-5xl lg:text-[3.4rem] tracking-[-0.02em] mt-3">You can exhale now</h2>
+      <p class="text-grape-soft mt-4 text-lg max-w-2xl mx-auto">Three promises, in plain English. We built BLOOM for the parent who’s been burned by apps that weren’t what they claimed.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 sm:gap-8">
+      <article class="clay clay-hover p-8 sm:p-10 reveal">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 clay-icon" style="color:#5B3FD6;background:#EEE6FF; box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -6px 10px rgba(124,92,252,.22);" aria-hidden="true">
+          <i data-lucide="shield-check" class="w-8 h-8"></i>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-grape">100% private</h3>
+        <p class="text-grape-soft text-base mt-3 leading-relaxed">No data sold, ever. Not to advertisers, not to “partners,” not to anyone. Your kid’s learning stays on your kid’s device.</p>
+      </article>
+      <article class="clay clay-hover p-8 sm:p-10 reveal">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 clay-icon" style="color:#D63B6E;background:#FFE7EF; box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -6px 10px rgba(214,59,110,.22);" aria-hidden="true">
+          <i data-lucide="ban" class="w-8 h-8"></i>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-grape">Zero ads, zero in-app purchases</h3>
+        <p class="text-grape-soft text-base mt-3 leading-relaxed">No surprise charges. No “tap here to unlock” traps. The price you see is the only money that ever changes hands.</p>
+      </article>
+      <article class="clay clay-hover p-8 sm:p-10 reveal">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 clay-icon" style="color:#0E8C75;background:#DFF7F2; box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -6px 10px rgba(14,140,117,.22);" aria-hidden="true">
+          <i data-lucide="timer" class="w-8 h-8"></i>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-grape">You set the screen-time</h3>
+        <p class="text-grape-soft text-base mt-3 leading-relaxed">Set 10 minutes, 20, 40 — your call. BLOOM honors it and stops on its own. No tantrum-inducing “just one more level” hooks.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section id="pricing" class="px-5 sm:px-8 py-20 sm:py-28">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <span class="eyebrow eyebrow-amber justify-center"><span class="eyebrow-dot" aria-hidden="true"></span>Pricing</span>
+      <h2 class="font-display font-extrabold text-grape text-4xl sm:text-5xl lg:text-[3.4rem] tracking-[-0.02em] mt-3">Try it free. Stay because it works.</h2>
+      <p class="text-grape-soft mt-4 text-lg max-w-2xl mx-auto">No credit card to start. Cancel anytime — though almost nobody does.</p>
+    </div>
+
+    <!-- Premium is first in DOM + tab order (the recommended plan leads the
+         keyboard/AT journey); CSS order keeps Free visually on the left. -->
+    <div class="grid md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
+      <!-- Premium (elevated) -->
+      <article class="clay-premium clay-hover p-8 sm:p-10 reveal flex flex-col relative md:-mt-4 md:mb-4 md:order-2">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+          <span class="badge-stamp px-5 py-2 font-label font-bold text-sm inline-flex items-center gap-1.5 whitespace-nowrap">
+            <i data-lucide="heart" class="w-4 h-4 stamp-heart" aria-hidden="true"></i> Most loved
+          </span>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-amethyst-deep mt-2">
+          Premium
+          <span class="sr-only">— most loved plan</span>
+        </h3>
+        <p class="font-label font-semibold text-grape-soft text-sm mt-1">Everything, unlocked</p>
+        <div class="mt-6 flex items-baseline gap-2 tnum leading-none">
+          <span class="font-display font-extrabold text-5xl text-grape">$8.99</span>
+          <span class="font-label text-base text-grape-soft self-end mb-1">/mo</span>
+        </div>
+        <ul class="mt-7 space-y-3.5 text-grape-soft flex-1" role="list">
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-amethyst flex-shrink-0 mt-0.5" aria-hidden="true"></i> All 4 subjects — Math, Reading, Science, Art</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-amethyst flex-shrink-0 mt-0.5" aria-hidden="true"></i> Unlimited lessons per day</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-amethyst flex-shrink-0 mt-0.5" aria-hidden="true"></i> Weekly bloom reports</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-amethyst flex-shrink-0 mt-0.5" aria-hidden="true"></i> Up to 4 kid profiles</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-amethyst flex-shrink-0 mt-0.5" aria-hidden="true"></i> Priority new-subject access</li>
+        </ul>
+        <a href="#" class="clay-pill-sec mt-8 px-7 py-3.5 font-display font-bold text-lg text-center block w-full">
+          Go Premium
+        </a>
+      </article>
+
+      <!-- Free -->
+      <article class="clay clay-hover p-8 sm:p-10 reveal flex flex-col md:order-1">
+        <h3 class="font-display font-bold text-2xl text-grape">Free</h3>
+        <p class="font-label font-semibold text-grape-soft text-sm mt-1">Forever — no card needed</p>
+        <div class="mt-6 flex items-baseline gap-2 tnum leading-none">
+          <span class="font-display font-extrabold text-5xl text-grape">$0</span>
+          <span class="font-label text-base text-grape-soft self-end mb-1">/mo</span>
+        </div>
+        <ul class="mt-7 space-y-3.5 text-grape-soft flex-1" role="list">
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-art flex-shrink-0 mt-0.5" aria-hidden="true"></i> 1 subject of your choice</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-art flex-shrink-0 mt-0.5" aria-hidden="true"></i> 3 lessons per day</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-art flex-shrink-0 mt-0.5" aria-hidden="true"></i> 1 kid profile</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-art flex-shrink-0 mt-0.5" aria-hidden="true"></i> Daily bloom streak</li>
+        </ul>
+        <a href="#" class="clay-pill-ghost mt-8 px-7 py-4 font-display font-bold text-lg text-grape text-center block w-full">
+          Continue with Free
+        </a>
+      </article>
+    </div>
+
+    <!-- App store badges — the real conversion exit; most prominent objects below pricing -->
+    <div class="text-center mt-16 reveal" role="region" aria-label="App download">
+      <p class="font-label font-semibold text-grape-soft mb-5">Loved by 200k+ blooming families — download and bloom tonight</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#" class="clay-store clay-store-hero px-7 py-3.5 flex items-center gap-3 text-white" aria-label="Download BLOOM on the Apple App Store">
+          <i data-lucide="apple" class="w-8 h-8" aria-hidden="true"></i>
+          <span class="text-left leading-tight">
+            <span class="block font-label text-xs text-white/90">Download on the</span>
+            <span class="block font-display font-bold text-xl">App Store</span>
+          </span>
+        </a>
+        <a href="#" class="clay-store clay-store-hero px-7 py-3.5 flex items-center gap-3 text-white" aria-label="Get BLOOM on Google Play">
+          <i data-lucide="play" class="w-8 h-8 fill-white" aria-hidden="true"></i>
+          <span class="text-left leading-tight">
+            <span class="block font-label text-xs text-white/90">Get it on</span>
+            <span class="block font-display font-bold text-xl">Google Play</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="mt-10">
+  <div aria-hidden="true" class="clay-lip-divider">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" class="w-full h-[60px] sm:h-[80px]">
+      <!-- Clay lip: matte fill + soft amethyst drop shadow + a lighter top
+           inset path so the divider shares the inflated material language
+           of the cards above it, instead of reading as a flat stock wave. -->
+      <defs>
+        <filter id="clayLipShadow" x="-2%" y="-20%" width="104%" height="160%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#7C5CFC" flood-opacity="0.12"/>
+        </filter>
+        <linearGradient id="clayLipTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,40 C360,90 1080,-10 1440,40 L1440,80 L0,80 Z" fill="#F3E9FB" filter="url(#clayLipShadow)"></path>
+      <path d="M0,40 C360,90 1080,-10 1440,40" fill="none" stroke="url(#clayLipTop)" stroke-width="3" opacity="0.9"></path>
+      <path d="M0,46 C360,94 1080,2 1440,46" fill="none" stroke="#E0CFF5" stroke-width="1.5" opacity="0.55"></path>
+    </svg>
+  </div>
+
+  <div class="bg-[#F3E9FB] pt-12 pb-10 px-5 sm:px-8" style="box-shadow: inset 0 6px 14px rgba(124,92,252,0.06);">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+        <div>
+          <a href="#top" class="flex items-center gap-2" aria-label="BLOOM home">
+            <span class="wordmark text-3xl">BLOOM</span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400" aria-hidden="true"></span>
+          </a>
+          <p class="font-label font-semibold text-grape-soft mt-3">Made for curious kids.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="flex flex-wrap gap-x-7 gap-y-3 font-label font-semibold text-grape-soft text-sm">
+            <li><a href="#" class="hover:text-grape transition-colors">About</a></li>
+            <li><a href="#" class="hover:text-grape transition-colors">Privacy</a></li>
+            <li><a href="#" class="hover:text-grape transition-colors">Contact</a></li>
+            <li><a href="#" class="hover:text-grape transition-colors">Blog</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="mt-10 pt-6 border-t border-grape-soft/20 flex flex-col sm:flex-row items-center justify-between gap-3 font-label text-sm text-grape-soft">
+        <p>&copy; 2026 BLOOM Learning, Inc. All rights reserved.</p>
+        <p class="flex items-center gap-2"><i data-lucide="heart" class="w-4 h-4 text-rose-deep" aria-hidden="true"></i> Grown with care for ages 3–10</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Icons
+  if (window.lucide) lucide.createIcons();
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Scroll reveal with staggered siblings within each section
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduce) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const sectionMap = new Map();
+    reveals.forEach(el => {
+      const sec = el.closest('section, header, footer') || el.parentElement;
+      if (!sectionMap.has(sec)) sectionMap.set(sec, []);
+      sectionMap.get(sec).push(el);
+    });
+    sectionMap.forEach(arr => {
+      arr.forEach((el, i) => {
+        el.style.transitionDelay = (i * 75) + 'ms';
+      });
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+
+  // Signature moment: bloom the mascot ONLY when the hero is actually in view.
+  // (Petals are bloomed by default in CSS, so no-JS / parse-failure visitors
+  //  still see the finished mascot; .bloom just plays the entrance once.)
+  const mascot = document.getElementById('mascot');
+  if (mascot && !reduce) {
+    const mio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { mascot.classList.add('bloom'); mio.unobserve(mascot); }
+      });
+    }, { threshold: 0.35 });
+    mio.observe(mascot);
+  }
+
+  // Subtle parallax on puffs (respects reduced motion). Only active while
+  // the hero is on-screen — disconnects once scrolled past to avoid wasted work.
+  if (!reduce) {
+    const puffs = document.querySelectorAll('.puff');
+    const hero = document.querySelector('main > section');
+    let active = true, raf;
+    const run = () => {
+      const y = window.scrollY;
+      puffs.forEach((p, i) => {
+        const factor = (i + 1) * 0.04;
+        p.style.translate = `0 ${(y * factor).toFixed(2)}px`;
+      });
+    };
+    window.addEventListener('scroll', () => {
+      if (!active) return;
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(run);
+    }, { passive: true });
+    if (hero && 'IntersectionObserver' in window) {
+      const hio = new IntersectionObserver((entries) => {
+        active = entries[0].isIntersecting;
+      }, { threshold: 0 });
+      hio.observe(hero);
+    }
+  }
+
+  // Cards stay matte and stable — the CSS hover-lift (-3px) + icon scale/rotate
+  // already give on-brand clay feedback. Glossy 3D tilt was removed because it
+  // fights the matte clay mood and can smear the layered shadows.
+  // A tiny tilt is reserved for the app-store badges (single focal objects).
+  if (!reduce && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.clay-store').forEach(badge => {
+      badge.addEventListener('pointermove', (e) => {
+        const r = badge.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        // Cap at ±1.5deg — single focal object, subtle sheen only
+        badge.style.transform = `translateY(-2px) scale(1.02) rotateX(${(py * -1.5).toFixed(2)}deg) rotateY(${(px * 1.5).toFixed(2)}deg)`;
+      });
+      badge.addEventListener('pointerleave', () => { badge.style.transform = ''; });
+      badge.addEventListener('pointercancel', () => { badge.style.transform = ''; });
+    });
+  }
+</script>
+</body>
+</html>

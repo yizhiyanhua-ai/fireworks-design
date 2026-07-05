@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FORM & FUNCTION — A Design Academy & Exhibition Space</title>
+<meta name="description" content="FORM & FUNCTION: a working Bauhaus-influenced institution. We teach the principles of modernism — typography, color, form, composition — and put them on the wall." />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper:   '#F4F1EA',
+          ink:     '#1A1A1A',
+          inksoft: '#4A4A4A',
+          rule:    '#8A8370',   /* darkened to clear WCAG 1.4.11 (3:1) so inter-card gridlines read as distinct structural cells, not a single field */
+          red:     '#CC2E3A',   /* deepened for AA; used only as fill / large display, never small text */
+          reddk:   '#B32731',   /* large/bold display red where red text is essential */
+          yellow:  '#F4C430',
+          yellowsoft: '#3A2E08', /* AA soft text on yellow hover (~6:1) */
+          blue:    '#1D4ED8',
+        },
+        fontFamily: {
+          /* Institutional voice = genuine Helvetica stack (cross-platform).
+             Editorial voice = IBM Plex Sans — geometrically distinct from
+             Helvetica, free (SIL OFL), and already half-loaded via Plex Mono.
+             It reads as a humanist-grotesk counter-voice, never Inter. */
+          inst: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+          edit: ['"IBM Plex Sans"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        },
+        letterSpacing: {
+          tightest: '-0.045em',
+          tighter:  '-0.025em',
+          editloose: '0.005em',
+        },
+        maxWidth: {
+          page: '1440px',
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F1EA; --ink:#1A1A1A; --inksoft:#4A4A4A; --rule:#8A8370;
+    --red:#CC2E3A; --reddk:#B32731; --yellow:#F4C430; --yellowsoft:#3A2E08; --blue:#1D4ED8;
+  }
+  html{ scroll-behavior:smooth; overflow-x:clip; }
+  /* overflow-x:clip on <html> prevents the signature escape-circle (which
+     intentionally bleeds past the right viewport edge) from inducing a
+     horizontal scrollbar. clip (not hidden) keeps position:sticky on the
+     nav working and adds no scroll container. */
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  /* Institutional voice = the genuine Helvetica stack, cross-platform.
+     Editorial voice = IBM Plex Sans — geometrically distinct, SIL-OFL
+     free, paired with Plex Mono already in the system. The two faces
+     make the institutional/humanist split legible at a glance. */
+  .edit{
+    font-family:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    letter-spacing:0.005em;
+  }
+  .mono{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric: tabular-nums; }
+  .tnum{ font-variant-numeric: tabular-nums; font-feature-settings:"tnum"; }
+
+  /* Visible-in-spirit grid: faint vertical rhythm along the page edge */
+  .grid-ghost{
+    background-image:
+      linear-gradient(to right, rgba(26,26,26,0.035) 1px, transparent 1px);
+    background-size: 8.333% 100%;
+  }
+
+  /* Hairline rules instead of shadows */
+  .rule-t{ border-top:1px solid var(--rule); }
+  .rule-b{ border-bottom:1px solid var(--rule); }
+  .rule-l{ border-left:1px solid var(--rule); }
+  .rule-ink{ border-color:var(--ink); }
+
+  /* Display wordmark tracking */
+  .wordmark{
+    font-weight:800;
+    letter-spacing:-0.045em;
+    line-height:0.82;
+  }
+
+  /* ===== Course card inversion — the interaction IS the lesson =====
+     ONE rule: each card inverts to its primitive's primary; text becomes
+     the highest-contrast counter-color. paper-on-red, paper-on-blue,
+     ink-on-yellow. The composition card stays paper so all three
+     primaries remain visible — the lesson is coexistence, not a fourth
+     dark state. Soft text is paper/ink at reduced opacity, never a tint. */
+  .course-card{
+    transition: background-color .35s ease, color .35s ease;
+    position:relative;
+    display:block;
+    text-decoration:none;
+    color:inherit;
+  }
+  .course-card .invert-text{ transition: color .35s ease, opacity .35s ease; }
+  .course-card .invert-primitive{ transition: background-color .35s ease, color .35s ease, border-color .35s ease; }
+  .course-card .invert-soft{ transition: color .35s ease, opacity .35s ease; }
+
+  /* Touch devices have no hover. .is-inverted (toggled via touchstart on
+     coarse pointers) mirrors the :hover/:focus-within states so the
+     inversion — the stated teaching point — is reachable on mobile. */
+  .course-card[data-c="red"]:hover,
+  .course-card[data-c="red"]:focus-within,
+  .course-card[data-c="red"].is-inverted{ background:var(--red); color:var(--paper); }
+  .course-card[data-c="red"]:hover .invert-text,
+  .course-card[data-c="red"]:focus-within .invert-text,
+  .course-card[data-c="red"].is-inverted .invert-text{ color:var(--paper); opacity:1; }
+  .course-card[data-c="red"]:hover .invert-soft,
+  .course-card[data-c="red"]:focus-within .invert-soft,
+  .course-card[data-c="red"].is-inverted .invert-soft{ color:var(--paper); opacity:1; }
+  .course-card[data-c="red"]:hover .invert-primitive,
+  .course-card[data-c="red"]:focus-within .invert-primitive,
+  .course-card[data-c="red"].is-inverted .invert-primitive{ background:var(--paper); }
+
+  .course-card[data-c="yellow"]:hover,
+  .course-card[data-c="yellow"]:focus-within,
+  .course-card[data-c="yellow"].is-inverted{ background:var(--yellow); color:var(--ink); }
+  .course-card[data-c="yellow"]:hover .invert-primitive,
+  .course-card[data-c="yellow"]:focus-within .invert-primitive,
+  .course-card[data-c="yellow"].is-inverted .invert-primitive{ background:var(--ink); }
+  .course-card[data-c="yellow"]:hover .invert-text,
+  .course-card[data-c="yellow"]:focus-within .invert-text,
+  .course-card[data-c="yellow"].is-inverted .invert-text{ color:var(--ink); opacity:1; }
+  .course-card[data-c="yellow"]:hover .invert-soft,
+  .course-card[data-c="yellow"]:focus-within .invert-soft,
+  .course-card[data-c="yellow"].is-inverted .invert-soft{ color:var(--ink); opacity:.72; }
+
+  .course-card[data-c="blue"]:hover,
+  .course-card[data-c="blue"]:focus-within,
+  .course-card[data-c="blue"].is-inverted{ background:var(--blue); color:var(--paper); }
+  .course-card[data-c="blue"]:hover .invert-text,
+  .course-card[data-c="blue"]:focus-within .invert-text,
+  .course-card[data-c="blue"].is-inverted .invert-text{ color:var(--paper); opacity:1; }
+  .course-card[data-c="blue"]:hover .invert-soft,
+  .course-card[data-c="blue"]:focus-within .invert-soft,
+  .course-card[data-c="blue"].is-inverted .invert-soft{ color:var(--paper); opacity:1; }
+  .course-card[data-c="blue"]:hover .invert-primitive,
+  .course-card[data-c="blue"]:focus-within .invert-primitive,
+  .course-card[data-c="blue"].is-inverted .invert-primitive{ background:var(--paper); }
+
+  /* Composition card does NOT invert to a dark state. On hover the three
+     primitives snap to full saturation against paper; ink text stays ink.
+     Coexistence is the lesson. */
+  .course-card[data-c="overlap"]:hover,
+  .course-card[data-c="overlap"]:focus-within,
+  .course-card[data-c="overlap"].is-inverted{ background:var(--paper); color:var(--ink); }
+  .course-card[data-c="overlap"]:hover .invert-text,
+  .course-card[data-c="overlap"]:focus-within .invert-text,
+  .course-card[data-c="overlap"].is-inverted .invert-text{ color:var(--ink); opacity:1; }
+  .course-card[data-c="overlap"]:hover .invert-soft,
+  .course-card[data-c="overlap"]:focus-within .invert-soft,
+  .course-card[data-c="overlap"].is-inverted .invert-soft{ color:var(--ink); opacity:.72; }
+  .course-card[data-c="overlap"] .invert-primitive{ background:rgba(26,26,26,.18); }
+  .course-card[data-c="overlap"]:hover .prim-red,
+  .course-card[data-c="overlap"]:focus-within .prim-red,
+  .course-card[data-c="overlap"].is-inverted .prim-red{ background:var(--red); }
+  .course-card[data-c="overlap"]:hover .prim-yellow,
+  .course-card[data-c="overlap"]:focus-within .prim-yellow,
+  .course-card[data-c="overlap"].is-inverted .prim-yellow{ border-bottom-color:var(--yellow); }
+  .course-card[data-c="overlap"]:hover .prim-blue,
+  .course-card[data-c="overlap"]:focus-within .prim-blue,
+  .course-card[data-c="overlap"].is-inverted .prim-blue{ background:var(--blue); }
+
+  /* Focus-visible for keyboard users — global ink-on-paper ring (highest
+     contrast, on-system). Blue ring reserved for inline body links only,
+     so a primary color never appears as a stray fourth hue on the red CTA,
+     yellow card, or blue-bar areas. */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:3px;
+  }
+  .prose-inline a:focus-visible, .nl-input:focus-visible{
+    outline:2px solid var(--blue);
+    outline-offset:3px;
+  }
+
+  /* ===== CTAs — sharp, no rounded corners. ONE primary action per page. ===== */
+  .cta{
+    display:inline-flex; align-items:center; justify-content:center;
+    font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+    font-size:0.8125rem; padding:1.05rem 2.25rem;
+    transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease;
+    border:1px solid transparent;
+    line-height:1;
+  }
+  .cta:hover{ transform:translate(-2px,-2px); box-shadow:4px 4px 0 var(--ink); }
+  .cta:active{ transform:translate(0,0); box-shadow:none; }
+  .cta-red{ background:var(--red); color:var(--paper); }
+  .cta-red:hover{ background:var(--reddk); }
+
+  /* Secondary action = text link with arrow + underline (same treatment everywhere) */
+  .link-arrow{
+    display:inline-flex; align-items:center; gap:.5em;
+    font-weight:600; font-size:.8125rem; letter-spacing:0.04em; text-transform:uppercase;
+    text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:1.5px;
+    text-decoration-color:var(--ink);
+    transition: color .2s ease, text-decoration-color .2s ease, gap .2s ease;
+    line-height:1;
+  }
+  .link-arrow:hover{ color:var(--blue); text-decoration-color:var(--blue); gap:.75em; }
+  .link-arrow .arr{ display:inline-block; transition: transform .2s ease; }
+  .link-arrow:hover .arr{ transform: translateX(2px); }
+  .link-arrow.is-blue{ color:var(--blue); text-decoration-color:var(--blue); }
+  .link-arrow.is-blue:hover{ color:var(--ink); text-decoration-color:var(--ink); }
+
+  /* ===== Hero primitive drift — signature interaction =====
+     Two independent channels: the load transition animates a base offset
+     (--load-x/--load-y) so primitives settle from displaced into place;
+     scroll parallax composes ON TOP via a parent-wrapper translate,
+     so the two never share state. */
+  .drift-wrap{
+    translate: var(--sx,0px) var(--sy,0px);
+    will-change: translate;
+  }
+  .drift{
+    transform: translate(var(--load-x,0px), var(--load-y,0px)) rotate(var(--dr,0deg)) scale(var(--ds,1));
+    transition: transform .7s cubic-bezier(.16,.84,.34,1);
+    will-change:transform;
+  }
+  /* Settled position is the CSS default — no-JS and JS-error states land in
+     the correct composition. The displaced offset applies ONLY before
+     body.loaded is set (an enhancement, not a load-bearing dependency). */
+  .drift.red-circle,
+  .drift.yellow-tri,
+  .drift.blue-bar{ --load-x:0px; --load-y:0px; }
+  body:not(.loaded) .drift.red-circle{ --load-x:2.6vw; --load-y:2.4vh; --ds:.94; }
+  body:not(.loaded) .drift.yellow-tri{ --load-x:-2vw; --load-y:2.6vh; --dr:-7deg; }
+  body:not(.loaded) .drift.blue-bar{   --load-x:2vw; --load-y:-2vh; }
+
+  /* Scroll reveal */
+  .reveal{ opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform:none; }
+
+  /* Manifesto numeric + body — the climax, the largest type on the page.
+     Numbers in primary red (--reddk for AA on large display); body in
+     neutral ink, set in the editorial (IBM Plex Sans) voice so the
+     climax carries both brand color and the second typeface. */
+  .principle-num{
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight:800; line-height:.8; letter-spacing:-0.05em;
+    color:var(--reddk);
+  }
+  .principle-body{
+    font-family:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight:500; line-height:1.04; letter-spacing:-0.028em;
+  }
+
+  /* Exhibition frames — geometric crops, no rounded corners except the circle */
+  .frame-circle{ border-radius:50%; overflow:hidden; }
+  .frame-square{ overflow:hidden; }
+  .frame-bar{ overflow:hidden; }
+
+  /* Definition-list baseline grid for enrollment */
+  .def-row{
+    display:grid;
+    grid-template-columns: 220px 1fr;
+    gap:1.5rem;
+    border-top:1px solid var(--rule);
+    padding:1.1rem 0;
+    align-items:baseline;
+  }
+  .def-row:last-child{ border-bottom:1px solid var(--rule); }
+  @media(max-width:640px){
+    .def-row{ grid-template-columns: 1fr; gap:.3rem; padding:.9rem 0; }
+  }
+
+  /* Marquee for term strip */
+  .ticker{ display:inline-block; white-space:nowrap; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    .drift, .drift-wrap{ transform:none !important; translate:none !important; }
+    .reveal{ opacity:1 !important; transform:none !important; }
+    .cta:hover{ transform:none; box-shadow:none; }
+    .link-arrow:hover{ gap:.5em; }
+    html{ scroll-behavior:auto; }
+  }
+
+  /* Nav link underline */
+  .nav-link{ position:relative; }
+  .nav-link::after{
+    content:''; position:absolute; left:0; right:0; bottom:-4px; height:2px;
+    background:var(--ink); transform:scaleX(0); transform-origin:left;
+    transition: transform .25s ease;
+  }
+  .nav-link:hover::after, .nav-link:focus-visible::after{ transform:scaleX(1); }
+
+  .prim{ position:absolute; }
+
+  /* Newsletter input */
+  .nl-input{
+    background:transparent; border:none; border-bottom:1px solid var(--ink);
+    padding:.5rem 0; font-family:'IBM Plex Mono',monospace; font-size:.8125rem;
+    color:var(--ink); width:100%; outline:none;
+    font-variant-numeric: tabular-nums;
+  }
+  .nl-input::placeholder{ color:var(--inksoft); }
+  .nl-input:focus{ border-color:var(--blue); }
+
+  /* Mobile menu disclosure */
+  .mobile-menu{ display:none; }
+  .mobile-menu.open{ display:block; }
+
+  /* ===== Signature structural gesture: red circle escapes hero, intersects manifesto =====
+     Positioned so ~20% of the arc is cropped by the right viewport edge
+     (the "escape" read). The visible arc crosses principle 02's body line
+     (~40% of the section height). mix-blend-mode:multiply so the red
+     tints the type where they overlap — a deliberate Bayer layering.
+     z-index:2 places it in front of the content layer so the blend
+     actually intersects the type rather than sitting behind it. */
+  .escape-circle{
+    position:absolute;
+    width:clamp(220px, 26vw, 460px);
+    height:clamp(220px, 26vw, 460px);
+    border-radius:50%;
+    background:var(--red);
+    z-index:2;
+    pointer-events:none;
+    mix-blend-mode:multiply;
+  }
+
+  /* Squint-test helper */
+  .prim, .escape-circle, .invert-primitive{ isolation:isolate; }
+
+  /* Section number label */
+  .sec-num{ font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--inksoft); font-variant-numeric:tabular-nums; }
+
+  /* Hero wordmark ampersand handling */
+  .amp-wrap{ display:inline-block; }
+
+  /* hairline between course cards on mobile */
+  @media(max-width:639px){
+    .course-card + .course-card{ border-top:1px solid var(--rule); }
+  }
+
+  /* Hero primitives: mix-blend so overlaps with ink read as constructed layering */
+  .drift.red-circle, .drift.yellow-tri, .drift.blue-bar{ mix-blend-mode:multiply; }
+
+  /* Eyebrow with red square carrier — color as primitive, not as ink */
+  .eyebrow-red{
+    display:inline-flex; align-items:center; gap:.55em;
+    color:var(--ink);
+  }
+  .eyebrow-red::before{
+    content:''; display:inline-block; width:.7em; height:.7em; background:var(--red);
+  }
+
+  /* Footer colophon — set in the editorial voice it names */
+  .colophon{
+    font-family:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-style:italic;
+    letter-spacing:0.01em;
+    text-transform:none;
+    font-size:13px;
+    color:var(--inksoft);
+  }
+
+  /* Exhibition vertical-bar cap — high enough that a 1/2.2 ratio bar reads
+     as a true vertical bar in a 4-col container, not a stubby rectangle. */
+  .frame-bar{ max-height:680px; }
+  .frame-bar img{ object-position: center; }
+  /* On md (single/2-col) keep the bar from dominating — constrain so the
+     three curated frames read as a coherent gallery wall. */
+  @media(max-width:1023px){
+    .frame-bar{ max-height:360px; }
+  }
+</style>
+</head>
+<body class="font-inst text-ink">
+
+<!-- ============ NAV ============ -->
+<header class="rule-b sticky top-0 z-50 bg-paper/95 backdrop-blur-sm">
+  <nav class="max-w-page mx-auto px-5 md:px-10 h-16 flex items-center justify-between" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-3" aria-label="FORM & FUNCTION home">
+      <span class="relative inline-block w-6 h-6" aria-hidden="true">
+        <span class="absolute left-0 top-0 w-3 h-3 bg-red"></span>
+        <span class="absolute right-0 top-0 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[12px] border-l-transparent border-r-transparent border-b-[var(--yellow)]"></span>
+        <span class="absolute left-0 bottom-0 w-6 h-[3px] bg-blue"></span>
+      </span>
+      <span class="text-[15px] font-extrabold tracking-tighter">FORM &amp; FUNCTION</span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8 text-[13px] uppercase tracking-wide font-semibold">
+      <li><a href="#courses" class="nav-link">Courses</a></li>
+      <li><a href="#exhibition" class="nav-link">Exhibition</a></li>
+      <li><a href="#manifesto" class="nav-link">Manifesto</a></li>
+      <li><a href="#enroll" class="nav-link">Enroll</a></li>
+    </ul>
+
+    <div class="flex items-center gap-4">
+      <span class="hidden lg:inline mono text-[11px] text-inksoft uppercase tracking-wider">Term 03 · Dessau</span>
+      <a href="#enroll" class="cta cta-red hidden sm:inline-flex">Enroll</a>
+      <button id="menuBtn" class="md:hidden inline-flex items-center justify-center w-10 h-10 -mr-2" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M2 6h18M2 11h18M2 16h18" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="square"/></svg>
+      </button>
+    </div>
+  </nav>
+  <div id="mobileMenu" class="mobile-menu md:hidden rule-t bg-paper">
+    <ul class="px-5 py-3 flex flex-col text-sm uppercase tracking-wide font-semibold">
+      <li><a href="#courses" class="block py-3 nav-link">Courses</a></li>
+      <li><a href="#exhibition" class="block py-3 nav-link rule-t">Exhibition</a></li>
+      <li><a href="#manifesto" class="block py-3 nav-link rule-t">Manifesto</a></li>
+      <li><a href="#enroll" class="block py-3 nav-link rule-t">Enroll</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="relative overflow-hidden grid-ghost" aria-label="Introduction">
+  <div class="max-w-page mx-auto px-5 md:px-10 min-h-[92vh] flex flex-col justify-between pt-8 pb-6">
+
+    <div class="flex items-start justify-between mono text-[11px] uppercase tracking-wider text-inksoft">
+      <div class="reveal">
+        <div>Est. 2019</div>
+        <div class="tnum">Dessau / New York</div>
+      </div>
+      <div class="text-right reveal">
+        <div class="tnum">Term 03 — Autumn 2026</div>
+        <div class="tnum">52.8017° N, 12.2324° E</div>
+      </div>
+    </div>
+
+    <div class="relative flex-1 flex items-center my-8 md:my-0">
+      <div class="relative w-full">
+        <h1 class="wordmark select-none">
+          <span class="block text-[clamp(3.25rem,14.5vw,12.5rem)]">
+            <span class="relative inline-block">
+              FORM
+              <span aria-hidden="true" class="drift-wrap prim" style="z-index:-1;">
+                <span class="drift red-circle"
+                  style="left:-0.42em;top:-0.34em;width:1.5em;height:1.5em;border-radius:50%;background:var(--red);"></span>
+              </span>
+            </span>
+          </span>
+          <span class="block text-[clamp(3.25rem,14.5vw,12.5rem)] relative">
+            <span aria-hidden="true" class="drift-wrap prim hidden sm:block" style="z-index:-1;">
+              <span class="drift yellow-tri"
+                style="left:-0.30em;top:0.10em;width:0;height:0;
+                  border-left:0.66em solid transparent;border-right:0.66em solid transparent;
+                  border-bottom:1.15em solid var(--yellow);"></span>
+            </span>
+            <span class="amp-wrap ml-[0.55em] md:ml-[0.7em]">&amp; FUNCTION</span>
+          </span>
+        </h1>
+        <span aria-hidden="true" class="drift-wrap prim" style="z-index:-1;">
+          <span class="drift blue-bar"
+            style="left:0.62em;bottom:-0.30em;width:64%;max-width:780px;height:0.10em;background:var(--blue);"></span>
+        </span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-end">
+      <p class="edit md:col-span-7 text-[clamp(1.15rem,2.4vw,1.9rem)] leading-[1.15] tracking-tight font-medium max-w-2xl reveal">
+        A working academy and rotating exhibition space where the principles of modernism are taught, debated, and put on the wall.
+      </p>
+      <div class="md:col-span-5 flex flex-wrap items-center gap-5 reveal">
+        <a href="#enroll" class="cta cta-red">Enroll</a>
+        <a href="#exhibition" class="link-arrow is-blue">Visit exhibition <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <div class="mt-8 md:mt-10 rule-t pt-3 flex items-center justify-between mono text-[11px] uppercase tracking-wider text-inksoft">
+      <span class="ticker">Now showing — <span class="text-ink">Three Primary Colors, One Discipline</span> · through 14 Feb 2027</span>
+      <span class="hidden md:inline">Scroll ↓</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COURSES ============ -->
+<section id="courses" class="rule-t" aria-labelledby="courses-h">
+  <div class="max-w-page mx-auto px-5 md:px-10">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 py-10 rule-b">
+      <div class="md:col-span-3">
+        <div class="sec-num">§ 01 — Curriculum</div>
+      </div>
+      <div class="md:col-span-9">
+        <h2 id="courses-h" class="wordmark text-[clamp(2rem,5vw,3.5rem)] tracking-tight">Four disciplines. One grammar.</h2>
+        <p class="edit mt-3 max-w-xl text-inksoft leading-snug">Each course isolates a single element of the modernist vocabulary. Mastery is demonstrated by restraint — the ability to remove everything that is not load-bearing.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 rule-b">
+
+      <a class="course-card invert-bg rule-l border-rule px-6 py-10 flex flex-col min-h-[460px]" data-c="blue" href="#enroll" aria-label="Typography — 8 week studio course. See syllabus.">
+        <div class="invert-primitive mb-8" style="width:clamp(56px,6vw,84px);height:clamp(12px,1.3vw,18px);background:var(--blue);"></div>
+        <h3 class="wordmark text-3xl tracking-tight invert-text">Typography</h3>
+        <p class="mono text-[11px] uppercase tracking-wider invert-soft mt-2">8 weeks · Studio I</p>
+        <p class="edit text-[15px] leading-snug mt-4 invert-text">The grid as morality: setting text that earns its place on the page.</p>
+        <div class="mt-auto pt-8">
+          <p class="mono text-[11px] uppercase tracking-wider invert-soft">Instructor</p>
+          <p class="text-sm font-semibold invert-text mt-1">Hanna Reuss</p>
+          <p class="text-xs invert-soft">Former typographer, Lars Müller Publishers</p>
+        </div>
+      </a>
+
+      <a class="course-card invert-bg rule-l border-rule px-6 py-10 flex flex-col min-h-[460px]" data-c="red" href="#enroll" aria-label="Color Theory — 6 week studio course. See syllabus.">
+        <div class="invert-primitive mb-8" style="width:clamp(56px,6vw,84px);height:clamp(56px,6vw,84px);border-radius:50%;background:var(--red);"></div>
+        <h3 class="wordmark text-3xl tracking-tight invert-text">Color Theory</h3>
+        <p class="mono text-[11px] uppercase tracking-wider invert-soft mt-2">6 weeks · Studio II</p>
+        <p class="edit text-[15px] leading-snug mt-4 invert-text">Three primaries, infinite discipline. Itten's wheel, put to work.</p>
+        <div class="mt-auto pt-8">
+          <p class="mono text-[11px] uppercase tracking-wider invert-soft">Instructor</p>
+          <p class="text-sm font-semibold invert-text mt-1">Marek Albers</p>
+          <p class="text-xs invert-soft">Color lead, Bauhaus-Archiv Berlin</p>
+        </div>
+      </a>
+
+      <a class="course-card invert-bg rule-l border-rule px-6 py-10 flex flex-col min-h-[460px]" data-c="yellow" href="#enroll" aria-label="3D Form — 10 week workshop. See syllabus.">
+        <div class="invert-primitive mb-8" style="width:0;height:0;border-left:clamp(30px,3.2vw,44px) solid transparent;border-right:clamp(30px,3.2vw,44px) solid transparent;border-bottom:clamp(52px,5.5vw,76px) solid var(--yellow);"></div>
+        <h3 class="wordmark text-3xl tracking-tight invert-text">3D Form</h3>
+        <p class="mono text-[11px] uppercase tracking-wider invert-soft mt-2">10 weeks · Workshop</p>
+        <p class="edit text-[15px] leading-snug mt-4 invert-text">From paper to steel — material honesty and the constructed object.</p>
+        <div class="mt-auto pt-8">
+          <p class="mono text-[11px] uppercase tracking-wider invert-soft">Instructor</p>
+          <p class="text-sm font-semibold invert-text mt-1">Greta Vordemann</p>
+          <p class="text-xs invert-soft">Sculptor; exhibited at Vitra Design Museum</p>
+        </div>
+      </a>
+
+      <a class="course-card invert-bg rule-l border-rule px-6 py-10 flex flex-col min-h-[460px]" data-c="overlap" href="#enroll" aria-label="Composition — 12 week atelier. See syllabus.">
+        <div class="mb-8 relative" style="width:clamp(56px,6vw,84px);height:clamp(52px,5.5vw,76px);">
+          <span class="prim prim-red" style="left:0;top:34%;width:clamp(30px,3.2vw,44px);height:clamp(30px,3.2vw,44px);border-radius:50%;background:var(--red);"></span>
+          <span class="prim prim-yellow" style="left:28%;top:0;width:0;height:0;border-left:clamp(15px,1.6vw,22px) solid transparent;border-right:clamp(15px,1.6vw,22px) solid transparent;border-bottom:clamp(26px,2.8vw,38px) solid var(--yellow);"></span>
+          <span class="prim prim-blue" style="left:14%;bottom:0;width:clamp(42px,4.5vw,62px);height:clamp(7px,.8vw,11px);background:var(--blue);"></span>
+        </div>
+        <h3 class="wordmark text-3xl tracking-tight invert-text">Composition</h3>
+        <p class="mono text-[11px] uppercase tracking-wider invert-soft mt-2">12 weeks · Atelier</p>
+        <p class="edit text-[15px] leading-snug mt-4 invert-text">Asymmetry, tension, balance — the page as a constructed field.</p>
+        <div class="mt-auto pt-8">
+          <p class="mono text-[11px] uppercase tracking-wider invert-soft">Instructor</p>
+          <p class="text-sm font-semibold invert-text mt-1">Jonas Bayer</p>
+          <p class="text-xs invert-soft">Co-founder, Werkstatt für Grafik</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="py-6 flex flex-wrap items-center justify-between gap-4">
+      <p class="mono text-[11px] uppercase tracking-wider text-inksoft">
+        <span class="card-caption-hover">Hover a card — the inversion is the lesson.</span><span class="card-caption-tap" hidden>Tap a card — the inversion is the lesson.</span>
+      </p>
+      <a href="#enroll" class="link-arrow">See full syllabus <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CURRENT EXHIBITION ============ -->
+<section id="exhibition" class="rule-t bg-paper" aria-labelledby="exh-h">
+  <div class="max-w-page mx-auto px-5 md:px-10 py-16 md:py-24">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+
+      <div class="lg:col-span-8">
+        <div class="sec-num mb-6">§ 02 — On the wall</div>
+        <p class="mono text-[12px] uppercase tracking-wider mb-4">
+          <span class="eyebrow-red">Current exhibition</span>
+        </p>
+        <h2 id="exh-h" class="wordmark text-[clamp(2.25rem,5.5vw,5rem)] leading-[0.85] tracking-tightest">
+          Three Primary<br/>Colors, One<br/>Discipline.
+        </h2>
+        <div class="mt-8 grid grid-cols-2 gap-6 max-w-lg">
+          <div>
+            <p class="sec-num">Dates</p>
+            <p class="text-base font-semibold mt-1 tnum">02 Oct 2026 — 14 Feb 2027</p>
+          </div>
+          <div>
+            <p class="sec-num">Curator</p>
+            <p class="text-base font-semibold mt-1">Anneliese Klee</p>
+            <p class="text-xs text-inksoft">Senior curator, 14 yrs</p>
+          </div>
+          <div>
+            <p class="sec-num">Venue</p>
+            <p class="text-base font-semibold mt-1">Hall A · Dessau</p>
+          </div>
+          <div>
+            <p class="sec-num">Admission</p>
+            <p class="text-base font-semibold mt-1 tnum">€8 / Free for students</p>
+          </div>
+        </div>
+        <p class="edit mt-8 max-w-xl text-inksoft leading-snug">
+          Forty-two works on loan from the Bauhaus-Archiv and three private estates, assembled to argue a single point: that red, yellow, and blue are not decoration but a method.
+        </p>
+      </div>
+
+      <div class="lg:col-span-4 flex flex-col gap-8 lg:border-l lg:border-rule lg:pl-10">
+
+        <figure>
+          <div class="frame-circle" style="aspect-ratio:1/1;">
+            <img src="https://picsum.photos/seed/bauhaus-circle-001/700/700"
+                 alt="Concentric Study in Red, a chromatic investigation by Vera Möller"
+                 class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <figcaption class="mt-3">
+            <p class="text-sm font-semibold">Concentric Study in Red</p>
+            <p class="mono text-[11px] uppercase tracking-wider text-inksoft mt-1">Vera Möller · Oil on board · 1968</p>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <div class="frame-square" style="aspect-ratio:4/3;">
+            <img src="https://picsum.photos/seed/bauhaus-square-042/800/600"
+                 alt="Untitled (Yellow Triangle), a constructed composition by Hans Schleger"
+                 class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <figcaption class="mt-3">
+            <p class="text-sm font-semibold">Untitled (Yellow Triangle)</p>
+            <p class="mono text-[11px] uppercase tracking-wider text-inksoft mt-1">Hans Schleger · Gouache on paper · 1972</p>
+          </figcaption>
+        </figure>
+
+        <figure class="hidden sm:block reveal">
+          <div class="frame-bar" style="aspect-ratio:1/2.2;">
+            <img src="https://picsum.photos/seed/bauhaus-bar-117/500/1100"
+                 alt="Vertical Field No. 4, a vertical bar composition by Lotte Reiniger"
+                 class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <figcaption class="mt-3">
+            <p class="text-sm font-semibold">Vertical Field No. 4</p>
+            <p class="mono text-[11px] uppercase tracking-wider text-inksoft mt-1">Lotte Reiniger · Acrylic on linen · 1981</p>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MANIFESTO — typographic climax, intersected by the escaped red circle ============ -->
+<section id="manifesto" class="rule-t relative" aria-labelledby="man-h">
+  <!-- Signature structural gesture: a red circle that escaped the hero
+       physically crops into principle 02's body line. mix-blend-mode:multiply
+       so the red tints the type where they overlap — constructed layering.
+       Positioned so ~20% of the arc is intentionally cropped by the right
+       viewport edge (the "escape" read), and the visible arc crosses
+       principle 02 at ~40% of the section. z-index:2 sits it in front of
+       the content layer so the multiply blend tints the type. -->
+  <span aria-hidden="true" class="escape-circle reveal"
+        style="top:42%; right:-8%; z-index:2;"></span>
+
+  <div class="max-w-page mx-auto px-5 md:px-10 py-20 md:py-32 relative">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12 md:mb-16">
+      <div class="md:col-span-3">
+        <div class="sec-num">§ 03 — Manifesto</div>
+      </div>
+      <div class="md:col-span-9">
+        <h2 id="man-h" class="edit text-[clamp(1.5rem,2.5vw,2rem)] font-medium tracking-tight leading-tight">Three principles, set in order.</h2>
+      </div>
+    </div>
+
+    <ol class="divide-y divide-rule" role="list">
+      <li class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 py-16 md:py-24 reveal">
+        <span class="md:col-span-2 principle-num text-[clamp(3.25rem,9vw,9rem)] relative z-10">01</span>
+        <h3 class="md:col-span-10 principle-body text-[clamp(2.75rem,9vw,9rem)] md:pl-4">
+          Form follows function. The page must do its work before it asks to be admired.
+        </h3>
+      </li>
+      <li class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 py-16 md:py-24 reveal">
+        <span class="md:col-span-2 principle-num text-[clamp(3.25rem,9vw,9rem)] relative z-10">02</span>
+        <h3 class="md:col-span-10 principle-body text-[clamp(2.75rem,9vw,9rem)] md:pl-4">
+          Three primaries are enough. Discipline is not a limitation; it is the medium.
+        </h3>
+      </li>
+      <li class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 py-16 md:py-24 reveal">
+        <span class="md:col-span-2 principle-num text-[clamp(3.25rem,9vw,9rem)] relative z-10">03</span>
+        <h3 class="md:col-span-10 principle-body text-[clamp(2.75rem,9vw,9rem)] md:pl-4">
+          The grid is a moral position. Everything in its place — or remove it.
+        </h3>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ ENROLLMENT / INFO ============ -->
+<section id="enroll" class="rule-t" aria-labelledby="enr-h">
+  <div class="max-w-page mx-auto px-5 md:px-10 py-16 md:py-24">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-4">
+        <div class="sec-num mb-6">§ 04 — Enrollment</div>
+        <h2 id="enr-h" class="wordmark text-[clamp(2rem,5vw,3.5rem)] tracking-tight leading-[0.9]">
+          Apply for<br/>the next intake.
+        </h2>
+        <p class="edit mt-5 text-inksoft leading-snug max-w-sm">
+          A cohort of 24. Studio access five days a week. No prior portfolio required — only evidence of looking carefully.
+        </p>
+        <!-- Application actions. In the live site these route to the form /
+             syllabus download; here they are intentionally inert (guarded
+             against scroll-to-top jank by the global anchor handler). -->
+        <div class="mt-8 flex flex-col items-start gap-4">
+          <a href="#" class="cta cta-red" data-stub>Enroll</a>
+          <a href="#" class="link-arrow" data-stub>Request syllabus <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-8 lg:pl-10 lg:border-l lg:border-rule">
+        <dl>
+          <div class="def-row">
+            <dt class="sec-num self-center">Next intake</dt>
+            <dd class="text-lg font-semibold tnum">06 January 2027 · Term 04</dd>
+          </div>
+          <div class="def-row">
+            <dt class="sec-num self-center">Tuition range</dt>
+            <dd class="text-lg font-semibold tnum">€4,800 – €6,400 per term <span class="text-inksoft font-normal text-sm">(sliding scale; need-based aid available)</span></dd>
+          </div>
+          <div class="def-row">
+            <dt class="sec-num self-center">Application deadline</dt>
+            <dd class="text-lg font-semibold tnum">15 November 2026, 23:59 CET</dd>
+          </div>
+          <div class="def-row">
+            <dt class="sec-num self-center">Open house</dt>
+            <dd class="text-lg font-semibold">Next: Sat 06 Sep 2026, 14:00–17:00, Hall A, Dessau <span class="text-inksoft font-normal text-sm">(first Saturday monthly)</span></dd>
+          </div>
+          <div class="def-row">
+            <dt class="sec-num self-center">Format</dt>
+            <dd class="text-lg font-semibold">In-residence, 16 weeks · part-time track available</dd>
+          </div>
+          <div class="def-row">
+            <dt class="sec-num self-center">Language</dt>
+            <dd class="text-lg font-semibold">English (German studio support)</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="rule-t bg-paper" aria-labelledby="foot-h">
+  <h2 id="foot-h" class="sr-only">Site information</h2>
+  <div class="max-w-page mx-auto px-5 md:px-10 py-14">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+
+      <div class="md:col-span-5">
+        <div class="flex items-center gap-3">
+          <span class="relative inline-block w-6 h-6" aria-hidden="true">
+            <span class="absolute left-0 top-0 w-3 h-3 bg-red"></span>
+            <span class="absolute right-0 top-0 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[12px] border-l-transparent border-r-transparent border-b-[var(--yellow)]"></span>
+            <span class="absolute left-0 bottom-0 w-6 h-[3px] bg-blue"></span>
+          </span>
+          <span class="text-[15px] font-extrabold tracking-tighter">FORM &amp; FUNCTION</span>
+        </div>
+        <p class="edit mt-4 text-sm text-inksoft max-w-xs leading-snug">
+          A design academy and rotating exhibition space. Bauhaus principles, in residence, since 2019.
+        </p>
+
+        <form class="mt-8 max-w-sm" onsubmit="event.preventDefault(); this.querySelector('.nl-msg').textContent='Thank you — your name is on the list.'; this.reset();">
+          <label for="nl" class="sec-num">Newsletter — term announcements</label>
+          <div class="mt-2 flex items-center gap-3">
+            <input id="nl" type="email" required placeholder="you@studio.com" class="nl-input" />
+            <button type="submit" class="mono text-[11px] uppercase tracking-wider font-semibold hover:text-blue whitespace-nowrap">Subscribe →</button>
+          </div>
+          <p class="nl-msg mono text-[11px] text-inksoft mt-2" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="md:col-span-2">
+        <p class="sec-num">Address</p>
+        <p class="text-sm mt-2 leading-snug tnum">
+          Gropiusallee 38<br/>
+          06846 Dessau-Roßlau<br/>
+          Germany
+        </p>
+      </div>
+
+      <div class="md:col-span-2">
+        <p class="sec-num">Hours</p>
+        <p class="text-sm mt-2 leading-snug tnum">
+          Tue–Sun · 10–18<br/>
+          Thu till 20:00<br/>
+          Closed Mon
+        </p>
+      </div>
+
+      <div class="md:col-span-3">
+        <p class="sec-num">Elsewhere</p>
+        <ul class="mt-2 text-sm space-y-1">
+          <li><a href="#" class="hover:text-blue" data-stub>Instagram — @formandfunction</a></li>
+          <li><a href="#" class="hover:text-blue" data-stub>Are.na — /form-and-function</a></li>
+          <li><a href="#" class="hover:text-blue" data-stub>Journal — notes.studio</a></li>
+          <li><a href="#" class="hover:text-blue" data-stub>Press kit (PDF)</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rule-t mt-12 pt-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mono text-[11px] uppercase tracking-wider text-inksoft">
+      <span>© 2026 FORM &amp; FUNCTION gGmbH</span>
+      <span>Imprint · Privacy · Accessibility</span>
+    </div>
+
+    <div class="rule-t mt-6 pt-5">
+      <p class="colophon">Set in Helvetica &amp; IBM Plex Sans, with IBM Plex Mono for figures.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ===== Mobile menu toggle =====
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+  }));
+
+  // ===== Stub-link guard =====
+  // Links marked [data-stub] are intentionally inert in this style study
+  // (external profiles, application form, press kit). Prevent the default
+  // scroll-to-top jump so they read as "not yet wired" without jank.
+  document.querySelectorAll('a[data-stub]').forEach(a => {
+    a.addEventListener('click', (e) => { e.preventDefault(); });
+  });
+
+  // ===== Scroll reveal via IntersectionObserver =====
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduceMotion) {
+    reveals.forEach(el => el.classList.add('visible'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  }
+
+  // ===== Course cards: tap-to-toggle on touch (coarse pointers) =====
+  // The inversion is the stated lesson. On touch devices there is no hover,
+  // so a touchstart toggles .is-inverted (mirrored from :hover in CSS).
+  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+  if (isCoarse) {
+    const hoverCap = document.querySelector('.card-caption-hover');
+    const tapCap = document.querySelector('.card-caption-tap');
+    if (hoverCap && tapCap) { hoverCap.hidden = true; tapCap.hidden = false; }
+    document.querySelectorAll('.course-card').forEach(card => {
+      card.addEventListener('touchstart', (e) => {
+        // Let the anchor navigate on a second tap if already inverted.
+        if (!card.classList.contains('is-inverted')) {
+          e.preventDefault();
+          // Collapse any sibling currently inverted so only one reads at a time.
+          card.parentElement.querySelectorAll('.course-card.is-inverted').forEach(c => {
+            if (c !== card) c.classList.remove('is-inverted');
+          });
+          card.classList.add('is-inverted');
+        }
+      }, { passive: false });
+    });
+  }
+
+  // ===== Hero primitive drift — signature interaction =====
+  // Two independent channels: the load transition settles the primitives
+  // from displaced into place via --load-x/--load-y on .drift. Scroll
+  // parallax composes on top via translate on the .drift-wrap parent, so
+  // the two never share state. The scroll handler is gated to not fire
+  // until body.loaded is set, so the load settle is never interrupted.
+  const drifters = document.querySelectorAll('.drift');
+  const wraps = document.querySelectorAll('.drift-wrap');
+  const hero = document.querySelector('section[aria-label="Introduction"]');
+
+  if (!reduceMotion && drifters.length) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => document.body.classList.add('loaded'));
+    });
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        if (!document.body.classList.contains('loaded')) { ticking = false; return; }
+        const r = hero.getBoundingClientRect();
+        const p = Math.max(-1, Math.min(1, (window.innerHeight - r.top) / window.innerHeight - 1));
+        if (r.bottom > 0 && r.top < window.innerHeight) {
+          wraps.forEach(w => {
+            if (w.querySelector('.red-circle')){
+              w.style.setProperty('--sx', `${-p*18}px`);
+              w.style.setProperty('--sy', `${-p*12}px`);
+            }
+            if (w.querySelector('.yellow-tri')){
+              w.style.setProperty('--sx', `${p*16}px`);
+              w.style.setProperty('--sy', `${-p*10}px`);
+            }
+            if (w.querySelector('.blue-bar')){
+              w.style.setProperty('--sx', `${-p*22}px`);
+              w.style.setProperty('--sy', `${p*8}px`);
+            }
+          });
+        }
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  } else if (reduceMotion) {
+    document.body.classList.add('loaded');
+  }
+</script>
+</body>
+</html>

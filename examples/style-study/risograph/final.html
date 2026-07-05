@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>INK &amp; PAPER — Quarterly Risograph Zines, Hand-Pulled in Two Colors</title>
+<meta name="description" content="INK & PAPER is an independent risograph zine and print studio. Quarterly limited-run issues and hand-pulled print services for artists and small publishers." />
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:   '#1B1B1B',
+          /* Red is split deliberately:
+             - red  = #E63946, the true fluorescent red 022 the spec mandates.
+                      Used for large display / ink fills / overprint layers
+                      (large-text rules: 3:1 is enough at >=24px or >=18.66px bold).
+             - redink = #B81F2C, a desaturated dark red that clears AA 4.5:1 on
+                      paper and kraft for SMALL text only (stamps, theme labels). */
+          red:    '#E63946',
+          redink: '#B81F2C',
+          /* Teal split the same way: teal = display/fills (#2A6F4F, large only);
+             tealink = #23603E clears 4.5:1 on kraft for small text. */
+          teal:    '#2A6F4F',
+          tealink: '#23603E',
+          paper: '#EDE6D6',
+          kraft: '#E4DCC8',
+          faded: '#58513F',
+        },
+        fontFamily: {
+          display: ['"Major Mono Display"', 'monospace'],
+          mono:    ['"Space Mono"', 'monospace'],
+          serif:   ['Newsreader', 'serif'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{
+    --ink:#1B1B1B;
+    --red:#E63946;     /* fluorescent red 022 — large display / ink fills only */
+    --redink:#B81F2C;  /* AA-pass small red text on paper & kraft */
+    --teal:#2A6F4F;    /* large display / ink fills */
+    --tealink:#23603E; /* AA-pass small teal text on kraft */
+    --paper:#EDE6D6; --kraft:#E4DCC8; --faded:#58513F;
+  }
+
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Space Mono', monospace;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ============ PAPER GRAIN ============ */
+  .grain-overlay{
+    position:fixed; inset:0; pointer-events:none; z-index:40;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.106 0 0 0 0 0.106 0 0 0 0 0.106 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size:240px 240px;
+    mix-blend-mode:multiply;
+    opacity:.26;
+  }
+  .grain{ position:relative; }
+  .grain::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.106 0 0 0 0 0.106 0 0 0 0 0.106 0 0 0 0.38 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode:multiply; opacity:.5;
+  }
+
+  /* ============ HALFTONE DOT FILL ============ */
+  .halftone-red{  background-image:radial-gradient(var(--red) 28%, transparent 30%); background-size:6px 6px; }
+  .halftone-teal{ background-image:radial-gradient(var(--teal) 28%, transparent 30%); background-size:6px 6px; }
+  .halftone-ink{  background-image:radial-gradient(var(--ink) 28%, transparent 30%); background-size:5px 5px; }
+  .halftone-soft{ background-image:radial-gradient(rgba(27,27,27,.55) 22%, transparent 24%); background-size:7px 7px; }
+
+  /* ============ OVERPRINT LOCKUP ============ */
+  /* The signature moment: the studio name carries its own misregistration
+     inside the glyphs via ::before (red) and ::after (teal) offset copies,
+     multiply-blended. On reveal the two ink layers slam from translate(0,0)
+     into their resting register-drift — a two-pass press pull. Hover snaps
+     both layers back to register; we do NOT auto-replay on mouseleave
+     (that was noisy and fought the 'restrained motion' rule). */
+  .lockup{
+    position:relative; display:inline-block;
+    font-family:'Major Mono Display', monospace;
+    line-height:.82; letter-spacing:-.02em;
+    color:var(--ink);
+    /* 1px ink stroke locks the silhouette against the busy background field
+       without adding a soft text-shadow (which would muddy the keyplate). */
+    -webkit-text-stroke:1px var(--ink);
+    text-stroke:1px var(--ink);
+  }
+  .lockup::before, .lockup::after{
+    content:attr(data-text);
+    position:absolute; inset:0;
+    pointer-events:none;
+    mix-blend-mode:multiply;
+    transition:transform .42s cubic-bezier(.2,.7,.2,1);
+    /* Only the base ink layer carries the silhouette stroke; the colored
+       offset plates stay stroke-free so the overprint stays clean. */
+    -webkit-text-stroke:0;
+    text-stroke:0;
+  }
+  .lockup::before{ color:var(--red);  transform:translate(0,0); transition-delay:0ms; }
+  .lockup::after{  color:var(--teal); transform:translate(0,0); transition-delay:80ms; }
+  .lockup.is-set::before{ transform:translate(-5px,-4px); }
+  .lockup.is-set::after{  transform:translate(5px,4px); }
+  /* Hover REMOVED: snapping to perfect register on hover is conceptually
+     backwards (implies the resting drift is the mistake). The misregistration
+     is permanent and uncorrectable — it IS the print. */
+  /* Smaller misregistration on small screens so drift stays proportional. */
+  @media (max-width:640px){
+    .lockup.is-set::before{ transform:translate(-3px,-2px); }
+    .lockup.is-set::after{  transform:translate(3px,2px); }
+  }
+
+  /* pull-quote overprint — ONE span, wraps naturally, both layers drift
+     the same direction so quote marks stay coherent. */
+  .overprint{ position:relative; display:inline; color:var(--ink); }
+  .overprint::before, .overprint::after{
+    content:attr(data-text); position:absolute; left:0; top:0;
+    pointer-events:none; mix-blend-mode:multiply;
+    transition:transform .42s cubic-bezier(.2,.7,.2,1);
+    white-space:pre-wrap;
+  }
+  .overprint::before{ color:var(--red); transform:translate(0,0); transition-delay:0ms; }
+  .overprint::after{  color:var(--teal); transform:translate(0,0); transition-delay:80ms; }
+  .overprint.is-set::before{ transform:translate(-3px,-2px); }
+  .overprint.is-set::after{  transform:translate(3px,2px); }
+  /* Hover-snap removed for the same reason as the lockup: imperfection is the
+     point, hover should not 'correct' it. */
+
+  /* ============ REGISTRATION MARKS ============ */
+  .reg{
+    width:22px; height:22px; flex:none;
+    background:
+      radial-gradient(circle, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 4.5px, transparent 4.5px),
+      linear-gradient(var(--ink),var(--ink)) center/1.5px 100% no-repeat,
+      linear-gradient(var(--ink),var(--ink)) center/100% 1.5px no-repeat;
+    opacity:.85;
+  }
+  .reg-sm{ width:14px; height:14px; background-size:100% 100%, 1px 100%, 100% 1px; }
+  /* Large decorative registration cross (for the elevated tier). */
+  .reg-cross{
+    position:absolute; pointer-events:none;
+    background:
+      linear-gradient(var(--ink),var(--ink)) center/2px 100% no-repeat,
+      linear-gradient(var(--ink),var(--ink)) center/100% 2px no-repeat;
+    opacity:.55; mix-blend-mode:multiply;
+  }
+
+  /* ============ RISO IMAGE TREATMENT ============ */
+  .riso-img{ position:relative; overflow:hidden; filter:grayscale(1) contrast(1.15) brightness(1.05); }
+  .riso-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .riso-img::before{
+    content:""; position:absolute; inset:0; z-index:2;
+    background-image:radial-gradient(rgba(0,0,0,.85) 30%, transparent 32%);
+    background-size:4px 4px; mix-blend-mode:multiply; opacity:.4;
+  }
+  .riso-red::after, .riso-teal::after, .riso-ink::after{
+    content:""; position:absolute; inset:0; z-index:3; mix-blend-mode:multiply;
+    transition:transform .3s ease;
+  }
+  .riso-red::after{  background:var(--red); }
+  .riso-teal::after{ background:var(--teal); }
+  .riso-ink::after{  background:var(--ink); }
+  /* default misregistration; overridden per-card by JS for the print-run effect */
+  .riso-misreg::after{ transform:translate(5px,5px); }
+
+  /* ============ DOTTED LEADER ============ */
+  .leader{ flex:1; align-self:flex-end; border-bottom:2px dotted var(--faded); margin:0 .5rem .35rem; min-width:1.5rem; }
+  /* Rate-card price lockup: tabular-nums so the digits column-align across
+     rows ($0.40 / $1.20 / $3.00), '/unit' as a baseline inline span — never a
+     block, so the leader dots terminate cleanly at the 'from' word. */
+  .rate-price{
+    font-feature-settings:'tnum' 1; font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .rate-price .unit{
+    font-size:11px; font-weight:400; color:var(--faded);
+    margin-left:.35rem; vertical-align:baseline;
+  }
+
+  /* ============ SCROLL REVEAL ============ */
+  /* opacity-only — ink absorbing into paper, NOT fade-in-up theater. */
+  .reveal{ opacity:0; transition:opacity .7s ease; }
+  .reveal.in{ opacity:1; }
+
+  /* ============ STAMP BADGE ============ */
+  .stamp{
+    border:2px solid var(--redink); color:var(--redink);
+    font-family:'Space Mono', monospace; font-weight:700;
+    font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    padding:.4rem .75rem; transform:rotate(-6deg);
+    mix-blend-mode:multiply;
+    box-shadow:inset 0 0 0 2px var(--paper);
+  }
+
+  /* ============ PAPER EDGE STRIP ============ */
+  .edge-tear{
+    --r:7px;
+    -webkit-mask:radial-gradient(circle var(--r) at 50% 0, transparent 98%, #000 100%) repeat-x left top / calc(var(--r)*2) var(--r);
+            mask:radial-gradient(circle var(--r) at 50% 0, transparent 98%, #000 100%) repeat-x left top / calc(var(--r)*2) var(--r);
+  }
+  /* Torn ticket-stub perforation: scalloped right edge. */
+  .stub-perf-r{
+    --r:6px;
+    -webkit-mask:radial-gradient(circle var(--r) at 100% 50%, transparent 98%, #000 100%) repeat-y top right / var(--r) calc(var(--r)*2);
+            mask:radial-gradient(circle var(--r) at 100% 50%, transparent 98%, #000 100%) repeat-y top right / var(--r) calc(var(--r)*2);
+  }
+
+  /* ============ ISSUE CARD / PRINT RUN ============ */
+  .issue-card{ transition:transform .25s ease; }
+  .issue-card:hover{ transform:translateY(-6px); }
+  .issue-card .corner{ opacity:0; transition:opacity .25s ease; }
+  .issue-card:hover .corner,
+  .issue-card:focus-within .corner,
+  .issue-card.is-pressed .corner{ opacity:1; }
+
+  /* The press plate sits above the card on hover/focus/tap; the card slides
+     "under" the press and re-emerges with a fresh randomized misregistration. */
+  .press-plate{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) translateY(-30px);
+    width:82%; z-index:30; pointer-events:none; opacity:0;
+    transition:opacity .25s ease, transform .35s ease;
+  }
+  .issue-card:hover .press-plate,
+  .issue-card:focus-within .press-plate,
+  .issue-card.is-pressed .press-plate{ opacity:.92; transform:translate(-50%,-50%) translateY(0); }
+  .press-plate svg{ width:100%; height:auto; display:block; mix-blend-mode:multiply; }
+
+  /* Horizontal scroll row: edge fade + thin scrollbar. */
+  .issues-row{ scrollbar-width:thin; scrollbar-color:var(--faded) transparent; }
+  .issues-row::-webkit-scrollbar{ height:8px; }
+  .issues-row::-webkit-scrollbar-thumb{ background:var(--faded); border-radius:0; }
+  .issues-fade{
+    position:absolute; top:0; bottom:24px; right:0; width:48px; z-index:5;
+    background:linear-gradient(90deg, transparent, var(--kraft));
+    pointer-events:none;
+  }
+  @media (max-width:640px){
+    .issues-fade{ display:none; }
+  }
+
+  /* ============ SUBSCRIBE: ink-offset double border (no drop shadow) ============ */
+  /* A misregistered second ink plate ::before translated +6,+6 with a solid
+     ink border at low opacity — fakes an overprinted second plate, in-world. */
+  .ink-offset{ position:relative; }
+  .ink-offset::before{
+    content:""; position:absolute; inset:0; z-index:-1;
+    transform:translate(6px,6px);
+    border:3px solid var(--ink);
+    opacity:.18;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+  }
+
+  /* ============ FOCUS VISIBILITY ============ */
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:3px solid var(--teal); outline-offset:3px;
+  }
+
+  /* ============ REDUCED MOTION ============ */
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1 !important; transition:none !important; }
+    .issue-card, .lockup::before, .lockup::after, .overprint::before, .overprint::after, .press-plate{
+      transition:none !important;
+    }
+    .lockup::before{ transform:translate(-5px,-4px) !important; }
+    .lockup::after{  transform:translate(5px,4px) !important; }
+    .overprint::before{ transform:translate(-3px,-2px) !important; }
+    .overprint::after{  transform:translate(3px,2px) !important; }
+    /* No hover lift, no press-plate drop — reduced-motion users get the static
+       misregistered cover, which IS the print, legible without the interaction. */
+    .issue-card:hover{ transform:none !important; }
+    .press-plate{ opacity:0 !important; }
+    html{ scroll-behavior:auto; }
+  }
+
+  /* Newsreader prose voice — relieves the small-mono readability tax */
+  .prose-serif{ font-family:'Newsreader', serif; font-weight:400; font-size:15px; line-height:1.65; }
+  .prose-serif-sm{ font-family:'Newsreader', serif; font-weight:400; font-size:14px; line-height:1.6; }
+
+  /* Inline "stamped" model plate — mono but sized to its serif host + tracked,
+     so it reads as a stamped plate rather than a dropped code token. */
+  .stamp-plate{
+    font-family:'Space Mono', monospace; font-weight:700;
+    letter-spacing:.06em; font-size:.92em;
+    border:1.5px solid var(--ink); padding:.05em .35em;
+    text-transform:uppercase; white-space:nowrap;
+  }
+  /* Small catalogue label — Space Mono bold uppercase tracked. Reserved for
+     <24px label/heading roles where Major Mono Display would read cramped.
+     Establishes the 3-tier face hierarchy: Major Mono (huge display) >
+     Space Mono (catalogue/labels) > Newsreader (prose). */
+  .label-head{
+    font-family:'Space Mono', monospace; font-weight:700;
+    text-transform:uppercase; letter-spacing:.18em;
+    font-size:12px;
+  }
+</style>
+</head>
+
+<body class="font-mono text-ink">
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- Skip link: first tab stop, jumps past the chrome to the hero. -->
+<a href="#top"
+   class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-ink focus:text-paper focus:px-4 focus:py-2 focus:text-[12px] focus:uppercase focus:tracking-[.2em] focus:border-2 focus:border-ink">
+  Skip to content
+</a>
+
+<!-- ============ NAV ============ -->
+<header class="relative z-30 border-b-2 border-ink/80 bg-paper/90">
+  <nav class="max-w-[1280px] mx-auto px-5 sm:px-8 h-16 flex items-center justify-between" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-3 group" aria-label="INK & PAPER home">
+      <span class="reg" aria-hidden="true"></span>
+      <!-- Display face reserved for hero/H2/numerals only; nav uses Space Mono. -->
+      <span class="font-mono font-bold text-sm sm:text-base tracking-[.22em] uppercase">INK &amp; PAPER</span>
+    </a>
+    <ul class="hidden md:flex items-center gap-8 text-[12px] uppercase tracking-[.18em]">
+      <li><a href="#issues" class="hover:text-redink transition-colors">Issues</a></li>
+      <li><a href="#shop" class="hover:text-redink transition-colors">Print Shop</a></li>
+      <li><a href="#subscribe" class="hover:text-redink transition-colors">Subscribe</a></li>
+      <li><a href="#about" class="hover:text-redink transition-colors">About</a></li>
+    </ul>
+    <a href="#subscribe"
+       class="hidden sm:inline-flex items-center gap-2 border-2 border-ink px-3 py-1.5 text-[12px] uppercase tracking-[.18em] hover:bg-ink hover:text-paper transition-colors">
+      Subscribe
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </nav>
+  <!-- Mobile wayfinding: a horizontally-scrollable row of 4 stamped mono links.
+       Not a hamburger drawer — a zine's contents strip, paper-stamped. Visible
+       only below md, where the inline nav + CTA are hidden. -->
+  <div class="md:hidden border-t border-ink/30 bg-paper">
+    <ul class="max-w-[1280px] mx-auto px-5 flex items-center gap-5 overflow-x-auto py-2 text-[11px] uppercase tracking-[.2em] whitespace-nowrap">
+      <li><a href="#issues" class="hover:text-redink transition-colors">Issues</a></li>
+      <li class="text-faded" aria-hidden="true">·</li>
+      <li><a href="#shop" class="hover:text-redink transition-colors">Shop</a></li>
+      <li class="text-faded" aria-hidden="true">·</li>
+      <li><a href="#subscribe" class="hover:text-redink transition-colors">Subscribe</a></li>
+      <li class="text-faded" aria-hidden="true">·</li>
+      <li><a href="#about" class="hover:text-redink transition-colors">About</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="relative overflow-hidden bg-paper grain" aria-label="Studio introduction">
+  <!-- Hero photo confined to a single lower-right band (not full-bleed behind
+       the wordmark) and dropped to .13 opacity so the giant INK&/PAPER lockup
+       wins as the single dominant element. Replaced the heavy 4px halftone
+       multiply with the faint .halftone-soft utility, also kept under .13. -->
+  <div class="absolute bottom-0 right-0 z-0 opacity-[.13] w-2/3 sm:w-1/2 h-2/3 pointer-events-none" aria-hidden="true">
+    <div class="riso-img riso-ink h-full w-full">
+      <img src="https://picsum.photos/seed/inkpaper-hero-press/1200/800" alt="" />
+    </div>
+    <div class="absolute inset-0 halftone-soft opacity-30 mix-blend-multiply"></div>
+  </div>
+  <div class="absolute top-6 left-6 z-20 reg" aria-hidden="true"></div>
+  <div class="absolute top-6 right-6 z-20 reg" aria-hidden="true"></div>
+
+  <div class="relative z-50 max-w-[1280px] mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-20 sm:pb-28">
+
+    <p class="flex items-center gap-3 text-[11px] sm:text-xs uppercase tracking-[.32em] text-faded mb-10 sm:mb-14">
+      <span class="reg reg-sm" aria-hidden="true"></span>
+      Est. 2019 · Risograph FR3950 · Two inks, sometimes three
+    </p>
+
+    <h1 class="font-display select-none">
+      <span class="block leading-[.8] tracking-tight" style="font-size:clamp(3rem,14vw,13.5rem)">
+        <span class="lockup" data-text="INK&amp;">INK&amp;</span>
+      </span>
+      <span class="block leading-[.8] tracking-tight -mt-1 sm:-mt-2" style="font-size:clamp(3rem,14vw,13.5rem)">
+        <span class="lockup" data-text="PAPER">PAPER</span>
+      </span>
+    </h1>
+
+    <p class="mt-8 sm:mt-10 max-w-xl font-serif italic text-xl sm:text-2xl leading-snug text-ink/90">
+      Quarterly risograph zines. Hand-pulled in two colors, sometimes three.
+    </p>
+
+    <div class="mt-10 sm:mt-12 flex flex-col sm:flex-row sm:items-end gap-6">
+      <a href="#subscribe"
+         class="group relative inline-flex flex-col bg-kraft grain border-2 border-ink px-6 py-5 pr-12 max-w-sm hover:pr-14 transition-all"
+         style="mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 14px),transparent calc(100% - 14px),transparent 100%);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 14px),transparent calc(100% - 14px),transparent 100%);">
+        <span class="absolute top-2 right-3 reg reg-sm" aria-hidden="true"></span>
+        <span class="text-[10px] uppercase tracking-[.28em] text-faded">Admit One · No. 09</span>
+        <span class="font-display text-2xl sm:text-3xl mt-1">SUBSCRIBE</span>
+        <span class="text-[11px] mt-1 text-faded">Get the next issue posted to you →</span>
+        <span class="absolute right-0 top-0 bottom-0 w-[14px] bg-paper"
+              style="-webkit-mask:radial-gradient(circle 5px at 0 50%, transparent 98%, #000) repeat-y; mask:radial-gradient(circle 5px at 0 50%, transparent 98%, #000) repeat-y; background-image:linear-gradient(90deg, transparent, var(--ink)); background-size:1.5px 8px; background-repeat:repeat-y; background-position:left center;"
+              aria-hidden="true"></span>
+      </a>
+
+      <a href="#shop" class="self-start sm:self-end text-[12px] uppercase tracking-[.2em] underline decoration-2 underline-offset-4 decoration-ink/50 hover:decoration-redink hover:text-redink transition-colors">
+        Or commission a print run →
+      </a>
+    </div>
+
+    <dl class="mt-16 sm:mt-24 grid grid-cols-2 sm:grid-cols-4 gap-y-6 gap-x-4 border-t-2 border-ink pt-6 text-[11px] uppercase tracking-[.18em]">
+      <div><dt class="text-faded">Issues printed</dt><dd class="font-display text-2xl mt-1">08</dd></div>
+      <div><dt class="text-faded">Copies per run</dt><dd class="font-display text-2xl mt-1">100</dd></div>
+      <div><dt class="text-faded">Inks in rotation</dt><dd class="font-display text-2xl mt-1">03</dd></div>
+      <div><dt class="text-faded">Based in</dt><dd class="font-display text-2xl mt-1">PDX</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============ ISSUES — the print-run set-piece ============ -->
+<section id="issues" class="relative bg-kraft grain py-20 sm:py-28 border-y-2 border-ink" aria-labelledby="issues-heading">
+  <div class="max-w-[1280px] mx-auto px-5 sm:px-8">
+    <div class="flex items-end justify-between gap-6 mb-6 sm:mb-10 reveal">
+      <div>
+        <p class="flex items-center gap-3 text-[11px] uppercase tracking-[.3em] text-faded mb-3">
+          <span class="reg reg-sm" aria-hidden="true"></span> The Archive
+        </p>
+        <h2 id="issues-heading" class="font-display text-4xl sm:text-6xl leading-none">Past Issues</h2>
+      </div>
+      <p class="hidden sm:block max-w-xs text-[12px] text-faded leading-relaxed text-right">
+        Four issues a year. 100 copies each. When they're gone, they're gone — we don't reprint.
+      </p>
+    </div>
+
+    <!-- Helper text: always visible (it's the core interaction's instruction). -->
+    <p class="mb-5 sm:mb-7 flex items-center gap-3 text-[11px] sm:text-[12px] uppercase tracking-[.2em] text-ink/70">
+      <span class="reg reg-sm" aria-hidden="true"></span>
+      Hover a cover to run it back through the press · tap to re-pull on touch →
+    </p>
+
+    <!-- Desktop/tablet: horizontal scroll with edge fade + snap-mandatory.
+         Mobile: 2-up grid (vertical scroll is more natural on touch). -->
+    <div class="relative sm:block hidden">
+      <div class="issues-row flex gap-5 sm:gap-7 overflow-x-auto pb-6 -mx-5 px-5 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+           role="region" aria-label="Past issues — scroll horizontally to browse">
+        <!-- cards injected below (shared markup duplicated for clarity) -->
+
+        <!-- card template. data-inks lists the ink classes the press can pull. -->
+        <article class="issue-card snap-start flex-none w-[260px] sm:w-[280px] bg-paper grain border-2 border-ink p-4 reveal" data-inks="riso-red,riso-teal" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 08 through the press">
+          <div class="relative aspect-[3/4] mb-4 border border-ink/60 overflow-hidden">
+            <div class="riso-img riso-red riso-misreg h-full w-full">
+              <img src="https://picsum.photos/seed/inkpaper-issue-08/600/800" alt="" />
+            </div>
+            <!-- static press plate that drops on hover/focus/tap -->
+            <div class="press-plate" aria-hidden="true">
+              <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img">
+                <rect x="6" y="6" width="188" height="108" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="26" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="14" fill="#E63946" fill-opacity="0.85"/>
+                <circle cx="100" cy="44" r="4" fill="#1B1B1B"/>
+                <rect x="22" y="78" width="156" height="22" fill="#EDE6D6" stroke="#1B1B1B" stroke-width="2"/>
+                <line x1="40" y1="89" x2="160" y2="89" stroke="#2A6F4F" stroke-width="2" stroke-dasharray="4 4"/>
+                <text x="100" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#1B1B1B" letter-spacing="1">FR3950 · PASS 01</text>
+                <g stroke="#1B1B1B" stroke-width="1" fill="none">
+                  <circle cx="14" cy="14" r="3"/><line x1="11" y1="14" x2="17" y2="14"/><line x1="14" y1="11" x2="14" y2="17"/>
+                  <circle cx="186" cy="106" r="3"/><line x1="183" y1="106" x2="189" y2="106"/><line x1="186" y1="103" x2="186" y2="109"/>
+                </g>
+              </svg>
+            </div>
+            <span class="corner absolute -top-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -top-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span class="font-display text-4xl">No.08</span>
+            <span class="text-[11px] uppercase tracking-[.2em] text-faded">Autumn '25</span>
+          </div>
+          <p class="font-display text-xl mt-1 text-redink">smoke</p>
+          <p class="prose-serif-sm text-faded mt-2">Sold out. 96 pages, two-color, saddle-stitched on Mohawk Superfine.</p>
+        </article>
+
+        <article class="issue-card snap-start flex-none w-[260px] sm:w-[280px] bg-paper grain border-2 border-ink p-4 reveal" data-inks="riso-teal,riso-red" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 07 through the press">
+          <div class="relative aspect-[3/4] mb-4 border border-ink/60 overflow-hidden">
+            <div class="riso-img riso-teal riso-misreg h-full w-full">
+              <img src="https://picsum.photos/seed/inkpaper-issue-07/600/800" alt="" />
+            </div>
+            <div class="press-plate" aria-hidden="true">
+              <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img">
+                <rect x="6" y="6" width="188" height="108" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="26" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="14" fill="#2A6F4F" fill-opacity="0.85"/>
+                <circle cx="100" cy="44" r="4" fill="#1B1B1B"/>
+                <rect x="22" y="78" width="156" height="22" fill="#EDE6D6" stroke="#1B1B1B" stroke-width="2"/>
+                <line x1="40" y1="89" x2="160" y2="89" stroke="#E63946" stroke-width="2" stroke-dasharray="4 4"/>
+                <text x="100" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#1B1B1B" letter-spacing="1">FR3950 · PASS 02</text>
+                <g stroke="#1B1B1B" stroke-width="1" fill="none">
+                  <circle cx="14" cy="14" r="3"/><line x1="11" y1="14" x2="17" y2="14"/><line x1="14" y1="11" x2="14" y2="17"/>
+                  <circle cx="186" cy="106" r="3"/><line x1="183" y1="106" x2="189" y2="106"/><line x1="186" y1="103" x2="186" y2="109"/>
+                </g>
+              </svg>
+            </div>
+            <span class="corner absolute -top-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -top-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span class="font-display text-4xl">No.07</span>
+            <span class="text-[11px] uppercase tracking-[.2em] text-faded">Summer '25</span>
+          </div>
+          <p class="font-display text-xl mt-1 text-tealink">rust</p>
+          <p class="prose-serif-sm text-faded mt-2">9 copies left. 80 pages, blue-green + black, perfect bound.</p>
+        </article>
+
+        <article class="issue-card snap-start flex-none w-[260px] sm:w-[280px] bg-paper grain border-2 border-ink p-4 reveal" data-inks="riso-red,riso-teal,riso-ink" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 06 through the press">
+          <div class="relative aspect-[3/4] mb-4 border border-ink/60 overflow-hidden">
+            <div class="riso-img riso-red riso-misreg h-full w-full">
+              <img src="https://picsum.photos/seed/inkpaper-issue-06/600/800" alt="" />
+            </div>
+            <div class="press-plate" aria-hidden="true">
+              <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img">
+                <rect x="6" y="6" width="188" height="108" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="26" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="14" fill="#E63946" fill-opacity="0.85"/>
+                <circle cx="100" cy="44" r="4" fill="#1B1B1B"/>
+                <rect x="22" y="78" width="156" height="22" fill="#EDE6D6" stroke="#1B1B1B" stroke-width="2"/>
+                <line x1="40" y1="89" x2="160" y2="89" stroke="#2A6F4F" stroke-width="2" stroke-dasharray="4 4"/>
+                <text x="100" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#1B1B1B" letter-spacing="1">FR3950 · PASS 03</text>
+                <g stroke="#1B1B1B" stroke-width="1" fill="none">
+                  <circle cx="14" cy="14" r="3"/><line x1="11" y1="14" x2="17" y2="14"/><line x1="14" y1="11" x2="14" y2="17"/>
+                  <circle cx="186" cy="106" r="3"/><line x1="183" y1="106" x2="189" y2="106"/><line x1="186" y1="103" x2="186" y2="109"/>
+                </g>
+              </svg>
+            </div>
+            <span class="corner absolute -top-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -top-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span class="font-display text-4xl">No.06</span>
+            <span class="text-[11px] uppercase tracking-[.2em] text-faded">Spring '25</span>
+          </div>
+          <p class="font-display text-xl mt-1 text-redink">lichen</p>
+          <p class="prose-serif-sm text-faded mt-2">Sold out. 64 pages, three-color experiment, stab bound.</p>
+        </article>
+
+        <article class="issue-card snap-start flex-none w-[260px] sm:w-[280px] bg-paper grain border-2 border-ink p-4 reveal" data-inks="riso-ink,riso-red" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 05 through the press">
+          <div class="relative aspect-[3/4] mb-4 border border-ink/60 overflow-hidden">
+            <div class="riso-img riso-ink riso-misreg h-full w-full">
+              <img src="https://picsum.photos/seed/inkpaper-issue-05/600/800" alt="" />
+            </div>
+            <div class="press-plate" aria-hidden="true">
+              <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img">
+                <rect x="6" y="6" width="188" height="108" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="26" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+                <circle cx="100" cy="44" r="14" fill="#1B1B1B" fill-opacity="0.85"/>
+                <circle cx="100" cy="44" r="4" fill="#EDE6D6"/>
+                <rect x="22" y="78" width="156" height="22" fill="#EDE6D6" stroke="#1B1B1B" stroke-width="2"/>
+                <line x1="40" y1="89" x2="160" y2="89" stroke="#E63946" stroke-width="2" stroke-dasharray="4 4"/>
+                <text x="100" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#1B1B1B" letter-spacing="1">FR3950 · PASS 04</text>
+                <g stroke="#1B1B1B" stroke-width="1" fill="none">
+                  <circle cx="14" cy="14" r="3"/><line x1="11" y1="14" x2="17" y2="14"/><line x1="14" y1="11" x2="14" y2="17"/>
+                  <circle cx="186" cy="106" r="3"/><line x1="183" y1="106" x2="189" y2="106"/><line x1="186" y1="103" x2="186" y2="109"/>
+                </g>
+              </svg>
+            </div>
+            <span class="corner absolute -top-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -top-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -left-2 reg reg-sm" aria-hidden="true"></span>
+            <span class="corner absolute -bottom-2 -right-2 reg reg-sm" aria-hidden="true"></span>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span class="font-display text-4xl">No.05</span>
+            <span class="text-[11px] uppercase tracking-[.2em] text-faded">Winter '24</span>
+          </div>
+          <p class="font-display text-xl mt-1">static</p>
+          <p class="prose-serif-sm text-faded mt-2">Sold out. 72 pages, black + fluorescent red, saddle-stitched.</p>
+        </article>
+      </div>
+      <div class="issues-fade" aria-hidden="true"></div>
+    </div>
+
+    <!-- Mobile: 2-up grid (vertical scroll is more natural on touch). -->
+    <div class="sm:hidden grid grid-cols-2 gap-3">
+      <article class="issue-card bg-paper grain border-2 border-ink p-3 reveal" data-inks="riso-red,riso-teal" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 08 through the press">
+        <div class="relative aspect-[3/4] mb-3 border border-ink/60 overflow-hidden">
+          <div class="riso-img riso-red riso-misreg h-full w-full">
+            <img src="https://picsum.photos/seed/inkpaper-issue-08/600/800" alt="" />
+          </div>
+          <span class="corner absolute -top-1.5 -left-1.5 reg reg-sm" aria-hidden="true"></span>
+          <span class="corner absolute -bottom-1.5 -right-1.5 reg reg-sm" aria-hidden="true"></span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span class="font-display text-2xl">No.08</span>
+          <span class="text-[9px] uppercase tracking-[.18em] text-faded">Autumn '25</span>
+        </div>
+        <p class="font-display text-base mt-0.5 text-redink">smoke</p>
+      </article>
+      <article class="issue-card bg-paper grain border-2 border-ink p-3 reveal" data-inks="riso-teal,riso-red" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 07 through the press">
+        <div class="relative aspect-[3/4] mb-3 border border-ink/60 overflow-hidden">
+          <div class="riso-img riso-teal riso-misreg h-full w-full">
+            <img src="https://picsum.photos/seed/inkpaper-issue-07/600/800" alt="" />
+          </div>
+          <span class="corner absolute -top-1.5 -left-1.5 reg reg-sm" aria-hidden="true"></span>
+          <span class="corner absolute -bottom-1.5 -right-1.5 reg reg-sm" aria-hidden="true"></span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span class="font-display text-2xl">No.07</span>
+          <span class="text-[9px] uppercase tracking-[.18em] text-faded">Summer '25</span>
+        </div>
+        <p class="font-display text-base mt-0.5 text-tealink">rust</p>
+      </article>
+      <article class="issue-card bg-paper grain border-2 border-ink p-3 reveal" data-inks="riso-red,riso-teal,riso-ink" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 06 through the press">
+        <div class="relative aspect-[3/4] mb-3 border border-ink/60 overflow-hidden">
+          <div class="riso-img riso-red riso-misreg h-full w-full">
+            <img src="https://picsum.photos/seed/inkpaper-issue-06/600/800" alt="" />
+          </div>
+          <span class="corner absolute -top-1.5 -left-1.5 reg reg-sm" aria-hidden="true"></span>
+          <span class="corner absolute -bottom-1.5 -right-1.5 reg reg-sm" aria-hidden="true"></span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span class="font-display text-2xl">No.06</span>
+          <span class="text-[9px] uppercase tracking-[.18em] text-faded">Spring '25</span>
+        </div>
+        <p class="font-display text-base mt-0.5 text-redink">lichen</p>
+      </article>
+      <article class="issue-card bg-paper grain border-2 border-ink p-3 reveal" data-inks="riso-ink,riso-red" tabindex="0" role="button" aria-pressed="false" aria-label="Re-run Issue No. 05 through the press">
+        <div class="relative aspect-[3/4] mb-3 border border-ink/60 overflow-hidden">
+          <div class="riso-img riso-ink riso-misreg h-full w-full">
+            <img src="https://picsum.photos/seed/inkpaper-issue-05/600/800" alt="" />
+          </div>
+          <span class="corner absolute -top-1.5 -left-1.5 reg reg-sm" aria-hidden="true"></span>
+          <span class="corner absolute -bottom-1.5 -right-1.5 reg reg-sm" aria-hidden="true"></span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span class="font-display text-2xl">No.05</span>
+          <span class="text-[9px] uppercase tracking-[.18em] text-faded">Winter '24</span>
+        </div>
+        <p class="font-display text-base mt-0.5">static</p>
+      </article>
+    </div>
+
+    <p class="mt-6 text-[11px] text-faded">Every sheet sits a hair off the last — that's the point. Each pass re-randomizes the misregistration.</p>
+  </div>
+</section>
+
+<!-- ============ PRINT SHOP ============ -->
+<section id="shop" class="relative bg-paper grain py-20 sm:py-28" aria-labelledby="shop-heading">
+  <div class="max-w-[1100px] mx-auto px-5 sm:px-8">
+
+    <div class="mb-12 sm:mb-16 reveal">
+      <p class="flex items-center gap-3 text-[11px] uppercase tracking-[.3em] text-faded mb-3">
+        <span class="reg reg-sm" aria-hidden="true"></span> Rate Card · Pinned to the Wall
+      </p>
+      <h2 id="shop-heading" class="font-display text-4xl sm:text-6xl leading-none">Print Shop</h2>
+      <p class="font-serif italic text-lg sm:text-xl text-ink/80 mt-4 max-w-2xl leading-snug">
+        We print for other people too. Small runs, real ink, no minimum that scares you. Prices below are starting points — your job gets a real quote.
+      </p>
+    </div>
+
+    <div class="bg-kraft grain border-2 border-ink p-5 sm:p-8 reveal">
+
+      <!-- Desktop header row -->
+      <div class="hidden sm:grid grid-cols-[1.4fr_.8fr_.7fr_.6fr_.5fr] gap-x-4 pb-3 mb-4 border-b-2 border-ink text-[10px] uppercase tracking-[.2em] text-faded">
+        <div>Service</div><div>Max Sheet</div><div>Turnaround</div><div>MOQ</div><div class="text-right">From</div>
+      </div>
+
+      <!-- ROW 1 — RISO PRINTING
+           Desktop: NAME ............ $0.40/unit on one line (rate-card lockup),
+                    specs on a second line. -->
+      <div class="border-b border-dotted border-faded pb-6 mb-6">
+        <div class="hidden sm:block">
+          <div class="flex items-baseline">
+            <h3 class="font-display text-2xl">Riso Printing</h3>
+            <span class="leader" aria-hidden="true"></span>
+            <span class="font-mono font-bold text-2xl rate-price">from $0.40<span class="unit">/unit</span></span>
+          </div>
+          <div class="grid grid-cols-[1.4fr_.8fr_.7fr_.6fr_.5fr] gap-x-4 gap-y-2 items-start mt-3">
+            <p class="prose-serif-sm text-faded">1–2 color runs on our FR3950. We overprint by hand, so every sheet sits a hair off the last — that's the point.
+              <span class="inline-flex items-center gap-2 mt-2 align-middle">
+                <span class="text-[10px] uppercase tracking-[.18em] text-faded mr-1">Inks:</span>
+                <span class="w-5 h-5 border border-ink halftone-ink" title="Keyplate Black"></span>
+                <span class="w-5 h-5 border border-ink halftone-red" title="Fluorescent Red 022"></span>
+                <span class="w-5 h-5 border border-ink halftone-teal" title="Blue-Green"></span>
+              </span>
+            </p>
+            <div class="text-[12px]">A5–A3</div>
+            <div class="text-[12px]">7–10 days</div>
+            <div class="text-[12px]">100+</div>
+            <div></div>
+          </div>
+        </div>
+        <!-- Mobile: compact card, large right-aligned price, 2-col mini-grid. -->
+        <div class="sm:hidden">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="font-display text-xl">Riso Printing</h3>
+            <span class="font-mono font-bold text-xl text-right whitespace-nowrap rate-price">from $0.40<span class="unit">/unit</span></span>
+          </div>
+          <p class="prose-serif-sm text-faded mt-2">1–2 color runs on our FR3950. We overprint by hand, so every sheet sits a hair off the last.</p>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-3 text-[11px] uppercase tracking-[.12em]">
+            <div><span class="text-faded">Sheet: </span>A5–A3</div>
+            <div><span class="text-faded">Turn: </span>7–10 days</div>
+            <div><span class="text-faded">MOQ: </span>100+</div>
+            <div><span class="text-faded">Inks: </span>2–3</div>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center justify-end">
+          <a href="#subscribe" class="text-[12px] uppercase tracking-[.18em] underline decoration-2 underline-offset-4 decoration-redink hover:text-redink transition-colors">Request a quote →</a>
+        </div>
+      </div>
+
+      <!-- ROW 2 — BINDING -->
+      <div class="border-b border-dotted border-faded pb-6 mb-6">
+        <div class="hidden sm:block">
+          <div class="flex items-baseline">
+            <h3 class="font-display text-2xl">Binding</h3>
+            <span class="leader" aria-hidden="true"></span>
+            <span class="font-mono font-bold text-2xl rate-price">from $1.20<span class="unit">/unit</span></span>
+          </div>
+          <div class="grid grid-cols-[1.4fr_.8fr_.7fr_.6fr_.5fr] gap-x-4 gap-y-2 items-start mt-3">
+            <p class="prose-serif-sm text-faded">Saddle-stitch, perfect, or Japanese stab bound by hand. We'll tell you honestly which suits your page count.</p>
+            <div class="text-[12px]">A4</div>
+            <div class="text-[12px]">5–8 days</div>
+            <div class="text-[12px]">25+</div>
+            <div></div>
+          </div>
+        </div>
+        <div class="sm:hidden">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="font-display text-xl">Binding</h3>
+            <span class="font-mono font-bold text-xl text-right whitespace-nowrap rate-price">from $1.20<span class="unit">/unit</span></span>
+          </div>
+          <p class="prose-serif-sm text-faded mt-2">Saddle-stitch, perfect, or Japanese stab bound by hand.</p>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-3 text-[11px] uppercase tracking-[.12em]">
+            <div><span class="text-faded">Sheet: </span>A4</div>
+            <div><span class="text-faded">Turn: </span>5–8 days</div>
+            <div><span class="text-faded">MOQ: </span>25+</div>
+            <div><span class="text-faded">Style: </span>3</div>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center justify-end">
+          <a href="#subscribe" class="text-[12px] uppercase tracking-[.18em] underline decoration-2 underline-offset-4 decoration-redink hover:text-redink transition-colors">Request a quote →</a>
+        </div>
+      </div>
+
+      <!-- ROW 3 — CUSTOM COVERS -->
+      <div>
+        <div class="hidden sm:block">
+          <div class="flex items-baseline">
+            <h3 class="font-display text-2xl">Custom Covers</h3>
+            <span class="leader" aria-hidden="true"></span>
+            <span class="font-mono font-bold text-2xl rate-price">from $3.00<span class="unit">/unit</span></span>
+          </div>
+          <div class="grid grid-cols-[1.4fr_.8fr_.7fr_.6fr_.5fr] gap-x-4 gap-y-2 items-start mt-3">
+            <p class="prose-serif-sm text-faded">Hand-pulled cover on colored stock — a one-off ink you won't get anywhere else. Best paired with a binding run.
+              <span class="inline-flex items-center gap-2 mt-2 align-middle">
+                <span class="text-[10px] uppercase tracking-[.18em] text-faded mr-1">Stock:</span>
+                <span class="w-5 h-5 border border-ink" style="background:#E4DCC8" title="Kraft"></span>
+                <span class="w-5 h-5 border border-ink" style="background:#EDE6D6" title="Paper"></span>
+              </span>
+            </p>
+            <div class="text-[12px]">A3</div>
+            <div class="text-[12px]">10–14 days</div>
+            <div class="text-[12px]">50+</div>
+            <div></div>
+          </div>
+        </div>
+        <div class="sm:hidden">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="font-display text-xl">Custom Covers</h3>
+            <span class="font-mono font-bold text-xl text-right whitespace-nowrap rate-price">from $3.00<span class="unit">/unit</span></span>
+          </div>
+          <p class="prose-serif-sm text-faded mt-2">Hand-pulled cover on colored stock — a one-off ink you won't get anywhere else.</p>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-3 text-[11px] uppercase tracking-[.12em]">
+            <div><span class="text-faded">Sheet: </span>A3</div>
+            <div><span class="text-faded">Turn: </span>10–14 days</div>
+            <div><span class="text-faded">MOQ: </span>50+</div>
+            <div><span class="text-faded">Stock: </span>2</div>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center justify-end">
+          <a href="#subscribe" class="text-[12px] uppercase tracking-[.18em] underline decoration-2 underline-offset-4 decoration-redink hover:text-redink transition-colors">Request a quote →</a>
+        </div>
+      </div>
+
+    </div>
+    <p class="mt-4 text-[11px] text-faded text-center">All prices USD. Quote locked for 30 days. We don't do CMYK — only what's on the drum.</p>
+  </div>
+</section>
+
+<!-- ============ SUBSCRIBE — torn ticket stubs ============ -->
+<section id="subscribe" class="relative bg-kraft grain py-20 sm:py-28 border-y-2 border-ink" aria-labelledby="subscribe-heading">
+  <div class="max-w-[1280px] mx-auto px-5 sm:px-8">
+
+    <div class="text-center mb-12 sm:mb-16 reveal">
+      <p class="flex items-center justify-center gap-3 text-[11px] uppercase tracking-[.3em] text-faded mb-3">
+        <span class="reg reg-sm" aria-hidden="true"></span> Torn Ticket Stubs
+      </p>
+      <h2 id="subscribe-heading" class="font-display text-4xl sm:text-6xl leading-none">Subscribe</h2>
+      <p class="font-serif italic text-lg text-ink/80 mt-4 max-w-xl mx-auto">Three ways in. Pick how much ink you want on your doorstep.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+
+      <!-- TIER 1 — torn ticket stub: scalloped perforation on the right edge -->
+      <article class="relative bg-paper grain border-2 border-ink p-6 pr-8 flex flex-col reveal md:mt-6 stub-perf-r">
+        <div class="flex items-start justify-between">
+          <h3 class="font-display text-2xl">The Single</h3>
+          <span class="reg reg-sm" aria-hidden="true"></span>
+        </div>
+        <p class="text-[11px] uppercase tracking-[.2em] text-faded mt-1">One issue, posted</p>
+        <!-- Price moved to Space Mono bold (rate-card face). -->
+        <div class="my-5 flex items-baseline gap-1">
+          <span class="font-mono font-bold text-5xl tracking-tight">$14</span>
+          <span class="text-[12px] text-faded">/issue</span>
+        </div>
+        <ul class="space-y-3 text-[13px] flex-1">
+          <li class="flex gap-3"><span class="text-redink font-bold leading-none" aria-hidden="true">✓</span><span>One copy of the next issue</span></li>
+          <li class="flex gap-3"><span class="text-redink font-bold leading-none" aria-hidden="true">✓</span><span>Posted flat in a board-backed mailer</span></li>
+          <li class="flex gap-3"><span class="text-redink font-bold leading-none" aria-hidden="true">✓</span><span>Ships within 5 days of release</span></li>
+        </ul>
+        <!-- serial / perforation row along the tear -->
+        <p class="mt-5 pt-3 border-t border-dotted border-faded text-[10px] uppercase tracking-[.2em] text-faded flex items-center justify-between">
+          <span>No. 014 / 100</span><span>Single</span>
+        </p>
+        <a href="#" class="mt-4 block text-center border-2 border-ink py-3 text-[12px] uppercase tracking-[.2em] hover:bg-ink hover:text-paper transition-colors">Get the single</a>
+      </article>
+
+      <!-- TIER 2 — elevated: ink-offset double border (no drop shadow),
+           prominent registration CROSSES at all four corners + oversized behind price. -->
+      <article class="relative bg-paper grain border-[3px] border-ink p-6 pr-8 flex flex-col reveal md:-mt-4 z-10 ink-offset stub-perf-r">
+        <div class="absolute -top-5 -right-3 stamp">Most Ink</div>
+        <!-- Four corner reg crosses (prominent, per brief). -->
+        <span class="reg-cross" style="top:-10px; left:-10px; width:20px; height:20px;" aria-hidden="true"></span>
+        <span class="reg-cross" style="top:-10px; right:-10px; width:20px; height:20px;" aria-hidden="true"></span>
+        <span class="reg-cross" style="bottom:-10px; left:-10px; width:20px; height:20px;" aria-hidden="true"></span>
+        <span class="reg-cross" style="bottom:-10px; right:-10px; width:20px; height:20px;" aria-hidden="true"></span>
+        <!-- Oversized registration cross behind the price. -->
+        <span class="reg-cross" style="top:96px; left:50%; width:120px; height:120px; transform:translateX(-50%); opacity:.12;" aria-hidden="true"></span>
+
+        <div class="flex items-start justify-between">
+          <h3 class="font-display text-2xl text-redink">The Subscription</h3>
+          <span class="reg reg-sm" aria-hidden="true"></span>
+        </div>
+        <p class="text-[11px] uppercase tracking-[.2em] text-faded mt-1">All four yearly issues</p>
+        <div class="my-5 flex items-baseline gap-1 relative z-10">
+          <span class="font-mono font-bold text-5xl tracking-tight text-redink">$48</span>
+          <span class="text-[12px] text-faded">/year</span>
+        </div>
+        <ul class="space-y-3 text-[13px] flex-1 relative z-10">
+          <li class="flex gap-3"><span class="text-redink font-bold leading-none" aria-hidden="true">✓</span><span>All 4 issues delivered as they drop</span></li>
+          <li class="flex gap-3"><span class="text-redink font-bold leading-none" aria-hidden="true">✓</span><span>Exclusive riso print insert each season</span></li>
+          <li class="flex gap-3"><span class="text-redink font-bold leading-none" aria-hidden="true">✓</span><span>First dibs on limited editions</span></li>
+          <li class="flex gap-3"><span class="text-redink font-bold leading-none" aria-hidden="true">✓</span><span>Subscriber-only studio open days</span></li>
+        </ul>
+        <p class="mt-5 pt-3 border-t border-dotted border-faded text-[10px] uppercase tracking-[.2em] text-faded flex items-center justify-between">
+          <span>No. 048 / 100</span><span>Yearly</span>
+        </p>
+        <a href="#" class="mt-4 block text-center bg-ink text-paper py-3 text-[12px] uppercase tracking-[.2em] border-2 border-ink hover:bg-red hover:border-red transition-colors relative z-10">Subscribe yearly</a>
+      </article>
+
+      <!-- TIER 3 -->
+      <article class="relative bg-paper grain border-2 border-ink p-6 pr-8 flex flex-col reveal md:mt-6 stub-perf-r">
+        <div class="flex items-start justify-between">
+          <h3 class="font-display text-2xl text-tealink">The Patron</h3>
+          <span class="reg reg-sm" aria-hidden="true"></span>
+        </div>
+        <p class="text-[11px] uppercase tracking-[.2em] text-faded mt-1">Subscribe + commission</p>
+        <div class="my-5 flex items-baseline gap-1">
+          <span class="font-mono font-bold text-5xl tracking-tight text-tealink">$120</span>
+          <span class="text-[12px] text-faded">/year</span>
+        </div>
+        <ul class="space-y-3 text-[13px] flex-1">
+          <li class="flex gap-3"><span class="text-tealink font-bold leading-none" aria-hidden="true">✓</span><span>Everything in The Subscription</span></li>
+          <li class="flex gap-3"><span class="text-tealink font-bold leading-none" aria-hidden="true">✓</span><span>1 commissioned mini-print (A5, 2-color)</span></li>
+          <li class="flex gap-3"><span class="text-tealink font-bold leading-none" aria-hidden="true">✓</span><span>$30 studio print credit</span></li>
+          <li class="flex gap-3"><span class="text-tealink font-bold leading-none" aria-hidden="true">✓</span><span>Your name in the colophon</span></li>
+        </ul>
+        <p class="mt-5 pt-3 border-t border-dotted border-faded text-[10px] uppercase tracking-[.2em] text-faded flex items-center justify-between">
+          <span>No. 120 / 100</span><span>Patron</span>
+        </p>
+        <a href="#" class="mt-4 block text-center border-2 border-ink py-3 text-[12px] uppercase tracking-[.2em] hover:bg-ink hover:text-paper transition-colors">Become a patron</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="relative bg-paper grain py-20 sm:py-28" aria-labelledby="about-heading">
+  <div class="max-w-[1100px] mx-auto px-5 sm:px-8 grid md:grid-cols-[1fr_1.2fr] gap-10 sm:gap-16 items-center">
+
+    <figure class="reveal">
+      <div class="relative riso-img riso-teal riso-misreg aspect-[4/5] border-2 border-ink">
+        <img src="https://picsum.photos/seed/inkpaper-press/700/875" alt="Ink-stained hands pulling a print on the Risograph FR3950 press" />
+        <span class="absolute -top-3 -left-3 reg" aria-hidden="true"></span>
+        <span class="absolute -bottom-3 -right-3 reg" aria-hidden="true"></span>
+      </div>
+      <figcaption class="text-[11px] uppercase tracking-[.2em] text-faded mt-3">The FR3950, inked up · Portland, OR</figcaption>
+    </figure>
+
+    <div class="reveal">
+      <p class="flex items-center gap-3 text-[11px] uppercase tracking-[.3em] text-faded mb-3">
+        <span class="reg reg-sm" aria-hidden="true"></span> The Studio
+      </p>
+      <h2 id="about-heading" class="font-display text-4xl sm:text-5xl leading-none mb-6">Who's Pulling</h2>
+
+      <p class="font-serif italic text-lg sm:text-xl leading-relaxed text-ink/90">
+        INK &amp; PAPER is two people, one <span class="stamp-plate">Risograph FR3950</span>, and a shelf of ink drums in a back room off Stark Street. We print a quarterly zine and run small editions for illustrators, comic makers, and small-press publishers who'd rather hold a sheet than scroll a feed.
+      </p>
+      <p class="prose-serif text-ink/85 mt-5">
+        Our ink philosophy is simple: <strong class="text-redink">two colors forced to do the work of four</strong>. We overprint by hand, we let the registration drift a few pixels, and we never print on white. Every imperfection is a signature, not a mistake.
+      </p>
+
+      <!-- pull quote: ONE overprint span, wraps naturally; quote marks stay coherent. -->
+      <blockquote class="mt-8">
+        <p class="font-display text-2xl sm:text-3xl leading-tight">
+          <span class="overprint" data-text="&quot;If it lines up perfectly, we printed it wrong.&quot;">"If it lines up perfectly, we printed it wrong."</span>
+        </p>
+        <footer class="text-[11px] uppercase tracking-[.2em] text-faded mt-4">— Studio motto, taped to the press</footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative bg-kraft grain border-t-2 border-ink">
+  <div class="max-w-[1280px] mx-auto px-5 sm:px-8 py-14 sm:py-20">
+
+    <div class="border-b-2 border-ink pb-10 mb-10 grid md:grid-cols-2 gap-8 items-end">
+      <div>
+        <p class="flex items-center gap-3 text-[11px] uppercase tracking-[.3em] text-faded mb-3">
+          <span class="reg reg-sm" aria-hidden="true"></span> Mailing List
+        </p>
+        <h2 class="font-display text-3xl sm:text-4xl leading-none">Get the drop list</h2>
+        <p class="prose-serif-sm text-faded mt-2 max-w-sm">One email when an issue drops or a print run opens. No newsletter, no noise.</p>
+      </div>
+      <form class="flex items-stretch border-2 border-ink bg-paper" onsubmit="event.preventDefault(); const b=this.querySelector('button'); b.innerHTML='✓ Posted'; b.setAttribute('aria-label','Email submitted'); document.getElementById('email-status').textContent='You are on the drop list.';">
+        <label for="email" class="sr-only">Email address</label>
+        <input id="email" type="email" name="email" autocomplete="email" required placeholder="you@studio.press"
+               class="flex-1 bg-transparent px-4 py-3 font-mono text-sm focus:outline-none" />
+        <button type="submit" aria-label="Submit email"
+                class="bg-ink text-paper px-5 flex items-center justify-center hover:bg-red transition-colors">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+      <p id="email-status" role="status" aria-live="polite" class="sr-only"></p>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-8 text-[12px] leading-relaxed">
+      <div>
+        <p class="label-head mb-2">Studio</p>
+        <p class="text-faded">2411 SE Stark St, Ste. 4<br>Portland, OR 97214<br>Open Thu–Sat, 12–6</p>
+      </div>
+      <div>
+        <p class="label-head mb-2">Elsewhere</p>
+        <ul class="space-y-1">
+          <li><a href="#" class="underline decoration-2 underline-offset-2 decoration-faded hover:decoration-redink hover:text-redink transition-colors">Instagram&nbsp;&nbsp;@inkandpaper</a></li>
+          <li><a href="#" class="underline decoration-2 underline-offset-2 decoration-faded hover:decoration-redink hover:text-redink transition-colors">Etsy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inkandpaper.shop</a></li>
+          <li><a href="#" class="underline decoration-2 underline-offset-2 decoration-faded hover:decoration-redink hover:text-redink transition-colors">Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hello@inkandpaper.press</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="label-head mb-2">Colophon</p>
+        <p class="prose-serif-sm text-faded">Set in Major Mono Display &amp; Space Mono, with Newsreader for prose. Printed in two inks — fluorescent red 022 &amp; blue-green — on Mohawk Superfine, 2026.</p>
+        <!-- Tagline now sits immediately under the colophon block, right-aligned. -->
+        <p class="font-serif italic text-[13px] text-ink/70 mt-2 text-right">— hand-pulled, every sheet.</p>
+      </div>
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-dotted border-faded flex items-center justify-between text-[11px] uppercase tracking-[.2em] text-faded">
+      <span class="flex items-center gap-3">
+        <span class="reg reg-sm" aria-hidden="true"></span>
+        INK &amp; PAPER · 2026
+      </span>
+    </div>
+  </div>
+
+  <!-- Final strip: a single tall grain-only band that fades to bare paper at
+       the very bottom — the visual equivalent of a deckled sheet edge. No
+       halftone (halftone belongs to ink, not bare paper), no border rule. -->
+  <div class="h-16 bg-paper grain relative" aria-hidden="true"
+       style="-webkit-mask:linear-gradient(180deg, #000 0%, #000 60%, transparent 100%); mask:linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);"></div>
+</footer>
+
+</main>
+
+<script>
+  // ---------- SCROLL REVEAL (opacity-only) ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------- OVERPRINT LOCKUP: press-pull on reveal only ----------
+  // The two ink layers (red ::before, teal ::after) start at translate(0,0).
+  // When the hero/quote enters view, add .is-set so they slam into their
+  // resting register-drift (staggered 80ms) — a two-pass press pull. The drift
+  // is permanent: hover no longer corrects it (correcting it would imply the
+  // misregister was a mistake, which is the opposite of the studio thesis).
+  // The lockup settles once on reveal.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const lockupObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        if (!reduceMotion){
+          requestAnimationFrame(() => e.target.classList.add('is-set'));
+        } else {
+          e.target.classList.add('is-set');
+        }
+        lockupObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.lockup, .overprint').forEach(el => lockupObserver.observe(el));
+
+  // ---------- ISSUES: interactive print run (mouse + keyboard + touch) ----------
+  // On hover OR focus-within OR tap-toggle, the card slides under a static
+  // press illustration (CSS). On exit/blur we randomize the misregistration
+  // offset and swap the ink layer, so each pass visibly produces a unique
+  // sheet — the studio's whole philosophy as an interaction. Touch gets a
+  // tap-to-toggle .is-pressed class so the effect is reachable on mobile.
+  const INK_CLASSES = ['riso-red', 'riso-teal', 'riso-ink'];
+  // Maps an issue's primary ink class to the press-plate's accent fill + the
+  // dashed overprint line color, so the injected plate matches the card.
+  const PLATE_INK = {
+    'riso-red':  { fill:'#E63946', line:'#2A6F4F', label:'PASS 01' },
+    'riso-teal': { fill:'#2A6F4F', line:'#E63946', label:'PASS 02' },
+    'riso-ink':  { fill:'#1B1B1B', line:'#E63946', label:'PASS 03' },
+  };
+  function pressPlateSVG(card){
+    const wrap = card.querySelector('.riso-img');
+    const inkClass = INK_CLASSES.find(c => wrap && wrap.classList.contains(c)) || 'riso-red';
+    const p = PLATE_INK[inkClass];
+    return `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+      <rect x="6" y="6" width="188" height="108" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+      <circle cx="100" cy="44" r="26" fill="none" stroke="#1B1B1B" stroke-width="2.5"/>
+      <circle cx="100" cy="44" r="14" fill="${p.fill}" fill-opacity="0.85"/>
+      <circle cx="100" cy="44" r="4" fill="#1B1B1B"/>
+      <rect x="22" y="78" width="156" height="22" fill="#EDE6D6" stroke="#1B1B1B" stroke-width="2"/>
+      <line x1="40" y1="89" x2="160" y2="89" stroke="${p.line}" stroke-width="2" stroke-dasharray="4 4"/>
+      <text x="100" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#1B1B1B" letter-spacing="1">FR3950 · ${p.label}</text>
+      <g stroke="#1B1B1B" stroke-width="1" fill="none">
+        <circle cx="14" cy="14" r="3"/><line x1="11" y1="14" x2="17" y2="14"/><line x1="14" y1="11" x2="14" y2="17"/>
+        <circle cx="186" cy="106" r="3"/><line x1="183" y1="106" x2="189" y2="106"/><line x1="186" y1="103" x2="186" y2="109"/>
+      </g>
+    </svg>`;
+  }
+  function randomizeMisreg(card){
+    const wrap = card.querySelector('.riso-img');
+    if (!wrap) return;
+    const allowed = (card.dataset.inks ? card.dataset.inks.split(',') : INK_CLASSES);
+    const next = allowed[Math.floor(Math.random() * allowed.length)].trim();
+    INK_CLASSES.forEach(c => wrap.classList.remove(c));
+    wrap.classList.add(next, 'riso-misreg');
+    const dx = (3 + Math.floor(Math.random() * 4)) * (Math.random() < 0.5 ? -1 : 1);
+    const dy = 3 + Math.floor(Math.random() * 4);
+    const id = 'misreg-' + Math.random().toString(36).slice(2, 8);
+    wrap.id = id;
+    const style = document.createElement('style');
+    style.textContent = `#${id}.riso-misreg::after{ transform:translate(${dx}px,${dy}px); }`;
+    document.head.appendChild(style);
+    // keep an injected plate's accent in sync with the new ink
+    const plate = card.querySelector('.press-plate');
+    if (plate) plate.innerHTML = pressPlateSVG(card);
+  }
+  document.querySelectorAll('.issue-card').forEach(card => {
+    // Ensure every card (including the simplified mobile grid cards) carries a
+    // press-plate so the signature interaction isn't desktop-only.
+    if (!card.querySelector('.press-plate')){
+      const holder = card.querySelector('.relative.aspect-\\[3\\/4\\]');
+      if (holder){
+        const plate = document.createElement('div');
+        plate.className = 'press-plate';
+        plate.setAttribute('aria-hidden', 'true');
+        plate.innerHTML = pressPlateSVG(card);
+        holder.appendChild(plate);
+      }
+    }
+    // mouse
+    card.addEventListener('mouseleave', () => {
+      if (reduceMotion) return;
+      if (card.classList.contains('is-pressed')) return; // touch toggle owns state
+      randomizeMisreg(card);
+    });
+    // touch / click toggle
+    card.addEventListener('click', (e) => {
+      // don't hijack link clicks
+      if (e.target.closest('a')) return;
+      if (reduceMotion) return;
+      card.classList.toggle('is-pressed');
+      randomizeMisreg(card);
+    });
+    // keyboard: Enter / Space toggles the press run for real operability
+    // (focusable-but-inert was an a11y anti-pattern). aria-pressed reflects state.
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault();
+        if (reduceMotion) return;
+        card.classList.toggle('is-pressed');
+        card.setAttribute('aria-pressed', card.classList.contains('is-pressed') ? 'true' : 'false');
+        randomizeMisreg(card);
+      }
+    });
+    // focus also reveals the press plate (CSS :focus-within); re-randomize on blur.
+    card.addEventListener('blur', () => {
+      if (reduceMotion) return;
+      randomizeMisreg(card);
+    }, true);
+  });
+</script>
+</body>
+</html>

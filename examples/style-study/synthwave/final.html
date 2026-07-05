@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" style="background:#0a0518;color:#f0e9ff;">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PIXEL DIVE — Insert Coin. Stay Til Dawn.</title>
+<meta name="description" content="A retro 80s arcade & cocktail bar hidden behind an unmarked downtown door. Synthwave neon, vintage cabinets, game-named drinks. Find the glowing magenta coin slot." />
+<!-- Critical inline CSS: paints the synthwave scene before Tailwind compiles, so there is no FOUC on slow connections. -->
+<style>
+  html,body{background:#0a0518;color:#f0e9ff;}
+  /* hide body chrome until Tailwind is ready, then reveal — avoids unstyled flash of structured content */
+  body{font-family:'Rajdhani',sans-serif;}
+  #fouc-shield{position:fixed;inset:0;background:#0a0518;z-index:9999;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .25s ease;}
+  #fouc-shield.done{opacity:0;pointer-events:none;}
+  #fouc-shield .f-mark{font-family:'Monoton',cursive;font-size:clamp(2rem,8vw,4rem);background:linear-gradient(180deg,#fff 0%,#f0e9ff 18%,#ffd47a 50%,#ff2e9a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.06em;}
+</style>
+<noscript><style>#fouc-shield{display:none;}</style></noscript>
+<script>/* reveal shield removal is queued on load — see bottom script */</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Monoton&family=Orbitron:wght@500;600;700;900&family=Press+Start+2P&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<!-- lucide pinned + inline SVG fallbacks inside <i> tags -->
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base:   '#0a0518',
+          base2:  '#140a2e',
+          magenta:'#ff2e9a',
+          cyan:   '#00f0ff',
+          amber:  '#ffd47a',
+          ink:    '#f0e9ff',
+          dim:    '#b8aed8',  /* lifted for AA on small labels */
+        },
+        fontFamily: {
+          logo:  ['Monoton', 'cursive'],
+          pixel: ['"Press Start 2P"', 'monospace'],
+          head:  ['Orbitron', 'sans-serif'],
+          body:  ['Rajdhani', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root {
+    --base:#0a0518; --base2:#140a2e;
+    --magenta:#ff2e9a; --cyan:#00f0ff; --amber:#ffd47a;
+    --ink:#f0e9ff; --dim:#b8aed8;
+  }
+  html, body { background: var(--base); color: var(--ink); }
+  body { font-family:'Rajdhani',sans-serif; font-weight:500; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  /* ============ Continuous sunset thread (hero -> footer) ============ */
+  .sunset-thread {
+    background:
+      linear-gradient(180deg,
+        rgba(10,5,24,0) 0%,
+        rgba(255,46,154,0.06) 28%,
+        rgba(255,180,90,0.07) 48%,
+        rgba(0,240,255,0.05) 70%,
+        rgba(10,5,24,0) 100%);
+  }
+
+  /* ============ Perspective grid floor (signature motif) ============ */
+  .grid-floor { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .grid-floor::before {
+    content:""; position:absolute; left:-50%; right:-50%; bottom:-10%; height:62%;
+    background-image:
+      linear-gradient(to right, rgba(255,46,154,0.55) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,240,255,0.45) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(420px) rotateX(68deg);
+    transform-origin: bottom center;
+    mask-image: linear-gradient(to top, #000 0%, #000 55%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, #000 0%, #000 55%, transparent 100%);
+    animation: grid-scroll 2.4s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(255,46,154,0.4));
+  }
+  .grid-floor::after {
+    content:""; position:absolute; left:0; right:0; top:36%; height:2px;
+    background: linear-gradient(90deg, transparent, var(--magenta), var(--amber), var(--cyan), transparent);
+    box-shadow: 0 0 24px 6px rgba(255,46,154,0.5), 0 0 40px 12px rgba(255,180,90,0.25);
+  }
+  @keyframes grid-scroll { from{background-position:0 0} to{background-position:0 60px} }
+
+  /* ============ Scanlines — subtle, BEHIND content ============ */
+  .scanlines::after {
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(to bottom,
+      rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.22) 3px, rgba(0,0,0,0) 4px);
+    mix-blend-mode: multiply;
+    opacity: 0.3;            /* reduced so hero text stays crisp */
+    z-index: 1;              /* below content */
+  }
+
+  /* ============ Sunset sky ============ */
+  .sunset-sky {
+    background:
+      radial-gradient(ellipse 80% 55% at 50% 38%, rgba(255,180,90,0.35) 0%, rgba(255,46,154,0.18) 35%, transparent 60%),
+      linear-gradient(180deg, #0a0518 0%, #1a0a3a 30%, #3a1052 50%, #5a1248 64%, #1a0a3a 78%, #0a0518 100%);
+  }
+
+  /* ============ Sun disc ============ */
+  .sun {
+    position:absolute; left:50%; top:30%; width:340px; height:340px;
+    transform: translate(-50%,-50%); border-radius:50%;
+    background: linear-gradient(180deg, #ffd47a 0%, #ff7a4a 45%, #ff2e9a 100%);
+    box-shadow: 0 0 80px 20px rgba(255,122,74,0.45), 0 0 160px 60px rgba(255,46,154,0.3);
+    overflow:hidden;
+  }
+  .sun-bands {
+    position:absolute; left:50%; top:30%; transform: translate(-50%,-50%);
+    width:340px; height:340px; border-radius:50%; pointer-events:none;
+    background: linear-gradient(to bottom,
+      transparent 0%, transparent 55%,
+      rgba(10,5,24,0.9) 56%, rgba(10,5,24,0.9) 60%, transparent 61%,
+      transparent 66%, rgba(10,5,24,0.85) 67%, rgba(10,5,24,0.85) 70%, transparent 71%,
+      transparent 75%, rgba(10,5,24,0.8) 76%, rgba(10,5,24,0.8) 79%, transparent 80%,
+      transparent 84%, rgba(10,5,24,0.7) 85%, rgba(10,5,24,0.7) 88%, transparent 89%);
+  }
+
+  /* ============ Chrome wordmark ============ */
+  .chrome-text {
+    font-family:'Monoton', cursive;
+    background: linear-gradient(180deg,
+      #fff 0%, #f0e9ff 18%, #f0e9ff 38%,
+      #ffd47a 50%, #ff7a4a 58%,
+      #ff2e9a 72%, #7a0f3f 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    -webkit-text-stroke: 1.5px rgba(255,255,255,0.18);
+    filter: drop-shadow(0 2px 0 rgba(0,0,0,0.6)) drop-shadow(0 0 18px rgba(255,46,154,0.55));
+    letter-spacing: 0.06em;
+  }
+
+  /* ============ Neon glow text ============ */
+  .neon-magenta { color: var(--magenta); text-shadow: 0 0 6px rgba(255,46,154,0.8), 0 0 18px rgba(255,46,154,0.45); }
+  .neon-cyan    { color: var(--cyan);    text-shadow: 0 0 6px rgba(0,240,255,0.8), 0 0 18px rgba(0,240,255,0.4); }
+  .neon-amber   { color: var(--amber);   text-shadow: 0 0 6px rgba(255,212,122,0.7), 0 0 16px rgba(255,180,90,0.35); }
+
+  /* ============ Section label — Orbitron tracked-out wayfinding (pixel face reserved for scores) ============ */
+  .sec-label {
+    font-family:'Orbitron', sans-serif; font-weight:700;
+    font-size: 0.7rem; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--cyan); text-shadow: none;
+    line-height: 1.4;
+  }
+  @media (min-width: 768px){ .sec-label { font-size: 0.78rem; } }
+  /* Reserved pixel accents: scores, GAME OVER, cabinet index */
+  .pixel-only { font-family:'Press Start 2P', monospace; }
+  .score-num {
+    font-family:'Press Start 2P', monospace;
+    color: var(--amber); text-shadow: 0 0 6px rgba(255,212,122,0.55);
+  }
+
+  /* ============ Buttons ============ */
+  .btn-coin {
+    position:relative; font-family:'Orbitron',sans-serif; font-weight:900;
+    letter-spacing:0.12em; text-transform:uppercase;
+    background: linear-gradient(180deg, #ff2e9a 0%, #c01470 100%);
+    color:#fff; border:1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 0 2px rgba(255,46,154,0.4), 0 0 22px rgba(255,46,154,0.55),
+                inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -3px 0 rgba(0,0,0,0.35);
+    transition: all .2s ease;
+  }
+  .btn-coin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 2px rgba(255,46,154,0.6), 0 0 36px rgba(255,46,154,0.85),
+                inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -3px 0 rgba(0,0,0,0.35);
+  }
+  .btn-coin:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+  .btn-ghost {
+    font-family:'Orbitron',sans-serif; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+    color: var(--cyan); border:1px solid rgba(0,240,255,0.5); transition: all .2s ease;
+    background: transparent;
+  }
+  .btn-ghost:hover { background: rgba(0,240,255,0.08); box-shadow: 0 0 18px rgba(0,240,255,0.4); }
+  .btn-ghost:focus-visible { outline: 2px solid var(--magenta); outline-offset: 3px; }
+  /* Amber-stroke ghost — distinct accent so the eye registers two different destinations (primary=coin, secondary=ghost) */
+  .btn-amber {
+    font-family:'Orbitron',sans-serif; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+    color: var(--amber); border:1px solid rgba(255,212,122,0.55); transition: all .2s ease;
+    background: transparent;
+  }
+  .btn-amber:hover { background: rgba(255,212,122,0.08); box-shadow: 0 0 18px rgba(255,212,122,0.4); }
+  .btn-amber:focus-visible { outline: 2px solid var(--magenta); outline-offset: 3px; }
+
+  /* ============ CRT bezel card ============ */
+  .crt {
+    position:relative;
+    background: linear-gradient(180deg, #1a0f33 0%, #0e0720 100%);
+    border:1px solid rgba(255,46,154,0.35); border-radius:14px;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.6), inset 0 0 24px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(0,240,255,0.12), 0 10px 30px rgba(0,0,0,0.5);
+    overflow:hidden;
+  }
+  .crt-screen {
+    position:relative;
+    background:
+      radial-gradient(ellipse 120% 100% at 50% 0%, rgba(255,46,154,0.10), transparent 60%),
+      radial-gradient(ellipse 100% 80% at 50% 120%, rgba(0,240,255,0.08), transparent 60%),
+      #0a0518;
+    overflow:hidden;
+  }
+  .crt-screen::after {
+    content:""; position:absolute; inset:0;
+    background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0,0,0,0.25) 3px, transparent 4px);
+    opacity:0.22; pointer-events:none; z-index:0;
+  }
+  /* lift card content above the scanline overlay so text stays crisp */
+  .crt-screen > * { position:relative; z-index:1; }
+  /* signature scanline sweep on hover */
+  .crt-screen::before {
+    content:""; position:absolute; left:0; right:0; top:-30%; height:30%;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.06), transparent);
+    transform: translateY(0); opacity:0; pointer-events:none; z-index:2;
+    transition: opacity .15s ease;
+  }
+  .crt:hover .crt-screen::before { opacity:1; animation: sweep 1.1s ease-out; }
+  @keyframes sweep { from{ transform: translateY(-30%);} to{ transform: translateY(420%);} }
+
+  /* per-genre screen tint (subtle, behind scanlines) */
+  .tint-fight  { background:
+      radial-gradient(ellipse 120% 100% at 50% 0%, rgba(255,46,154,0.18), transparent 60%),
+      radial-gradient(ellipse 100% 80% at 50% 120%, rgba(255,46,154,0.06), transparent 60%),
+      #0a0518; }
+  .tint-maze   { background:
+      radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0,240,255,0.16), transparent 60%),
+      radial-gradient(ellipse 100% 80% at 50% 120%, rgba(0,240,255,0.06), transparent 60%),
+      #0a0518; }
+  .tint-shmup  { background:
+      radial-gradient(ellipse 120% 100% at 50% 0%, rgba(255,212,122,0.15), transparent 60%),
+      radial-gradient(ellipse 100% 80% at 50% 120%, rgba(255,212,122,0.05), transparent 60%),
+      #0a0518; }
+  .tint-race   { background:
+      radial-gradient(ellipse 120% 100% at 50% 0%, rgba(0,240,255,0.13), transparent 60%),
+      radial-gradient(ellipse 100% 80% at 50% 120%, rgba(255,212,122,0.06), transparent 60%),
+      #0a0518; }
+  .tint-plat   { background:
+      radial-gradient(ellipse 120% 100% at 50% 0%, rgba(255,212,122,0.14), transparent 60%),
+      radial-gradient(ellipse 100% 80% at 50% 120%, rgba(255,46,154,0.06), transparent 60%),
+      #0a0518; }
+
+  .marquee-glow { transition: all .35s ease; }
+  .crt:hover .marquee-glow.m-fight { color:#fff; text-shadow:0 0 8px rgba(255,46,154,0.95),0 0 22px rgba(255,46,154,0.6),0 0 40px rgba(255,46,154,0.35); }
+  .crt:hover .marquee-glow.m-maze  { color:#fff; text-shadow:0 0 8px rgba(0,240,255,0.95),0 0 22px rgba(0,240,255,0.6),0 0 40px rgba(0,240,255,0.35); }
+  .crt:hover .marquee-glow.m-shmup { color:#fff; text-shadow:0 0 8px rgba(255,212,122,0.95),0 0 22px rgba(255,212,122,0.6),0 0 40px rgba(255,212,122,0.35); }
+  .crt:hover .marquee-glow.m-race  { color:#fff; text-shadow:0 0 8px rgba(0,240,255,0.9),0 0 22px rgba(0,240,255,0.55); }
+  .crt:hover .marquee-glow.m-plat  { color:#fff; text-shadow:0 0 8px rgba(255,212,122,0.9),0 0 22px rgba(255,212,122,0.55); }
+  .crt:hover { border-color: rgba(255,46,154,0.85); box-shadow: inset 0 0 0 2px rgba(0,0,0,0.6), inset 0 0 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,240,255,0.4), 0 0 26px rgba(255,46,154,0.35); }
+
+  /* Card flicker — applied ONLY to a decorative tint overlay (never the score text).
+     Runs twice on reveal, then settles. Not infinite, so the legible score data
+     never wobbles for users without prefers-reduced-motion. */
+  .flicker-overlay { position:absolute; inset:0; pointer-events:none; z-index:3; opacity:0; background:#fff; mix-blend-mode:overlay; }
+  .crt.in .flicker-overlay { animation: card-power-on 1.1s ease-out 1 forwards; }
+  @keyframes card-power-on {
+    0%   { opacity:0; }
+    4%   { opacity:.55; }
+    8%   { opacity:.05; }
+    12%  { opacity:.4; }
+    18%  { opacity:0; }
+    40%  { opacity:.18; }
+    55%  { opacity:0; }
+    100% { opacity:0; }
+  }
+
+  /* ============ Neon price tag ============ */
+  .price-tag {
+    font-family:'Orbitron',sans-serif; font-weight:700; font-size:0.95rem;
+    letter-spacing:0.04em;
+    color: var(--amber); border:1px solid rgba(255,212,122,0.55);
+    background: rgba(255,212,122,0.06); padding:6px 12px; border-radius:6px;
+    text-shadow: 0 0 6px rgba(255,212,122,0.5); white-space:nowrap;
+  }
+
+  /* ============ Tournament flag / house fav ============ */
+  .tourney-flag {
+    font-family:'Orbitron',sans-serif; font-weight:700;
+    font-size:0.625rem; letter-spacing:0.16em; text-transform:uppercase;
+    color:#0a0518;
+    background: linear-gradient(90deg, var(--amber), #ff7a4a);
+    padding:5px 9px; border-radius:4px; box-shadow:0 0 14px rgba(255,180,90,0.55);
+  }
+  .house-fav {
+    font-family:'Orbitron',sans-serif; font-weight:700;
+    font-size:0.625rem; letter-spacing:0.16em; text-transform:uppercase;
+    color: var(--cyan); border:1px solid rgba(0,240,255,0.6);
+    padding:4px 8px; border-radius:4px; text-shadow:0 0 6px rgba(0,240,255,0.5);
+  }
+
+  /* ============ Bespoke neon "power-on" dots ============ */
+  .power-dot { display:inline-block; width:7px; height:7px; border-radius:50%; }
+  .pd-magenta { background: var(--magenta); animation: power-on 3.6s ease-in-out infinite; }
+  .pd-cyan    { background: var(--cyan);    animation: power-on 3.6s ease-in-out infinite .6s; }
+  .pd-amber   { background: var(--amber);   animation: power-on 3.6s ease-in-out infinite 1.2s; }
+  @keyframes power-on {
+    0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0);    opacity:.5; }
+    8%   { box-shadow: 0 0 8px 2px rgba(255,255,255,.9); opacity:1; }  /* quick bright flash */
+    20%  { box-shadow: 0 0 6px 1px currentColor;        opacity:.85; }
+    100% { box-shadow: 0 0 2px 0 rgba(255,255,255,0);   opacity:.55; } /* slow dim */
+  }
+
+  /* ============ FIND THE DOOR panel ============ */
+  .coin-panel {
+    background: linear-gradient(180deg, #140a2e 0%, #0a0518 100%);
+    border: 2px solid rgba(0,240,255,0.5); border-radius:16px;
+    box-shadow: 0 0 0 1px rgba(255,46,154,0.3), 0 0 40px rgba(0,240,255,0.18), inset 0 0 40px rgba(0,0,0,0.6);
+  }
+
+  /* The unmarked black door with a glowing coin slot — the interactive centerpiece */
+  .door-wrap { position:relative; }
+  .black-door {
+    position:relative; width:100%; aspect-ratio: 3/7;
+    background: linear-gradient(180deg, #05030d 0%, #0a0518 100%);
+    border:1px solid rgba(80,60,120,0.4); border-radius:6px 6px 0 0;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.9), 0 12px 40px rgba(0,0,0,0.6);
+    overflow:hidden; cursor:pointer; transition: box-shadow .35s ease;
+  }
+  .black-door:focus-visible { outline:2px solid var(--cyan); outline-offset:4px; }
+  .door-panel-line { position:absolute; left:14%; right:14%; top:12%; height:30%; border:1px solid rgba(80,60,120,0.25); border-radius:3px; }
+  .door-handle { position:absolute; right:16px; top:52%; width:8px; height:8px; border-radius:50%; background: rgba(120,100,160,0.5); }
+
+  .coin-slot {
+    position:absolute; right:14px; top:38%; width:30px; height:7px;
+    background:#0a0518; border:1px solid rgba(255,46,154,0.75); border-radius:2px;
+    box-shadow: 0 0 12px 3px rgba(255,46,154,0.7), 0 0 28px 8px rgba(255,46,154,0.4);
+    animation: slot-pulse 2.2s ease-in-out infinite;
+    overflow:visible;
+  }
+  @keyframes slot-pulse {
+    0%,100% { box-shadow: 0 0 12px 3px rgba(255,46,154,0.7), 0 0 28px 8px rgba(255,46,154,0.4); }
+    50%     { box-shadow: 0 0 18px 5px rgba(255,46,154,0.95),0 0 44px 14px rgba(255,46,154,0.6); }
+  }
+  /* the falling quarter */
+  .quarter {
+    position:absolute; right:6px; top:-30px; width:24px; height:24px; border-radius:50%;
+    background: radial-gradient(circle at 38% 32%, #fff 0%, #ffe9b8 35%, #d9a441 70%, #8a5a14 100%);
+    box-shadow: 0 0 8px rgba(255,212,122,0.6);
+    opacity:0; pointer-events:none; z-index:5;
+  }
+  .door-wrap.dropping .quarter { animation: drop-quarter .9s cubic-bezier(.5,.05,.7,1) forwards; }
+  @keyframes drop-quarter {
+    0%   { top:-30px; opacity:0; transform: scale(.8) rotate(0); }
+    20%  { opacity:1; }
+    62%  { top:38%;  transform: scale(1) rotate(220deg); }   /* arrive at slot */
+    68%  { top:38%;  transform: scale(1) rotate(220deg); }
+    72%  { top:46%;  transform: scale(.6) rotate(260deg); }  /* drop inside */
+    100% { top:80%;  transform: scale(.2) rotate(360deg); opacity:0; }
+  }
+  .door-wrap.dropping .coin-slot { animation: slot-flash .9s ease-out; }
+  @keyframes slot-flash {
+    0%,60%{ box-shadow: 0 0 12px 3px rgba(255,46,154,0.7); }
+    66%   { box-shadow: 0 0 30px 8px rgba(255,255,255,0.95), 0 0 60px 16px rgba(255,46,154,0.9); }
+    100%  { box-shadow: 0 0 12px 3px rgba(255,46,154,0.7); }
+  }
+  /* door cracks open leaking cyan light */
+  .door-leak {
+    position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
+    width:0; height:78%; background: linear-gradient(180deg, transparent, rgba(0,240,255,0.85), transparent);
+    box-shadow: 0 0 24px 6px rgba(0,240,255,0.7); opacity:0; pointer-events:none; transition: all .45s ease;
+  }
+  .door-wrap.open .door-leak { width:5px; opacity:1; }
+  .door-wrap.open .black-door { box-shadow: inset 0 0 30px rgba(0,0,0,0.9), 0 12px 40px rgba(0,0,0,0.6), 0 0 40px rgba(0,240,255,0.4); }
+  /* floor light pool — bleeds cyan onto the ground when the door cracks open */
+  .door-glow {
+    position:absolute; left:50%; bottom:-14px; transform: translateX(-50%);
+    width:80%; height:34px; border-radius:50%;
+    background: radial-gradient(ellipse at center, rgba(0,240,255,0.55) 0%, rgba(0,240,255,0.18) 45%, transparent 75%);
+    opacity:0; pointer-events:none; filter: blur(4px); transition: opacity .45s ease;
+  }
+  .door-wrap.open .door-glow { opacity:1; }
+  @media (prefers-reduced-motion: reduce) {
+    .door-wrap.open .door-glow { transition:none; }
+  }
+  .door-hint {
+    font-family:'Orbitron',sans-serif; font-weight:700; font-size:0.625rem; letter-spacing:0.18em;
+    text-transform:uppercase; color: var(--cyan); white-space:nowrap;
+    text-shadow: 0 0 6px rgba(0,240,255,0.5); transition: opacity .3s ease;
+  }
+  .door-hint-top {
+    position:absolute; top:-2rem; left:50%; transform: translateX(-50%);
+    opacity:.85; text-align:center;
+  }
+  /* hover only intensifies the slot pulse subtly — no audio, no quarter-drop */
+  .black-door:hover .coin-slot { animation: slot-pulse 1.1s ease-in-out infinite; }
+
+  /* Touch devices: brighter cyan leak so the open flash reads in bright mobile ambient.
+     Door scales w-52 (mobile) -> w-60 (desktop). Hint copy swapped by JS for coarse pointers. */
+  @media (pointer: coarse) {
+    .door-wrap.open .door-leak { width:6px; box-shadow: 0 0 36px 10px rgba(0,240,255,0.9), 0 0 72px 20px rgba(0,240,255,0.5); }
+    .door-wrap.open .black-door { box-shadow: inset 0 0 30px rgba(0,0,0,0.9), 0 12px 40px rgba(0,0,0,0.6), 0 0 56px rgba(0,240,255,0.6); }
+  }
+
+  /* ============ Scroll reveal ============ */
+  .reveal { opacity:0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity:1; transform:none; }
+
+  /* ============ Decorative CRT flicker (hero "Now Loading", "Open Now", footer "GAME OVER") ============ */
+  /* Infinite but with a high opacity floor (1.0 -> 0.7) so the text is never hard to read. */
+  @keyframes flicker {
+    0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.7} 94%{opacity:1} 96%{opacity:.85} 97%{opacity:1}
+  }
+  .flicker { animation: flicker 6s infinite; }
+
+  /* ============ Nav link ============ */
+  .nav-link { position:relative; transition: color .2s ease; }
+  .nav-link::after {
+    content:""; position:absolute; left:0; bottom:-4px; height:2px; width:0;
+    background: var(--magenta); box-shadow:0 0 8px var(--magenta); transition: width .25s ease;
+  }
+  .nav-link:hover { color:#fff; }
+  .nav-link:hover::after { width:100%; }
+  .nav-link:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; border-radius:2px; }
+
+  /* ============ Events ============ */
+  .event-row { transition: background .2s ease; }
+  .event-row:hover { background: rgba(255,46,154,0.06); }
+  .next-event {
+    background: linear-gradient(90deg, rgba(255,46,154,0.12), rgba(0,240,255,0.06));
+    border-left: 3px solid var(--magenta);
+    box-shadow: 0 0 24px rgba(255,46,154,0.12);
+  }
+  /* fixed-width day column so the eye scans straight down the day rhythm */
+  .event-day { font-variant-numeric: tabular-nums; }
+  /* non-tonight rows: subtle cyan glow on hover so day/time is loudest in its own row */
+  .event-row:not(.next-event):hover .event-day { text-shadow: 0 0 6px rgba(0,240,255,0.55); }
+  /* dim entry-fee pill on non-tonight rows so day/time wins in every row */
+  .event-fee-muted { color: rgba(184,174,216,0.65); font-weight:500; }
+
+  /* ============ Hours table ============ */
+  .hours-row { border-bottom: 1px dashed rgba(184,174,216,0.22); }
+  .hours-row:last-child { border-bottom:none; }
+
+  /* ============ Reduced motion ============ */
+  @media (prefers-reduced-motion: reduce) {
+    .grid-floor::before, .coin-slot, .flicker,
+    .crt.in .flicker-overlay,
+    .pd-magenta, .pd-cyan, .pd-amber,
+    .crt-screen::before, .quarter, .door-wrap.dropping .coin-slot { animation: none !important; }
+    .reveal { transition:none; opacity:1; transform:none; }
+    .flicker-overlay { opacity:0 !important; }
+    .crt:hover .crt-screen::before { opacity:0; }
+    /* door resolves to a static open state on activation, no quarter-drop */
+    .door-wrap.dropping .quarter { opacity:0; }
+    .door-wrap.dropping .door-leak,
+    .door-wrap.open .door-leak { width:5px; opacity:1; transition:none; }
+    * { scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body class="font-body text-ink antialiased">
+
+<!-- FOUC shield: covers the page with a branded magenta→amber "PIXEL DIVE" mark until Tailwind
+     has compiled, so slow-connection visitors never see unstyled black-on-white. Removed on load. -->
+<div id="fouc-shield" aria-hidden="true"><span class="f-mark">PIXEL DIVE</span></div>
+
+<!-- Skip link for keyboard users -->
+<a href="#top"
+   class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-md focus:bg-magenta focus:text-white focus:font-head focus:font-bold focus:text-sm focus:shadow-lg">
+  Skip to content
+</a>
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-base/70 border-b border-magenta/20">
+  <nav class="max-w-7xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2 group" aria-label="PIXEL DIVE home">
+      <span class="font-pixel text-amber text-[10px] md:text-xs neon-amber tracking-widest">P D</span>
+      <span class="font-logo text-xl md:text-2xl chrome-text leading-none">PIXEL DIVE</span>
+    </a>
+    <ul class="hidden md:flex items-center gap-8 font-head text-sm font-semibold tracking-wide text-dim">
+      <li><a class="nav-link" href="#cabinets">Cabinets</a></li>
+      <li><a class="nav-link" href="#drinks">Drinks</a></li>
+      <li><a class="nav-link" href="#events">Events</a></li>
+      <li><a class="nav-link" href="#find">Find Us</a></li>
+    </ul>
+    <a href="#find" class="btn-ghost text-xs px-4 py-2 rounded-md hidden sm:inline-block">Find the Door</a>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="relative min-h-[100svh] sunset-sky scanlines overflow-hidden flex flex-col">
+  <div class="grid-floor" aria-hidden="true"></div>
+  <div class="sun" aria-hidden="true"></div>
+  <div class="sun-bands" aria-hidden="true"></div>
+
+  <!-- CRT vignette -->
+  <div class="absolute inset-0 z-[5] pointer-events-none" aria-hidden="true"
+       style="background: radial-gradient(ellipse 90% 75% at 50% 45%, transparent 40%, rgba(10,5,24,0.85) 100%);"></div>
+
+  <div class="relative z-20 flex-1 flex flex-col items-center justify-center text-center px-5 pt-24 pb-16">
+    <p class="sec-label mb-6 flicker">// Now Loading &mdash; Cabinet 01</p>
+
+    <h1 class="font-logo chrome-text text-[clamp(2.75rem,15vw,13rem)] leading-[0.85] tracking-wide break-words max-w-full">
+      PIXEL DIVE
+    </h1>
+
+    <p class="mt-5 font-head font-bold text-lg sm:text-2xl md:text-3xl tracking-[0.18em] sm:tracking-[0.32em] uppercase neon-magenta break-words">
+      INSERT COIN. STAY TIL DAWN.
+    </p>
+
+    <p class="mt-6 max-w-xl font-body text-lg md:text-xl text-dim leading-relaxed">
+      A retro 80s arcade &amp; cocktail bar hidden behind an unmarked downtown door.
+      Vintage cabinets, synthwave sets, and game-named drinks &mdash; for the people who stayed up too late in 1986 and never quite came back.
+    </p>
+
+    <div class="mt-10 flex flex-col sm:flex-row items-center gap-4">
+      <a href="#find" class="btn-coin px-8 py-4 rounded-md text-sm md:text-base inline-flex items-center gap-2.5">
+        <span>Find the Door</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="#cabinets" class="btn-amber px-6 py-4 rounded-md text-xs md:text-sm">See What's Playing</a>
+    </div>
+
+    <div class="mt-12 flex items-center gap-6 font-head text-xs text-dim">
+      <span class="flex items-center gap-2"><span class="power-dot pd-magenta"></span> 12 Cabinets</span>
+      <span class="hidden sm:flex items-center gap-2"><span class="power-dot pd-cyan"></span> Open Til 2AM</span>
+      <span class="flex items-center gap-2"><span class="power-dot pd-amber"></span> Basement Level</span>
+    </div>
+  </div>
+
+  <div class="relative z-20 h-px w-full bg-gradient-to-r from-transparent via-magenta/60 to-transparent"></div>
+</section>
+
+<!-- continuous sunset thread wrapper -->
+<div class="sunset-thread">
+
+<!-- ============ CABINETS ============ -->
+<section id="cabinets" class="relative max-w-7xl mx-auto px-5 md:px-8 py-20 md:py-28">
+  <div class="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+    <div>
+      <p class="sec-label mb-3">// 01 &mdash; Cabinet Lineup</p>
+      <h2 class="font-head font-black text-3xl md:text-4xl tracking-tight">
+        <span class="neon-magenta">12</span> machines. <span class="neon-cyan">One</span> quarter at a time.
+      </h2>
+    </div>
+    <p class="font-body text-dim max-w-sm md:text-right">Every cabinet is original CRT, free-play with your tab. High scores reset Sundays at noon &mdash; get your initials up.</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+
+    <!-- Card 1 — tournament featured -->
+    <article class="crt reveal group">
+      <div class="crt-screen tint-fight p-5 h-full flex flex-col">
+        <div class="flicker-overlay" aria-hidden="true"></div>
+        <div class="flex items-start justify-between mb-3">
+          <span class="tourney-flag">★ Tonight's Tourney</span>
+          <span class="pixel-only text-[9px] text-dim">01/12</span>
+        </div>
+        <div class="marquee-glow m-fight font-head font-black text-xl md:text-2xl text-magenta leading-tight mb-4">STREET FIGHTER II</div>
+        <div class="mt-auto">
+          <p class="font-head font-semibold text-xs text-dim mb-1 tracking-[0.18em] uppercase">Hi-Score</p>
+          <p class="score-num text-base">1,284,950</p>
+          <p class="font-head font-bold text-sm text-ink mt-1.5">AKL &mdash; <span class="text-dim font-medium">"KEN BURNS"</span> <span class="text-dim/60 font-medium text-xs">since '98</span></p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="crt reveal group" style="transition-delay:.05s">
+      <div class="crt-screen tint-maze p-5 h-full flex flex-col">
+        <div class="flicker-overlay" aria-hidden="true"></div>
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-head font-semibold text-[10px] text-cyan/80 tracking-[0.18em] uppercase">Maze</span>
+          <span class="pixel-only text-[9px] text-dim">02/12</span>
+        </div>
+        <div class="marquee-glow m-maze font-head font-black text-xl md:text-2xl text-cyan leading-tight mb-4">PAC-MAN</div>
+        <div class="mt-auto">
+          <p class="font-head font-semibold text-xs text-dim mb-1 tracking-[0.18em] uppercase">Hi-Score</p>
+          <p class="score-num text-base">321,400</p>
+          <p class="font-head font-bold text-sm text-ink mt-1.5">JRM &mdash; <span class="text-dim font-medium">"DOT EATER"</span></p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="crt reveal group" style="transition-delay:.1s">
+      <div class="crt-screen tint-shmup p-5 h-full flex flex-col">
+        <div class="flicker-overlay" aria-hidden="true"></div>
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-head font-semibold text-[10px] text-amber/80 tracking-[0.18em] uppercase">Shmup</span>
+          <span class="pixel-only text-[9px] text-dim">03/12</span>
+        </div>
+        <div class="marquee-glow m-shmup font-head font-black text-xl md:text-2xl text-amber leading-tight mb-4">GALAGA</div>
+        <div class="mt-auto">
+          <p class="font-head font-semibold text-xs text-dim mb-1 tracking-[0.18em] uppercase">Hi-Score</p>
+          <p class="score-num text-base">198,750</p>
+          <p class="font-head font-bold text-sm text-ink mt-1.5">TBO &mdash; <span class="text-dim font-medium">"NO MISS"</span></p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="crt reveal group" style="transition-delay:.15s">
+      <div class="crt-screen tint-plat p-5 h-full flex flex-col">
+        <div class="flicker-overlay" aria-hidden="true"></div>
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-head font-semibold text-[10px] text-amber/80 tracking-[0.18em] uppercase">Platform</span>
+          <span class="pixel-only text-[9px] text-dim">04/12</span>
+        </div>
+        <div class="marquee-glow m-plat font-head font-black text-xl md:text-2xl text-amber leading-tight mb-4">DONKEY KONG</div>
+        <div class="mt-auto">
+          <p class="font-head font-semibold text-xs text-dim mb-1 tracking-[0.18em] uppercase">Hi-Score</p>
+          <p class="score-num text-base">847,300</p>
+          <p class="font-head font-bold text-sm text-ink mt-1.5">CRS &mdash; <span class="text-dim font-medium">"LADDER KING"</span></p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 5 -->
+    <article class="crt reveal group" style="transition-delay:.2s">
+      <div class="crt-screen tint-race p-5 h-full flex flex-col">
+        <div class="flicker-overlay" aria-hidden="true"></div>
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-head font-semibold text-[10px] text-cyan/80 tracking-[0.18em] uppercase">Racing</span>
+          <span class="pixel-only text-[9px] text-dim">05/12</span>
+        </div>
+        <div class="marquee-glow m-race font-head font-black text-xl md:text-2xl text-cyan leading-tight mb-4">OUTRUN</div>
+        <div class="mt-auto">
+          <p class="font-head font-semibold text-xs text-dim mb-1 tracking-[0.18em] uppercase">Hi-Score</p>
+          <p class="score-num text-base">4,512,800</p>
+          <p class="font-head font-bold text-sm text-ink mt-1.5">MDV &mdash; <span class="text-dim font-medium">"RED FERRARI"</span></p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 6 — swapped stock TEKKEN 3 for a deep-cut to signal insider knowledge -->
+    <article class="crt reveal group" style="transition-delay:.25s">
+      <div class="crt-screen tint-fight p-5 h-full flex flex-col">
+        <div class="flicker-overlay" aria-hidden="true"></div>
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-head font-semibold text-[10px] text-amber/80 tracking-[0.18em] uppercase">Fighting</span>
+          <span class="pixel-only text-[9px] text-dim">06/12</span>
+        </div>
+        <div class="marquee-glow m-fight font-head font-black text-xl md:text-2xl text-magenta leading-tight mb-4">3RD STRIKE</div>
+        <div class="mt-auto">
+          <p class="font-head font-semibold text-xs text-dim mb-1 tracking-[0.18em] uppercase">Hi-Score</p>
+          <p class="score-num text-base">999,999</p>
+          <p class="font-head font-bold text-sm text-ink mt-1.5">??? &mdash; <span class="text-dim font-medium">"GHOST"</span></p>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="reveal mt-10 flex items-center justify-center gap-3 font-head font-semibold text-xs text-dim tracking-[0.22em] uppercase">
+    <span class="h-px w-12 bg-magenta/40"></span>
+    +6 More Cabinets On The Floor
+    <span class="h-px w-12 bg-cyan/40"></span>
+  </div>
+</section>
+
+<!-- ============ DRINKS ============ -->
+<section id="drinks" class="relative max-w-6xl mx-auto px-5 md:px-8 py-20 md:py-28">
+  <div class="reveal mb-12 text-center">
+    <p class="sec-label mb-3">// 02 &mdash; Bar Menu</p>
+    <h2 class="font-head font-black text-3xl md:text-4xl tracking-tight">
+      Drinks named after the <span class="neon-amber">games</span> you lost.
+    </h2>
+    <p class="font-body text-dim mt-4 max-w-xl mx-auto">Double pours. No mocktail menu. Ask about the save file.</p>
+  </div>
+
+  <div class="reveal grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+
+    <div class="flex items-start justify-between gap-4 py-4 border-b border-magenta/15">
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-1.5 flex-wrap">
+          <h3 class="font-head font-bold text-xl text-ink">The Konami Code</h3>
+          <span class="house-fav">House Fav</span>
+        </div>
+        <p class="font-body text-dim text-sm md:text-base leading-snug">↑↑↓↓←→←→ &mdash; yuzu shochu, Aperol, lime, chili-mango foam, sea-salt rim.</p>
+      </div>
+      <span class="price-tag mt-1">$14</span>
+    </div>
+
+    <div class="flex items-start justify-between gap-4 py-4 border-b border-magenta/15">
+      <div class="flex-1">
+        <h3 class="font-head font-bold text-xl text-ink mb-1.5">Hadouken</h3>
+        <p class="font-body text-dim text-sm md:text-base leading-snug">Mezcal, ginger-lime cordial, Szechuan peppercorn, smoked over Japanese oak.</p>
+      </div>
+      <span class="price-tag mt-1">$15</span>
+    </div>
+
+    <div class="flex items-start justify-between gap-4 py-4 border-b border-magenta/15">
+      <div class="flex-1">
+        <h3 class="font-head font-bold text-xl text-ink mb-1.5">Princess Peach</h3>
+        <p class="font-body text-dim text-sm md:text-base leading-snug">Gin, white peach purée, elderflower, prosecco float, rose petal garnish.</p>
+      </div>
+      <span class="price-tag mt-1">$13</span>
+    </div>
+
+    <div class="flex items-start justify-between gap-4 py-4 border-b border-magenta/15">
+      <div class="flex-1">
+        <h3 class="font-head font-bold text-xl text-ink mb-1.5">Continue? 9…</h3>
+        <p class="font-body text-dim text-sm md:text-base leading-snug">Cold-brew espresso, bourbon, demerara, orange bitters. For when 3am asks if you're staying.</p>
+      </div>
+      <span class="price-tag mt-1">$11</span>
+    </div>
+
+    <div class="md:col-span-2 flex items-center gap-4 py-2">
+      <span class="h-px flex-1 bg-cyan/25"></span>
+      <span class="font-head font-semibold text-[10px] text-cyan tracking-[0.24em] uppercase">NA &mdash; Free-Play</span>
+      <span class="h-px flex-1 bg-cyan/25"></span>
+    </div>
+
+    <div class="flex items-start justify-between gap-4 py-4 border-b border-magenta/15 md:col-span-2">
+      <div class="flex-1">
+        <h3 class="font-head font-bold text-xl text-ink mb-1.5">Player 2</h3>
+        <p class="font-body text-dim text-sm md:text-base leading-snug">Zero-proof: cucumber, matcha, yuzu, tonic, mint. Free-play all night, no hangover boss.</p>
+      </div>
+      <span class="price-tag mt-1">$8</span>
+    </div>
+
+  </div>
+
+  <p class="reveal mt-8 text-center font-head font-semibold text-xs text-dim tracking-[0.22em] uppercase">Full menu on the bar &mdash; ask the tender about the secret save file</p>
+</section>
+
+<!-- ============ EVENTS ============ -->
+<section id="events" class="relative max-w-5xl mx-auto px-5 md:px-8 py-20 md:py-28">
+  <div class="reveal mb-10 text-center">
+    <p class="sec-label mb-3">// 03 &mdash; Weekly Schedule</p>
+    <h2 class="font-head font-black text-3xl md:text-4xl tracking-tight">
+      What's <span class="neon-magenta">on</span> tonight.
+    </h2>
+  </div>
+
+  <div class="reveal crt">
+    <div class="crt-screen p-2 md:p-3">
+      <ul class="divide-y divide-magenta/10">
+
+        <li class="event-row next-event grid grid-cols-12 gap-3 px-4 md:px-6 py-5 items-center">
+          <div class="col-span-12 sm:col-span-3">
+            <p class="event-day font-head font-black text-2xl md:text-3xl text-amber neon-amber leading-none">FRI · 9PM</p>
+            <p class="font-head font-bold text-[10px] text-cyan mt-1.5 neon-cyan tracking-[0.2em] uppercase">Tonight</p>
+          </div>
+          <div class="col-span-7 sm:col-span-6">
+            <p class="font-head font-bold text-base md:text-lg text-cyan">Street Fighter II Tournament</p>
+            <p class="font-body text-dim text-sm">Single-elim, 32 brackets. House cabinet. Winner drinks free til close.</p>
+          </div>
+          <div class="col-span-5 sm:col-span-3 text-right">
+            <span class="inline-block font-head font-semibold text-[11px] text-amber/80 border border-amber/40 rounded px-2 py-1 tracking-wide">$10 Entry</span>
+            <p class="font-body text-dim text-xs mt-1.5">Sign up at bar</p>
+          </div>
+        </li>
+
+        <li class="event-row grid grid-cols-12 gap-3 px-4 md:px-6 py-5 items-center">
+          <div class="col-span-12 sm:col-span-3">
+            <p class="event-day font-head font-black text-2xl md:text-3xl text-ink leading-none">SAT · 10PM</p>
+          </div>
+          <div class="col-span-7 sm:col-span-6">
+            <p class="font-head font-bold text-base md:text-lg text-cyan">RetroWave DJ Set — NEONDRIVE</p>
+            <p class="font-body text-dim text-sm">Synthwave / outrun all night. Cabinets on free-play during the set.</p>
+          </div>
+          <div class="col-span-5 sm:col-span-3 text-right">
+            <span class="inline-block event-fee-muted font-head text-[11px] border border-dim/30 rounded px-2 py-1 tracking-wide">Free</span>
+          </div>
+        </li>
+
+        <li class="event-row grid grid-cols-12 gap-3 px-4 md:px-6 py-5 items-center">
+          <div class="col-span-12 sm:col-span-3">
+            <p class="event-day font-head font-black text-2xl md:text-3xl text-ink leading-none">TUE · 8PM</p>
+          </div>
+          <div class="col-span-7 sm:col-span-6">
+            <p class="font-head font-bold text-base md:text-lg text-cyan">Pac-Man Speedrun Night</p>
+            <p class="font-body text-dim text-sm">Fastest clear wins a $50 tab. Practice runs from open.</p>
+          </div>
+          <div class="col-span-5 sm:col-span-3 text-right">
+            <span class="inline-block event-fee-muted font-head text-[11px] border border-dim/30 rounded px-2 py-1 tracking-wide">$5 Entry</span>
+          </div>
+        </li>
+
+        <li class="event-row grid grid-cols-12 gap-3 px-4 md:px-6 py-5 items-center">
+          <div class="col-span-12 sm:col-span-3">
+            <p class="event-day font-head font-black text-2xl md:text-3xl text-ink leading-none">WED · 9PM</p>
+          </div>
+          <div class="col-span-7 sm:col-span-6">
+            <p class="font-head font-bold text-base md:text-lg text-cyan">Synthwave Wednesdays — VHS GHOST</p>
+            <p class="font-body text-dim text-sm">Resident DJ, deep cuts, John Hughes energy. Half-price Konami Codes.</p>
+          </div>
+          <div class="col-span-5 sm:col-span-3 text-right">
+            <span class="inline-block event-fee-muted font-head text-[11px] border border-dim/30 rounded px-2 py-1 tracking-wide">Free</span>
+          </div>
+        </li>
+
+        <li class="event-row grid grid-cols-12 gap-3 px-4 md:px-6 py-5 items-center">
+          <div class="col-span-12 sm:col-span-3">
+            <p class="event-day font-head font-black text-2xl md:text-3xl text-ink leading-none">SUN · 7PM</p>
+          </div>
+          <div class="col-span-7 sm:col-span-6">
+            <p class="font-head font-bold text-base md:text-lg text-cyan">High-Score Reset + Co-op Night</p>
+            <p class="font-body text-dim text-sm">Scores wipe at noon &mdash; be the first initial up. Co-op cabinets on free-play.</p>
+          </div>
+          <div class="col-span-5 sm:col-span-3 text-right">
+            <span class="inline-block event-fee-muted font-head text-[11px] border border-dim/30 rounded px-2 py-1 tracking-wide">Free</span>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOURS & LOCATION — SIGNATURE ============ -->
+<section id="find" class="relative max-w-6xl mx-auto px-5 md:px-8 py-20 md:py-28">
+  <div class="reveal mb-10 text-center">
+    <p class="sec-label mb-3">// 04 &mdash; Hours &amp; Location</p>
+    <h2 class="font-head font-black text-3xl md:text-4xl tracking-tight">
+      Find the <span class="neon-magenta">door</span>. We did the rest.
+    </h2>
+  </div>
+
+  <div class="coin-panel reveal grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden">
+
+    <!-- LEFT: the unmarked door (signature moment, scaled larger) -->
+    <div class="lg:col-span-5 p-8 md:p-10 border-b lg:border-b-0 lg:border-r border-cyan/25 flex flex-col">
+      <p class="font-head font-bold text-xs text-cyan mb-4 neon-cyan tracking-[0.22em] uppercase">▼ No Sign. No Name. ▼</p>
+
+      <div class="flex-1 flex items-center justify-center py-8">
+        <div class="door-wrap w-52 md:w-60" id="doorWrap">
+          <p class="door-hint door-hint-top" id="doorHint">Click or press Enter &mdash; drop a quarter</p>
+          <div class="black-door" id="blackDoor" role="button" tabindex="0"
+               aria-describedby="doorHint"
+               aria-expanded="false"
+               aria-label="Drop a quarter in the glowing magenta coin slot to open the unmarked door">
+            <div class="door-panel-line"></div>
+            <div class="door-handle"></div>
+            <div class="door-leak" aria-hidden="true"></div>
+            <div class="coin-slot" aria-hidden="true">
+              <span class="quarter" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="door-glow" aria-hidden="true"></div>
+          <p class="sr-only" aria-live="polite" id="doorStatus"></p>
+        </div>
+      </div>
+
+      <p class="font-head font-bold text-xl md:text-2xl text-ink leading-tight text-center">
+        Look for the glowing<br>
+        <span class="neon-magenta">magenta coin slot</span><br>
+        beside the black door.
+      </p>
+      <p class="font-body text-dim text-sm md:text-base text-center mt-3 max-w-xs mx-auto">
+        No sign. No name on the street. Drop a quarter in the slot and the door pops. That's the only way in.
+      </p>
+    </div>
+
+    <!-- RIGHT: hours + address + continue panel -->
+    <div class="lg:col-span-7 p-8 md:p-10">
+
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-magenta/20">
+        <div>
+          <p class="font-head font-semibold text-[10px] text-amber mb-1 tracking-[0.2em] uppercase">Credit(s) &mdash; 01</p>
+          <h3 class="font-head font-black text-2xl text-ink">HOURS</h3>
+        </div>
+        <span class="font-head font-bold text-xs text-amber neon-amber flicker tracking-[0.18em] uppercase">Open Now</span>
+      </div>
+
+      <ul class="font-body mb-8">
+        <li class="hours-row flex justify-between py-2.5 text-lg md:text-xl">
+          <span class="text-dim">Mon</span><span class="text-ink font-semibold">Closed</span>
+        </li>
+        <li class="hours-row flex justify-between py-2.5 text-lg md:text-xl">
+          <span class="text-dim">Tue &mdash; Thu</span><span class="text-ink font-semibold">6pm &mdash; 1am</span>
+        </li>
+        <li class="hours-row flex justify-between py-2.5 text-lg md:text-xl">
+          <span class="text-dim">Fri</span><span class="text-ink font-semibold">6pm &mdash; 2am</span>
+        </li>
+        <li class="hours-row flex justify-between py-2.5 text-lg md:text-xl">
+          <span class="text-dim">Sat</span><span class="text-ink font-semibold">5pm &mdash; 2am</span>
+        </li>
+        <li class="hours-row flex justify-between py-2.5 text-lg md:text-xl">
+          <span class="text-dim">Sun</span><span class="text-ink font-semibold">5pm &mdash; midnight</span>
+        </li>
+      </ul>
+
+      <div class="mb-8">
+        <p class="font-head font-semibold text-[10px] text-amber mb-2 tracking-[0.2em] uppercase">Location</p>
+        <p class="font-head font-bold text-xl md:text-2xl text-ink leading-snug">
+          1847 Vesper Lane,<br>Downtown &mdash; <span class="neon-cyan">basement level</span>
+        </p>
+        <p class="font-body text-dim text-sm md:text-base mt-2">Between the laundromat and the vinyl shop. No sign, no name on the street.</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-stretch gap-3 pt-6 border-t border-magenta/20">
+        <a href="#cabinets" class="btn-coin flex-1 px-6 py-3.5 rounded-md text-center text-sm">Browse Cabinets</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=1847+Vesper+Lane+Downtown" class="btn-ghost flex-1 px-6 py-3.5 rounded-md text-center text-xs" target="_blank" rel="noopener">Get Directions</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER — CRT power-down ============ -->
+<footer class="relative sunset-sky scanlines overflow-hidden border-t border-magenta/25">
+  <div class="grid-floor opacity-40" aria-hidden="true"></div>
+  <div class="relative z-20 max-w-6xl mx-auto px-5 md:px-8 py-16 md:py-20">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+
+      <div class="md:col-span-1">
+        <p class="font-logo chrome-text text-4xl md:text-5xl leading-none mb-3">PIXEL DIVE</p>
+        <p class="font-head font-bold text-xl tracking-[0.25em] uppercase neon-magenta mb-4">Stay Til Dawn.</p>
+        <p class="font-body text-dim text-sm md:text-base max-w-xs">Open since the Reagan administration. Still here. Basement level, downtown, behind the black door with the magenta slot.</p>
+      </div>
+
+      <div>
+        <p class="sec-label mb-4">// Tournament Sign-Up</p>
+        <p class="font-body text-dim text-sm md:text-base mb-3">Lock in your bracket slot. We'll text you the night before.</p>
+        <form class="flex flex-col sm:flex-row gap-2" aria-label="Tournament sign-up">
+          <label for="email" class="sr-only">Phone or email</label>
+          <input id="email" type="text" placeholder="phone or email"
+            class="flex-1 bg-base/60 border border-cyan/40 rounded-md px-3 py-2.5 font-body text-sm text-ink placeholder:text-dim focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/50 transition" />
+          <button type="submit" class="btn-coin px-5 py-2.5 rounded-md text-xs">Lock Bracket</button>
+        </form>
+        <p class="font-body text-dim text-xs mt-2 min-h-[1em]" aria-live="polite" id="bracketStatus"></p>
+      </div>
+
+      <div>
+        <p class="sec-label mb-4">// Find Us Elsewhere</p>
+        <ul class="space-y-2.5 font-head font-medium text-sm">
+          <li><a href="#" aria-label="Instagram placeholder — @pixeldive.bar (not yet linked)" class="nav-link text-ink/90 inline-flex items-center gap-2">
+            <i data-lucide="instagram" class="w-4 h-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></i>
+            @pixeldive.bar</a></li>
+          <li><a href="#" aria-label="Mixtapes placeholder — pixeldive.mixtapes (not yet linked)" class="nav-link text-ink/90 inline-flex items-center gap-2">
+            <i data-lucide="music-2" class="w-4 h-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="8" cy="18" r="3"/><path d="M11 18V5l10-2v11"/><circle cx="18" cy="16" r="3"/></svg></i>
+            pixeldive.mixtapes</a></li>
+          <li><a href="https://www.google.com/maps/search/?api=1&query=1847+Vesper+Lane+Downtown" target="_blank" rel="noopener" aria-label="Map — 1847 Vesper Lane" class="nav-link text-ink/90 inline-flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></i>
+            1847 Vesper Lane</a></li>
+          <li><span class="text-ink/90 inline-flex items-center gap-2" aria-label="No phone — just show up">
+            <i data-lucide="phone" class="w-4 h-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.69 2.35a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.73-1.73a2 2 0 0 1 2.11-.45c.75.33 1.54.56 2.35.69A2 2 0 0 1 22 16.92z"/></svg></i>
+            (no phone — just show up)</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="border-t border-magenta/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="pixel-only text-[9px] text-dim flicker">GAME OVER</p>
+      <p class="pixel-only text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.28em] uppercase neon-amber text-center">
+        INSERT COIN TO CONTINUE
+      </p>
+      <p class="font-head font-semibold text-[10px] text-dim tracking-[0.2em] uppercase">© 1986 — ∞ Pixel Dive</p>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /sunset-thread (now wraps hero through footer for one continuous gradient) -->
+
+</main>
+
+<script>
+  // ----- FOUC shield removal -----
+  // Tailwind's Play CDN compiles asynchronously; until it does, the shield holds the
+  // branded scene so the first viewport never flashes unstyled HTML. We remove it as
+  // soon as Tailwind is ready (or after a 2.5s safety timeout, whichever is first).
+  (function () {
+    var shield = document.getElementById('fouc-shield');
+    var done = false;
+    function remove() {
+      if (done || !shield) return;
+      done = true;
+      shield.classList.add('done');
+      setTimeout(function () { if (shield && shield.parentNode) shield.parentNode.removeChild(shield); }, 300);
+    }
+    // Tailwind CDN exposes tailwind on window once loaded; styles apply shortly after.
+    function tryRemove() {
+      if (window.tailwind && document.documentElement.classList.contains('scroll-smooth')) {
+        // give Tailwind a tick to inject styles
+        setTimeout(remove, 60);
+        return true;
+      }
+      return false;
+    }
+    if (!tryRemove()) {
+      var iv = setInterval(function () { if (tryRemove()) clearInterval(iv); }, 40);
+      setTimeout(function () { clearInterval(iv); remove(); }, 2500);
+    }
+    window.addEventListener('load', remove);
+  })();
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ----- Scroll reveal -----
+  if (!reduce && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
+
+  // ----- Lucide (pinned) with inline SVG fallback already inside <i> tags -----
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      try { window.lucide.createIcons(); } catch (e) { /* fallback SVGs remain */ }
+    }
+  });
+
+  // ----- The door: signature interactive centerpiece -----
+  // Quarter-drop + soft ka-ching (Web Audio) + door cracks leaking cyan light.
+  // Audio is gated behind an explicit user gesture (click/Enter/Space) — never hover.
+  const doorWrap   = document.getElementById('doorWrap');
+  const blackDoor  = document.getElementById('blackDoor');
+  const doorHint   = document.getElementById('doorHint');
+  const doorStatus = document.getElementById('doorStatus');
+  let audioCtx = null;
+  let busy = false;
+  let interacted = false;
+
+  function kaChing() {
+    if (reduce) return;
+    try {
+      // AudioContext is created/resumed only inside a user gesture handler.
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+      const now = audioCtx.currentTime;
+      // metallic coin ping
+      const o1 = audioCtx.createOscillator();
+      const g1 = audioCtx.createGain();
+      o1.type = 'triangle'; o1.frequency.setValueAtTime(1320, now);
+      o1.frequency.exponentialRampToValueAtTime(880, now + 0.18);
+      g1.gain.setValueAtTime(0.0001, now);
+      g1.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
+      g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+      o1.connect(g1).connect(audioCtx.destination);
+      o1.start(now); o1.stop(now + 0.34);
+      // lower thud for "slot accept"
+      const o2 = audioCtx.createOscillator();
+      const g2 = audioCtx.createGain();
+      o2.type = 'sine'; o2.frequency.setValueAtTime(220, now + 0.18);
+      g2.gain.setValueAtTime(0.0001, now + 0.18);
+      g2.gain.exponentialRampToValueAtTime(0.14, now + 0.2);
+      g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+      o2.connect(g2).connect(audioCtx.destination);
+      o2.start(now + 0.18); o2.stop(now + 0.52);
+    } catch (e) { /* audio not available — visual still plays */ }
+  }
+
+  function announceOpen(open) {
+    blackDoor.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (doorStatus) { doorStatus.textContent = open ? 'Door open. Bracket locked.' : ''; }
+  }
+
+  function dropCoin() {
+    if (busy) return;
+    busy = true;
+    if (!interacted) {
+      interacted = true;
+      if (doorHint) doorHint.style.opacity = '0';
+    }
+    doorWrap.classList.remove('open');
+    doorWrap.classList.add('dropping');
+    kaChing();
+    // open the door just after the quarter enters the slot
+    setTimeout(() => { doorWrap.classList.add('open'); announceOpen(true); }, 620);
+    setTimeout(() => {
+      doorWrap.classList.remove('dropping');
+      doorWrap.classList.remove('open');
+      announceOpen(false);
+      busy = false;
+    }, 1700);
+  }
+
+  // Hover does NOT trigger audio or the quarter-drop — only a subtle CSS pulse
+  // (handled by .black-door:hover .coin-slot). The full interaction is click/keyboard.
+  blackDoor.addEventListener('click', dropCoin);
+  blackDoor.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dropCoin(); }
+  });
+  // hint fades after first focus/interaction
+  blackDoor.addEventListener('focus', () => { if (doorHint && interacted) doorHint.style.opacity = '0.4'; });
+
+  // Touch devices get touch-appropriate hint copy — no desktop input references.
+  if (window.matchMedia('(pointer: coarse)').matches && doorHint) {
+    doorHint.textContent = 'Tap the door — drop a quarter';
+  }
+
+  // ----- Tournament sign-up (no-op) -----
+  document.addEventListener('submit', (e) => {
+    if (e.target.matches('form[aria-label="Tournament sign-up"]')) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const status = document.getElementById('bracketStatus');
+      const original = btn.textContent;
+      btn.textContent = 'Bracket Locked ✓';
+      btn.disabled = true;
+      if (status) { status.textContent = 'Bracket locked. See you tonight.'; }
+      setTimeout(() => {
+        btn.textContent = original; btn.disabled = false; e.target.reset();
+        if (status) { status.textContent = ''; }
+      }, 2600);
+    }
+  });
+</script>
+</body>
+</html>
