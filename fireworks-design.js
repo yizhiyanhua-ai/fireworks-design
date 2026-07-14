@@ -193,7 +193,7 @@ Write the complete HTML file to this EXACT absolute path using the Write tool:
 ${path}
 
 Then return the structured metadata (path must be the absolute path above).`
-  return agent(p, { label: `gen:${lens.key}`, phase: 'Diverge', schema: VARIANT_SCHEMA })
+  return agentRetry(p, { label: `gen:${lens.key}`, phase: 'Diverge', schema: VARIANT_SCHEMA })
 }))).filter(Boolean)
 
 if (!variants.length) throw new Error('No design directions were generated.')
@@ -212,7 +212,7 @@ DIMENSION: ${d.key}
 WHAT TO JUDGE: ${d.q}
 
 Score 1-10 (10 = world-class, 7 = solid, 5 = competent-but-generic, ≤4 has real problems). Return score, concise notes, and the single highest-leverage fix for this dimension.`
-  return agent(p, { label: `judge:${d.key}:${v.lens}`, phase: 'Judge', schema: SCORE_SCHEMA })
+  return agentRetry(p, { label: `judge:${d.key}:${v.lens}`, phase: 'Judge', schema: SCORE_SCHEMA })
     .then(s => ({ variant: v.lens, path: v.path, dim: d.key, ...s }))
 })))).filter(Boolean)
 
